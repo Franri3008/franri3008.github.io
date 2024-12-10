@@ -41,7 +41,6 @@ body { margin:0; font-family:sans-serif; }
   padding-top:5px; 
 }
 
-/* Por defecto los cursos z-index:2 */
 .curso { 
   width:100%; 
   text-align:center; 
@@ -63,7 +62,7 @@ body { margin:0; font-family:sans-serif; }
   z-index:2;
 }
 .curso:hover {
-  transform: scale(1.1) translateZ(0); /* Restaurar animación de hover */
+  transform: scale(1.1) translateZ(0);
 }
 .curso b {
   font-size:inherit;
@@ -98,7 +97,6 @@ body { margin:0; font-family:sans-serif; }
   display:flex;
 }
 
-.amarillo { background:yellow; }
 .naranjo { background:#ff9c3a; }
 .azul { background:#3ba0ff; }
 .verde { background:#59da48; }
@@ -173,7 +171,6 @@ body { margin:0; font-family:sans-serif; }
   font-size:14px;
 }
 
-/* Seleccionado */
 .selected-node {
   box-shadow: 0 0 5px 3px yellow !important;
   transform: scale(1.1) !important;
@@ -194,7 +191,6 @@ body { margin:0; font-family:sans-serif; }
   z-index:2;
 }
 
-/* Líneas curva */
 #lines-overlay {
   position:absolute;
   top:0; left:0; 
@@ -447,7 +443,6 @@ function addClickListener(curso) {
   });
 }
 
-// click fuera
 document.addEventListener('click',e=>{
   let cursoClicked = e.target.closest('.curso');
   if(!cursoClicked) {
@@ -640,13 +635,6 @@ function drawLines(related) {
   const svg = document.getElementById('lines-overlay');
   const containerRect = document.querySelector('.container').getBoundingClientRect();
 
-  // Ajustar las líneas para que salgan de los bordes
-  // Suponiendo conexión horizontal principal:
-  // Si x2 > x1, la linea irá desde el lado derecho del primero al lado izquierdo del segundo
-  // Si x2 < x1, desde el lado izquierdo del primero al lado derecho del segundo
-  // Si estan alineados verticalmente, usamos top/bottom
-  // Esto es una asunción, ajustar según caso.
-
   for(let id of related) {
     (forwardAdj[id]||[]).forEach(nxt=>{
       if(related.has(nxt)) {
@@ -664,29 +652,24 @@ function drawLines(related) {
         let x1, y1, x2, y2;
 
         if(Math.abs(x2Center - x1Center) > Math.abs(y2Center - y1Center)) {
-          // Conexión mayormente horizontal
           if(x2Center > x1Center) {
             x1 = (r1.left + r1.width) - containerRect.left; 
             y1 = r1.top + r1.height/2 - containerRect.top;
             x2 = r2.left - containerRect.left;
             y2 = r2.top + r2.height/2 - containerRect.top;
           } else {
-            // ir de la izquierda de el1 a la derecha de el2
             x1 = r1.left - containerRect.left; 
             y1 = r1.top + r1.height/2 - containerRect.top;
             x2 = (r2.left + r2.width) - containerRect.left;
             y2 = r2.top + r2.height/2 - containerRect.top;
           }
         } else {
-          // Conexión mayormente vertical
           if(y2Center > y1Center) {
-            // de abajo de el1 a arriba de el2
             x1 = r1.left + r1.width/2 - containerRect.left; 
             y1 = (r1.top + r1.height) - containerRect.top;
             x2 = r2.left + r2.width/2 - containerRect.left;
             y2 = r2.top - containerRect.top;
           } else {
-            // de arriba de el1 a abajo de el2
             x1 = r1.left + r1.width/2 - containerRect.left; 
             y1 = r1.top - containerRect.top;
             x2 = r2.left + r2.width/2 - containerRect.left;
@@ -697,8 +680,6 @@ function drawLines(related) {
         let xmid = (x1 + x2)/2;
         let ymid = (y1 + y2)/2;
 
-        // Ajustar curva según horizontal o vertical:
-        // Uso una curva suave en el punto medio
         let d = `M ${x1},${y1} C ${xmid},${y1}, ${xmid},${y2}, ${x2},${y2}`;
 
         let path = document.createElementNS('http://www.w3.org/2000/svg','path');
