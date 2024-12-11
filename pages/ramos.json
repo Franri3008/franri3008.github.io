@@ -1,484 +1,592 @@
 [
-    {
-        "semestre": "I",
-        "cursos": [
-            {
-                "id": "510140",
-                "text": "Física I",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": ""
-            },
-            {
-                "id": "525140",
-                "text": "Álgebra I",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": ""
-            },
-            {
-                "id": "527140",
-                "text": "Cálculo I",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": ""
-            },
-            {
-                "id": "531140",
-                "text": "Química General I",
-                "credits": "6",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": ""
-            },
-            {
-                "id": "580120",
-                "text": "Desarrollo de Habilidades de Gestión",
-                "credits": "3",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": ""
-            }
-        ]
-    },
-    {
-        "semestre": "II",
-        "cursos": [
-            {
-                "id": "510150",
-                "text": "Física II",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "510140"
-            },
-            {
-                "id": "525150",
-                "text": "Álgebra II",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "525140"
-            },
-            {
-                "id": "527150",
-                "text": "Cálculo II",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "527140"
-            },
-            {
-                "id": "503203",
-                "text": "Programación",
-                "credits": "5",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": ""
-            },
-            {
-                "id": "500151",
-                "text": "Introducción a la Innovación en Ingeniería",
-                "credits": "3",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "580120"
-            }
-        ]
-    },
-    {
-        "semestre": "III",
-        "cursos": [
-            {
-                "id": "521227",
-                "text": "Cálculo III",
-                "credits": "7",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "525150,527150"
-            },
-            {
-                "id": "525223",
-                "text": "Ecuaciones Diferenciales",
-                "credits": "5",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "525150,527150"
-            },
-            {
-                "id": "523250",
-                "text": "Estadística y Probabilidades",
-                "credits": "5",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "525140,527150"
-            },
-            {
-                "id": "indef1",
-                "text": "Fundamentos de Ciencia de Datos",
-                "credits": "5",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "503203"
-            },
-            {
-                "id": "890050",
-                "text": "Inglés Comunicativo Nivel Básico I",
-                "credits": "6",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            }
-        ]
-    },
-    {
-        "semestre": "IV",
-        "cursos": [
-            {
-                "id": "523325",
-                "text": "Inferencia Estadística y Muestreo",
-                "credits": "6",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "523250"
-            },
-            {
-                "id": "521230",
-                "text": "Cálculo Numérico",
-                "credits": "5",
-                "size": "1",
-                "classes": ["naranjo"],
-                "pre": "503203,521227"
-            },
-            {
-                "id": "541271",
-                "text": "Mecánica",
-                "credits": "5",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "510150,521227"
-            },
-            {
-                "id": "541203",
-                "text": "Termodinámica",
-                "credits": "6",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": ""
-            },
-            {
-                "id": "580211",
-                "text": "Modelación de Sistemas",
-                "credits": "3",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "indef1"
-            },
-            {
-                "id": "890051",
-                "text": "Inglés Comunicativo Nivel Básico II",
-                "credits": "6",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": "890050"
-            }
-        ]
-    },
-    {
-        "semestre": "V",
-        "cursos": [
-            {
-                "id": "541340",
-                "text": "Mecánica de Fluidos",
-                "credits": "6",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "541271,541203"
-            },
-            {
-                "id": "543355",
-                "text": "Máquinas Eléctricas",
-                "credits": "6",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "510150,525223"
-            },
-            {
-                "id": "indef2",
-                "text": "Administración y Liderazgo",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "580211"
-            },
-            {
-                "id": "580315",
-                "text": "Optimización I",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "525150,580211"
-            },
-            {
-                "id": "580311",
-                "text": "Análisis Estadístico Multivariado*",
-                "credits": "6",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "523325"
-            },
-            {
-                "id": "-",
-                "text": "Complementaria",
-                "credits": "3",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            },
-            {
-                "id": "580490",
-                "text": "Práctica Laboral",
-                "credits": "0",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            }
-        ]
-    },
-    {
-        "semestre": "VI",
-        "cursos": [
-            {
-                "id": "580310",
-                "text": "Microeconomía",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "521227"
-            },
-            {
-                "id": "580414",
-                "text": "Contabilidad General y de Costos",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "indef2"
-            },
-            {
-                "id": "580327",
-                "text": "Simulación",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "580311,580315"
-            },
-            {
-                "id": "580325",
-                "text": "Optimización II",
-                "credits": "6",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "580315"
-            },
-            {
-                "id": "indef3",
-                "text": "Electivo Ciencias de Ing. I",
-                "credits": "5",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": ""
-            },
-            {
-                "id": "indef4",
-                "text": "Electivo Ciencias de Ing. II",
-                "credits": "5",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": ""
-            }
-        ]
-    },
-    {
-        "semestre": "VII",
-        "cursos": [
-            {
-                "id": "540451",
-                "text": "Procesos Industriales",
-                "credits": "5",
-                "size": "1",
-                "classes": ["azul"],
-                "pre": "541340"
-            },
-            {
-                "id": "580421",
-                "text": "Planificación y Control de Producción",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "580327"
-            },
-            {
-                "id": "indef5",
-                "text": "Sistemas de Producción y Logística",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "580325"
-            },
-            {
-                "id": "580429",
-                "text": "Finanzas",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "580414"
-            },
-            {
-                "id": "580323",
-                "text": "Macroeconomía",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "580310"
-            },
-            {
-                "id": "indef6",
-                "text": "Inteligencia de Negocios*",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "580311"
-            }
-        ]
-    },
-    {
-        "semestre": "VIII",
-        "cursos": [
-            {
-                "id": "indef7",
-                "text": "Proyecto de Ingeniería",
-                "credits": "7",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "580421,indef5" 
-            },
-            {
-                "id": "554150",
-                "text": "Gestión Sustentable y Sociedad",
-                "credits": "3",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": ""
-            },
-            {
-                "id": "580513",
-                "text": "Preparación y Evaluación de Proyectos",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "580414"
-            },
-            {
-                "id": "580415",
-                "text": "Gestión Estratégica y Control de Gestión",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "indef2"
-            },
-            {
-                "id": "-",
-                "text": "Electivo I",
-                "credits": "5",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            },
-            {
-                "id": "-",
-                "text": "Electivo II",
-                "credits": "5",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            }
-        ]
-    },
-    {
-        "semestre": "IX",
-        "cursos": [
-            {
-                "id": "580525",
-                "text": "Dirección y Control de Proyectos",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "580513"
-            },
-            {
-                "id": "580523",
-                "text": "Innovación y Emprendimiento Tecnológico",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde-oscuro"],
-                "pre": "580513"
-            },
-            {
-                "id": "580514",
-                "text": "Gestión de Personas y Comportamiento Organizacional",
-                "credits": "5",
-                "size": "1",
-                "classes": ["verde"],
-                "pre": "indef2"
-            },
-            {
-                "id": "-",
-                "text": "Electivo III",
-                "credits": "5",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            },
-            {
-                "id": "-",
-                "text": "Electivo IV",
-                "credits": "5",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            },
-            {
-                "id": "-",
-                "text": "Electivo V",
-                "credits": "5",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            },
-            {
-                "id": "580590",
-                "text": "Práctica Profesional",
-                "credits": "0",
-                "size": "1",
-                "classes": ["gris"],
-                "pre": ""
-            }
-        ]
-    },
-    {
-        "semestre": "X",
-        "cursos": [
-            {
-                "id": "580695",
-                "text": "Memoria de Título",
-                "credits": "30",
-                "size": "6",
-                "classes": ["gris"],
-                "pre": ""
-            }
-        ]
-    }    
+  {
+    "semestre": "I",
+    "cursos": [
+      {
+        "text": "Física I",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "510140",
+        "pre": ""
+      },
+      {
+        "text": "Álgebra I",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "525140",
+        "pre": ""
+      },
+      {
+        "text": "Cálculo I",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "527140",
+        "pre": ""
+      },
+      {
+        "text": "Química General I",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "531140",
+        "pre": ""
+      },
+      {
+        "text": "Desarrollo de Habilidades de Gestión",
+        "credits": "3",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580120",
+        "pre": ""
+      }
+    ]
+  },
+  {
+    "semestre": "II",
+    "cursos": [
+      {
+        "text": "Física II",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "510150",
+        "pre": "510140"
+      },
+      {
+        "text": "Álgebra II",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "525150",
+        "pre": "525140"
+      },
+      {
+        "text": "Cálculo II",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "527150",
+        "pre": "527140"
+      },
+      {
+        "text": "Programación",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "503203",
+        "pre": ""
+      },
+      {
+        "text": "Introducción a la Innovación en Ingeniería",
+        "credits": "3",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "500151",
+        "pre": "580120"
+      }
+    ]
+  },
+  {
+    "semestre": "III",
+    "cursos": [
+      {
+        "text": "Cálculo III",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "521227",
+        "pre": "525150,527150"
+      },
+      {
+        "text": "Ecuaciones Diferenciales",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "525223",
+        "pre": "525150,527150"
+      },
+      {
+        "text": "Estadística y Probabilidades",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "523250",
+        "pre": "525140,527150"
+      },
+      {
+        "text": "Fundamentos de Ciencia de Datos",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "indef1",
+        "pre": "503203"
+      },
+      {
+        "text": "Inglés Comunicativo Nivel Básico I",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "890050",
+        "pre": ""
+      }
+    ]
+  },
+  {
+    "semestre": "IV",
+    "cursos": [
+      {
+        "text": "Cálculo Numérico",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "naranjo"
+        ],
+        "id": "521230",
+        "pre": "503203,521227"
+      },
+      {
+        "text": "Modelación de Sistemas",
+        "credits": "3",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580211",
+        "pre": "indef1"
+      },
+      {
+        "text": "Inferencia Estadística y Muestreo",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "523325",
+        "pre": "523250"
+      },
+      {
+        "text": "Mecánica",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "541271",
+        "pre": "510150,521227"
+      },
+      {
+        "text": "Termodinámica",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "541203",
+        "pre": ""
+      },
+      {
+        "text": "Inglés Comunicativo Nivel Básico II",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "890051",
+        "pre": "890050"
+      }
+    ]
+  },
+  {
+    "semestre": "V",
+    "cursos": [
+      {
+        "text": "Administración y Liderazgo",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "indef2",
+        "pre": "580211"
+      },
+      {
+        "text": "Análisis Estadístico Multivariado*",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580311",
+        "pre": "523325"
+      },
+      {
+        "text": "Optimización I",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580315",
+        "pre": "525150,580211"
+      },
+      {
+        "text": "Mecánica de Fluidos",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "541340",
+        "pre": "541271,541203"
+      },
+      {
+        "text": "Máquinas Eléctricas",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "543355",
+        "pre": "510150,525223"
+      },
+      {
+        "text": "Complementaria",
+        "credits": "3",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "-",
+        "pre": ""
+      },
+      {
+        "text": "Práctica Laboral",
+        "credits": "0",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "580490",
+        "pre": ""
+      }
+    ]
+  },
+  {
+    "semestre": "VI",
+    "cursos": [
+      {
+        "text": "Microeconomía",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580310",
+        "pre": "521227"
+      },
+      {
+        "text": "Contabilidad General y de Costos",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580414",
+        "pre": "indef2"
+      },
+      {
+        "text": "Optimización II",
+        "credits": "6",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580325",
+        "pre": "580315"
+      },
+      {
+        "text": "Simulación",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580327",
+        "pre": "580311,580315"
+      },
+      {
+        "text": "Electivo Ciencias de Ing. I",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "indef3",
+        "pre": ""
+      },
+      {
+        "text": "Electivo Ciencias de Ing. II",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "indef4",
+        "pre": ""
+      }
+    ]
+  },
+  {
+    "semestre": "VII",
+    "cursos": [
+      {
+        "text": "Macroeconomía",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580323",
+        "pre": "580310"
+      },
+      {
+        "text": "Finanzas",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580429",
+        "pre": "580414"
+      },
+      {
+        "text": "Inteligencia de Negocios*",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "indef6",
+        "pre": "580311"
+      },
+      {
+        "text": "Planificación y Control de Producción",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580421",
+        "pre": "580327"
+      },
+      {
+        "text": "Sistemas de Producción y Logística",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "indef5",
+        "pre": "580325"
+      },
+      {
+        "text": "Procesos Industriales",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "azul"
+        ],
+        "id": "540451",
+        "pre": "541340"
+      }
+    ]
+  },
+  {
+    "semestre": "VIII",
+    "cursos": [
+      {
+        "text": "Preparación y Evaluación de Proyectos",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580513",
+        "pre": "580414"
+      },
+      {
+        "text": "Gestión Estratégica y Control de Gestión",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580415",
+        "pre": "indef2"
+      },
+      {
+        "text": "Gestión Sustentable y Sociedad",
+        "credits": "3",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "554150",
+        "pre": ""
+      },
+      {
+        "text": "Proyecto de Ingeniería",
+        "credits": "7",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "indef7",
+        "pre": "580421,indef5"
+      },
+      {
+        "text": "Electivo I",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "-",
+        "pre": ""
+      },
+      {
+        "text": "Electivo II",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "-",
+        "pre": ""
+      }
+    ]
+  },
+  {
+    "semestre": "IX",
+    "cursos": [
+      {
+        "text": "Dirección y Control de Proyectos",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580525",
+        "pre": "580513"
+      },
+      {
+        "text": "Gestión de Personas y Comportamiento Organizacional",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde"
+        ],
+        "id": "580514",
+        "pre": "indef2"
+      },
+      {
+        "text": "Innovación y Emprendimiento Tecnológico",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "verde-oscuro"
+        ],
+        "id": "580523",
+        "pre": "580513"
+      },
+      {
+        "text": "Electivo III",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "-",
+        "pre": ""
+      },
+      {
+        "text": "Electivo IV",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "-",
+        "pre": ""
+      },
+      {
+        "text": "Electivo V",
+        "credits": "5",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "-",
+        "pre": ""
+      },
+      {
+        "text": "Práctica Profesional",
+        "credits": "0",
+        "size": "1",
+        "classes": [
+          "gris"
+        ],
+        "id": "580590",
+        "pre": ""
+      }
+    ]
+  },
+  {
+    "semestre": "X",
+    "cursos": [
+      {
+        "text": "Memoria de Título",
+        "credits": "30",
+        "size": "6",
+        "classes": [
+          "gris"
+        ],
+        "id": "580695",
+        "pre": ""
+      }
+    ]
+  }
 ]
