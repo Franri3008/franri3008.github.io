@@ -348,7 +348,7 @@
         "pre": "580311,580315"
       },
       {
-        "text": "Electivo Ciencias de Ing. I",
+        "text": "Transferencia de Calor / Electivo",
         "credits": "5",
         "size": "1",
         "classes": [
@@ -358,8 +358,8 @@
         "pre": ""
       },
       {
-        "text": "Electivo Ciencias de Ing. II",
-        "credits": "5",
+        "text": "Dibujo Industrial",
+        "credits": "6",
         "size": "1",
         "classes": [
           "azul"
@@ -393,7 +393,7 @@
         "pre": "580414"
       },
       {
-        "text": "Inteligencia de Negocios",
+        "text": "Inteligencia y Analítica de Negocios",
         "credits": "5",
         "size": "1",
         "classes": [
