@@ -144,7 +144,7 @@
       },
       {
         "text": "Ingeniería de Datos",
-        "credits": "5",
+        "credits": "6",
         "size": "1",
         "classes": [
           "azul"
@@ -329,7 +329,7 @@
       },
       {
         "text": "Optimización II",
-        "credits": "6",
+        "credits": "5",
         "size": "1",
         "classes": [
           "verde-oscuro"
