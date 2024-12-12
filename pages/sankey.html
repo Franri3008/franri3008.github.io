@@ -14,7 +14,6 @@ body {
 }
 
 .nodes rect {
-  stroke: #fff;
   stroke-width: 1px;
   transition: all 0.3s ease;
 }
@@ -77,6 +76,7 @@ body {
 const svg = d3.select("svg"),
       width = +svg.attr("width"),
       height = +svg.attr("height");
+
 const sankey = d3.sankey()
     .nodeWidth(20)
     .nodePadding(10)
@@ -84,73 +84,74 @@ const sankey = d3.sankey()
 
 const link = d3.sankeyLinkHorizontal();
 const countryColors = {
-  "United States": "#1f77b4",
+  "United States": "#e85254",
   "Canada": "#ff7f0e",
   "United Kingdom": "#2ca02c",
-  "China": "#d62728",
+  "China": "#f9d20a",
   "Netherlands": "#9467bd",
-  "Singapore": "#8c564b",
-  "South Korea": "#e377c2"
+  "Singapore": "#8C00A8",
+  "South Korea": "#e377c2",
+  "Australia": "#7f51cb",
+  "India": "#8c564b",
+  "Germany": "#65D967",
+  "Switzerland": "#5D94CC"
 };
 
-const domainColor = "#4682B4";
+// Domain boxes should be white by default
+const domainColor = "#fff";
 const tooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
 d3.json("data.json").then(data => {
-  const countries = ["United States", "Canada", "United Kingdom", "China", "Netherlands", "Singapore", "South Korea"];
-  const universities = Array.from(new Set(data.map(d => d.id)));
-  const domains = Array.from(new Set(data.map(d => d.domain)));
-
-  const nodes = countries.map(c => ({ name: c }))
-    .concat(universities.map(u => ({ name: u })))
-    .concat(domains.map(dm => ({ name: dm })));
-
-  const countryIndex = new Map(countries.map((c, i) => [c, i]));
-  const universityIndex = new Map(universities.map((u, i) => [u, i + countries.length]));
-  const domainIndex = new Map(domains.map((dm, i) => [dm, i + countries.length + universities.length]));
-
-  const uniToCountry = {};
-  data.forEach(d => {
-    if (!uniToCountry[d.id]) {
-      uniToCountry[d.id] = d.parent;
-    }
-  });
-
-  const universityAggregates = d3.nest()
-    .key(d => d.id)
+  // Agrupamos por parent y domain para obtener sumas directas (parent -> domain)
+  const parentDomainAgg = d3.nest()
+    .key(d => d.parent)
+    .key(d => d.domain)
     .rollup(v => d3.sum(v, d => d.value))
     .object(data);
 
-  const cuLinks = universities.map(u => {
-    const country = uniToCountry[u];
-    return {
-      source: countryIndex.get(country),
-      target: universityIndex.get(u),
-      value: universityAggregates[u]
-    };
-  });
-  const udLinks = data.map(d => ({
-    source: universityIndex.get(d.id),
-    target: domainIndex.get(d.domain),
-    value: d.value
-  }));
+  const parentsRaw = Array.from(new Set(data.map(d => d.parent)));
+  const domains = Array.from(new Set(data.map(d => d.domain)));
 
-  const links = cuLinks.concat(udLinks);
+  // Calcular el total de cada parent para ordenarlos por tamaño
+  const parentTotals = parentsRaw.map(p => {
+    const vals = parentDomainAgg[p] ? Object.values(parentDomainAgg[p]) : [];
+    return { parent: p, total: d3.sum(vals) };
+  });
+  parentTotals.sort((a, b) => b.total - a.total); // De mayor a menor
+  const parents = parentTotals.map(d => d.parent);
+
+  const nodes = parents.map(c => ({ name: c }))
+    .concat(domains.map(dm => ({ name: dm })));
+
+  const countryIndex = new Map(parents.map((c, i) => [c, i]));
+  const domainIndex = new Map(domains.map((dm, i) => [dm, i + parents.length]));
+
+  const links = [];
+  parents.forEach(p => {
+    if (parentDomainAgg[p]) {
+      Object.entries(parentDomainAgg[p]).forEach(([dom, val]) => {
+        const source = countryIndex.get(p);
+        const target = domainIndex.get(dom);
+        if (source !== undefined && target !== undefined) {
+          links.push({ source, target, value: val });
+        }
+      });
+    }
+  });
+
   const graph = {nodes, links};
   sankey(graph);
+
   graph.nodes.forEach((d, i) => {
-    if (i < countries.length) {
+    if (i < parents.length) {
       d.color = countryColors[d.name] || "#ccc";
-    } else if (i < countries.length + universities.length) {
-      const uniName = d.name;
-      const c = uniToCountry[uniName];
-      d.color = countryColors[c] || "#ccc";
     } else {
       d.color = domainColor;
     }
   });
+
   const linkSelection = svg.append("g")
       .attr("class", "links")
     .selectAll("path")
@@ -159,35 +160,32 @@ d3.json("data.json").then(data => {
       .attr("d", link)
       .attr("stroke-width", d => d.width)
       .attr("stroke", d => graph.nodes[d.source.index].color);
+
   const nodeSelection = svg.append("g")
       .attr("class", "nodes")
     .selectAll("g")
     .data(graph.nodes)
     .enter().append("g")
       .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
   nodeSelection.append("rect")
       .attr("height", d => d.y1 - d.y0)
       .attr("width", sankey.nodeWidth())
-      .attr("fill", d => d.color);
+      .attr("fill", d => d.color)
+      .attr("stroke", d => d.index >= parents.length ? "#000" : "#fff");
+
   nodeSelection.append("text")
       .attr("x", -6)
       .attr("y", d => (d.y1 - d.y0)/2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "end")
-      .attr("fill", d => {
-        const i = d.index;
-        if (i < countries.length) {
-          return d.color;
-        } else if (i < countries.length + universities.length) {
-          return d.color;
-        } else {
-          return "#000";
-        }
-      })
+      .attr("fill", d => d.index < parents.length ? (countryColors[d.name] || "#000") : "#000")
       .text(d => d.name)
       .filter(d => d.x0 < width/2)
       .attr("x", 6 + sankey.nodeWidth())
       .attr("text-anchor", "start");
+
+  // Eventos para nodos
   nodeSelection
     .on("mouseover", function(d) {
       d3.select(this).style("cursor", "pointer");
@@ -223,6 +221,39 @@ d3.json("data.json").then(data => {
       nodeSelection.classed("hoveredNode", false).classed("dimmedNode", false);
       linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
       
+      d3.select(this).style("cursor", null);
+    });
+
+  // Eventos para enlaces (links)
+  linkSelection
+    .on("mouseover", function(d) {
+      d3.select(this).style("cursor", "pointer");
+      tooltip.transition().duration(200).style("opacity", .9);
+      const sourceName = graph.nodes[d.source.index].name;
+      const targetName = graph.nodes[d.target.index].name;
+      tooltip.html("Source: " + sourceName + "<br/>Target: " + targetName + "<br/>Value: " + d.value)
+        .style("left", (d3.event.pageX + 10) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+
+      // Resaltar el enlace y nodos conectados
+      const connectedNodes = new Set([d.source.index, d.target.index]);
+      nodeSelection.classed("dimmedNode", true).classed("hoveredNode", false);
+      linkSelection.classed("dimmedLink", true).classed("hoveredLink", false);
+
+      nodeSelection.filter(nd => connectedNodes.has(nd.index))
+        .classed("dimmedNode", false)
+        .classed("hoveredNode", true);
+      d3.select(this).classed("dimmedLink", false)
+        .classed("hoveredLink", true);
+    })
+    .on("mousemove", function() {
+      tooltip.style("left", (d3.event.pageX + 10) + "px")
+             .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function() {
+      tooltip.transition().duration(200).style("opacity", 0);
+      nodeSelection.classed("hoveredNode", false).classed("dimmedNode", false);
+      linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
       d3.select(this).style("cursor", null);
     });
 
