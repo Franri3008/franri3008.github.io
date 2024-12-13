@@ -1,2697 +1,422 @@
 [
     {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "australian national university",
-        "name": "australian national university",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "australian national university",
-        "name": "australian national university",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "griffith university",
-        "name": "griffith university",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "griffith university",
-        "name": "griffith university",
-        "parent": "Australia",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "griffith university",
-        "name": "griffith university",
-        "parent": "Australia",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "mediatek research",
-        "name": "mediatek research",
-        "parent": "Australia",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "monash university",
-        "name": "monash university",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "monash university",
-        "name": "monash university",
-        "parent": "Australia",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "monash university",
-        "name": "monash university",
-        "parent": "Australia",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "sea ltd",
-        "name": "sea ltd",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "university adelaide",
-        "name": "university adelaide",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "university adelaide",
-        "name": "university adelaide",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "university adelaide",
-        "name": "university adelaide",
-        "parent": "Australia",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "university melbourne",
-        "name": "university melbourne",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "university melbourne",
-        "name": "university melbourne",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "university melbourne",
-        "name": "university melbourne",
-        "parent": "Australia",
-        "domain": "Explainable AI",
-        "value": 3
-    },
-    {
-        "id": "university queensland",
-        "name": "university queensland",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "university sydney",
-        "name": "university sydney",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "university sydney",
-        "name": "university sydney",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 5
-    },
-    {
-        "id": "university sydney",
-        "name": "university sydney",
-        "parent": "Australia",
-        "domain": "Explainable AI",
-        "value": 5
-    },
-    {
-        "id": "university sydney",
-        "name": "university sydney",
-        "parent": "Australia",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "university sydney",
-        "name": "university sydney",
-        "parent": "Australia",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "university sydney",
-        "name": "university sydney",
-        "parent": "Australia",
-        "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "university technology sydney",
-        "name": "university technology sydney",
-        "parent": "Australia",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "university technology sydney",
-        "name": "university technology sydney",
-        "parent": "Australia",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "university technology sydney",
-        "name": "university technology sydney",
-        "parent": "Australia",
-        "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 7
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Canada",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Canada",
-        "domain": "Explainable AI",
-        "value": 3
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Canada",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Canada",
-        "domain": "NLP",
-        "value": 11
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 4
-    },
-    {
-        "id": "department computer science university maryland",
-        "name": "department computer science university maryland",
-        "parent": "Canada",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "department computer science university maryland",
-        "name": "department computer science university maryland",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "department computer science university maryland college park",
-        "name": "department computer science university maryland college park",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "department computer science university maryland college park",
-        "name": "department computer science university maryland college park",
-        "parent": "Canada",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "department computer science university maryland college park",
-        "name": "department computer science university maryland college park",
-        "parent": "Canada",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "department computer science university oxford",
-        "name": "department computer science university oxford",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "department computer science university oxford",
-        "name": "department computer science university oxford",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "department computer science university toronto",
-        "name": "department computer science university toronto",
-        "parent": "Canada",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "department computer science university toronto",
-        "name": "department computer science university toronto",
-        "parent": "Canada",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "department computer science university toronto",
-        "name": "department computer science university toronto",
-        "parent": "Canada",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "department computer science university toronto",
-        "name": "department computer science university toronto",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "mcgill university",
-        "name": "mcgill university",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "mcgill university",
-        "name": "mcgill university",
-        "parent": "Canada",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "mcgill university",
-        "name": "mcgill university",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 4
-    },
-    {
-        "id": "montreal institute learning algorithms mila",
-        "name": "montreal institute learning algorithms mila",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "montreal institute learning algorithms university montreal university montreal",
-        "name": "montreal institute learning algorithms university montreal university montreal",
-        "parent": "Canada",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "montreal institute learning algorithms university montreal university montreal",
-        "name": "montreal institute learning algorithms university montreal university montreal",
-        "parent": "Canada",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "montreal institute learning algorithms university montreal university montreal",
-        "name": "montreal institute learning algorithms university montreal university montreal",
-        "parent": "Canada",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "university alberta",
-        "name": "university alberta",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "university alberta",
-        "name": "university alberta",
-        "parent": "Canada",
-        "domain": "RL & Robotics",
-        "value": 5
-    },
-    {
-        "id": "university british columbia",
-        "name": "university british columbia",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "university british columbia",
-        "name": "university british columbia",
-        "parent": "Canada",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "university british columbia",
-        "name": "university british columbia",
-        "parent": "Canada",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "university british columbia",
-        "name": "university british columbia",
-        "parent": "Canada",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "university toronto",
-        "name": "university toronto",
-        "parent": "Canada",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "university toronto",
-        "name": "university toronto",
-        "parent": "Canada",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "university toronto",
-        "name": "university toronto",
-        "parent": "Canada",
-        "domain": "NLP",
-        "value": 3
-    },
-    {
-        "id": "Others",
-        "name": "Others",
+        "id": "China",
+        "name": "China",
         "parent": "China",
         "domain": "Computer Vision",
-        "value": 245
+        "value": 1574
     },
     {
-        "id": "Others",
-        "name": "Others",
+        "id": "China",
+        "name": "China",
         "parent": "China",
         "domain": "Ethics & safety",
-        "value": 63
+        "value": 400
     },
     {
-        "id": "Others",
-        "name": "Others",
+        "id": "China",
+        "name": "China",
         "parent": "China",
         "domain": "Explainable AI",
-        "value": 18
+        "value": 141
     },
     {
-        "id": "Others",
-        "name": "Others",
+        "id": "China",
+        "name": "China",
         "parent": "China",
         "domain": "Graph Neural Networks",
-        "value": 32
+        "value": 253
     },
     {
-        "id": "Others",
-        "name": "Others",
+        "id": "China",
+        "name": "China",
         "parent": "China",
         "domain": "NLP",
-        "value": 89
+        "value": 695
     },
     {
-        "id": "Others",
-        "name": "Others",
+        "id": "China",
+        "name": "China",
         "parent": "China",
         "domain": "RL & Robotics",
-        "value": 88
+        "value": 483
     },
     {
-        "id": "fudan university",
-        "name": "fudan university",
-        "parent": "China",
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
         "domain": "Computer Vision",
-        "value": 12
+        "value": 36
     },
     {
-        "id": "fudan university",
-        "name": "fudan university",
-        "parent": "China",
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
         "domain": "Ethics & safety",
-        "value": 2
+        "value": 35
     },
     {
-        "id": "fudan university",
-        "name": "fudan university",
-        "parent": "China",
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
         "domain": "Explainable AI",
-        "value": 3
+        "value": 59
     },
     {
-        "id": "fudan university",
-        "name": "fudan university",
-        "parent": "China",
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
         "domain": "Graph Neural Networks",
-        "value": 1
+        "value": 38
     },
     {
-        "id": "fudan university",
-        "name": "fudan university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 6
-    },
-    {
-        "id": "hong kong university science technology",
-        "name": "hong kong university science technology",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 8
-    },
-    {
-        "id": "hong kong university science technology",
-        "name": "hong kong university science technology",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 5
-    },
-    {
-        "id": "hong kong university science technology",
-        "name": "hong kong university science technology",
-        "parent": "China",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "hong kong university science technology",
-        "name": "hong kong university science technology",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "hong kong university science technology",
-        "name": "hong kong university science technology",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 9
-    },
-    {
-        "id": "hong kong university science technology",
-        "name": "hong kong university science technology",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "nanjing university",
-        "name": "nanjing university",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 10
-    },
-    {
-        "id": "nanjing university",
-        "name": "nanjing university",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "nanjing university",
-        "name": "nanjing university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 5
-    },
-    {
-        "id": "nanjing university",
-        "name": "nanjing university",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 22
-    },
-    {
-        "id": "peking university",
-        "name": "peking university",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 19
-    },
-    {
-        "id": "peking university",
-        "name": "peking university",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 9
-    },
-    {
-        "id": "peking university",
-        "name": "peking university",
-        "parent": "China",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "peking university",
-        "name": "peking university",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 5
-    },
-    {
-        "id": "peking university",
-        "name": "peking university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 11
-    },
-    {
-        "id": "peking university",
-        "name": "peking university",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 25
-    },
-    {
-        "id": "shanghai ai laboratory",
-        "name": "shanghai ai laboratory",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 16
-    },
-    {
-        "id": "shanghai ai laboratory",
-        "name": "shanghai ai laboratory",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "shanghai ai laboratory",
-        "name": "shanghai ai laboratory",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 4
-    },
-    {
-        "id": "shanghai ai laboratory",
-        "name": "shanghai ai laboratory",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 4
-    },
-    {
-        "id": "shanghai jiao tong university",
-        "name": "shanghai jiao tong university",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 17
-    },
-    {
-        "id": "shanghai jiao tong university",
-        "name": "shanghai jiao tong university",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "shanghai jiao tong university",
-        "name": "shanghai jiao tong university",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "shanghai jiao tong university",
-        "name": "shanghai jiao tong university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 4
-    },
-    {
-        "id": "shanghai jiao tong university",
-        "name": "shanghai jiao tong university",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 8
-    },
-    {
-        "id": "tsinghua university",
-        "name": "tsinghua university",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 20
-    },
-    {
-        "id": "tsinghua university",
-        "name": "tsinghua university",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 7
-    },
-    {
-        "id": "tsinghua university",
-        "name": "tsinghua university",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "tsinghua university",
-        "name": "tsinghua university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 10
-    },
-    {
-        "id": "tsinghua university",
-        "name": "tsinghua university",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 14
-    },
-    {
-        "id": "tsinghua university tsinghua university",
-        "name": "tsinghua university tsinghua university",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 20
-    },
-    {
-        "id": "tsinghua university tsinghua university",
-        "name": "tsinghua university tsinghua university",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 9
-    },
-    {
-        "id": "tsinghua university tsinghua university",
-        "name": "tsinghua university tsinghua university",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "tsinghua university tsinghua university",
-        "name": "tsinghua university tsinghua university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 11
-    },
-    {
-        "id": "tsinghua university tsinghua university",
-        "name": "tsinghua university tsinghua university",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 11
-    },
-    {
-        "id": "university science technology china",
-        "name": "university science technology china",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 16
-    },
-    {
-        "id": "university science technology china",
-        "name": "university science technology china",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "university science technology china",
-        "name": "university science technology china",
-        "parent": "China",
-        "domain": "Explainable AI",
-        "value": 5
-    },
-    {
-        "id": "university science technology china",
-        "name": "university science technology china",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "university science technology china",
-        "name": "university science technology china",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 8
-    },
-    {
-        "id": "university science technology china",
-        "name": "university science technology china",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "zhejiang university",
-        "name": "zhejiang university",
-        "parent": "China",
-        "domain": "Computer Vision",
-        "value": 29
-    },
-    {
-        "id": "zhejiang university",
-        "name": "zhejiang university",
-        "parent": "China",
-        "domain": "Ethics & safety",
-        "value": 8
-    },
-    {
-        "id": "zhejiang university",
-        "name": "zhejiang university",
-        "parent": "China",
-        "domain": "Explainable AI",
-        "value": 4
-    },
-    {
-        "id": "zhejiang university",
-        "name": "zhejiang university",
-        "parent": "China",
-        "domain": "Graph Neural Networks",
-        "value": 4
-    },
-    {
-        "id": "zhejiang university",
-        "name": "zhejiang university",
-        "parent": "China",
-        "domain": "NLP",
-        "value": 17
-    },
-    {
-        "id": "zhejiang university",
-        "name": "zhejiang university",
-        "parent": "China",
-        "domain": "RL & Robotics",
-        "value": 7
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Germany",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Germany",
-        "domain": "Ethics & safety",
-        "value": 7
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Germany",
-        "domain": "Explainable AI",
-        "value": 11
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Germany",
-        "domain": "Graph Neural Networks",
-        "value": 5
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Germany",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Germany",
-        "domain": "RL & Robotics",
-        "value": 6
-    },
-    {
-        "id": "cispa saarland informatics campus",
-        "name": "cispa saarland informatics campus",
-        "parent": "Germany",
-        "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "cispa saarland university saarland informatics campus",
-        "name": "cispa saarland university saarland informatics campus",
-        "parent": "Germany",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "cispa saarland university saarland informatics campus",
-        "name": "cispa saarland university saarland informatics campus",
-        "parent": "Germany",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "ellis institute t\u00fcbingen",
-        "name": "ellis institute t\u00fcbingen",
-        "parent": "Germany",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "ellis institute t\u00fcbingen",
-        "name": "ellis institute t\u00fcbingen",
-        "parent": "Germany",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "ellis institute t\u00fcbingen",
-        "name": "ellis institute t\u00fcbingen",
-        "parent": "Germany",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "karlsruher institut f\u00fcr technologie",
-        "name": "karlsruher institut f\u00fcr technologie",
-        "parent": "Germany",
-        "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "lmu munich",
-        "name": "lmu munich",
-        "parent": "Germany",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "ludwig maximilians universit\u00e4t m\u00fcnchen",
-        "name": "ludwig maximilians universit\u00e4t m\u00fcnchen",
-        "parent": "Germany",
-        "domain": "Explainable AI",
-        "value": 3
-    },
-    {
-        "id": "ludwig maximilians universit\u00e4t m\u00fcnchen",
-        "name": "ludwig maximilians universit\u00e4t m\u00fcnchen",
-        "parent": "Germany",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "machine learning research lab volkswagen group",
-        "name": "machine learning research lab volkswagen group",
-        "parent": "Germany",
-        "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "max planck institute",
-        "name": "max planck institute",
-        "parent": "Germany",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "max planck institute",
-        "name": "max planck institute",
-        "parent": "Germany",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "max planck institute",
-        "name": "max planck institute",
-        "parent": "Germany",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "max planck institute",
-        "name": "max planck institute",
-        "parent": "Germany",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "max planck institute",
-        "name": "max planck institute",
-        "parent": "Germany",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "max planck institute intelligent systems",
-        "name": "max planck institute intelligent systems",
-        "parent": "Germany",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "max planck institute intelligent systems",
-        "name": "max planck institute intelligent systems",
-        "parent": "Germany",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "technical university munich",
-        "name": "technical university munich",
-        "parent": "Germany",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "technical university munich",
-        "name": "technical university munich",
-        "parent": "Germany",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "technical university munich",
-        "name": "technical university munich",
-        "parent": "Germany",
-        "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "technical university munich",
-        "name": "technical university munich",
-        "parent": "Germany",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "indian institute technology bombay",
-        "name": "indian institute technology bombay",
-        "parent": "India",
-        "domain": "Graph Neural Networks",
-        "value": 7
-    },
-    {
-        "id": "indian institute technology delhi",
-        "name": "indian institute technology delhi",
-        "parent": "India",
-        "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "indian institute technology hyderabad",
-        "name": "indian institute technology hyderabad",
-        "parent": "India",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "institute science technology",
-        "name": "institute science technology",
-        "parent": "India",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "institute science technology",
-        "name": "institute science technology",
-        "parent": "India",
-        "domain": "Explainable AI",
-        "value": 3
-    },
-    {
-        "id": "institute science technology",
-        "name": "institute science technology",
-        "parent": "India",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "microsoft",
-        "name": "microsoft",
-        "parent": "India",
-        "domain": "Computer Vision",
-        "value": 11
-    },
-    {
-        "id": "microsoft",
-        "name": "microsoft",
-        "parent": "India",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "microsoft",
-        "name": "microsoft",
-        "parent": "India",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "microsoft",
-        "name": "microsoft",
-        "parent": "India",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "microsoft",
-        "name": "microsoft",
-        "parent": "India",
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
         "domain": "NLP",
         "value": 16
     },
     {
-        "id": "microsoft",
-        "name": "microsoft",
-        "parent": "India",
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
         "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "microsoft research",
-        "name": "microsoft research",
-        "parent": "India",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "microsoft research",
-        "name": "microsoft research",
-        "parent": "India",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "microsoft research",
-        "name": "microsoft research",
-        "parent": "India",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "microsoft research",
-        "name": "microsoft research",
-        "parent": "India",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "microsoft research",
-        "name": "microsoft research",
-        "parent": "India",
-        "domain": "NLP",
-        "value": 9
-    },
-    {
-        "id": "microsoft research",
-        "name": "microsoft research",
-        "parent": "India",
-        "domain": "RL & Robotics",
-        "value": 4
-    },
-    {
-        "id": "microsoft research asia",
-        "name": "microsoft research asia",
-        "parent": "India",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "microsoft research asia",
-        "name": "microsoft research asia",
-        "parent": "India",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "microsoft research asia",
-        "name": "microsoft research asia",
-        "parent": "India",
-        "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "microsoft research asia",
-        "name": "microsoft research asia",
-        "parent": "India",
-        "domain": "NLP",
-        "value": 4
-    },
-    {
-        "id": "university technology nuremberg",
-        "name": "university technology nuremberg",
-        "parent": "India",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Others",
-        "domain": "Computer Vision",
         "value": 36
     },
     {
         "id": "Others",
         "name": "Others",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 23
+        "parent": "EU27+UK+EFTA",
+        "domain": "Computer Vision",
+        "value": 147
     },
     {
         "id": "Others",
         "name": "Others",
-        "parent": "Others",
-        "domain": "Explainable AI",
-        "value": 16
+        "parent": "EU27+UK+EFTA",
+        "domain": "Ethics & safety",
+        "value": 65
     },
     {
         "id": "Others",
         "name": "Others",
-        "parent": "Others",
-        "domain": "Graph Neural Networks",
-        "value": 6
+        "parent": "EU27+UK+EFTA",
+        "domain": "Explainable AI",
+        "value": 57
     },
     {
         "id": "Others",
         "name": "Others",
-        "parent": "Others",
-        "domain": "NLP",
-        "value": 23
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 34
-    },
-    {
-        "id": "adobe research",
-        "name": "adobe research",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "adobe research",
-        "name": "adobe research",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "adobe research",
-        "name": "adobe research",
-        "parent": "Others",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "amazon",
-        "name": "amazon",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "amazon",
-        "name": "amazon",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "amazon",
-        "name": "amazon",
-        "parent": "Others",
-        "domain": "NLP",
-        "value": 7
-    },
-    {
-        "id": "amazon",
-        "name": "amazon",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 5
-    },
-    {
-        "id": "google research",
-        "name": "google research",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "google research",
-        "name": "google research",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "google research",
-        "name": "google research",
-        "parent": "Others",
-        "domain": "NLP",
-        "value": 3
-    },
-    {
-        "id": "google research",
-        "name": "google research",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "huawei technologies ltd",
-        "name": "huawei technologies ltd",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "huawei technologies ltd",
-        "name": "huawei technologies ltd",
-        "parent": "Others",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "inria",
-        "name": "inria",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "inria",
-        "name": "inria",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "inria",
-        "name": "inria",
-        "parent": "Others",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "inria",
-        "name": "inria",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "international business machines",
-        "name": "international business machines",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "international business machines",
-        "name": "international business machines",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 5
-    },
-    {
-        "id": "international business machines",
-        "name": "international business machines",
-        "parent": "Others",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "international business machines",
-        "name": "international business machines",
-        "parent": "Others",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "politecnico di milano",
-        "name": "politecnico di milano",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 6
-    },
-    {
-        "id": "technion israel institute technology technion",
-        "name": "technion israel institute technology technion",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "technion israel institute technology technion",
-        "name": "technion israel institute technology technion",
-        "parent": "Others",
-        "domain": "Graph Neural Networks",
-        "value": 4
-    },
-    {
-        "id": "technion israel institute technology technion",
-        "name": "technion israel institute technology technion",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "university amsterdam",
-        "name": "university amsterdam",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "university amsterdam",
-        "name": "university amsterdam",
-        "parent": "Others",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "university amsterdam",
-        "name": "university amsterdam",
-        "parent": "Others",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "university amsterdam",
-        "name": "university amsterdam",
-        "parent": "Others",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "university trento",
-        "name": "university trento",
-        "parent": "Others",
-        "domain": "Computer Vision",
-        "value": 6
-    },
-    {
-        "id": "centre frontier ai research cfar star",
-        "name": "centre frontier ai research cfar star",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "centre frontier ai research cfar star",
-        "name": "centre frontier ai research cfar star",
-        "parent": "Singapore",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "centre frontier ai research cfar star",
-        "name": "centre frontier ai research cfar star",
-        "parent": "Singapore",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "centre frontier ai research star",
-        "name": "centre frontier ai research star",
-        "parent": "Singapore",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "nanyang technological university",
-        "name": "nanyang technological university",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 23
-    },
-    {
-        "id": "nanyang technological university",
-        "name": "nanyang technological university",
-        "parent": "Singapore",
-        "domain": "Ethics & safety",
-        "value": 5
-    },
-    {
-        "id": "nanyang technological university",
-        "name": "nanyang technological university",
-        "parent": "Singapore",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "nanyang technological university",
-        "name": "nanyang technological university",
-        "parent": "Singapore",
-        "domain": "NLP",
-        "value": 5
-    },
-    {
-        "id": "nanyang technological university",
-        "name": "nanyang technological university",
-        "parent": "Singapore",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "nanyang technological university singapore",
-        "name": "nanyang technological university singapore",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "national university singaore national university singapore",
-        "name": "national university singaore national university singapore",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "national university singaore national university singapore",
-        "name": "national university singaore national university singapore",
-        "parent": "Singapore",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "national university singapore",
-        "name": "national university singapore",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 23
-    },
-    {
-        "id": "national university singapore",
-        "name": "national university singapore",
-        "parent": "Singapore",
-        "domain": "Ethics & safety",
-        "value": 7
-    },
-    {
-        "id": "national university singapore",
-        "name": "national university singapore",
-        "parent": "Singapore",
-        "domain": "Explainable AI",
-        "value": 8
-    },
-    {
-        "id": "national university singapore",
-        "name": "national university singapore",
-        "parent": "Singapore",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "national university singapore",
-        "name": "national university singapore",
-        "parent": "Singapore",
-        "domain": "NLP",
-        "value": 10
-    },
-    {
-        "id": "national university singapore",
-        "name": "national university singapore",
-        "parent": "Singapore",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "school computer science engineering nanyang technological university",
-        "name": "school computer science engineering nanyang technological university",
-        "parent": "Singapore",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "sea ai lab",
-        "name": "sea ai lab",
-        "parent": "Singapore",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "sea ai lab",
-        "name": "sea ai lab",
-        "parent": "Singapore",
-        "domain": "NLP",
-        "value": 4
-    },
-    {
-        "id": "singapore management university",
-        "name": "singapore management university",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "singapore management university",
-        "name": "singapore management university",
-        "parent": "Singapore",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "singapore management university",
-        "name": "singapore management university",
-        "parent": "Singapore",
-        "domain": "Graph Neural Networks",
-        "value": 4
-    },
-    {
-        "id": "singapore management university",
-        "name": "singapore management university",
-        "parent": "Singapore",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "singapore management university",
-        "name": "singapore management university",
-        "parent": "Singapore",
-        "domain": "RL & Robotics",
-        "value": 3
-    },
-    {
-        "id": "singapore university technology design",
-        "name": "singapore university technology design",
-        "parent": "Singapore",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "singapore university technology design",
-        "name": "singapore university technology design",
-        "parent": "Singapore",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "South Korea",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "South Korea",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "South Korea",
-        "domain": "NLP",
-        "value": 3
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "chungang university",
-        "name": "chungang university",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "institute basic science",
-        "name": "institute basic science",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "kaist",
-        "name": "kaist",
-        "parent": "South Korea",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "kaist",
-        "name": "kaist",
-        "parent": "South Korea",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "kaist",
-        "name": "kaist",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "kaust",
-        "name": "kaust",
-        "parent": "South Korea",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "korea advanced institute science technology",
-        "name": "korea advanced institute science technology",
-        "parent": "South Korea",
-        "domain": "Computer Vision",
-        "value": 6
-    },
-    {
-        "id": "korea advanced institute science technology",
-        "name": "korea advanced institute science technology",
-        "parent": "South Korea",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "korea advanced institute science technology",
-        "name": "korea advanced institute science technology",
-        "parent": "South Korea",
-        "domain": "NLP",
-        "value": 8
-    },
-    {
-        "id": "korea advanced institute science technology",
-        "name": "korea advanced institute science technology",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 8
-    },
-    {
-        "id": "korea university",
-        "name": "korea university",
-        "parent": "South Korea",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "naver",
-        "name": "naver",
-        "parent": "South Korea",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "samsung",
-        "name": "samsung",
-        "parent": "South Korea",
-        "domain": "Computer Vision",
-        "value": 5
-    },
-    {
-        "id": "seoul national university",
-        "name": "seoul national university",
-        "parent": "South Korea",
-        "domain": "Computer Vision",
-        "value": 11
-    },
-    {
-        "id": "seoul national university",
-        "name": "seoul national university",
-        "parent": "South Korea",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "seoul national university",
-        "name": "seoul national university",
-        "parent": "South Korea",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "seoul national university",
-        "name": "seoul national university",
-        "parent": "South Korea",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "seoul national university",
-        "name": "seoul national university",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 5
-    },
-    {
-        "id": "sungkyunkwan university",
-        "name": "sungkyunkwan university",
-        "parent": "South Korea",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Switzerland",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "Switzerland",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "epfl",
-        "name": "epfl",
-        "parent": "Switzerland",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "epfl epf lausanne",
-        "name": "epfl epf lausanne",
-        "parent": "Switzerland",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "epfl epf lausanne",
-        "name": "epfl epf lausanne",
-        "parent": "Switzerland",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "epfl epf lausanne",
-        "name": "epfl epf lausanne",
-        "parent": "Switzerland",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "epfl epf lausanne",
-        "name": "epfl epf lausanne",
-        "parent": "Switzerland",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "eth zurich",
-        "name": "eth zurich",
-        "parent": "Switzerland",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "ethz eth zurich",
-        "name": "ethz eth zurich",
-        "parent": "Switzerland",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "ethz eth zurich",
-        "name": "ethz eth zurich",
-        "parent": "Switzerland",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "ethz eth zurich",
-        "name": "ethz eth zurich",
-        "parent": "Switzerland",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "fair meta",
-        "name": "fair meta",
-        "parent": "Switzerland",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "ibm research zurich",
-        "name": "ibm research zurich",
-        "parent": "Switzerland",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "idiap research institute",
-        "name": "idiap research institute",
-        "parent": "Switzerland",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "swiss federal institute technology",
-        "name": "swiss federal institute technology",
-        "parent": "Switzerland",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "swiss federal institute technology",
-        "name": "swiss federal institute technology",
-        "parent": "Switzerland",
-        "domain": "Ethics & safety",
-        "value": 10
-    },
-    {
-        "id": "swiss federal institute technology",
-        "name": "swiss federal institute technology",
-        "parent": "Switzerland",
-        "domain": "Explainable AI",
-        "value": 4
-    },
-    {
-        "id": "swiss federal institute technology",
-        "name": "swiss federal institute technology",
-        "parent": "Switzerland",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "swiss federal institute technology",
-        "name": "swiss federal institute technology",
-        "parent": "Switzerland",
-        "domain": "NLP",
-        "value": 6
-    },
-    {
-        "id": "swiss federal institute technology",
-        "name": "swiss federal institute technology",
-        "parent": "Switzerland",
-        "domain": "RL & Robotics",
-        "value": 6
-    },
-    {
-        "id": "swiss federal institute technology lausanne",
-        "name": "swiss federal institute technology lausanne",
-        "parent": "Switzerland",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "swiss federal institute technology lausanne",
-        "name": "swiss federal institute technology lausanne",
-        "parent": "Switzerland",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "swiss federal institute technology lausanne",
-        "name": "swiss federal institute technology lausanne",
-        "parent": "Switzerland",
-        "domain": "Explainable AI",
-        "value": 6
-    },
-    {
-        "id": "swiss federal institute technology lausanne",
-        "name": "swiss federal institute technology lausanne",
-        "parent": "Switzerland",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "university geneva",
-        "name": "university geneva",
-        "parent": "Switzerland",
-        "domain": "RL & Robotics",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 12
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 8
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United Kingdom",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 9
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 8
-    },
-    {
-        "id": "ant group",
-        "name": "ant group",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 4
-    },
-    {
-        "id": "ant group",
-        "name": "ant group",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "ant group",
-        "name": "ant group",
-        "parent": "United Kingdom",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "ant group",
-        "name": "ant group",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "anthropic",
-        "name": "anthropic",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "anthropic",
-        "name": "anthropic",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "anthropic",
-        "name": "anthropic",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 1
-    },
-    {
-        "id": "deepmind",
-        "name": "deepmind",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 4
-    },
-    {
-        "id": "deepmind",
-        "name": "deepmind",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 7
-    },
-    {
-        "id": "deepmind",
-        "name": "deepmind",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 6
-    },
-    {
-        "id": "deepmind",
-        "name": "deepmind",
-        "parent": "United Kingdom",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "deepmind",
-        "name": "deepmind",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 4
-    },
-    {
-        "id": "deepmind",
-        "name": "deepmind",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 13
-    },
-    {
-        "id": "google deepmind",
-        "name": "google deepmind",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "google deepmind",
-        "name": "google deepmind",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 2
-    },
-    {
-        "id": "google deepmind",
-        "name": "google deepmind",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "google deepmind",
-        "name": "google deepmind",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 4
-    },
-    {
-        "id": "google deepmind",
-        "name": "google deepmind",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 2
-    },
-    {
-        "id": "imperial college london",
-        "name": "imperial college london",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 3
-    },
-    {
-        "id": "imperial college london",
-        "name": "imperial college london",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "imperial college london",
-        "name": "imperial college london",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 1
-    },
-    {
-        "id": "king college london",
-        "name": "king college london",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 5
-    },
-    {
-        "id": "university cambridge",
-        "name": "university cambridge",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 1
-    },
-    {
-        "id": "university cambridge",
-        "name": "university cambridge",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "university cambridge",
-        "name": "university cambridge",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 4
-    },
-    {
-        "id": "university cambridge",
-        "name": "university cambridge",
-        "parent": "United Kingdom",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "university cambridge",
-        "name": "university cambridge",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 8
-    },
-    {
-        "id": "university cambridge",
-        "name": "university cambridge",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 4
-    },
-    {
-        "id": "university college london",
-        "name": "university college london",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "university college london",
-        "name": "university college london",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 5
-    },
-    {
-        "id": "university oxford",
-        "name": "university oxford",
-        "parent": "United Kingdom",
-        "domain": "Computer Vision",
-        "value": 12
-    },
-    {
-        "id": "university oxford",
-        "name": "university oxford",
-        "parent": "United Kingdom",
-        "domain": "Ethics & safety",
-        "value": 3
-    },
-    {
-        "id": "university oxford",
-        "name": "university oxford",
-        "parent": "United Kingdom",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "university oxford",
-        "name": "university oxford",
-        "parent": "United Kingdom",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "university oxford",
-        "name": "university oxford",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 3
-    },
-    {
-        "id": "university oxford",
-        "name": "university oxford",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 8
-    },
-    {
-        "id": "university oxford university oxford",
-        "name": "university oxford university oxford",
-        "parent": "United Kingdom",
-        "domain": "NLP",
-        "value": 2
-    },
-    {
-        "id": "university oxford university oxford",
-        "name": "university oxford university oxford",
-        "parent": "United Kingdom",
-        "domain": "RL & Robotics",
-        "value": 5
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United States",
-        "domain": "Computer Vision",
-        "value": 158
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United States",
-        "domain": "Ethics & safety",
-        "value": 166
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United States",
-        "domain": "Explainable AI",
-        "value": 105
-    },
-    {
-        "id": "Others",
-        "name": "Others",
-        "parent": "United States",
+        "parent": "EU27+UK+EFTA",
         "domain": "Graph Neural Networks",
         "value": 26
     },
     {
         "id": "Others",
         "name": "Others",
-        "parent": "United States",
+        "parent": "EU27+UK+EFTA",
         "domain": "NLP",
-        "value": 120
+        "value": 88
     },
     {
         "id": "Others",
         "name": "Others",
-        "parent": "United States",
+        "parent": "EU27+UK+EFTA",
         "domain": "RL & Robotics",
-        "value": 85
+        "value": 96
     },
     {
-        "id": "carnegie mellon university",
-        "name": "carnegie mellon university",
-        "parent": "United States",
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
         "domain": "Computer Vision",
-        "value": 13
+        "value": 28
     },
     {
-        "id": "carnegie mellon university",
-        "name": "carnegie mellon university",
-        "parent": "United States",
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
         "domain": "Ethics & safety",
-        "value": 21
+        "value": 42
     },
     {
-        "id": "carnegie mellon university",
-        "name": "carnegie mellon university",
-        "parent": "United States",
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
         "domain": "Explainable AI",
+        "value": 30
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Graph Neural Networks",
+        "value": 3
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "NLP",
+        "value": 14
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "RL & Robotics",
         "value": 22
     },
     {
-        "id": "carnegie mellon university",
-        "name": "carnegie mellon university",
-        "parent": "United States",
-        "domain": "Graph Neural Networks",
-        "value": 1
-    },
-    {
-        "id": "carnegie mellon university",
-        "name": "carnegie mellon university",
-        "parent": "United States",
-        "domain": "NLP",
-        "value": 6
-    },
-    {
-        "id": "carnegie mellon university",
-        "name": "carnegie mellon university",
-        "parent": "United States",
-        "domain": "RL & Robotics",
-        "value": 18
-    },
-    {
-        "id": "georgia institute technology",
-        "name": "georgia institute technology",
-        "parent": "United States",
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
         "domain": "Computer Vision",
-        "value": 3
+        "value": 120
     },
     {
-        "id": "georgia institute technology",
-        "name": "georgia institute technology",
-        "parent": "United States",
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
         "domain": "Ethics & safety",
-        "value": 15
+        "value": 100
     },
     {
-        "id": "georgia institute technology",
-        "name": "georgia institute technology",
-        "parent": "United States",
-        "domain": "NLP",
-        "value": 7
-    },
-    {
-        "id": "georgia institute technology",
-        "name": "georgia institute technology",
-        "parent": "United States",
-        "domain": "RL & Robotics",
-        "value": 8
-    },
-    {
-        "id": "google",
-        "name": "google",
-        "parent": "United States",
-        "domain": "Computer Vision",
-        "value": 20
-    },
-    {
-        "id": "google",
-        "name": "google",
-        "parent": "United States",
-        "domain": "Ethics & safety",
-        "value": 16
-    },
-    {
-        "id": "google",
-        "name": "google",
-        "parent": "United States",
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
         "domain": "Explainable AI",
-        "value": 7
+        "value": 60
     },
     {
-        "id": "google",
-        "name": "google",
-        "parent": "United States",
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
         "domain": "Graph Neural Networks",
-        "value": 2
-    },
-    {
-        "id": "google",
-        "name": "google",
-        "parent": "United States",
-        "domain": "NLP",
         "value": 19
     },
     {
-        "id": "google",
-        "name": "google",
-        "parent": "United States",
-        "domain": "RL & Robotics",
-        "value": 14
-    },
-    {
-        "id": "massachusetts institute technology",
-        "name": "massachusetts institute technology",
-        "parent": "United States",
-        "domain": "Computer Vision",
-        "value": 8
-    },
-    {
-        "id": "massachusetts institute technology",
-        "name": "massachusetts institute technology",
-        "parent": "United States",
-        "domain": "Ethics & safety",
-        "value": 7
-    },
-    {
-        "id": "massachusetts institute technology",
-        "name": "massachusetts institute technology",
-        "parent": "United States",
-        "domain": "Explainable AI",
-        "value": 4
-    },
-    {
-        "id": "massachusetts institute technology",
-        "name": "massachusetts institute technology",
-        "parent": "United States",
-        "domain": "Graph Neural Networks",
-        "value": 6
-    },
-    {
-        "id": "massachusetts institute technology",
-        "name": "massachusetts institute technology",
-        "parent": "United States",
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
         "domain": "NLP",
-        "value": 17
+        "value": 116
     },
     {
-        "id": "massachusetts institute technology",
-        "name": "massachusetts institute technology",
-        "parent": "United States",
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
         "domain": "RL & Robotics",
-        "value": 16
+        "value": 94
     },
     {
-        "id": "stanford university",
-        "name": "stanford university",
-        "parent": "United States",
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
         "domain": "Computer Vision",
-        "value": 9
+        "value": 49
     },
     {
-        "id": "stanford university",
-        "name": "stanford university",
-        "parent": "United States",
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
         "domain": "Ethics & safety",
-        "value": 7
+        "value": 32
     },
     {
-        "id": "stanford university",
-        "name": "stanford university",
-        "parent": "United States",
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
         "domain": "Explainable AI",
-        "value": 7
-    },
-    {
-        "id": "stanford university",
-        "name": "stanford university",
-        "parent": "United States",
-        "domain": "Graph Neural Networks",
-        "value": 3
-    },
-    {
-        "id": "stanford university",
-        "name": "stanford university",
-        "parent": "United States",
-        "domain": "NLP",
-        "value": 26
-    },
-    {
-        "id": "stanford university",
-        "name": "stanford university",
-        "parent": "United States",
-        "domain": "RL & Robotics",
-        "value": 10
-    },
-    {
-        "id": "university california berkeley",
-        "name": "university california berkeley",
-        "parent": "United States",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "university california berkeley",
-        "name": "university california berkeley",
-        "parent": "United States",
-        "domain": "Ethics & safety",
         "value": 13
     },
     {
-        "id": "university california berkeley",
-        "name": "university california berkeley",
-        "parent": "United States",
-        "domain": "Explainable AI",
-        "value": 6
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
+        "value": 11
     },
     {
-        "id": "university california berkeley",
-        "name": "university california berkeley",
-        "parent": "United States",
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
         "domain": "NLP",
-        "value": 14
+        "value": 46
     },
     {
-        "id": "university california berkeley",
-        "name": "university california berkeley",
-        "parent": "United States",
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
         "domain": "RL & Robotics",
-        "value": 4
+        "value": 67
     },
     {
-        "id": "university california los angeles",
-        "name": "university california los angeles",
-        "parent": "United States",
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
         "domain": "Computer Vision",
-        "value": 7
+        "value": 169
     },
     {
-        "id": "university california los angeles",
-        "name": "university california los angeles",
-        "parent": "United States",
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
         "domain": "Ethics & safety",
-        "value": 1
+        "value": 112
     },
     {
-        "id": "university california los angeles",
-        "name": "university california los angeles",
-        "parent": "United States",
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "Explainable AI",
+        "value": 65
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
+        "value": 56
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
         "domain": "NLP",
+        "value": 133
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "RL & Robotics",
+        "value": 95
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Computer Vision",
+        "value": 111
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Ethics & safety",
+        "value": 47
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Explainable AI",
         "value": 16
     },
     {
-        "id": "university california los angeles",
-        "name": "university california los angeles",
-        "parent": "United States",
-        "domain": "RL & Robotics",
-        "value": 6
-    },
-    {
-        "id": "university illinois urbana champaign",
-        "name": "university illinois urbana champaign",
-        "parent": "United States",
-        "domain": "Computer Vision",
-        "value": 2
-    },
-    {
-        "id": "university illinois urbana champaign",
-        "name": "university illinois urbana champaign",
-        "parent": "United States",
-        "domain": "Ethics & safety",
-        "value": 11
-    },
-    {
-        "id": "university illinois urbana champaign",
-        "name": "university illinois urbana champaign",
-        "parent": "United States",
-        "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "university illinois urbana champaign",
-        "name": "university illinois urbana champaign",
-        "parent": "United States",
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
         "domain": "Graph Neural Networks",
-        "value": 2
+        "value": 23
     },
     {
-        "id": "university illinois urbana champaign",
-        "name": "university illinois urbana champaign",
-        "parent": "United States",
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
         "domain": "NLP",
-        "value": 3
+        "value": 48
     },
     {
-        "id": "university illinois urbana champaign",
-        "name": "university illinois urbana champaign",
-        "parent": "United States",
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
         "domain": "RL & Robotics",
-        "value": 6
+        "value": 25
     },
     {
-        "id": "university texas austin",
-        "name": "university texas austin",
-        "parent": "United States",
+        "id": "South Korea",
+        "name": "South Korea",
+        "parent": "Rest of the World",
         "domain": "Computer Vision",
-        "value": 8
+        "value": 107
     },
     {
-        "id": "university texas austin",
-        "name": "university texas austin",
-        "parent": "United States",
+        "id": "South Korea",
+        "name": "South Korea",
+        "parent": "Rest of the World",
         "domain": "Ethics & safety",
-        "value": 2
+        "value": 35
     },
     {
-        "id": "university texas austin",
-        "name": "university texas austin",
-        "parent": "United States",
+        "id": "South Korea",
+        "name": "South Korea",
+        "parent": "Rest of the World",
         "domain": "Explainable AI",
-        "value": 2
-    },
-    {
-        "id": "university texas austin",
-        "name": "university texas austin",
-        "parent": "United States",
-        "domain": "NLP",
         "value": 5
     },
     {
-        "id": "university texas austin",
-        "name": "university texas austin",
-        "parent": "United States",
-        "domain": "RL & Robotics",
-        "value": 15
-    },
-    {
-        "id": "university washington",
-        "name": "university washington",
-        "parent": "United States",
-        "domain": "Computer Vision",
+        "id": "South Korea",
+        "name": "South Korea",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
         "value": 9
     },
     {
-        "id": "university washington",
-        "name": "university washington",
-        "parent": "United States",
-        "domain": "Ethics & safety",
-        "value": 1
-    },
-    {
-        "id": "university washington",
-        "name": "university washington",
-        "parent": "United States",
-        "domain": "Explainable AI",
-        "value": 3
-    },
-    {
-        "id": "university washington",
-        "name": "university washington",
-        "parent": "United States",
+        "id": "South Korea",
+        "name": "South Korea",
+        "parent": "Rest of the World",
         "domain": "NLP",
-        "value": 11
+        "value": 45
     },
     {
-        "id": "university washington",
-        "name": "university washington",
-        "parent": "United States",
+        "id": "South Korea",
+        "name": "South Korea",
+        "parent": "Rest of the World",
         "domain": "RL & Robotics",
-        "value": 9
+        "value": 63
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Computer Vision",
+        "value": 646
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Ethics & safety",
+        "value": 572
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Explainable AI",
+        "value": 359
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Graph Neural Networks",
+        "value": 110
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "NLP",
+        "value": 628
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "RL & Robotics",
+        "value": 440
     }
 ]
