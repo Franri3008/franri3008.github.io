@@ -130,21 +130,21 @@
         "name": "Others",
         "parent": "EU27+UK+EFTA",
         "domain": "Computer Vision",
-        "value": 111
+        "value": 114
     },
     {
         "id": "Others",
         "name": "Others",
         "parent": "EU27+UK+EFTA",
         "domain": "Ethics & safety",
-        "value": 58
+        "value": 60
     },
     {
         "id": "Others",
         "name": "Others",
         "parent": "EU27+UK+EFTA",
         "domain": "Explainable AI",
-        "value": 50
+        "value": 51
     },
     {
         "id": "Others",
@@ -214,21 +214,21 @@
         "name": "United Kingdom",
         "parent": "EU27+UK+EFTA",
         "domain": "Computer Vision",
-        "value": 102
+        "value": 104
     },
     {
         "id": "United Kingdom",
         "name": "United Kingdom",
         "parent": "EU27+UK+EFTA",
         "domain": "Ethics & safety",
-        "value": 58
+        "value": 63
     },
     {
         "id": "United Kingdom",
         "name": "United Kingdom",
         "parent": "EU27+UK+EFTA",
         "domain": "Explainable AI",
-        "value": 49
+        "value": 56
     },
     {
         "id": "United Kingdom",
@@ -242,14 +242,14 @@
         "name": "United Kingdom",
         "parent": "EU27+UK+EFTA",
         "domain": "NLP",
-        "value": 102
+        "value": 109
     },
     {
         "id": "United Kingdom",
         "name": "United Kingdom",
         "parent": "EU27+UK+EFTA",
         "domain": "RL & Robotics",
-        "value": 87
+        "value": 90
     },
     {
         "id": "Canada",
@@ -340,14 +340,14 @@
         "name": "Others",
         "parent": "Rest of the World",
         "domain": "Computer Vision",
-        "value": 116
+        "value": 117
     },
     {
         "id": "Others",
         "name": "Others",
         "parent": "Rest of the World",
         "domain": "Ethics & safety",
-        "value": 77
+        "value": 81
     },
     {
         "id": "Others",
@@ -361,21 +361,21 @@
         "name": "Others",
         "parent": "Rest of the World",
         "domain": "Graph Neural Networks",
-        "value": 44
+        "value": 47
     },
     {
         "id": "Others",
         "name": "Others",
         "parent": "Rest of the World",
         "domain": "NLP",
-        "value": 62
+        "value": 65
     },
     {
         "id": "Others",
         "name": "Others",
         "parent": "Rest of the World",
         "domain": "RL & Robotics",
-        "value": 70
+        "value": 75
     },
     {
         "id": "Singapore",
