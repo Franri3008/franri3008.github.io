@@ -85,50 +85,29 @@ const sankey = d3.sankey()
 
 const link = d3.sankeyLinkHorizontal();
 
-// Updated parent colors
 const parentColors = {
   "China": "#f9c74f",
   "US": "#577590",
   "Rest of the World": "#90be6d",
-  "EU27+UK+EFTA": "#43aa8b"
+  "EU27+UK+EFTA": "#ff595e"
 };
 
-// We'll apply a yellowish gradient scale for domains
-// For exactly 6 domains, domainIndex 0..5
-const domainColorScale = d3.scaleSequential(d3.interpolate("#793DA4", "#8CB3DA"))
+const domainColorScale = d3.scaleSequential(d3.interpolate("#8CB3DA", "#8CB3DA"))
                            .domain([0, 5]);
 
 const tooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
-// Only two columns: parent -> domain
 d3.json("data.json").then(data => {
-  /*
-    Each data entry:
-      {
-        "id": "...",
-        "name": "...",
-        "parent": "...",
-        "domain": "...",
-        "value": ...
-      }
-
-    We only care about parent -> domain for the Sankey.
-  */
-
-  // 1) Group by parent, domain; sum the values
   const parentDomainAgg = d3.nest()
     .key(d => d.parent)
     .key(d => d.domain)
     .rollup(v => d3.sum(v, d => d.value))
     .object(data);
-
-  // 2) Extract unique parents and domains
   const parentsRaw = Array.from(new Set(data.map(d => d.parent)));
   const domainsRaw = Array.from(new Set(data.map(d => d.domain)));
 
-  // 3) Sort parents by descending total
   const parentTotals = parentsRaw.map(p => {
     const domainVals = data.filter(d => d.parent === p).map(d => d.value);
     return { parent: p, total: d3.sum(domainVals) };
@@ -136,15 +115,12 @@ d3.json("data.json").then(data => {
   parentTotals.sort((a, b) => b.total - a.total);
   const parents = parentTotals.map(d => d.parent);
 
-  // 4) Build nodes: first parents, then domains
   const nodes = parents.map(c => ({ name: c }))
     .concat(domainsRaw.map(dm => ({ name: dm })));
 
-  // 5) Build index maps
   const parentIndex = new Map(parents.map((c, i) => [c, i]));
   const domainIndex = new Map(domainsRaw.map((dm, i) => [dm, i + parents.length]));
 
-  // 6) Build links
   const links = [];
   parents.forEach(p => {
     if (parentDomainAgg[p]) {
@@ -158,12 +134,8 @@ d3.json("data.json").then(data => {
     }
   });
 
-  // 7) Sankey
   const graph = { nodes, links };
   sankey(graph);
-
-  // 8) Assign colors: parents get parentColors, domains get from domainColorScale
-  // We'll map each domain to an index in domainsRaw, then apply color scale
   const domainMap = new Map(domainsRaw.map((dm, i) => [dm, i]));
   
   graph.nodes.forEach((d, i) => {
@@ -172,11 +144,10 @@ d3.json("data.json").then(data => {
     } else {
       const domainName = d.name;
       const idx = domainMap.get(domainName);
-      d.color = domainColorScale(idx); // gradient color for domain
+      d.color = domainColorScale(idx);
     }
   });
 
-  // 9) Draw links
   const linkSelection = svg.append("g")
       .attr("class", "links")
     .selectAll("path")
@@ -184,10 +155,8 @@ d3.json("data.json").then(data => {
     .enter().append("path")
       .attr("d", link)
       .attr("stroke-width", d => d.width)
-      // color from the parent's color
       .attr("stroke", d => graph.nodes[d.source.index].color);
 
-  // 10) Draw nodes
   const nodeSelection = svg.append("g")
       .attr("class", "nodes")
     .selectAll("g")
@@ -199,7 +168,6 @@ d3.json("data.json").then(data => {
       .attr("height", d => d.y1 - d.y0)
       .attr("width", sankey.nodeWidth())
       .attr("fill", d => d.color)
-      // If domain, black stroke. If parent, white stroke
       .attr("stroke", (d,i) => i >= parents.length ? "#000" : "#fff");
 
   nodeSelection.append("text")
@@ -213,7 +181,6 @@ d3.json("data.json").then(data => {
       .attr("x", 6 + sankey.nodeWidth())
       .attr("text-anchor", "start");
 
-  // Node events
   nodeSelection
     .on("mouseover", function(d) {
       d3.select(this).style("cursor", "pointer");
@@ -252,7 +219,6 @@ d3.json("data.json").then(data => {
       d3.select(this).style("cursor", null);
     });
 
-  // Link events
   linkSelection
     .on("mouseover", function(d) {
       d3.select(this).style("cursor", "pointer");
@@ -264,7 +230,6 @@ d3.json("data.json").then(data => {
         .style("left", (d3.event.pageX + 10) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
 
-      // Highlight
       const connectedNodes = new Set([d.source.index, d.target.index]);
       nodeSelection.classed("dimmedNode", true).classed("hoveredNode", false);
       linkSelection.classed("dimmedLink", true).classed("hoveredLink", false);
