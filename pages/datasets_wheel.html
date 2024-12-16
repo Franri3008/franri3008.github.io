@@ -94,7 +94,7 @@
             centralCircle.setAttribute('cx', centerX);
             centralCircle.setAttribute('cy', centerY);
             centralCircle.setAttribute('r', centralRadius);
-            centralCircle.setAttribute('fill', '#F7F7F7');
+            centralCircle.setAttribute('fill', '#FFFFFF');
             centralCircle.setAttribute('class', 'central-circle');
             centralCircle.setAttribute('stroke', '#000000');
             centralCircle.setAttribute('stroke-width', '2');
@@ -163,6 +163,7 @@
                 icon.setAttribute('height', iconSize);
                 icon.setAttribute('class', 'circle-icon');
                 circleGroup.appendChild(icon);
+
                 const textOffset = 80;
                 const textDistance = circleRadius + smallRadius + textOffset;
                 const customPos = customTextPositions[i] || { xFactor: 0, yFactor: 0 };
@@ -239,7 +240,7 @@
 
                 circleGroup.addEventListener('mouseleave', () => {
                     fullGroup.setAttribute('transform', '');
-                    centralCircle.setAttribute('fill', '#F7F7F7');
+                    centralCircle.setAttribute('fill', '#FFFFFF');
                     centralCircle.removeAttribute('style');
                     circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
