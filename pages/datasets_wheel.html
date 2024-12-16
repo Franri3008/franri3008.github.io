@@ -113,7 +113,7 @@
             centralCircle.setAttribute('class', 'central-circle');
             svg.appendChild(centralCircle);
 
-            const centralTextFontSize = centralRadius * 0.3;
+            const centralTextFontSize = centralRadius * 0.25;
             const centralText1 = document.createElementNS(NS, 'text');
             centralText1.setAttribute('x', centerX);
             centralText1.setAttribute('y', centerY - centralRadius * 0.2);
@@ -121,7 +121,8 @@
             centralText1.setAttribute('alignment-baseline', 'middle');
             centralText1.setAttribute('fill', '#ffffff');
             centralText1.setAttribute('font-size', centralTextFontSize);
-            centralText1.textContent = 'Open Source';
+            centralText1.setAttribute('font-weight', 'bold');
+            centralText1.textContent = 'OPEN SOURCE';
             svg.appendChild(centralText1);
 
             const centralText2 = document.createElementNS(NS, 'text');
@@ -130,7 +131,8 @@
             centralText2.setAttribute('text-anchor', 'middle');
             centralText2.setAttribute('alignment-baseline', 'middle');
             centralText2.setAttribute('fill', '#ffffff');
-            centralText2.setAttribute('font-size', centralTextFontSize);
+            centralText2.setAttribute('font-size', centralTextFontSize*2);
+            centralText2.setAttribute('font-weight', 'bold');
             centralText2.textContent = 'AI';
             svg.appendChild(centralText2);
 
