@@ -24,6 +24,7 @@
         }
         .circle-icon {
             pointer-events: none;
+            filter: brightness(0) invert(1);
         }
         .full-group {
             transition: transform 0.2s ease;
@@ -113,7 +114,7 @@
             svg.appendChild(centralText1);
             const centralText2 = document.createElementNS(NS, 'text');
             centralText2.setAttribute('x', centerX);
-            centralText2.setAttribute('y', centerY + centralRadius * 0.25);
+            centralText2.setAttribute('y', centerY + centralRadius * 0.35);
             centralText2.setAttribute('text-anchor', 'middle');
             centralText2.setAttribute('alignment-baseline', 'middle');
             centralText2.setAttribute('fill', '#111111');
@@ -153,13 +154,14 @@
                 smallCircle.setAttribute('class', 'small-circle');
                 smallCircle.setAttribute('font-family', 'Robobo');
                 circleGroup.appendChild(smallCircle);
-                const iconSize = smallRadius * 1.4;
+                const iconSize = smallRadius * 1.2;
                 const icon = document.createElementNS(NS, 'image');
-                icon.setAttribute('href', `https://www.paballand.com/ai-world/images/icon/icon${(i % 25) + 1}.svg`);
+                icon.setAttribute('href', `datasets_wheel_icons/icon${(i % 25) + 1}.svg`);
                 icon.setAttribute('x', x - iconSize / 2);
                 icon.setAttribute('y', y - iconSize / 2);
                 icon.setAttribute('width', iconSize);
                 icon.setAttribute('height', iconSize);
+                icon.setAttribute('class', 'circle-icon');
                 circleGroup.appendChild(icon);
                 const textOffset = 80;
                 const textDistance = circleRadius + smallRadius + textOffset;
