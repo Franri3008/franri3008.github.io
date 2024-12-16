@@ -107,7 +107,7 @@
             centralCircle.setAttribute('cx', centerX);
             centralCircle.setAttribute('cy', centerY);
             centralCircle.setAttribute('r', centralRadius);
-            centralCircle.setAttribute('fill', '#791D81');
+            centralCircle.setAttribute('fill', '#F7F7F7');
             centralCircle.setAttribute('class', 'central-circle');
             svg.appendChild(centralCircle);
 
@@ -117,7 +117,7 @@
             centralText1.setAttribute('y', centerY - centralRadius * 0.2);
             centralText1.setAttribute('text-anchor', 'middle');
             centralText1.setAttribute('alignment-baseline', 'middle');
-            centralText1.setAttribute('fill', '#ffffff');
+            centralText1.setAttribute('fill', '#111111');
             centralText1.setAttribute('font-size', centralTextFontSize);
             centralText1.setAttribute('font-weight', 'bold');
             centralText1.textContent = 'OPEN SOURCE';
@@ -125,10 +125,10 @@
 
             const centralText2 = document.createElementNS(NS, 'text');
             centralText2.setAttribute('x', centerX);
-            centralText2.setAttribute('y', centerY + centralRadius * 0.2);
+            centralText2.setAttribute('y', centerY + centralRadius * 0.25);
             centralText2.setAttribute('text-anchor', 'middle');
             centralText2.setAttribute('alignment-baseline', 'middle');
-            centralText2.setAttribute('fill', '#ffffff');
+            centralText2.setAttribute('fill', '#111111');
             centralText2.setAttribute('font-size', centralTextFontSize*2);
             centralText2.setAttribute('font-weight', 'bold');
             centralText2.textContent = 'AI';
@@ -221,7 +221,6 @@
                 fullGroup.appendChild(subtextGroup);
                 allSubtexts.push(subtextGroup);
 
-                // Hover and click events
                 circleGroup.addEventListener('mouseenter', () => {
                     const scaleFactor = 1.5;
                     const dx = x - centerX;
@@ -235,6 +234,9 @@
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', colors[i % colors.length]);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
+
+                    centralText1.setAttribute('fill', '#ffffff');
+                    centralText2.setAttribute('fill', '#ffffff');
 
                     //const linkPreview = document.getElementById('linkPreview');
                     //linkPreview.textContent = circleLinks[i];
@@ -251,10 +253,13 @@
 
                 circleGroup.addEventListener('mouseleave', () => {
                     fullGroup.setAttribute('transform', '');
-                    centralCircle.setAttribute('fill', '#791D81');
+                    centralCircle.setAttribute('fill', '#F7F7F7');
                     circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
+
+                    centralText1.setAttribute('fill', '#111111');
+                    centralText2.setAttribute('fill', '#111111');
 
                     //const linkPreview = document.getElementById('linkPreview');
                     //linkPreview.style.visibility = 'hidden';
