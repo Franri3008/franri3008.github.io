@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>AI Wheel Visualization</title>
@@ -49,10 +49,12 @@
         const svg = document.getElementById('wheelSVG');
         const NS = "http://www.w3.org/2000/svg";
 
-        let centerX, centerY;
-        let circleRadius, smallRadius;
-        const numSmallCircles = 9;
+        const baseWidth = 1300; 
+        const baseHeight = 1300;
+        const centerX = baseWidth / 2;
+        const centerY = baseHeight / 2;
 
+        const numSmallCircles = 9;
         const colors = ["#FFD21E", "#2656D2", "#FFD21E", "#2f2f95",
                         "#106c4e", "#e54c1c", "#af191e", "#106c4e", "#2656D2"];
 
@@ -63,74 +65,41 @@
         ];
 
         const circleSubtexts = [
-            ['Accessible Codebase', 'Reusable Frameworks', 'Interoperable Tools'],
+            ['Reusable Frameworks', 'Accessible Codebase','Interoperable Tools'],
             ['Faster Iteration', 'Enables Re-Combination', 'Collective Intelligence'],
             ['Wide Accesability', 'Reduced Entry Barriers', 'Particularly Beneficial for Startups'],
             ['Lower Costs', 'Global Reach', 'Cross-Sectoral Adoption'],
             ['Enhanced Transparency', 'Greater Accountability', 'Empowered Users'],
-            ['Unsafe for Users & Developers', 'Security Vulnerabilities', 'Inadequate Testing & Documentation'],
-            ['Misinformation & Deepfakes', 'Cyber Attacks', 'Data Breaches'],
-            ['Sectorial Differences', 'Different Benefits & Concerns', 'Balanced Approach Needed'],
+            ['Ensure Safety for Users & Developers', 'Comprehensive Testing & Documentation', 'Overall Low Risk'],
+            ['Prevent Misuse ', 'Block Intentional Harm', 'Ongoing Debate on Scope of New Risks'],
+            ['Sectoral Differences', 'Different Benefits & Concerns', 'Balanced Approach Needed'],
             ['Significant Net Beenefit', 'Avoid Unnecesary Restrictions', 'Promote Open-Source Initiatives']
         ];
 
-        const circleLinks = [
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/",
-            "https://aiworld.eu/"
+        // Just fill them with repeated links for the example
+        const circleLinks = Array(25).fill("https://aiworld.eu/");
+
+        // Slightly adjusted text positions if needed
+        const customTextPositions = [
+            { xFactor: -0.10, yFactor: -0.05},
+            { xFactor: 0.05, yFactor: -0.20 },
+            { xFactor: 0.15, yFactor: -0.2 },
+            { xFactor: -0.05, yFactor: -0.08 },
+            { xFactor: 0.10, yFactor: -0.18 },
+            { xFactor: 0.12, yFactor: 0.1 },
+            { xFactor: -0.05, yFactor: 0.10 },
+            { xFactor: 0.2, yFactor: 0.1},
+            { xFactor: 0.02, yFactor: 0.15 }
         ];
 
-        const customTextPositions = [
-            { xFactor: -0.30, yFactor: -0.05},
-            { xFactor: -0.10, yFactor: -0.30 },
-            { xFactor: -0.05, yFactor: -0.3 },
-            { xFactor: 0.15, yFactor: -0.15 },
-            { xFactor: 0.20, yFactor: -0.18 },
-            { xFactor: 0.22, yFactor: 0.1 },
-            { xFactor: -0.01, yFactor: 0.30 },
-            { xFactor: -0.05, yFactor: 0.1},
-            { xFactor: -0.1, yFactor: 0.1 }
-        ];
-        const smallCircles = [];
         const allMainTexts = [];
         const allSubtexts = [];
 
         function createWheel() {
             svg.innerHTML = '';
-
-            const rect = svg.getBoundingClientRect();
-            const svgWidth = rect.width;
-            const svgHeight = rect.height;
-
-            centerX = svgWidth / 2;
-            centerY = svgHeight / 2;
-
-            circleRadius = Math.min(svgWidth, svgHeight) * 0.35;
-            smallRadius = circleRadius * 0.05 * 3.5;
-
-            svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+            svg.setAttribute('viewBox', `0 0 ${baseWidth} ${baseHeight}`);
+            const circleRadius = 400;
+            const smallRadius = circleRadius * 0.05 * 3.5;
 
             const linesGroup = document.createElementNS(NS, 'g');
             svg.appendChild(linesGroup);
@@ -140,7 +109,7 @@
             centralCircle.setAttribute('cx', centerX);
             centralCircle.setAttribute('cy', centerY);
             centralCircle.setAttribute('r', centralRadius);
-            centralCircle.setAttribute('fill', '#808080');
+            centralCircle.setAttribute('fill', '#791D81');
             centralCircle.setAttribute('class', 'central-circle');
             svg.appendChild(centralCircle);
 
@@ -152,7 +121,7 @@
             centralText1.setAttribute('alignment-baseline', 'middle');
             centralText1.setAttribute('fill', '#ffffff');
             centralText1.setAttribute('font-size', centralTextFontSize);
-            centralText1.textContent = 'I dont know';
+            centralText1.textContent = 'Open Source';
             svg.appendChild(centralText1);
 
             const centralText2 = document.createElementNS(NS, 'text');
@@ -162,7 +131,7 @@
             centralText2.setAttribute('alignment-baseline', 'middle');
             centralText2.setAttribute('fill', '#ffffff');
             centralText2.setAttribute('font-size', centralTextFontSize);
-            centralText2.textContent = 'what to put here';
+            centralText2.textContent = 'AI';
             svg.appendChild(centralText2);
 
             for (let i = 0; i < numSmallCircles; i++) {
@@ -181,7 +150,6 @@
                 line.setAttribute('stroke-width', '1');
                 linesGroup.appendChild(line);
                 const originalStrokeWidth = 1;
-
                 const fullGroup = document.createElementNS(NS, 'g');
                 fullGroup.setAttribute('class', 'full-group interactive-circle');
                 fullGroup.setAttribute('data-index', i);
@@ -190,7 +158,6 @@
                 const circleGroup = document.createElementNS(NS, 'g');
                 circleGroup.setAttribute('class', 'circle-group');
                 fullGroup.appendChild(circleGroup);
-
                 circleGroup.lineElement = line;
 
                 const smallCircle = document.createElementNS(NS, 'circle');
@@ -211,7 +178,7 @@
                 icon.setAttribute('class', 'circle-icon');
                 circleGroup.appendChild(icon);
 
-                const textOffset = 100;
+                const textOffset = 80;
                 const textDistance = circleRadius + smallRadius + textOffset;
                 const customPos = customTextPositions[i] || { xFactor: 0, yFactor: 0 };
                 const adjustedX = customPos.xFactor * circleRadius;
@@ -220,7 +187,7 @@
                 const textY = centerY + textDistance * Math.sin(angle) + adjustedY;
                 let textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
 
-                const mainTextFontSize = smallRadius * 0.7;
+                const mainTextFontSize = smallRadius * 0.6;
                 const mainText = document.createElementNS(NS, 'text');
                 mainText.setAttribute('class', 'main-text');
                 mainText.setAttribute('x', textX);
@@ -233,7 +200,7 @@
                 fullGroup.appendChild(mainText);
                 allMainTexts.push(mainText);
 
-                const subtextFontSize = smallRadius * 0.35;
+                const subtextFontSize = smallRadius * 0.3;
                 const subtextGroup = document.createElementNS(NS, 'text');
                 subtextGroup.setAttribute('class', 'sub-text');
                 subtextGroup.setAttribute('x', textX);
@@ -254,59 +221,54 @@
                 fullGroup.appendChild(subtextGroup);
                 allSubtexts.push(subtextGroup);
 
-                circleGroup.mainText = mainText;
-                circleGroup.subtextGroup = subtextGroup;
-
+                // Hover and click events
                 circleGroup.addEventListener('mouseenter', () => {
-                    const scaleFactor = 1.4;
+                    const scaleFactor = 1.5;
                     const dx = x - centerX;
                     const dy = y - centerY;
                     const translateX = -dx * (scaleFactor - 1);
                     const translateY = -dy * (scaleFactor - 1);
                     fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scaleFactor})`);
+
                     centralCircle.setAttribute('fill', colors[i % colors.length]);
-                    const hoverStrokeWidth = originalStrokeWidth * 9.5;
+                    const hoverStrokeWidth = originalStrokeWidth * 20;
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', colors[i % colors.length]);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
-                    const linkPreview = document.getElementById('linkPreview');
-                    linkPreview.textContent = circleLinks[i];
-                    linkPreview.style.visibility = 'visible';
+
+                    //const linkPreview = document.getElementById('linkPreview');
+                    //linkPreview.textContent = circleLinks[i];
+                    //SlinkPreview.style.visibility = 'visible';
+
+                    // Dim all other texts
                     allMainTexts.forEach((text) => {
-                        if (text !== circleGroup.mainText) {
-                            text.style.opacity = '0.4';
-                        }
+                        if (text !== mainText) text.style.opacity = '0.4';
                     });
-                    allSubtexts.forEach((text) => {
-                        if (text !== circleGroup.subtextGroup) {
-                            text.style.opacity = '0.4';
-                        }
+                    allSubtexts.forEach((sub) => {
+                        if (sub !== subtextGroup) sub.style.opacity = '0.4';
                     });
                 });
 
                 circleGroup.addEventListener('mouseleave', () => {
                     fullGroup.setAttribute('transform', '');
-                    centralCircle.setAttribute('fill', '#808080');
+                    centralCircle.setAttribute('fill', '#791D81');
                     circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
-                    const linkPreview = document.getElementById('linkPreview');
-                    linkPreview.style.visibility = 'hidden';
-                    allMainTexts.forEach((text) => {
-                        text.style.opacity = '1';
-                    });
-                    allSubtexts.forEach((text) => {
-                        text.style.opacity = '1';
-                    });
+
+                    //const linkPreview = document.getElementById('linkPreview');
+                    //linkPreview.style.visibility = 'hidden';
+
+                    allMainTexts.forEach((text) => { text.style.opacity = '1'; });
+                    allSubtexts.forEach((sub) => { sub.style.opacity = '1'; });
                 });
 
-                circleGroup.addEventListener('click', () => {
-                    window.open(circleLinks[i], '_blank');
-                });
+                //circleGroup.addEventListener('click', () => {
+                //    window.open(circleLinks[i], '_blank');
+                //});
             }
         }
 
-        window.addEventListener('resize', createWheel);
         createWheel();
     </script>
 </body>
