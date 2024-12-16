@@ -41,7 +41,7 @@
     </style>
 </head>
 <body>
-    <svg id="wheelSVG" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="wheelSVG" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin meet"></svg>
     <div id="linkPreview" style="position: fixed; bottom: 0; left: 0; padding: 5px; background: rgba(0, 0, 0, 0.7); color: #fff; font-size: 14px; visibility: hidden; z-index: 1000;"></div>
     <script>
         const svg = document.getElementById('wheelSVG');
@@ -84,7 +84,8 @@
 
         function createWheel() {
             svg.innerHTML = '';
-            svg.setAttribute('viewBox', `0 0 ${baseWidth} ${baseHeight}`);
+            const bottomMargin = 100; // Adjust this value as needed
+            svg.setAttribute('viewBox', `0 0 ${baseWidth} ${baseHeight + bottomMargin}`);
             const circleRadius = 400;
             const smallRadius = circleRadius * 0.05 * 3.5;
             const linesGroup = document.createElementNS(NS, 'g');
@@ -187,14 +188,7 @@
                 allMainTexts.push(mainText);
                 const sepLen = 360;
                 const sepY = textY + mainTextFontSize * 0.5;
-                const sepLine = document.createElementNS(NS, 'line');
-                sepLine.setAttribute('x1', textAnchor === 'end' ? textX - sepLen : textX);
-                sepLine.setAttribute('y1', sepY);
-                sepLine.setAttribute('x2', textAnchor === 'end' ? textX : textX + sepLen);
-                sepLine.setAttribute('y2', sepY);
-                sepLine.setAttribute('stroke', colors[i % colors.length]);
-                sepLine.setAttribute('stroke-width', '3');
-                fullGroup.appendChild(sepLine);
+
                 const subtextFontSize = smallRadius * 0.35;
                 const subtextGroup = document.createElementNS(NS, 'text');
                 subtextGroup.setAttribute('class', 'sub-text');
