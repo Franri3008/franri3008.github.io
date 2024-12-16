@@ -51,41 +51,42 @@
         const centerX = baseWidth / 2;
         const centerY = baseHeight / 2;
         const numSmallCircles = 9;
-        const colors = ["#FFD21E", "#2f2f95", "#106c4e", "#e54c1c", "#af191e","#106c4e", "#2656D2", "#FFD21E", "#2656D2"];
+        const colors = ["#FFD21E", "#2656D2", "#FFD21E", "#2f2f95", "#106c4e", "#e54c1c", "#af191e","#106c4e", "#2656D2"];
         const circleTexts = [
-            "Competition", "Economic Growth", "Responsible AI", "Risk 1: Unintentional Gaps", "Risk 2: Malicious Use",
-            "Regulatory Trade-Offs", "Call to Action", "Core Principles", "Innovation"
+             "Core Principles", "Innovation", "Competition", "Economic Growth", "Responsible AI", 
+             "Risk 1: Unintentional Gaps", "Risk 2: Malicious Use", "Regulatory Trade-Offs", "Call to Action"
         ];
         const circleSubtexts = [
+            ["Reusable Frameworks", "Accessible Codebase","Interoperable Tools"],
+            ["Faster Iteration", "Enables Recombination", "Collective Intelligence"],
             ["Wide Accessibility", "Reduced Entry Barriers", "Particularly Beneficial for Startups"],
             ["Lower Costs", "Global Reach", "Cross-Sectoral Adoption"],
             ["Enhanced Transparency", "Greater Accountability", "Empowered Users"],
             ["Ensure Safety for Users & Developers", "Comprehensive Testing & Documentation", "Overall Low Risk"],
             ["Prevent Misuse ", "Block Intentional Harm", "Ongoing Debate on Scope of New Risks"],
             ["Sectoral Differences", "Different Benefits & Concerns", "Balanced Approach Needed"],
-            ["Significant Net Benefit", "Avoid Unnecessary Restrictions", "Promote Open-Source Initiatives"],
-            ["Reusable Frameworks", "Accessible Codebase","Interoperable Tools"],
-            ["Faster Iteration", "Enables Recombination", "Collective Intelligence"]
+            ["Significant Net Benefit", "Avoid Unnecessary Restrictions", "Promote Open-Source Initiatives"]
         ];
         const circleLinks = Array(25).fill("https://aiworld.eu/");
         const customTextPositions = [
-            { xFactor: -0.10, yFactor: -0.05},
-            { xFactor: 0.05, yFactor: -0.20 },
-            { xFactor: 0.15, yFactor: -0.2 },
-            { xFactor: -0.05, yFactor: -0.08 },
-            { xFactor: 0.10, yFactor: -0.18 },
-            { xFactor: 0.12, yFactor: 0.1 },
-            { xFactor: -0.05, yFactor: 0.10 },
-            { xFactor: 0.2, yFactor: 0.1},
-            { xFactor: 0.02, yFactor: 0.15 }
+            { xFactor: 0.0, yFactor: -0.15},
+            { xFactor: 0.05, yFactor: 0.12 },
+            { xFactor: -0.05, yFactor: -0.05 },
+            { xFactor: -0.02, yFactor: -0.22},
+            { xFactor: 0.12, yFactor: -0.18 },
+            { xFactor: -0.12, yFactor: -0.18 },
+            { xFactor: 0.01, yFactor: -0.2 },
+            { xFactor: 0.02, yFactor: -0.05},
+            { xFactor: -0.08, yFactor: 0.15 }
         ];
         const allMainTexts = [];
         const allSubtexts = [];
 
         function createWheel() {
             svg.innerHTML = '';
-            const bottomMargin = 50;
-            svg.setAttribute('viewBox', `0 0 ${baseWidth} ${baseHeight + bottomMargin}`);
+            const topMargin = 110;
+            const bottomMargin = 10;
+            svg.setAttribute('viewBox', `0 -${topMargin} ${baseWidth} ${baseHeight + topMargin + bottomMargin}`);
             const circleRadius = 400;
             const smallRadius = circleRadius * 0.05 * 3.5;
             const linesGroup = document.createElementNS(NS, 'g');
@@ -126,7 +127,7 @@
             svg.appendChild(centralText2);
 
             for (let i = 0; i < numSmallCircles; i++) {
-                const angle = (2 * Math.PI / numSmallCircles) * i;
+                const angle = (2 * Math.PI / numSmallCircles) * i - Math.PI / 2;
                 const x = centerX + circleRadius * Math.cos(angle);
                 const y = centerY + circleRadius * Math.sin(angle);
                 const line = document.createElementNS(NS, 'line');
@@ -178,7 +179,11 @@
                 mainText.setAttribute('class', 'main-text');
                 mainText.setAttribute('x', textX);
                 mainText.setAttribute('y', textY);
-                mainText.setAttribute('text-anchor', textAnchor);
+                if (circleTexts[i] === "Core Principles") {
+                    mainText.setAttribute('text-anchor', 'middle');
+                } else {
+                    mainText.setAttribute('text-anchor', textAnchor);
+                }
                 mainText.setAttribute('fill', colors[i % colors.length]);
                 mainText.setAttribute('font-size', mainTextFontSize);
                 mainText.setAttribute('font-weight', 'bold');
@@ -199,6 +204,10 @@
                 subtextGroup.setAttribute('font-size', subtextFontSize);
                 subtextGroup.setAttribute('alignment-baseline', 'hanging');
                 subtextGroup.setAttribute('font-family', 'Robobo');
+                // **Override Text Anchor for "Core Principles" Subtexts to Center Alignment**
+                if (circleTexts[i] === "Core Principles") {
+                    subtextGroup.setAttribute('text-anchor', 'middle');
+                }
                 circleSubtexts[i].forEach((subtext, idx) => {
                     const tspan = document.createElementNS(NS, 'tspan');
                     tspan.setAttribute('x', textX);
@@ -210,7 +219,7 @@
                 allSubtexts.push(subtextGroup);
 
                 circleGroup.addEventListener('mouseenter', () => {
-                    const scaleFactor = 1.5;
+                    const scaleFactor = 1.35;
                     const dx = x - centerX;
                     const dy = y - centerY;
                     const translateX = -dx * (scaleFactor - 1);
@@ -247,7 +256,6 @@
             }
         }
         createWheel();
-        
     </script>
 </body>
 </html>
