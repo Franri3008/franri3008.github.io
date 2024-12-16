@@ -55,31 +55,29 @@
         const centerY = baseHeight / 2;
 
         const numSmallCircles = 9;
-        const colors = ["#FFD21E", "#2656D2", "#FFD21E", "#2f2f95",
-                        "#106c4e", "#e54c1c", "#af191e", "#106c4e", "#2656D2"];
+        const colors = ["#FFD21E", "#2f2f95", "#106c4e", "#e54c1c", "#af191e",
+                 "#106c4e", "#2656D2", "#FFD21E", "#2656D2"];
 
         const circleTexts = [
-            "Core Principles", "Innovation", "Competition", "Economic Growth",
+            "Competition", "Economic Growth",
             "Responsible AI", "Risk 1: Unintentional Gaps", "Risk 2: Malicious Use",
-            "Regulatory Trade-Offs", "Call to Action"
+            "Regulatory Trade-Offs", "Call to Action", "Core Principles", "Innovation"
         ];
 
         const circleSubtexts = [
-            ['Reusable Frameworks', 'Accessible Codebase','Interoperable Tools'],
-            ['Faster Iteration', 'Enables Re-Combination', 'Collective Intelligence'],
             ['Wide Accesability', 'Reduced Entry Barriers', 'Particularly Beneficial for Startups'],
             ['Lower Costs', 'Global Reach', 'Cross-Sectoral Adoption'],
             ['Enhanced Transparency', 'Greater Accountability', 'Empowered Users'],
             ['Ensure Safety for Users & Developers', 'Comprehensive Testing & Documentation', 'Overall Low Risk'],
             ['Prevent Misuse ', 'Block Intentional Harm', 'Ongoing Debate on Scope of New Risks'],
             ['Sectoral Differences', 'Different Benefits & Concerns', 'Balanced Approach Needed'],
-            ['Significant Net Beenefit', 'Avoid Unnecesary Restrictions', 'Promote Open-Source Initiatives']
+            ['Significant Net Beenefit', 'Avoid Unnecesary Restrictions', 'Promote Open-Source Initiatives'],
+            ['Reusable Frameworks', 'Accessible Codebase','Interoperable Tools'],
+            ['Faster Iteration', 'Enables Re-Combination', 'Collective Intelligence']
         ];
 
-        // Just fill them with repeated links for the example
         const circleLinks = Array(25).fill("https://aiworld.eu/");
 
-        // Slightly adjusted text positions if needed
         const customTextPositions = [
             { xFactor: -0.10, yFactor: -0.05},
             { xFactor: 0.05, yFactor: -0.20 },
@@ -202,7 +200,7 @@
                 fullGroup.appendChild(mainText);
                 allMainTexts.push(mainText);
 
-                const subtextFontSize = smallRadius * 0.3;
+                const subtextFontSize = smallRadius * 0.35;
                 const subtextGroup = document.createElementNS(NS, 'text');
                 subtextGroup.setAttribute('class', 'sub-text');
                 subtextGroup.setAttribute('x', textX);
