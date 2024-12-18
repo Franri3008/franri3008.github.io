@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Wheel Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+        svg {
+            width: 100%;
+            height: 100vh;
+            display: block;
+            margin: 0 auto;
+            overflow: visible;
+        }
+        .small-circle {
+            transition: r 0.2s ease;
+        }
+        .central-circle {
+            transition: fill 0.5s ease;
+        }
+        .circle-icon {
+            pointer-events: none;
+            filter: brightness(0) invert(1);
+        }
+        .full-group {
+            transition: transform 0.2s ease;
+            transform-origin: center center;
+        }
+        .interactive-circle {}
+        .line {
+            transition: stroke-width 0.2s ease, stroke 0.2s ease, stroke-dasharray 0.2s ease;
+        }
+        .main-text,
+        .sub-text {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <svg id="wheelSVG" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin meet"></svg>
+    <div id="linkPreview" style="position: fixed; bottom: 0; left: 0; padding: 5px; background: rgba(0, 0, 0, 0.7); color: #fff; font-size: 14px; visibility: hidden; z-index: 1000;"></div>
+    <script>
+        const svg = document.getElementById('wheelSVG');
+        const NS = "http://www.w3.org/2000/svg";
+        const baseWidth = 1300;
+        const baseHeight = 1300;
+        const centerX = baseWidth / 2;
+        const centerY = baseHeight / 2;
+        const numSmallCircles = 9;
+        const colors = ["#FFD21E", "#2656D2", "#FFD21E", "#2f2f95", "#106c4e", "#e54c1c", "#af191e","#106c4e", "#2656D2"];
+        const circleTexts = [
+             "Core Principles", "Innovation", "Competition", "Economic Growth", "Responsible AI", 
+             "Risk 1: Unintentional Gaps", "Risk 2: Malicious Use", "Regulatory Trade-Offs", "Call to Action"
+        ];
+        const circleSubtexts = [
+            ["Reusable Frameworks", "Accessible Codebase","Interoperable Tools"],
+            ["Faster Iteration", "Enables Recombination", "Collective Intelligence"],
+            ["Wide Accessibility", "Reduced Entry Barriers", "Particularly Beneficial for Startups"],
+            ["Lower Costs", "Global Reach", "Cross-Sectoral Adoption"],
+            ["Enhanced Transparency", "Greater Accountability", "Empowered Users"],
+            ["Ensure Safety for Users & Developers", "Comprehensive Testing & Documentation", "Overall Low Risk"],
+            ["Prevent Misuse ", "Block Intentional Harm", "Ongoing Debate on Scope of New Risks"],
+            ["Sectoral Differences", "Different Benefits & Concerns", "Balanced Approach Needed"],
+            ["Significant Net Benefit", "Avoid Unnecessary Restrictions", "Promote Open-Source Initiatives"]
+        ];
+        const circleLinks = Array(25).fill("https://aiworld.eu/");
+        const customTextPositions = [
+            { xFactor: 0.0, yFactor: -0.15},
+            { xFactor: 0.05, yFactor: 0.12 },
+            { xFactor: -0.05, yFactor: -0.05 },
+            { xFactor: -0.02, yFactor: -0.22},
+            { xFactor: 0.12, yFactor: -0.18 },
+            { xFactor: -0.12, yFactor: -0.18 },
+            { xFactor: 0.01, yFactor: -0.2 },
+            { xFactor: 0.02, yFactor: -0.05},
+            { xFactor: -0.08, yFactor: 0.15 }
+        ];
+        const allMainTexts = [];
+        const allSubtexts = [];
+
+        function createWheel() {
+            svg.innerHTML = '';
+            const topMargin = 110;
+            const bottomMargin = 10;
+            svg.setAttribute('viewBox', `0 -${topMargin} ${baseWidth} ${baseHeight + topMargin + bottomMargin}`);
+            const circleRadius = 400;
+            const smallRadius = circleRadius * 0.05 * 3.5;
+            const linesGroup = document.createElementNS(NS, 'g');
+            svg.appendChild(linesGroup);
+            const centralRadius = circleRadius * 0.3;
+            const centralCircle = document.createElementNS(NS, 'circle');
+            centralCircle.setAttribute('cx', centerX);
+            centralCircle.setAttribute('cy', centerY);
+            centralCircle.setAttribute('r', centralRadius);
+            centralCircle.setAttribute('fill', '#FFFFFF');
+            centralCircle.setAttribute('class', 'central-circle');
+            centralCircle.setAttribute('stroke', '#000000');
+            centralCircle.setAttribute('stroke-width', '2');
+            centralCircle.setAttribute('font-family', 'Robobo');
+            svg.appendChild(centralCircle);
+            const centralTextFontSize = centralRadius * 0.25;
+            const centralText1 = document.createElementNS(NS, 'text');
+            centralText1.setAttribute('x', centerX);
+            centralText1.setAttribute('y', centerY - centralRadius * 0.2);
+            centralText1.setAttribute('text-anchor', 'middle');
+            centralText1.setAttribute('alignment-baseline', 'middle');
+            centralText1.setAttribute('fill', '#111111');
+            centralText1.setAttribute('font-size', centralTextFontSize);
+            centralText1.setAttribute('font-weight', 'bold');
+            centralText1.setAttribute('font-family', 'Robobo');
+            centralText1.textContent = 'OPEN SOURCE';
+            svg.appendChild(centralText1);
+            const centralText2 = document.createElementNS(NS, 'text');
+            centralText2.setAttribute('x', centerX);
+            centralText2.setAttribute('y', centerY + centralRadius * 0.35);
+            centralText2.setAttribute('text-anchor', 'middle');
+            centralText2.setAttribute('alignment-baseline', 'middle');
+            centralText2.setAttribute('fill', '#111111');
+            centralText2.setAttribute('font-size', centralTextFontSize*2);
+            centralText2.setAttribute('font-weight', 'bold');
+            centralText2.setAttribute('font-family', 'Robobo');
+            centralText2.textContent = 'AI';
+            svg.appendChild(centralText2);
+
+            for (let i = 0; i < numSmallCircles; i++) {
+                const angle = (2 * Math.PI / numSmallCircles) * i - Math.PI / 2;
+                const x = centerX + circleRadius * Math.cos(angle);
+                const y = centerY + circleRadius * Math.sin(angle);
+                const line = document.createElementNS(NS, 'line');
+                line.setAttribute('x1', centerX);
+                line.setAttribute('y1', centerY);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#000000');
+                line.setAttribute('stroke-dasharray', '5,5');
+                line.setAttribute('class', 'line');
+                line.setAttribute('stroke-width', '1');
+                linesGroup.appendChild(line);
+                const originalStrokeWidth = 1;
+                const fullGroup = document.createElementNS(NS, 'g');
+                fullGroup.setAttribute('class', 'full-group');
+                fullGroup.setAttribute('data-index', i);
+                svg.appendChild(fullGroup);
+                const circleGroup = document.createElementNS(NS, 'g');
+                fullGroup.appendChild(circleGroup);
+                circleGroup.lineElement = line;
+                const smallCircle = document.createElementNS(NS, 'circle');
+                smallCircle.setAttribute('cx', x);
+                smallCircle.setAttribute('cy', y);
+                smallCircle.setAttribute('r', smallRadius);
+                smallCircle.setAttribute('fill', colors[i % colors.length]);
+                smallCircle.setAttribute('class', 'small-circle');
+                smallCircle.setAttribute('font-family', 'Robobo');
+                circleGroup.appendChild(smallCircle);
+                const iconSize = smallRadius * 1.2;
+                const icon = document.createElementNS(NS, 'image');
+                icon.setAttribute('href', `datasets_wheel_icons/icon${(i % 25) + 1}.svg`);
+                icon.setAttribute('x', x - iconSize / 2);
+                icon.setAttribute('y', y - iconSize / 2);
+                icon.setAttribute('width', iconSize);
+                icon.setAttribute('height', iconSize);
+                icon.setAttribute('class', 'circle-icon');
+                circleGroup.appendChild(icon);
+
+                const textOffset = 80;
+                const textDistance = circleRadius + smallRadius + textOffset;
+                const customPos = customTextPositions[i] || { xFactor: 0, yFactor: 0 };
+                const adjustedX = customPos.xFactor * circleRadius;
+                const adjustedY = customPos.yFactor * circleRadius;
+                const textX = centerX + textDistance * Math.cos(angle) + adjustedX;
+                const textY = centerY + textDistance * Math.sin(angle) + adjustedY;
+                let textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
+                const mainTextFontSize = smallRadius * 0.6;
+                const mainText = document.createElementNS(NS, 'text');
+                mainText.setAttribute('class', 'main-text');
+                mainText.setAttribute('x', textX);
+                mainText.setAttribute('y', textY);
+                if (circleTexts[i] === "Core Principles") {
+                    mainText.setAttribute('text-anchor', 'middle');
+                } else {
+                    mainText.setAttribute('text-anchor', textAnchor);
+                }
+                mainText.setAttribute('fill', colors[i % colors.length]);
+                mainText.setAttribute('font-size', mainTextFontSize);
+                mainText.setAttribute('font-weight', 'bold');
+                mainText.setAttribute('font-family', 'Robobo');
+                mainText.textContent = circleTexts[i];
+                fullGroup.appendChild(mainText);
+                allMainTexts.push(mainText);
+                const sepLen = 360;
+                const sepY = textY + mainTextFontSize * 0.5;
+
+                const subtextFontSize = smallRadius * 0.35;
+                const subtextGroup = document.createElementNS(NS, 'text');
+                subtextGroup.setAttribute('class', 'sub-text');
+                subtextGroup.setAttribute('x', textX);
+                subtextGroup.setAttribute('y', sepY + subtextFontSize * 1.2);
+                subtextGroup.setAttribute('text-anchor', textAnchor);
+                subtextGroup.setAttribute('fill', '#000000');
+                subtextGroup.setAttribute('font-size', subtextFontSize);
+                subtextGroup.setAttribute('alignment-baseline', 'hanging');
+                subtextGroup.setAttribute('font-family', 'Robobo');
+                // **Override Text Anchor for "Core Principles" Subtexts to Center Alignment**
+                if (circleTexts[i] === "Core Principles") {
+                    subtextGroup.setAttribute('text-anchor', 'middle');
+                }
+                circleSubtexts[i].forEach((subtext, idx) => {
+                    const tspan = document.createElementNS(NS, 'tspan');
+                    tspan.setAttribute('x', textX);
+                    tspan.setAttribute('dy', idx === 0 ? '0' : `${subtextFontSize * 1.2}`);
+                    tspan.textContent = subtext;
+                    subtextGroup.appendChild(tspan);
+                });
+                fullGroup.appendChild(subtextGroup);
+                allSubtexts.push(subtextGroup);
+
+                circleGroup.addEventListener('mouseenter', () => {
+                    const scaleFactor = 1.35;
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    const translateX = -dx * (scaleFactor - 1);
+                    const translateY = -dy * (scaleFactor - 1);
+                    fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scaleFactor})`);
+                    centralCircle.setAttribute('fill', colors[i % colors.length]);
+                    centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${colors[i % colors.length]});`);
+                    const hoverStrokeWidth = originalStrokeWidth * 20;
+                    circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke', colors[i % colors.length]);
+                    circleGroup.lineElement.setAttribute('stroke-dasharray', '');
+                    allMainTexts.forEach((t) => {
+                        if (t !== mainText) t.style.opacity = '0.4';
+                    });
+                    allSubtexts.forEach((sub) => {
+                        if (sub !== subtextGroup) sub.style.opacity = '0.4';
+                    });
+                    centralText1.setAttribute('fill', '#ffffff');
+                    centralText2.setAttribute('fill', '#ffffff');
+                });
+
+                circleGroup.addEventListener('mouseleave', () => {
+                    fullGroup.setAttribute('transform', '');
+                    centralCircle.setAttribute('fill', '#FFFFFF');
+                    centralCircle.removeAttribute('style');
+                    circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke', '#000000');
+                    circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
+                    allMainTexts.forEach((t) => { t.style.opacity = '1'; });
+                    allSubtexts.forEach((sub) => { sub.style.opacity = '1'; });
+                    centralText1.setAttribute('fill', '#111111');
+                    centralText2.setAttribute('fill', '#111111');
+                });
+            }
+        }
+        createWheel();
+    </script>
+</body>
+</html>

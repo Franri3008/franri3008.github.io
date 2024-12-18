@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Wheel Visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+        }
+        svg {
+            width: 100%;
+            height: 100vh;
+            display: block;
+            margin: 0 auto;
+            overflow: visible;
+        }
+        .small-circle {
+            transition: r 0.2s ease;
+        }
+        .central-circle {
+            transition: fill 0.5s ease;
+        }
+        .circle-icon {
+            pointer-events: none;
+            filter: brightness(0) invert(1);
+        }
+        .full-group {
+            transition: transform 0.2s ease;
+            transform-origin: center center;
+        }
+        .interactive-circle {}
+        .line {
+            transition: stroke-width 0.2s ease, stroke 0.2s ease, stroke-dasharray 0.2s ease;
+        }
+        .main-text,
+        .sub-text {
+            transition: opacity 0.3s ease;
+        }
+        #urlPreview {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            font-size: 14px;
+            visibility: hidden;
+            z-index: 1000;
+        }
+        #tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            visibility: hidden;
+            z-index: 2000;
+            white-space: pre-wrap; /* allow new lines */
+        }
+    </style>
+</head>
+<body>
+    <svg id="wheelSVG" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin meet"></svg>
+    <div id="urlPreview"></div>
+    <div id="tooltip"></div>
+    <script>
+        const svg = document.getElementById('wheelSVG');
+        const NS = "http://www.w3.org/2000/svg";
+        const baseWidth = 1300;
+        const baseHeight = 1300;
+        const centerX = baseWidth / 2;
+        const centerY = baseHeight / 2;
+        const urlPreview = document.getElementById('urlPreview');
+        const tooltip = document.getElementById('tooltip');
+
+        fetch('wheel2.json').then(res => res.json()).then(data => {
+            const items = data.items;
+            const central = data.central;
+            svg.innerHTML = '';
+            const topMargin = 110;
+            const bottomMargin = 10;
+            svg.setAttribute('viewBox', `0 -${topMargin} ${baseWidth} ${baseHeight + topMargin + bottomMargin}`);
+            const circleRadius = 400;
+            const smallRadius = circleRadius * 0.05 * 3.5;
+            const linesGroup = document.createElementNS(NS, 'g');
+            svg.appendChild(linesGroup);
+            const centralRadius = circleRadius * 0.3;
+            const centralCircle = document.createElementNS(NS, 'circle');
+            centralCircle.setAttribute('cx', centerX);
+            centralCircle.setAttribute('cy', centerY);
+            centralCircle.setAttribute('r', centralRadius);
+            centralCircle.setAttribute('fill', '#FFFFFF');
+            centralCircle.setAttribute('class', 'central-circle');
+            centralCircle.setAttribute('stroke', '#000000');
+            centralCircle.setAttribute('stroke-width', '2');
+            centralCircle.setAttribute('font-family', 'Robobo');
+            svg.appendChild(centralCircle);
+            const centralTextFontSize = centralRadius * 0.25;
+            const centralText1 = document.createElementNS(NS, 'text');
+            centralText1.setAttribute('x', centerX);
+            centralText1.setAttribute('y', centerY - centralRadius * 0.2);
+            centralText1.setAttribute('text-anchor', 'middle');
+            centralText1.setAttribute('alignment-baseline', 'middle');
+            centralText1.setAttribute('fill', '#111111');
+            centralText1.setAttribute('font-size', centralTextFontSize);
+            centralText1.setAttribute('font-weight', 'bold');
+            centralText1.setAttribute('font-family', 'Robobo');
+            centralText1.textContent = central.name;
+            svg.appendChild(centralText1);
+            const centralText2 = document.createElementNS(NS, 'text');
+            centralText2.setAttribute('x', centerX);
+            centralText2.setAttribute('y', centerY + centralRadius * 0.35);
+            centralText2.setAttribute('text-anchor', 'middle');
+            centralText2.setAttribute('alignment-baseline', 'middle');
+            centralText2.setAttribute('fill', '#111111');
+            centralText2.setAttribute('font-size', centralTextFontSize*2);
+            centralText2.setAttribute('font-weight', 'bold');
+            centralText2.setAttribute('font-family', 'Robobo');
+            centralText2.textContent = central.subname;
+            svg.appendChild(centralText2);
+            const allMainTexts = [];
+            const allSubtexts = [];
+
+            function showTooltip(desc, evt) {
+                if (!desc || desc.trim() === '') return;
+                // Replace \n with actual newlines
+                const formattedDesc = desc.replace(/\\n/g, '\n');
+                tooltip.textContent = formattedDesc;
+                tooltip.style.visibility = 'visible';
+                const mouseX = evt.pageX;
+                const mouseY = evt.pageY;
+                tooltip.style.left = (mouseX + 10) + 'px';
+                tooltip.style.top = (mouseY + 10) + 'px';
+            }
+
+            function hideTooltip() {
+                tooltip.style.visibility = 'hidden';
+            }
+
+            function showURL(url) {
+                if (!url) return;
+                urlPreview.textContent = url;
+                urlPreview.style.visibility = 'visible';
+            }
+
+            function hideURL() {
+                urlPreview.style.visibility = 'hidden';
+            }
+
+            document.addEventListener('mousemove', (evt) => {
+                if (tooltip.style.visibility === 'visible') {
+                    tooltip.style.left = (evt.pageX + 10) + 'px';
+                    tooltip.style.top = (evt.pageY + 10) + 'px';
+                }
+            });
+
+            for (let i = 0; i < items.length; i++) {
+                const angle = (2 * Math.PI / items.length) * i - Math.PI / 2;
+                const x = centerX + circleRadius * Math.cos(angle);
+                const y = centerY + circleRadius * Math.sin(angle);
+                const line = document.createElementNS(NS, 'line');
+                line.setAttribute('x1', centerX);
+                line.setAttribute('y1', centerY);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#000000');
+                line.setAttribute('stroke-dasharray', '5,5');
+                line.setAttribute('class', 'line');
+                line.setAttribute('stroke-width', '1');
+                linesGroup.appendChild(line);
+                const originalStrokeWidth = 1;
+                const fullGroup = document.createElementNS(NS, 'g');
+                fullGroup.setAttribute('class', 'full-group');
+                fullGroup.setAttribute('data-index', i);
+                svg.appendChild(fullGroup);
+                const circleGroup = document.createElementNS(NS, 'g');
+                fullGroup.appendChild(circleGroup);
+                circleGroup.lineElement = line;
+                const smallCircle = document.createElementNS(NS, 'circle');
+                smallCircle.setAttribute('cx', x);
+                smallCircle.setAttribute('cy', y);
+                smallCircle.setAttribute('r', smallRadius);
+                smallCircle.setAttribute('fill', items[i].color);
+                smallCircle.setAttribute('class', 'small-circle');
+                smallCircle.setAttribute('font-family', 'Robobo');
+                if (items[i].url) {
+                    smallCircle.style.cursor = 'pointer';
+                }
+                circleGroup.appendChild(smallCircle);
+                const iconSize = smallRadius * 1.2;
+                const icon = document.createElementNS(NS, 'image');
+                icon.setAttribute('href', items[i].icon);
+                icon.setAttribute('x', x - iconSize / 2);
+                icon.setAttribute('y', y - iconSize / 2);
+                icon.setAttribute('width', iconSize);
+                icon.setAttribute('height', iconSize);
+                icon.setAttribute('class', 'circle-icon');
+                circleGroup.appendChild(icon);
+                const textOffset = 80;
+                const textDistance = circleRadius + smallRadius + textOffset;
+                const adjustedX = items[i].x * circleRadius;
+                const adjustedY = items[i].y * circleRadius;
+                const textX = centerX + textDistance * Math.cos(angle) + adjustedX;
+                const textY = centerY + textDistance * Math.sin(angle) + adjustedY;
+
+                let textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
+                // If angle is exactly top (-90°, -π/2) or bottom (90°, π/2), center the text
+                if (Math.abs(angle + Math.PI/2) < 0.0001 || Math.abs(angle - Math.PI/2) < 0.0001) {
+                    textAnchor = 'middle';
+                }
+
+                const mainTextFontSize = smallRadius * 0.6;
+                const subtitleFontSize = mainTextFontSize * 0.8; 
+                const bulletsFontSize = smallRadius * 0.35;
+
+                const mainText = document.createElementNS(NS, 'text');
+                mainText.setAttribute('class', 'main-text');
+                mainText.setAttribute('x', textX);
+                mainText.setAttribute('y', textY);
+                mainText.setAttribute('text-anchor', textAnchor);
+                mainText.setAttribute('alignment-baseline', 'middle');
+                mainText.setAttribute('fill', items[i].color);
+                mainText.setAttribute('font-size', mainTextFontSize);
+                mainText.setAttribute('font-weight', 'bold');
+                mainText.setAttribute('font-family', 'Robobo');
+                mainText.textContent = items[i].name;
+                if (items[i].url) {
+                    mainText.style.cursor = 'pointer';
+                }
+                fullGroup.appendChild(mainText);
+                allMainTexts.push(mainText);
+
+                // After adding the main text, get its bounding box to position the subtitle below it
+                const mainTextBBox = mainText.getBBox();
+
+                // Subtitle
+                let currentY = mainTextBBox.y + mainTextBBox.height; 
+                // currentY now is just below main text
+                if (items[i].subname && items[i].subname.trim() !== '') {
+                    const subText = document.createElementNS(NS, 'text');
+                    subText.setAttribute('class', 'sub-text');
+                    subText.setAttribute('x', textX);
+                    // Place the subtitle directly below the main text
+                    // Use alignment-baseline=hanging to position from the top of this line
+                    subText.setAttribute('y', currentY); 
+                    subText.setAttribute('text-anchor', textAnchor);
+                    subText.setAttribute('alignment-baseline', 'hanging');
+                    subText.setAttribute('fill', items[i].color);
+                    subText.setAttribute('font-size', subtitleFontSize);
+                    subText.setAttribute('font-family', 'Robobo');
+                    subText.textContent = items[i].subname;
+                    fullGroup.appendChild(subText);
+                    allSubtexts.push(subText);
+
+                    const subTextBBox = subText.getBBox();
+                    currentY = subTextBBox.y + subTextBBox.height;
+                }
+
+                // Bullets
+                if (items[i].bullets && items[i].bullets.length > 0) {
+                    const subtextGroup = document.createElementNS(NS, 'text');
+                    subtextGroup.setAttribute('class', 'sub-text');
+                    subtextGroup.setAttribute('x', textX);
+                    subtextGroup.setAttribute('y', currentY + bulletsFontSize * 0.5); 
+                    subtextGroup.setAttribute('text-anchor', textAnchor);
+                    subtextGroup.setAttribute('fill', '#000000');
+                    subtextGroup.setAttribute('font-size', bulletsFontSize);
+                    subtextGroup.setAttribute('alignment-baseline', 'hanging');
+                    subtextGroup.setAttribute('font-family', 'Robobo');
+                    items[i].bullets.forEach((b, idx) => {
+                        const tspan = document.createElementNS(NS, 'tspan');
+                        tspan.setAttribute('x', textX);
+                        tspan.setAttribute('dy', idx === 0 ? '0' : `${bulletsFontSize * 1.2}`);
+                        tspan.textContent = b;
+                        subtextGroup.appendChild(tspan);
+                    });
+                    fullGroup.appendChild(subtextGroup);
+                    allSubtexts.push(subtextGroup);
+                }
+
+                circleGroup.addEventListener('mouseenter', (evt) => {
+                    const scaleFactor = 1.35;
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    const translateX = -dx * (scaleFactor - 1);
+                    const translateY = -dy * (scaleFactor - 1);
+                    fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scaleFactor})`);
+                    centralCircle.setAttribute('fill', items[i].color);
+                    centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${items[i].color});`);
+                    const hoverStrokeWidth = originalStrokeWidth * 20;
+                    circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke', items[i].color);
+                    circleGroup.lineElement.setAttribute('stroke-dasharray', '');
+                    allMainTexts.forEach((t) => {
+                        if (t !== mainText) t.style.opacity = '0.4';
+                    });
+                    allSubtexts.forEach((sub) => {
+                        if (!fullGroup.contains(sub)) sub.style.opacity = '0.4';
+                    });
+                    centralText1.setAttribute('fill', '#ffffff');
+                    centralText2.setAttribute('fill', '#ffffff');
+                    if (items[i].url) showURL(items[i].url);
+                    showTooltip(items[i].description, evt);
+                });
+
+                circleGroup.addEventListener('mouseleave', () => {
+                    fullGroup.setAttribute('transform', '');
+                    centralCircle.setAttribute('fill', '#FFFFFF');
+                    centralCircle.removeAttribute('style');
+                    circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke', '#000000');
+                    circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
+                    allMainTexts.forEach((t) => { t.style.opacity = '1'; });
+                    allSubtexts.forEach((sub) => { sub.style.opacity = '1'; });
+                    centralText1.setAttribute('fill', '#111111');
+                    centralText2.setAttribute('fill', '#111111');
+                    hideURL();
+                    hideTooltip();
+                });
+
+                if (items[i].url) {
+                    smallCircle.addEventListener('click', () => {
+                        window.open(items[i].url, '_blank');
+                    });
+                    mainText.addEventListener('click', () => {
+                        window.open(items[i].url, '_blank');
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

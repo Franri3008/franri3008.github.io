@@ -1,0 +1,290 @@
+[
+    {
+        "id": "amphion/Emilia-Dataset",
+        "name": "amphion/Emilia-Dataset",
+        "parent": "root",
+        "domain": "Audio",
+        "value": 6,
+        "color": "rgba(16, 108, 78, 0.4)"
+    },
+    {
+        "id": "HuggingFaceM4/Docmatix",
+        "name": "HuggingFaceM4/Docmatix",
+        "parent": "root",
+        "domain": "Multimodal",
+        "value": 4,
+        "color": "rgba(121, 29, 129, 0.4)"
+    },
+    {
+        "id": "BAAI/Infinity-Instruct",
+        "name": "BAAI/Infinity-Instruct",
+        "parent": "root",
+        "domain": "Natural Language Processing",
+        "value": 3,
+        "color": "rgba(38, 86, 210, 0.4)"
+    },
+    {
+        "id": "Salesforce/xlam-function-calling-60k",
+        "name": "Salesforce/xlam-function-calling-60k",
+        "parent": "root",
+        "domain": "Reinforcement Learning",
+        "value": 4,
+        "color": "rgba(175, 25, 30, 0.4)"
+    },
+    {
+        "id": "pixparse/pdfa-eng-wds",
+        "name": "pixparse/pdfa-eng-wds",
+        "parent": "root",
+        "domain": "Computer Vision",
+        "value": 4,
+        "color": "rgba(255, 157, 0, 0.4)"
+    },
+    {
+        "id": "HuggingFaceM4",
+        "name": "HuggingFaceM4",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 5,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Zyphra",
+        "name": "Zyphra",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 2,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "amphion",
+        "name": "amphion",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "MrLight",
+        "name": "MrLight",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "SWivid",
+        "name": "SWivid",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 2,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "marduk-ra",
+        "name": "marduk-ra",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceTB",
+        "name": "HuggingFaceTB",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 2,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "BAAI",
+        "name": "BAAI",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "OuteAI",
+        "name": "OuteAI",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 2,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Salesforce",
+        "name": "Salesforce",
+        "parent": "datasets",
+        "domain": "author",
+        "value": 4,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "amphion/MaskGCT",
+        "name": "amphion/MaskGCT",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Salesforce/xLAM-7b-r",
+        "name": "Salesforce/xLAM-7b-r",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceTB/SmolVLM-Instruct",
+        "name": "HuggingFaceTB/SmolVLM-Instruct",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "OuteAI/OuteTTS-0.2-500M-GGUF",
+        "name": "OuteAI/OuteTTS-0.2-500M-GGUF",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Zyphra/Zamba2-2.7B-instruct",
+        "name": "Zyphra/Zamba2-2.7B-instruct",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceM4/idefics2-8b-AWQ",
+        "name": "HuggingFaceM4/idefics2-8b-AWQ",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceM4/idefics2-8b-base",
+        "name": "HuggingFaceM4/idefics2-8b-base",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceM4/idefics2-8b",
+        "name": "HuggingFaceM4/idefics2-8b",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "SWivid/E2-TTS",
+        "name": "SWivid/E2-TTS",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Salesforce/xLAM-7b-fc-r",
+        "name": "Salesforce/xLAM-7b-fc-r",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceM4/idefics2-8b-chatty",
+        "name": "HuggingFaceM4/idefics2-8b-chatty",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "SWivid/F5-TTS",
+        "name": "SWivid/F5-TTS",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceM4/Idefics3-8B-Llama3",
+        "name": "HuggingFaceM4/Idefics3-8B-Llama3",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "BAAI/Aquila-VL-2B-llava-qwen",
+        "name": "BAAI/Aquila-VL-2B-llava-qwen",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Salesforce/xLAM-8x22b-r",
+        "name": "Salesforce/xLAM-8x22b-r",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "HuggingFaceTB/SmolVLM-Base",
+        "name": "HuggingFaceTB/SmolVLM-Base",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "marduk-ra/F5-TTS-German",
+        "name": "marduk-ra/F5-TTS-German",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Salesforce/xLAM-1b-fc-r",
+        "name": "Salesforce/xLAM-1b-fc-r",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "Zyphra/Zamba2-1.2B-instruct",
+        "name": "Zyphra/Zamba2-1.2B-instruct",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "OuteAI/OuteTTS-0.2-500M",
+        "name": "OuteAI/OuteTTS-0.2-500M",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    },
+    {
+        "id": "MrLight/dse-qwen2-2b-mrl-v1",
+        "name": "MrLight/dse-qwen2-2b-mrl-v1",
+        "parent": "authors",
+        "domain": "model",
+        "value": 1,
+        "color": "#CCCCCC"
+    }
+]

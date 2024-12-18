@@ -1,0 +1,464 @@
+[
+    {
+        "id": "China",
+        "name": "China",
+        "parent": "China",
+        "domain": "Computer Vision",
+        "value": 1473
+    },
+    {
+        "id": "China",
+        "name": "China",
+        "parent": "China",
+        "domain": "Ethics & safety",
+        "value": 374
+    },
+    {
+        "id": "China",
+        "name": "China",
+        "parent": "China",
+        "domain": "Explainable AI",
+        "value": 137
+    },
+    {
+        "id": "China",
+        "name": "China",
+        "parent": "China",
+        "domain": "Graph Neural Networks",
+        "value": 238
+    },
+    {
+        "id": "China",
+        "name": "China",
+        "parent": "China",
+        "domain": "NLP",
+        "value": 651
+    },
+    {
+        "id": "China",
+        "name": "China",
+        "parent": "China",
+        "domain": "RL & Robotics",
+        "value": 465
+    },
+    {
+        "id": "Hong Kong",
+        "name": "Hong Kong",
+        "parent": "China",
+        "domain": "Computer Vision",
+        "value": 145
+    },
+    {
+        "id": "Hong Kong",
+        "name": "Hong Kong",
+        "parent": "China",
+        "domain": "Ethics & safety",
+        "value": 36
+    },
+    {
+        "id": "Hong Kong",
+        "name": "Hong Kong",
+        "parent": "China",
+        "domain": "Explainable AI",
+        "value": 12
+    },
+    {
+        "id": "Hong Kong",
+        "name": "Hong Kong",
+        "parent": "China",
+        "domain": "Graph Neural Networks",
+        "value": 18
+    },
+    {
+        "id": "Hong Kong",
+        "name": "Hong Kong",
+        "parent": "China",
+        "domain": "NLP",
+        "value": 79
+    },
+    {
+        "id": "Hong Kong",
+        "name": "Hong Kong",
+        "parent": "China",
+        "domain": "RL & Robotics",
+        "value": 32
+    },
+    {
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Computer Vision",
+        "value": 37
+    },
+    {
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Ethics & safety",
+        "value": 34
+    },
+    {
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Explainable AI",
+        "value": 63
+    },
+    {
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Graph Neural Networks",
+        "value": 40
+    },
+    {
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
+        "domain": "NLP",
+        "value": 15
+    },
+    {
+        "id": "Germany",
+        "name": "Germany",
+        "parent": "EU27+UK+EFTA",
+        "domain": "RL & Robotics",
+        "value": 34
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Computer Vision",
+        "value": 114
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Ethics & safety",
+        "value": 60
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Explainable AI",
+        "value": 51
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Graph Neural Networks",
+        "value": 21
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "EU27+UK+EFTA",
+        "domain": "NLP",
+        "value": 43
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "EU27+UK+EFTA",
+        "domain": "RL & Robotics",
+        "value": 71
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Computer Vision",
+        "value": 29
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Ethics & safety",
+        "value": 44
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Explainable AI",
+        "value": 29
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Graph Neural Networks",
+        "value": 2
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "NLP",
+        "value": 13
+    },
+    {
+        "id": "Switzerland",
+        "name": "Switzerland",
+        "parent": "EU27+UK+EFTA",
+        "domain": "RL & Robotics",
+        "value": 23
+    },
+    {
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Computer Vision",
+        "value": 104
+    },
+    {
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Ethics & safety",
+        "value": 63
+    },
+    {
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Explainable AI",
+        "value": 56
+    },
+    {
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
+        "domain": "Graph Neural Networks",
+        "value": 17
+    },
+    {
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
+        "domain": "NLP",
+        "value": 109
+    },
+    {
+        "id": "United Kingdom",
+        "name": "United Kingdom",
+        "parent": "EU27+UK+EFTA",
+        "domain": "RL & Robotics",
+        "value": 90
+    },
+    {
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "Computer Vision",
+        "value": 39
+    },
+    {
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "Ethics & safety",
+        "value": 27
+    },
+    {
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "Explainable AI",
+        "value": 9
+    },
+    {
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
+        "value": 9
+    },
+    {
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "NLP",
+        "value": 41
+    },
+    {
+        "id": "Canada",
+        "name": "Canada",
+        "parent": "Rest of the World",
+        "domain": "RL & Robotics",
+        "value": 57
+    },
+    {
+        "id": "Korea, Republic of",
+        "name": "Korea, Republic of",
+        "parent": "Rest of the World",
+        "domain": "Computer Vision",
+        "value": 116
+    },
+    {
+        "id": "Korea, Republic of",
+        "name": "Korea, Republic of",
+        "parent": "Rest of the World",
+        "domain": "Ethics & safety",
+        "value": 35
+    },
+    {
+        "id": "Korea, Republic of",
+        "name": "Korea, Republic of",
+        "parent": "Rest of the World",
+        "domain": "Explainable AI",
+        "value": 4
+    },
+    {
+        "id": "Korea, Republic of",
+        "name": "Korea, Republic of",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
+        "value": 8
+    },
+    {
+        "id": "Korea, Republic of",
+        "name": "Korea, Republic of",
+        "parent": "Rest of the World",
+        "domain": "NLP",
+        "value": 54
+    },
+    {
+        "id": "Korea, Republic of",
+        "name": "Korea, Republic of",
+        "parent": "Rest of the World",
+        "domain": "RL & Robotics",
+        "value": 64
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "Computer Vision",
+        "value": 117
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "Ethics & safety",
+        "value": 81
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "Explainable AI",
+        "value": 45
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
+        "value": 47
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "NLP",
+        "value": 65
+    },
+    {
+        "id": "Others",
+        "name": "Others",
+        "parent": "Rest of the World",
+        "domain": "RL & Robotics",
+        "value": 75
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Computer Vision",
+        "value": 119
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Ethics & safety",
+        "value": 50
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Explainable AI",
+        "value": 17
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "Graph Neural Networks",
+        "value": 22
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "NLP",
+        "value": 48
+    },
+    {
+        "id": "Singapore",
+        "name": "Singapore",
+        "parent": "Rest of the World",
+        "domain": "RL & Robotics",
+        "value": 26
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Computer Vision",
+        "value": 666
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Ethics & safety",
+        "value": 603
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Explainable AI",
+        "value": 367
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "Graph Neural Networks",
+        "value": 121
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "NLP",
+        "value": 661
+    },
+    {
+        "id": "United States",
+        "name": "United States",
+        "parent": "US",
+        "domain": "RL & Robotics",
+        "value": 454
+    }
+]
