@@ -59,7 +59,7 @@
             pointer-events: none;
             visibility: hidden;
             z-index: 2000;
-            white-space: pre-wrap; /* allow new lines */
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -79,16 +79,25 @@
 
         fetch('wheel2.json').then(res => res.json()).then(data => {
             const items = data.items;
-            const central = data.central;
+            const central = data.central || {};
+
+            const centralColor = central.color || '#111111';
+            const mainSizeFactor = central.nameSizeFactor || 0.25; 
+            const subSizeFactor = central.subnameSizeFactor || 2.0;
+            const centralCircleSize = central.centralCircleSize || 0.3;
+            const smallCircleSize = central.smallCircleSize || 0.175; // default equivalent of previous 0.05*3.5
+
             svg.innerHTML = '';
             const topMargin = 110;
             const bottomMargin = 10;
             svg.setAttribute('viewBox', `0 -${topMargin} ${baseWidth} ${baseHeight + topMargin + bottomMargin}`);
             const circleRadius = 400;
-            const smallRadius = circleRadius * 0.05 * 3.5;
             const linesGroup = document.createElementNS(NS, 'g');
             svg.appendChild(linesGroup);
-            const centralRadius = circleRadius * 0.3;
+
+            const centralRadius = circleRadius * centralCircleSize;
+            const smallRadius = circleRadius * smallCircleSize;
+
             const centralCircle = document.createElementNS(NS, 'circle');
             centralCircle.setAttribute('cx', centerX);
             centralCircle.setAttribute('cy', centerY);
@@ -99,35 +108,37 @@
             centralCircle.setAttribute('stroke-width', '2');
             centralCircle.setAttribute('font-family', 'Robobo');
             svg.appendChild(centralCircle);
-            const centralTextFontSize = centralRadius * 0.25;
+
+            const centralTextFontSize = centralRadius * mainSizeFactor;
             const centralText1 = document.createElementNS(NS, 'text');
             centralText1.setAttribute('x', centerX);
             centralText1.setAttribute('y', centerY - centralRadius * 0.2);
             centralText1.setAttribute('text-anchor', 'middle');
             centralText1.setAttribute('alignment-baseline', 'middle');
-            centralText1.setAttribute('fill', '#111111');
+            centralText1.setAttribute('fill', centralColor);
             centralText1.setAttribute('font-size', centralTextFontSize);
             centralText1.setAttribute('font-weight', 'bold');
             centralText1.setAttribute('font-family', 'Robobo');
-            centralText1.textContent = central.name;
+            centralText1.textContent = central.name || '';
             svg.appendChild(centralText1);
+
             const centralText2 = document.createElementNS(NS, 'text');
             centralText2.setAttribute('x', centerX);
             centralText2.setAttribute('y', centerY + centralRadius * 0.35);
             centralText2.setAttribute('text-anchor', 'middle');
             centralText2.setAttribute('alignment-baseline', 'middle');
-            centralText2.setAttribute('fill', '#111111');
-            centralText2.setAttribute('font-size', centralTextFontSize*2);
+            centralText2.setAttribute('fill', centralColor);
+            centralText2.setAttribute('font-size', centralTextFontSize * subSizeFactor);
             centralText2.setAttribute('font-weight', 'bold');
             centralText2.setAttribute('font-family', 'Robobo');
-            centralText2.textContent = central.subname;
+            centralText2.textContent = central.subname || '';
             svg.appendChild(centralText2);
+
             const allMainTexts = [];
             const allSubtexts = [];
 
             function showTooltip(desc, evt) {
                 if (!desc || desc.trim() === '') return;
-                // Replace \n with actual newlines
                 const formattedDesc = desc.replace(/\\n/g, '\n');
                 tooltip.textContent = formattedDesc;
                 tooltip.style.visibility = 'visible';
@@ -180,17 +191,21 @@
                 const circleGroup = document.createElementNS(NS, 'g');
                 fullGroup.appendChild(circleGroup);
                 circleGroup.lineElement = line;
-                const smallCircle = document.createElementNS(NS, 'circle');
-                smallCircle.setAttribute('cx', x);
-                smallCircle.setAttribute('cy', y);
-                smallCircle.setAttribute('r', smallRadius);
-                smallCircle.setAttribute('fill', items[i].color);
-                smallCircle.setAttribute('class', 'small-circle');
-                smallCircle.setAttribute('font-family', 'Robobo');
+
+                const circleColor = items[i].color || '#858585';
+                
+                const smallCircleElement = document.createElementNS(NS, 'circle');
+                smallCircleElement.setAttribute('cx', x);
+                smallCircleElement.setAttribute('cy', y);
+                smallCircleElement.setAttribute('r', smallRadius);
+                smallCircleElement.setAttribute('fill', circleColor);
+                smallCircleElement.setAttribute('class', 'small-circle');
+                smallCircleElement.setAttribute('font-family', 'Robobo');
                 if (items[i].url) {
-                    smallCircle.style.cursor = 'pointer';
+                    smallCircleElement.style.cursor = 'pointer';
                 }
-                circleGroup.appendChild(smallCircle);
+                circleGroup.appendChild(smallCircleElement);
+
                 const iconSize = smallRadius * 1.2;
                 const icon = document.createElementNS(NS, 'image');
                 icon.setAttribute('href', items[i].icon);
@@ -200,15 +215,15 @@
                 icon.setAttribute('height', iconSize);
                 icon.setAttribute('class', 'circle-icon');
                 circleGroup.appendChild(icon);
+
                 const textOffset = 80;
                 const textDistance = circleRadius + smallRadius + textOffset;
-                const adjustedX = items[i].x * circleRadius;
-                const adjustedY = items[i].y * circleRadius;
+                const adjustedX = (items[i].x || 0) * circleRadius;
+                const adjustedY = (items[i].y || 0) * circleRadius;
                 const textX = centerX + textDistance * Math.cos(angle) + adjustedX;
                 const textY = centerY + textDistance * Math.sin(angle) + adjustedY;
 
                 let textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
-                // If angle is exactly top (-90°, -π/2) or bottom (90°, π/2), center the text
                 if (Math.abs(angle + Math.PI/2) < 0.0001 || Math.abs(angle - Math.PI/2) < 0.0001) {
                     textAnchor = 'middle';
                 }
@@ -223,7 +238,7 @@
                 mainText.setAttribute('y', textY);
                 mainText.setAttribute('text-anchor', textAnchor);
                 mainText.setAttribute('alignment-baseline', 'middle');
-                mainText.setAttribute('fill', items[i].color);
+                mainText.setAttribute('fill', circleColor);
                 mainText.setAttribute('font-size', mainTextFontSize);
                 mainText.setAttribute('font-weight', 'bold');
                 mainText.setAttribute('font-family', 'Robobo');
@@ -234,22 +249,18 @@
                 fullGroup.appendChild(mainText);
                 allMainTexts.push(mainText);
 
-                // After adding the main text, get its bounding box to position the subtitle below it
                 const mainTextBBox = mainText.getBBox();
+                let currentY = mainTextBBox.y + mainTextBBox.height; 
 
                 // Subtitle
-                let currentY = mainTextBBox.y + mainTextBBox.height; 
-                // currentY now is just below main text
                 if (items[i].subname && items[i].subname.trim() !== '') {
                     const subText = document.createElementNS(NS, 'text');
                     subText.setAttribute('class', 'sub-text');
                     subText.setAttribute('x', textX);
-                    // Place the subtitle directly below the main text
-                    // Use alignment-baseline=hanging to position from the top of this line
-                    subText.setAttribute('y', currentY); 
+                    subText.setAttribute('y', currentY);
                     subText.setAttribute('text-anchor', textAnchor);
                     subText.setAttribute('alignment-baseline', 'hanging');
-                    subText.setAttribute('fill', items[i].color);
+                    subText.setAttribute('fill', circleColor);
                     subText.setAttribute('font-size', subtitleFontSize);
                     subText.setAttribute('font-family', 'Robobo');
                     subText.textContent = items[i].subname;
@@ -257,7 +268,7 @@
                     allSubtexts.push(subText);
 
                     const subTextBBox = subText.getBBox();
-                    currentY = subTextBBox.y + subTextBBox.height;
+                    currentY = subTextBBox.y + subTextBBox.height + (subTextBBox.height * 0.2);
                 }
 
                 // Bullets
@@ -265,7 +276,7 @@
                     const subtextGroup = document.createElementNS(NS, 'text');
                     subtextGroup.setAttribute('class', 'sub-text');
                     subtextGroup.setAttribute('x', textX);
-                    subtextGroup.setAttribute('y', currentY + bulletsFontSize * 0.5); 
+                    subtextGroup.setAttribute('y', currentY + bulletsFontSize * 0.5);
                     subtextGroup.setAttribute('text-anchor', textAnchor);
                     subtextGroup.setAttribute('fill', '#000000');
                     subtextGroup.setAttribute('font-size', bulletsFontSize);
@@ -289,11 +300,11 @@
                     const translateX = -dx * (scaleFactor - 1);
                     const translateY = -dy * (scaleFactor - 1);
                     fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scaleFactor})`);
-                    centralCircle.setAttribute('fill', items[i].color);
-                    centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${items[i].color});`);
+                    centralCircle.setAttribute('fill', circleColor);
+                    centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${circleColor});`);
                     const hoverStrokeWidth = originalStrokeWidth * 20;
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
-                    circleGroup.lineElement.setAttribute('stroke', items[i].color);
+                    circleGroup.lineElement.setAttribute('stroke', circleColor);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
                     allMainTexts.forEach((t) => {
                         if (t !== mainText) t.style.opacity = '0.4';
@@ -316,14 +327,14 @@
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
                     allMainTexts.forEach((t) => { t.style.opacity = '1'; });
                     allSubtexts.forEach((sub) => { sub.style.opacity = '1'; });
-                    centralText1.setAttribute('fill', '#111111');
-                    centralText2.setAttribute('fill', '#111111');
+                    centralText1.setAttribute('fill', centralColor);
+                    centralText2.setAttribute('fill', centralColor);
                     hideURL();
                     hideTooltip();
                 });
 
                 if (items[i].url) {
-                    smallCircle.addEventListener('click', () => {
+                    smallCircleElement.addEventListener('click', () => {
                         window.open(items[i].url, '_blank');
                     });
                     mainText.addEventListener('click', () => {

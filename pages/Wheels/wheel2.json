@@ -1,7 +1,12 @@
 {
     "central": {
-      "name": "Hugging Face",
-      "subname": "Datasets"
+      "name": "HUGGING FACE 🤗",
+      "subname": "DATASETS",
+      "color": "#111111",
+      "nameSizeFactor": 0.20,
+      "subnameSizeFactor": 1.65,
+      "centralCircleSize": 0.3,
+      "smallCircleSize": 0.175
     },
     "items": [
       {
@@ -55,7 +60,7 @@
         "description": "Synthetic dataset designed for supervised finetuning (SFT) of LLMs. It focuses on bridging the performance gap between models trained on SFT datasets and those trained on proprietary instruction datasets.\nNumber of rows: 2,197,730\nSize of the auto-converted Parquet files: 4.15 GB\nKey feature: While curated for SFT, the dataset also aims at improving on instruction following tasks.",
         "icon": "https://drive.google.com/file/d/1QhQuw1-tpEG9T0KzJjsiHQxxQqi9z9PZ/view?usp=drive_link",
         "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
-        "color": "#D2E534",
+        "color": "#ffd11e",
         "x": 0.0,
         "y": -0.05
       },
@@ -89,6 +94,50 @@
         "icon": "https://drive.google.com/file/d/1sLl9DeUWWHsMjK1OKogwRsNhreWKGmIm/view?usp=drive_link",
         "url": "https://huggingface.co/datasets/BAAI/Infinity-Instruct",
         "color": "#8940A8",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "TxT360",
+        "subname": "LLM360",
+        "bullets": ["Globally filters 99 Common Crawl snapshots", "Curated for LLM pretraining and data weighting"],
+        "description": "The first dataset to globally deduplicate 99 CommonCrawl snapshots and 14 commonly used non-web data sources, thereby offering scalable, high-quality data for pretraining performant models.",
+        "icon": "https://drive.google.com/file/d/1W8wA_cSri7E4Ecabf3C3O5Ozezfh8PI-/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/LLM360/TxT360",
+        "color": "#E95C00",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "FineVideo",
+        "subname": "HuggingFaceFV",
+        "bullets": ["Curated to fine-tune AI for video understanding tasks", "Focuses on of mood analysis and storytelling in multimodal settings"],
+        "description": "Focuses on capturing the emotional journey and narrative flow of videos, thereby giving researchers the ingredients to cook up more context-savvy video analysis models.",
+        "icon": "https://drive.google.com/file/d/1PlYICoY1Zx0lL8PTcdrj26B9W87vKS0c/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/HuggingFaceFV/finevideo",
+        "color": "#ffd11e",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "FineWeb-Edu",
+        "subname": "HuggingFaceFW",
+        "bullets": ["Contains educational web page data filtered from FineWeb", "Uses an educational classifier to retain high-quality data"],
+        "description": "A 1.3T-token dataset of educational web pages filtered from FineWeb.\nNumber of rows: 3,004,505,493\nSize of the auto-converted Parquet files: 8.84 TB\nKey feature: The dataset uses an AI-trained educational classifier to retain only the most educational web pages.",
+        "icon": "https://drive.google.com/file/d/1jzAp9yMt7GJlsg5z47fCGelwwdduS_R0/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu",
+        "color": "#ffd11e",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "PersonaHub",
+        "subname": "proj-persona",
+        "bullets": ["~1B personas curated from web data", "Used to synthesize reasoning tasks and game NPCs"],
+        "description": "Contains ~1B personas curated from web data, enabling synthetic data creation for tasks like reasoning, instructions, and game NPCs.\nNumber of rows: 375,000\nSize of the auto-converted Parquet files: 102 MB\nKey feature: Providing a large amount of personas allows for scalable, flexible, and easy to use data creation.",
+        "icon": "https://drive.google.com/file/d/1JIaHKDmDSRa6lqfWbDE1bPDph6QLdhXz/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/proj-persona/PersonaHub",
+        "color": "#48AB73",
         "x": 0.0,
         "y": -0.05
       }
