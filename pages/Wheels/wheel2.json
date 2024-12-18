@@ -47,6 +47,17 @@
         "color": "#C658C6",
         "x": 0.0,
         "y": -0.05
+      },
+      {
+        "name": "SmolTalkDataset",
+        "subname": "HuggingFaceTB",
+        "bullets": ["Designed for supervised finetuning (SFT) of LLMs", "Curated to strengthen model capabilities such as mathematics and coding"],
+        "description": "Synthetic dataset designed for supervised finetuning (SFT) of LLMs. It focuses on bridging the performance gap between models trained on SFT datasets and those trained on proprietary instruction datasets.\nNumber of rows: 2,197,730\nSize of the auto-converted Parquet files: 4.15 GB\nKey feature: While curated for SFT, the dataset also aims at improving on instruction following tasks.",
+        "icon": "https://drive.google.com/file/d/1QhQuw1-tpEG9T0KzJjsiHQxxQqi9z9PZ/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+        "color": "#D2E534",
+        "x": 0.0,
+        "y": -0.05
       }
     ]
   }
