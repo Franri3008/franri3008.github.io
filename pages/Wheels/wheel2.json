@@ -27,13 +27,24 @@
         "y": -0.05
       },
       {
-        "name": "arXiver ",
+        "name": "arXiver",
         "subname": "Neuralwork",
         "bullets": ["Curated for question-answering tasks", "Data is converted to highly readable (.mmd) format"],
         "description": "The largest open and permissible licensed text dataset, comprising over 2 trillion tokens (2,003,039,184,047 tokens). Contains a diverse set of sources such as books, newspapers, scientific articles, government and legal documents, code, and more.\nEstimated number of rows: 396,953,971\nSize of auto-converted Parquet files (First 5GB): 2.96 GB\nKey feature: Data is permissively licensed, meaning it can be used, modified, and redistributed without legal ambiguity or risk of infringement.",
         "icon": "https://drive.google.com/file/d/10OJ348DMNH3nd8yJBqyP44unwQPL-x9a/view?usp=drive_link",
-        "url": "https://huggingface.co/datasets/PleIAs/common_corpus",
+        "url": "https://huggingface.co/datasets/neuralwork/arxiver",
         "color": "#2FAD3B",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "Common Corpus",
+        "subname": "PleIAs",
+        "bullets": ["Permissible licensed text dataset", "Contains a diverse set of sources (books, newspapers, scientific articles)"],
+        "description": "The largest open and permissible licensed text dataset, comprising over 2 trillion tokens (2,003,039,184,047 tokens). Contains a diverse set of sources such as books, newspapers, scientific articles, government and legal documents, code, and more.\nEstimated number of rows: 396,953,971\nSize of auto-converted Parquet files (First 5GB): 2.96 GB\nKey feature: Data is permissively licensed, meaning it can be used, modified, and redistributed without legal ambiguity or risk of infringement.",
+        "icon": "https://drive.google.com/file/d/10OJ348DMNH3nd8yJBqyP44unwQPL-x9a/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/PleIAs/common_corpus",
+        "color": "#C658C6",
         "x": 0.0,
         "y": -0.05
       }
