@@ -69,6 +69,28 @@
         "color": "#323185",
         "x": 0.0,
         "y": -0.05
+      },
+      {
+        "name": "FinePersonas",
+        "subname": "Argilla",
+        "bullets": ["Provides unique persona traits for synthetic outputs", "Enhances the diversity and specificity of synthetic outputs"],
+        "description": "Allows AI researchers and engineers to easily integrate unique persona traits into text generation systems, thereby enhancing the diversity and specificity of synthetic outputs without the complexity of crafting detailed attributes from scratch.\nNumber of rows: 42,142,456\nSize of the auto-converted Parquet files: 143 GB\nKey feature: Focus on providing personas with specific expertise, career paths, or personal interestswhich allow for more nuanced and targeted content.",
+        "icon": "https://drive.google.com/file/d/1v9ugBO_oJzcEJSViQXv2EBX0W36c9a5Z/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/argilla/FinePersonas-v0.1",
+        "color": "#EB321B",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "Infinity Instruct",
+        "subname": "Beijing Academy of Artificial Intelligence (BAAI)",
+        "bullets": ["Large-scale instruction dataset", "Curated to advance open-source model fine-tuning"],
+        "description": "A high quality, scalable instruction dataset designed to advance open-source model fine-tuning and research.\nNumber of rows: 7,449,106",
+        "icon": "https://drive.google.com/file/d/1sLl9DeUWWHsMjK1OKogwRsNhreWKGmIm/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/BAAI/Infinity-Instruct",
+        "color": "#8940A8",
+        "x": 0.0,
+        "y": -0.05
       }
     ]
   }
