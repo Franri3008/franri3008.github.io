@@ -58,6 +58,17 @@
         "color": "#D2E534",
         "x": 0.0,
         "y": -0.05
+      },
+      {
+        "name": "Multilingual Massive Multitask Language Understanding (MMMLU)",
+        "subname": "OpenAI",
+        "bullets": ["Covers 57 topics from physics to history", "Test set translated into 14 languages using professional human translators"],
+        "description": "Benchmark dataset for assessing the general knowledge and reasoning skills of AI models. It covers 57 topics from physics to history, and its test set is translated into 14 languages by professional translators to improve multilingual AI performance and accuracy.\nNumber of rows: 393,176\nSize of the auto-converted Parquet files: 124 MB\nKey feature: Aiming to improve the multilingual capabilities of AI models, ensuring they perform accurately across languages, particularly for underrepresented communities.",
+        "icon": "https://drive.google.com/file/d/1pRcIEe8BgZlbig7SmB9dXeOioXlzC5IF/view?usp=drive_link",
+        "url": "https://huggingface.co/datasets/openai/MMMLU",
+        "color": "#323185",
+        "x": 0.0,
+        "y": -0.05
       }
     ]
   }
