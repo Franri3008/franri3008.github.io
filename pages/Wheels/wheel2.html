@@ -58,6 +58,8 @@
             visibility: hidden;
             z-index: 2000;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 300px;
         }
     </style>
 </head>
@@ -140,7 +142,7 @@
             const allSmallCircles = [];
             const allIcons = [];
 
-            // Special icons configuration
+            // Place icons (no color filter)
             const specialIcons = [
                 "Icons/first_place.svg",
                 "Icons/second_place.svg",
@@ -148,14 +150,6 @@
                 "Icons/fourth_place.svg",
                 "Icons/fifth_place.svg"
             ];
-            // Colors: gold, silver, bronze, gray, gray
-            const specialColorsFilters = {
-                "gold": "brightness(0) invert(1) sepia(1) saturate(10000%) hue-rotate(45deg)",
-                "silver": "brightness(0) invert(1) grayscale(100%) brightness(1.2)",
-                "bronze": "brightness(0) invert(1) sepia(1) saturate(500%) hue-rotate(20deg)",
-                "gray": "brightness(0) invert(1) grayscale(100%)"
-            };
-            const specialColors = ["gold", "silver", "bronze", "gray", "gray"];
 
             function showTooltip(desc, evt, isRightSide) {
                 if (!desc || desc.trim() === '') return;
@@ -166,10 +160,10 @@
                 const mouseY = evt.pageY;
                 tooltip.style.top = (mouseY + 10) + 'px';
 
+                // If right side, show to the left
                 if (isRightSide) {
-                    tooltip.style.left = '-9999px';
-                    const tipWidth = tooltip.offsetWidth;
-                    let leftPos = mouseX - tipWidth - 10;
+                    let leftPos = mouseX - tooltip.offsetWidth - 10;
+                    // If goes beyond left bound, leftPos could be negative, set to 0:
                     if (leftPos < 0) {
                         leftPos = 0;
                     }
@@ -198,7 +192,6 @@
                 const x = centerX + circleRadius * Math.cos(angle);
                 const y = centerY + circleRadius * Math.sin(angle);
 
-                // Calculate text position now so we can place the place icon first
                 const textOffset = 80;
                 const textDistance = circleRadius + smallRadius + textOffset;
                 const adjustedX = (items[i].x || 0) * circleRadius;
@@ -215,31 +208,16 @@
                 const subtitleFontSize = mainTextFontSize * 0.8; 
                 const bulletsFontSize = smallRadius * 0.35;
 
-                // Create fullGroup for this circle
                 const fullGroup = document.createElementNS(NS, 'g');
                 fullGroup.setAttribute('class', 'full-group');
                 fullGroup.setAttribute('data-index', i);
                 svg.appendChild(fullGroup);
 
-                // Draw place icon first if i < topN and i < 5 (behind everything)
+                // Place icon if topN
                 if (i < topN && i < 5) {
                     const placeIconHref = specialIcons[i];
-                    const placeColor = specialColors[i]; 
-                    const placeFilter = specialColorsFilters[placeColor];
-                    const largeIconSize = mainTextFontSize * 10; 
-                    // mainTextFontSize is small, let's pick a suitable size:
-                    // The user said x3 size from what? 
-                    // Initially we used iconSize * 3. Let's re-derive:
-                    // Previously, largeIcon was iconSize * 3 where iconSize = smallRadius * 1.2
-                    // For consistency, let's just pick a similar approach:
-                    // The text is small. Let's revert to how we did it before:
-                    // The user wants the icon at the main text position. 
-                    // Originally largeIconSize = iconSize * 3
-                    // iconSize = smallRadius * 1.2
-                    // Let's keep that logic:
                     const iconSize = smallRadius * 1.2;
                     const largeIconSizeFinal = iconSize * 3; 
-
                     const placeIcon = document.createElementNS(NS, 'image');
                     placeIcon.setAttribute('href', placeIconHref);
                     placeIcon.setAttribute('x', textX - largeIconSizeFinal / 2);
@@ -247,13 +225,9 @@
                     placeIcon.setAttribute('width', largeIconSizeFinal);
                     placeIcon.setAttribute('height', largeIconSizeFinal);
                     placeIcon.setAttribute('opacity', '0.5');
-                    placeIcon.setAttribute('style', `filter: ${placeFilter};`);
-
-                    // Append first so it's behind everything else in fullGroup
                     fullGroup.appendChild(placeIcon);
                 }
 
-                // Now create line and circleGroup
                 const line = document.createElementNS(NS, 'line');
                 line.setAttribute('x1', centerX);
                 line.setAttribute('y1', centerY);
@@ -310,7 +284,6 @@
                 circleGroup.appendChild(icon);
                 allIcons.push(icon);
 
-                // Now append texts after circleGroup (so text is on top)
                 const mainText = document.createElementNS(NS, 'text');
                 mainText.setAttribute('class', 'main-text');
                 mainText.setAttribute('x', textX);
@@ -370,7 +343,14 @@
                     allSubtexts.push(subtextGroup);
                 }
 
+                const originalStrokeWidth = 1;
+
                 const onHover = (evt) => {
+                    // Only trigger hover if the target is the circle or the icon or the line
+                    if (evt.target !== smallCircleElement && evt.target !== icon && evt.target !== circleGroup && evt.target !== line) {
+                        return;
+                    }
+
                     const dx = x - centerX;
                     const dy = y - centerY;
                     const translateX = -dx * (hoverScaleFactor - 1);
@@ -379,12 +359,12 @@
                     centralCircle.setAttribute('fill', circleColor);
                     centralCircle.setAttribute('stroke', 'none');
                     centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${circleColor});`);
-                    const hoverStrokeWidth = 1 * 20;
+                    const hoverStrokeWidth = originalStrokeWidth * 20;
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', circleColor);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
 
-                    // Make others transparent
+                    // Make others transparent except the hovered main text
                     allMainTexts.forEach((t) => {
                         if (t !== mainText) t.style.opacity = '0.4';
                     });
@@ -410,7 +390,7 @@
                     centralCircle.setAttribute('fill', '#FFFFFF');
                     centralCircle.setAttribute('stroke', '#000000'); 
                     centralCircle.removeAttribute('style');
-                    circleGroup.lineElement.setAttribute('stroke-width', '1');
+                    circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
 
@@ -426,16 +406,17 @@
                     hideTooltip();
                 };
 
-                fullGroup.addEventListener('mouseenter', onHover);
-                fullGroup.addEventListener('mouseleave', onLeave);
+                // Hover only on circleGroup
+                circleGroup.addEventListener('mouseenter', onHover);
+                circleGroup.addEventListener('mouseleave', onLeave);
 
                 if (items[i].url) {
                     const openLink = () => {
                         window.open(items[i].url, '_blank');
                     };
                     smallCircleElement.addEventListener('click', openLink);
-                    mainText.addEventListener('click', openLink);
                     icon.addEventListener('click', openLink);
+                    mainText.addEventListener('click', openLink);
                 }
             }
         });

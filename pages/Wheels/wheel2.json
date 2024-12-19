@@ -9,7 +9,7 @@
       "smallCircleSize": 0.14,
       "icon_transform": "None",
       "top": 0,
-      "size_increase": 1.5
+      "size_increase": 1.32
     },
     "items": [
       {
@@ -21,7 +21,7 @@
         "url": "https://huggingface.co/datasets/microsoft/orca-agentinstruct-1M-v1",
         "color": "#5086BC",
         "x": 0.0,
-        "y": -0.13
+        "y": -0.23
       },
       {
         "name": "arXiver",
@@ -31,8 +31,8 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6329b0cabdb6242b42b8cd63/7T7rS_-BL7wLWMDiCZgs7.png",
         "url": "https://huggingface.co/datasets/neuralwork/arxiver",
         "color": "#2FAD3B",
-        "x": 0.0,
-        "y": -0.05
+        "x": 0.03,
+        "y": -0.03
       },
       {
         "name": "Common Corpus",
@@ -42,8 +42,8 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/64ce091a9e9ca8123d7a42b0/vCajdXlzRs0zAU-b_KJ_G.png",
         "url": "https://huggingface.co/datasets/PleIAs/common_corpus",
         "color": "#0221b9",
-        "x": 0.0,
-        "y": -0.05
+        "x": 0.05,
+        "y": 0.04
       },
       {
         "name": "SmolTalkDataset",
@@ -54,7 +54,7 @@
         "url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
         "color": "#ffd11e",
         "x": 0.0,
-        "y": -0.05
+        "y": 0.03
       },
       {
         "name": "MMMLU",
@@ -65,7 +65,7 @@
         "url": "https://huggingface.co/datasets/openai/MMMLU",
         "color": "#323185",
         "x": 0.0,
-        "y": -0.05
+        "y": 0.0
       },
       {
         "name": "FinePersonas",
@@ -76,7 +76,7 @@
         "url": "https://huggingface.co/datasets/argilla/FinePersonas-v0.1",
         "color": "#EB321B",
         "x": 0.0,
-        "y": -0.05
+        "y": -0.07
       },
       {
         "name": "Infinity Instruct",
@@ -87,7 +87,7 @@
         "url": "https://huggingface.co/datasets/BAAI/Infinity-Instruct",
         "color": "#8940A8",
         "x": 0.0,
-        "y": -0.05
+        "y": -0.12
       },
       {
         "name": "TxT360",
