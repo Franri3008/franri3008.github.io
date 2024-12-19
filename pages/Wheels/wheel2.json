@@ -209,6 +209,17 @@
         "y": -0.05
       },
       {
+        "name": "OpenO1-SFT",
+        "subname": "O1-OPEN",
+        "bullets": ["Designed for fine-tuning language models", "Focuses on natural language understanding and question answering"],
+        "description": "",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/65d2251f98b4a470bf6a26e3/4yeCUW8LBIlAP_gD19i0k.jpeg",
+        "url": "",
+        "color": "#6BC1C4",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
         "name": "Cosmopedia",
         "subname": "HuggingFaceTB",
         "bullets": ["Dataset containing synthetic textbooks, blogs, and stories", "25B tokens"],
