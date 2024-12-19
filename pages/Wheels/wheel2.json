@@ -127,7 +127,7 @@
         "subname": "proj-persona",
         "bullets": ["Collection of synthetic personas curated from web data", "Curated for tasks like creative storytelling or game NPC design"],
         "description": "Contains ~1B personas curated from web data, enabling synthetic data creation for tasks like reasoning, instructions, and game NPCs.\nNumber of rows: 375,000\nSize of the auto-converted Parquet files: 102 MB\nKey feature: Providing a large amount of personas allows for scalable, flexible, and easy to use data creation.",
-        "icon": "",
+        "icon": "https://huggingface.co/avatars/74566faa9b26f5852c29d1eff65383dc.svg",
         "url": "https://huggingface.co/datasets/proj-persona/PersonaHub",
         "color": "#48AB73",
         "x": 0.0,
