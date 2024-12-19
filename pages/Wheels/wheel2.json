@@ -112,7 +112,7 @@
       {
         "name": "FineWeb-Edu",
         "subname": "HuggingFaceFW",
-        "bullets": ["Contains educational web page data filtered from FineWeb", "Uses an educational classifier to retain high-quality data"],
+        "bullets": ["Collection of high-quality educational web content, filtered from FineWeb", "Data is filtered with an educational classifier for high-quality data"],
         "description": "A 1.3T-token dataset of educational web pages filtered from FineWeb.\nNumber of rows: 3,004,505,493\nSize of the auto-converted Parquet files: 8.84 TB\nKey feature: The dataset uses an AI-trained educational classifier to retain only the most educational web pages.",
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu",
@@ -123,7 +123,7 @@
       {
         "name": "PersonaHub",
         "subname": "proj-persona",
-        "bullets": ["~1B personas curated from web data", "Used to synthesize reasoning tasks and game NPCs"],
+        "bullets": ["Collection of synthetic personas curated from web data", "Curated for tasks like creative storytelling or game NPC design"],
         "description": "Contains ~1B personas curated from web data, enabling synthetic data creation for tasks like reasoning, instructions, and game NPCs.\nNumber of rows: 375,000\nSize of the auto-converted Parquet files: 102 MB\nKey feature: Providing a large amount of personas allows for scalable, flexible, and easy to use data creation.",
         "icon": "",
         "url": "https://huggingface.co/datasets/proj-persona/PersonaHub",
@@ -134,7 +134,7 @@
       {
         "name": "reasoning-base-20k",
         "subname": "KingNish",
-        "bullets": ["Designed to train reasoning models", "Number of rows: 19,944"],
+        "bullets": ["Designed to train reasoning models", "Problems are formatted with Chain of Thought explanation"],
         "description": "A dataset designed to train reasoning models to think through complex problems with detailed chains of thought and answers, for refined, human-like reasoning.\nNumber of rows: 19,944\nSize of the auto-converted Parquet files: 118 MB\nKey feature: Focus on complex reasoning problems presented in a Chain of Thought (CoT) format. ",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6612aedf09f16e7347dfa7e1/bPYjBXCedY_1fSIPjoBTY.jpeg",
         "url": "https://huggingface.co/datasets/KingNish/reasoning-base-20k",
@@ -145,7 +145,7 @@
       {
         "name": "xlam-function-calling-60k",
         "subname": "Salesforce",
-        "bullets": ["Verified data for function-calling applications", "95% correctness rate "],
+        "bullets": ["Verified data for function-calling applications", "Ensures a 95% correctness rate "],
         "description": "Provides high-quality, verified data for function-calling applications, with a 95% correctness rate ensured through rigorous hierarchical verification.\nKey feature: Data is verified at three hierarchical levels: Format verification, actual function execution and semantic verification, ensuring its reliability and correctness.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1602756670970-noauth.jpeg",
         "url": "https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k",
