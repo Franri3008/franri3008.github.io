@@ -188,12 +188,23 @@
       },
       {
         "name": "FineWeb 2",
-        "subname": "HuggingFace FW",
+        "subname": "HuggingFaceFW",
         "bullets": ["Built from CommonCrawl snapshots", "Curated to remove duplicates and low-quality content"],
         "description": "",
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2",
         "color": "#ffd11e",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "two-million-bluesky-posts",
+        "subname": "Alpin Dale",
+        "bullets": ["2 million public posts collected from Bluesky Social's firehose API", "Designed for studying social media behavior, natural language processing and online communication trends"],
+        "description": "",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/635567189c72a7e742f1419c/tbfBz0furS-y4ISgoe6j0.jpeg",
+        "url": "",
+        "color": "#FF4CF3",
         "x": 0.0,
         "y": -0.05
       },
