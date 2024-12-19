@@ -194,7 +194,7 @@
         "bullets": ["2 million public posts collected from Bluesky Social's firehose API", "Designed for studying social media behavior, natural language processing and online communication trends"],
         "description": "2 Million Bluesky Posts\nNumber of rows: 2,107,530\nSize of the auto-converted Parquet files: 380 MB\nKey feature: With 2 million posts from Bluesky, this large-scale social media dataset offers rich insights into social media language and trends",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/635567189c72a7e742f1419c/tbfBz0furS-y4ISgoe6j0.jpeg",
-        "url": "",
+        "url": "https://huggingface.co/datasets/alpindale/two-million-bluesky-posts",
         "color": "#FF4CF3",
         "x": 0.0,
         "y": 0.02

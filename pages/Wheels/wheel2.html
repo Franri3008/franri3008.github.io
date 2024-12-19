@@ -142,7 +142,6 @@
             const allSmallCircles = [];
             const allIcons = [];
 
-            // Place icons (no color filter)
             const specialIcons = [
                 "Icons/first_place.svg",
                 "Icons/second_place.svg",
@@ -160,10 +159,8 @@
                 const mouseY = evt.pageY;
                 tooltip.style.top = (mouseY + 10) + 'px';
 
-                // If right side, show to the left
                 if (isRightSide) {
                     let leftPos = mouseX - tooltip.offsetWidth - 10;
-                    // If goes beyond left bound, leftPos could be negative, set to 0:
                     if (leftPos < 0) {
                         leftPos = 0;
                     }
@@ -213,7 +210,6 @@
                 fullGroup.setAttribute('data-index', i);
                 svg.appendChild(fullGroup);
 
-                // Place icon if topN
                 if (i < topN && i < 5) {
                     const placeIconHref = specialIcons[i];
                     const iconSize = smallRadius * 1.2;
@@ -346,7 +342,6 @@
                 const originalStrokeWidth = 1;
 
                 const onHover = (evt) => {
-                    // Only trigger hover if the target is the circle or the icon or the line
                     if (evt.target !== smallCircleElement && evt.target !== icon && evt.target !== circleGroup && evt.target !== line) {
                         return;
                     }
@@ -364,7 +359,6 @@
                     circleGroup.lineElement.setAttribute('stroke', circleColor);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
 
-                    // Make others transparent except the hovered main text
                     allMainTexts.forEach((t) => {
                         if (t !== mainText) t.style.opacity = '0.4';
                     });
@@ -394,7 +388,6 @@
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
 
-                    // Restore opacity
                     allMainTexts.forEach((t) => { t.style.opacity = '1'; });
                     allSubtexts.forEach((sub) => { sub.style.opacity = '1'; });
                     allSmallCircles.forEach((c) => { c.style.opacity = '1'; });
@@ -406,7 +399,6 @@
                     hideTooltip();
                 };
 
-                // Hover only on circleGroup
                 circleGroup.addEventListener('mouseenter', onHover);
                 circleGroup.addEventListener('mouseleave', onLeave);
 
