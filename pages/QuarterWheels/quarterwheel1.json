@@ -6,7 +6,7 @@
       "nameSizeFactor": 0.20,
       "subnameSizeFactor": 1.65,
       "centralCircleSize": 0.40,
-      "smallCircleSize": 0.14,
+      "smallCircleSize": 0.10,
       "icon_transform": "None",
       "top": 0,
       "size_increase": 1.32
@@ -87,7 +87,7 @@
         "url": "https://huggingface.co/datasets/BAAI/Infinity-Instruct",
         "color": "#8940A8",
         "x": 0.0,
-        "y": -0.16
+        "y": -0.12
       },
       {
         "name": "TxT360",
@@ -98,7 +98,7 @@
         "url": "https://huggingface.co/datasets/LLM360/TxT360",
         "color": "#E95C00",
         "x": 0.05,
-        "y": -0.18
+        "y": -0.05
       },
       {
         "name": "FineVideo",
@@ -108,8 +108,8 @@
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFV/finevideo",
         "color": "#ffd11e",
-        "x": 0.08,
-        "y": -0.18
+        "x": -0.08,
+        "y": -0.05
       },
       {
         "name": "FineWeb-Edu",
@@ -119,8 +119,8 @@
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu",
         "color": "#ffd11e",
-        "x": 0.12,
-        "y": -0.08
+        "x": 0.08,
+        "y": -0.05
       },
       {
         "name": "PersonaHub",
@@ -130,8 +130,8 @@
         "icon": "",
         "url": "https://huggingface.co/datasets/proj-persona/PersonaHub",
         "color": "#48AB73",
-        "x": 0.0,
-        "y": 0.0
+        "x": -0.08,
+        "y": -0.05
       },
       {
         "name": "reasoning-base-20k",
@@ -141,8 +141,8 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6612aedf09f16e7347dfa7e1/bPYjBXCedY_1fSIPjoBTY.jpeg",
         "url": "https://huggingface.co/datasets/KingNish/reasoning-base-20k",
         "color": "#EA4A7D",
-        "x": -0.1,
-        "y": -0.1
+        "x": 0.0,
+        "y": -0.05
       },
       {
         "name": "xlam-function-calling-60k",
@@ -152,8 +152,8 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1602756670970-noauth.jpeg",
         "url": "https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k",
         "color": "#6182C4",
-        "x": -0.05,
-        "y": -0.2
+        "x": 0.0,
+        "y": -0.05
       },
       {
         "name": "FRAMES",
@@ -164,7 +164,7 @@
         "url": "https://huggingface.co/datasets/google/frames-benchmark",
         "color": "#70A1D1",
         "x": 0.0,
-        "y": -0.2
+        "y": -0.05
       },
       {
         "name": "HelpSteer2",
@@ -175,7 +175,7 @@
         "url": "https://huggingface.co/datasets/nvidia/HelpSteer2",
         "color": "#2fad3b",
         "x": 0.0,
-        "y": -0.14
+        "y": -0.05
       },
       {
         "name": "FineWeb 2",
@@ -197,7 +197,7 @@
         "url": "",
         "color": "#FF4CF3",
         "x": 0.0,
-        "y": 0.02
+        "y": -0.05
       },
       {
         "name": "OpenO1-SFT",
@@ -208,29 +208,29 @@
         "url": "",
         "color": "#6BC1C4",
         "x": 0.0,
-        "y": 0.05
+        "y": -0.05
       },
       {
-        "name": "5CD-AILLaVA-CoT-o1-Instruct",
-        "subname": "5CD-AI",
-        "bullets": [""],
-        "description": "Focuses on training models to generate step-by-step reasoning processes, enhancing their ability to handle complex, multi-step tasks.",
+        "name": "Global-MMLU",
+        "subname": "CohereForAI",
+        "bullets": ["A multilingual evaluation set spanning 42 languages", "Curated for assessing the performance of AI models on understanding and reasoning"],
+        "description": "Key feature: Addressing cultural biases in multilingual benchmarks by identifying and mitigating cultural biases, ensuring more accurate and fair evaluations across 42 languages.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1678549441248-5e70f6048ce3c604d78fe133.png",
-        "url": "https://huggingface.co/datasets/5CD-AI/LLaVA-CoT-o1-Instruct",
+        "url": "https://huggingface.co/datasets/CohereForAI/Global-MMLU",
         "color": "#323185",
         "x": 0.0,
-        "y": 0.1
+        "y": -0.05
       },
       {
         "name": "Cosmopedia",
         "subname": "HuggingFaceTB",
         "bullets": ["Designed for training LMs on tasks like summarization and educational content generation", "Includes textbooks, blog posts and WikiHow articles"],
         "description": "A 25B-token synthetic dataset of textbooks, blogs, and stories, mapping world knowledge from web datasets like RefinedWeb for research in synthetic data.",
-        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6336b5c831efcb5647f00170/Dj0MUGFuRKcRbzGwB8cVE.png",
+        "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceTB/cosmopedia",
         "color": "#ffd11e",
-        "x": -0.05,
-        "y": -0.02
+        "x": 0.0,
+        "y": -0.05
       }
     ]
   }
