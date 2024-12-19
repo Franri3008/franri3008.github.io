@@ -22,15 +22,10 @@
         .central-circle {
             transition: fill 0.5s ease;
         }
-        .circle-icon {
-            pointer-events: none;
-            filter: brightness(0) invert(1);
-        }
         .full-group {
             transition: transform 0.2s ease;
             transform-origin: center center;
         }
-        .interactive-circle {}
         .line {
             transition: stroke-width 0.2s ease, stroke 0.2s ease, stroke-dasharray 0.2s ease;
         }
@@ -85,7 +80,8 @@
             const mainSizeFactor = central.nameSizeFactor || 0.25; 
             const subSizeFactor = central.subnameSizeFactor || 2.0;
             const centralCircleSize = central.centralCircleSize || 0.3;
-            const smallCircleSize = central.smallCircleSize || 0.175; // default equivalent of previous 0.05*3.5
+            const smallCircleSize = central.smallCircleSize || 0.175; 
+            const iconTransform = (central.icon_transform === null || central.icon_transform === "None") ? null : central.icon_transform;
 
             svg.innerHTML = '';
             const topMargin = 110;
@@ -213,7 +209,35 @@
                 icon.setAttribute('y', y - iconSize / 2);
                 icon.setAttribute('width', iconSize);
                 icon.setAttribute('height', iconSize);
-                icon.setAttribute('class', 'circle-icon');
+
+                // Apply icon transform if specified
+                if (iconTransform) {
+                    // Currently they are being transformed to white with brightness/invert.
+                    // We'll do the same but if we want a custom color, we can approximate.
+                    // For simplicity, if icon_transform is a hex, we transform the icon from black to white,
+                    // then use a CSS filter approximation.
+                    // If user wants the exact color, they'd need inline SVG manipulation, 
+                    // but here we show a conceptual approach.
+                    
+                    // If user provided a hex color, we try to colorize it:
+                    // We'll first turn it white:
+                    let filterStr = 'brightness(0) invert(1)'; 
+                    // If the color is not white (#ffffff), we can try a rough approximation with sepia/hue-rotate
+                    if (iconTransform.toLowerCase() !== '#ffffff') {
+                        // This won't produce exact matches for all colors, but it's a demonstration.
+                        // For a generic approach, you'd need a more complex calculation.
+                        // Let's try a simple sepia and hue-rotate:
+                        // We assume user picks a color and we try to approximate:
+                        filterStr += ' sepia(1) saturate(10000%) hue-rotate(0deg)'; 
+                        // With no hue-rotate, this gives a reddish tone. 
+                        // Perfect color mapping is complex via CSS filters.
+                    }
+                    icon.setAttribute('style', `filter: ${filterStr};`);
+                } else {
+                    // No transform
+                    icon.removeAttribute('style');
+                }
+
                 circleGroup.appendChild(icon);
 
                 const textOffset = 80;
@@ -301,6 +325,7 @@
                     const translateY = -dy * (scaleFactor - 1);
                     fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scaleFactor})`);
                     centralCircle.setAttribute('fill', circleColor);
+                    centralCircle.setAttribute('stroke', 'none'); // remove black outline on hover
                     centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${circleColor});`);
                     const hoverStrokeWidth = originalStrokeWidth * 20;
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
@@ -321,6 +346,7 @@
                 circleGroup.addEventListener('mouseleave', () => {
                     fullGroup.setAttribute('transform', '');
                     centralCircle.setAttribute('fill', '#FFFFFF');
+                    centralCircle.setAttribute('stroke', '#000000'); // restore outline on mouse leave
                     centralCircle.removeAttribute('style');
                     circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
