@@ -6,7 +6,7 @@
       "nameSizeFactor": 0.20,
       "subnameSizeFactor": 1.65,
       "centralCircleSize": 0.40,
-      "smallCircleSize": 0.135,
+      "smallCircleSize": 0.14,
       "icon_transform": "None"
     },
     "items": [
@@ -19,7 +19,7 @@
         "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb",
         "color": "#FFD21E",
         "x": 0.0,
-        "y": -0.15
+        "y": -0.255
       },
       {
         "name": "orca-agentinstruct-1M-v1",
@@ -30,7 +30,7 @@
         "url": "https://huggingface.co/datasets/microsoft/orca-agentinstruct-1M-v1",
         "color": "#5086BC",
         "x": 0.0,
-        "y": -0.05
+        "y": -0.13
       },
       {
         "name": "arXiver",
@@ -106,7 +106,7 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/644bf65522d211df6444a7f4/7B9Y9bkBn6K1NDwlZH3dx.png",
         "url": "https://huggingface.co/datasets/LLM360/TxT360",
         "color": "#E95C00",
-        "x": 0.0,
+        "x": 0.05,
         "y": -0.05
       },
       {
@@ -117,7 +117,7 @@
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFV/finevideo",
         "color": "#ffd11e",
-        "x": 0.0,
+        "x": -0.08,
         "y": -0.05
       },
       {
@@ -128,7 +128,7 @@
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu",
         "color": "#ffd11e",
-        "x": 0.0,
+        "x": 0.08,
         "y": -0.05
       },
       {
@@ -139,7 +139,7 @@
         "icon": "https://drive.google.com/file/d/1JIaHKDmDSRa6lqfWbDE1bPDph6QLdhXz/view?usp=drive_link",
         "url": "https://huggingface.co/datasets/proj-persona/PersonaHub",
         "color": "#48AB73",
-        "x": 0.0,
+        "x": -0.08,
         "y": -0.05
       },
       {
@@ -147,7 +147,7 @@
         "subname": "KingNish",
         "bullets": ["Designed to train reasoning models", "Number of rows: 19,944"],
         "description": "A dataset designed to train reasoning models to think through complex problems with detailed chains of thought and answers, for refined, human-like reasoning.\nNumber of rows: 19,944\nSize of the auto-converted Parquet files: 118 MB\nKey feature: Focus on complex reasoning problems presented in a Chain of Thought (CoT) format. ",
-        "icon": "https://drive.google.com/file/d/1XFQoBzYrZer31S3icqZdhDVttz9j9yvP/view?usp=drive_link",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6612aedf09f16e7347dfa7e1/bPYjBXCedY_1fSIPjoBTY.jpeg",
         "url": "https://huggingface.co/datasets/KingNish/reasoning-base-20k",
         "color": "#EA4A7D",
         "x": 0.0,
@@ -158,7 +158,7 @@
         "subname": "Salesforce",
         "bullets": ["Verified data for function-calling applications", "95% correctness rate "],
         "description": "Provides high-quality, verified data for function-calling applications, with a 95% correctness rate ensured through rigorous hierarchical verification.\nKey feature: Data is verified at three hierarchical levels: Format verification, actual function execution and semantic verification, ensuring its reliability and correctness.",
-        "icon": "https://drive.google.com/file/d/1atbEeWkO0ANarKopnwd6s3Uf1mggkQ3h/view?usp=drive_link",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1602756670970-noauth.jpeg",
         "url": "https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k",
         "color": "#6182C4",
         "x": 0.0,
@@ -172,6 +172,50 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/WtA3YYitedOr9n02eHfJe.png",
         "url": "https://huggingface.co/datasets/google/frames-benchmark",
         "color": "#70A1D1",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "HelpSteer2",
+        "subname": "Nvidia",
+        "bullets": ["Supports models to become more factually correct and coherent"],
+        "description": "An open-source Helpfulness Dataset (CC-BY-4.0) that supports aligning models to become more helpful, factually correct and coherent, while being adjustable in terms of the complexity and verbosity of its responses.",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1613114437487-60262a8e0703121c822a80b6.png",
+        "url": "https://huggingface.co/datasets/nvidia/HelpSteer2",
+        "color": "#2fad3b",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "Cosmopedia",
+        "subname": "HuggingFaceTB",
+        "bullets": ["Dataset containing synthetic textbooks, blogs, and stories", "25B tokens"],
+        "description": "A 25B-token synthetic dataset of textbooks, blogs, and stories, mapping world knowledge from web datasets like RefinedWeb for research in synthetic data.",
+        "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+        "url": "https://huggingface.co/datasets/HuggingFaceTB/cosmopedia",
+        "color": "#ffd11e",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "Hermes Function-Calling V1 ",
+        "subname": "NousResearch",
+        "bullets": ["Designed to train LLM models in performing function calls ", "Number of rows: 11,578"],
+        "description": "A dataset of structured outputs and function-calling conversations, enabling LLMs to perform and return structured outputs from natural language instructions.",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6317aade83d8d2fd903192d9/tPLjYEeP6q1w0j_G2TJG_.png",
+        "url": "https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1",
+        "color": "#0221b9",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "reasoning-0.01",
+        "subname": "SkunkworksAI",
+        "bullets": ["Synthetic dataset of reasoning chains"],
+        "description": "Synthetic dataset of reasoning chains for a wide variety of tasks.",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/64b7e345f92b20f7a38bf47a/wz-kRIjZ02vPTaBrrjQAd.png",
+        "url": "https://huggingface.co/datasets/SkunkworksAI/reasoning-0.01",
+        "color": "#48ab73",
         "x": 0.0,
         "y": -0.05
       }
