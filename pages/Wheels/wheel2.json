@@ -6,7 +6,7 @@
       "nameSizeFactor": 0.20,
       "subnameSizeFactor": 1.65,
       "centralCircleSize": 0.40,
-      "smallCircleSize": 0.12,
+      "smallCircleSize": 0.10,
       "icon_transform": "None"
     },
     "items": [
@@ -136,7 +136,7 @@
         "subname": "proj-persona",
         "bullets": ["~1B personas curated from web data", "Used to synthesize reasoning tasks and game NPCs"],
         "description": "Contains ~1B personas curated from web data, enabling synthetic data creation for tasks like reasoning, instructions, and game NPCs.\nNumber of rows: 375,000\nSize of the auto-converted Parquet files: 102 MB\nKey feature: Providing a large amount of personas allows for scalable, flexible, and easy to use data creation.",
-        "icon": "https://drive.google.com/file/d/1JIaHKDmDSRa6lqfWbDE1bPDph6QLdhXz/view?usp=drive_link",
+        "icon": "",
         "url": "https://huggingface.co/datasets/proj-persona/PersonaHub",
         "color": "#48AB73",
         "x": -0.08,
@@ -220,9 +220,20 @@
         "y": -0.05
       },
       {
+        "name": "Global-MMLU",
+        "subname": "CohereForAI",
+        "bullets": ["A multilingual evaluation set spanning 42 languages", "Curated for assessing the performance of AI models on understanding and reasoning"],
+        "description": "",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1678549441248-5e70f6048ce3c604d78fe133.png",
+        "url": "https://huggingface.co/datasets/CohereForAI/Global-MMLU",
+        "color": "#323185",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
         "name": "Cosmopedia",
         "subname": "HuggingFaceTB",
-        "bullets": ["Dataset containing synthetic textbooks, blogs, and stories", "25B tokens"],
+        "bullets": ["Designed for training LMs on tasks like summarization and educational content generation", "Includes textbooks, blog posts and WikiHow articles"],
         "description": "A 25B-token synthetic dataset of textbooks, blogs, and stories, mapping world knowledge from web datasets like RefinedWeb for research in synthetic data.",
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceTB/cosmopedia",
@@ -233,7 +244,7 @@
       {
         "name": "Hermes Function-Calling V1 ",
         "subname": "NousResearch",
-        "bullets": ["Designed to train LLM models in performing function calls ", "Number of rows: 11,578"],
+        "bullets": ["Trains LLMs to return structured output based on natural language instructions", "Training areas include API usage, automated workflows, and complex system integration"],
         "description": "A dataset of structured outputs and function-calling conversations, enabling LLMs to perform and return structured outputs from natural language instructions.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/6317aade83d8d2fd903192d9/tPLjYEeP6q1w0j_G2TJG_.png",
         "url": "https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1",
@@ -244,11 +255,22 @@
       {
         "name": "reasoning-0.01",
         "subname": "SkunkworksAI",
-        "bullets": ["Synthetic dataset of reasoning chains"],
+        "bullets": ["Designed to train reasoning and problem-solving capabilities in LLMs", "Contains step-by-step solutions in CoT format"],
         "description": "Synthetic dataset of reasoning chains for a wide variety of tasks.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/64b7e345f92b20f7a38bf47a/wz-kRIjZ02vPTaBrrjQAd.png",
         "url": "https://huggingface.co/datasets/SkunkworksAI/reasoning-0.01",
         "color": "#48ab73",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "SmolLM-Corpus ",
+        "subname": "HuggingFaceTB",
+        "bullets": ["Collection of high-quality educational and synthetic data", "Designed for fine-tuning and training small language models"],
+        "description": "A curated collection of high-quality educational and synthetic data designed for training small language models.",
+        "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+        "url": "https://huggingface.co/datasets/HuggingFaceTB/smollm-corpus",
+        "color": "#ffd11e",
         "x": 0.0,
         "y": -0.05
       }
