@@ -6,7 +6,7 @@
       "nameSizeFactor": 0.20,
       "subnameSizeFactor": 1.65,
       "centralCircleSize": 0.40,
-      "smallCircleSize": 0.14,
+      "smallCircleSize": 0.12,
       "icon_transform": "None"
     },
     "items": [
@@ -183,6 +183,17 @@
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1613114437487-60262a8e0703121c822a80b6.png",
         "url": "https://huggingface.co/datasets/nvidia/HelpSteer2",
         "color": "#2fad3b",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "FineWeb 2",
+        "subname": "HuggingFace FW",
+        "bullets": ["Built from CommonCrawl snapshots", "Curated to remove duplicates and low-quality content"],
+        "description": "",
+        "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+        "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2",
+        "color": "#ffd11e",
         "x": 0.0,
         "y": -0.05
       },
