@@ -62,7 +62,7 @@ body {
 </style>
 </head>
 <body>
-<svg width="1200" height="700"></svg>
+<svg width="1100" height="560"></svg>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
@@ -82,15 +82,10 @@ const tooltip = d3.select("body").append("div")
   .style("opacity", 0);
 
 d3.json("sankey2.json").then(data => {
-  // Extraer sets únicos
   const parentsRaw = Array.from(new Set(data.map(d => d.parent)));
   const idsRaw = Array.from(new Set(data.map(d => d.id)));
   const domainsRaw = Array.from(new Set(data.map(d => d.domain)));
 
-  // Crear nodos
-  // parents: izquierda
-  // ids: medio
-  // domains: derecha
   const parentNodes = parentsRaw.map(p => ({ name: p, type: "parent" }));
   const idNodes = idsRaw.map(i => ({ name: i, type: "id" }));
   const domainNodes = domainsRaw.map(dm => ({ name: dm, type: "domain" }));
@@ -103,18 +98,13 @@ d3.json("sankey2.json").then(data => {
   const domainStart = parentsRaw.length + idsRaw.length;
   const domainIndexMap = new Map(domainsRaw.map((dm, i) => [dm, domainStart + i]));
 
-  // Crear links:
-  // parent -> id
-  // id -> domain
   const links = [];
   data.forEach(d => {
     const pIndex = parentIndexMap.get(d.parent);
     const iIndex = idIndexMap.get(d.id);
     const dmIndex = domainIndexMap.get(d.domain);
     if (pIndex !== undefined && iIndex !== undefined && dmIndex !== undefined) {
-      // parent -> id
       links.push({ source: pIndex, target: iIndex, value: d.value });
-      // id -> domain
       links.push({ source: iIndex, target: dmIndex, value: d.value });
     }
   });
@@ -122,8 +112,6 @@ d3.json("sankey2.json").then(data => {
   const graph = { nodes, links };
   sankey(graph);
 
-  // Asignar colores
-  // Tomar el primer color encontrado para cada parent, id y domain
   const parentColorMap = {};
   parentsRaw.forEach(p => {
     const item = data.find(d => d.parent === p);
