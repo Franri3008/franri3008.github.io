@@ -6,7 +6,7 @@
       "nameSizeFactor": 0.20,
       "subnameSizeFactor": 1.65,
       "centralCircleSize": 0.40,
-      "smallCircleSize": 0.10,
+      "smallCircleSize": 0.14,
       "icon_transform": "None"
     },
     "items": [
@@ -156,7 +156,7 @@
       {
         "name": "FRAMES",
         "subname": "Google",
-        "bullets": ["Designed to test capabilities of Retrieval-Augmented Generation", "Questions span diverse topics from history to science"],
+        "bullets": ["Designed to evaluate reasoning and factual retrieval capabilities in LLMs", "Questions span diverse topics from history to science"],
         "description": "A comprehensive evaluation dataset designed to test the capabilities of Retrieval-Augmented Generation (RAG) systems across factuality, retrieval accuracy, and reasoning.\nNumber of rows: 824\nSize of the auto-converted Parquet files: 236 kB\nKey feature:",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/WtA3YYitedOr9n02eHfJe.png",
         "url": "https://huggingface.co/datasets/google/frames-benchmark",
@@ -167,7 +167,7 @@
       {
         "name": "HelpSteer2",
         "subname": "Nvidia",
-        "bullets": ["Supports models to become more factually correct and coherent"],
+        "bullets": ["Designed to train models to be more helpful, factually accurate, and coherent", "Includes feedback on attributes like helpfulness, correctness and verbosity"],
         "description": "An open-source Helpfulness Dataset (CC-BY-4.0) that supports aligning models to become more helpful, factually correct and coherent, while being adjustable in terms of the complexity and verbosity of its responses.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1613114437487-60262a8e0703121c822a80b6.png",
         "url": "https://huggingface.co/datasets/nvidia/HelpSteer2",
