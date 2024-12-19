@@ -7,7 +7,9 @@
       "subnameSizeFactor": 1.65,
       "centralCircleSize": 0.40,
       "smallCircleSize": 0.14,
-      "icon_transform": "None"
+      "icon_transform": "None",
+      "top": 0,
+      "size_increase": 1.5
     },
     "items": [
       {
@@ -179,7 +181,7 @@
         "name": "FineWeb 2",
         "subname": "HuggingFaceFW",
         "bullets": ["Built from CommonCrawl snapshots", "Curated to remove duplicates and low-quality content"],
-        "description": "",
+        "description": "Second iteration of the FineWeb dataset.\nEstimated number of rows: 13,782,000,384\nSize of the auto-converted Parquet files (First 5GB per split): 19.4 TB\nKey feature: Curated dataset of diverse, high-quality web documents designed for fine-tuning language models on complex and nuanced tasks",
         "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
         "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2",
         "color": "#ffd11e",
@@ -190,7 +192,7 @@
         "name": "two-million-bluesky-posts",
         "subname": "Alpin Dale",
         "bullets": ["2 million public posts collected from Bluesky Social's firehose API", "Designed for studying social media behavior, natural language processing and online communication trends"],
-        "description": "",
+        "description": "2 Million Bluesky Posts\nNumber of rows: 2,107,530\nSize of the auto-converted Parquet files: 380 MB\nKey feature: With 2 million posts from Bluesky, this large-scale social media dataset offers rich insights into social media language and trends",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/635567189c72a7e742f1419c/tbfBz0furS-y4ISgoe6j0.jpeg",
         "url": "",
         "color": "#FF4CF3",
@@ -201,7 +203,7 @@
         "name": "OpenO1-SFT",
         "subname": "O1-OPEN",
         "bullets": ["Designed for fine-tuning language models", "Focuses on natural language understanding and question answering"],
-        "description": "",
+        "description": "Number of rows: 77,685\nSize of the auto-converted Parquet files: 183 MB\nKey feature: Instruction-tuned dataset. Focused on supervised fine-tuning (SFT), featuring diverse tasks and instructions to improve model alignment and usability.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/65d2251f98b4a470bf6a26e3/4yeCUW8LBIlAP_gD19i0k.jpeg",
         "url": "",
         "color": "#6BC1C4",
@@ -212,7 +214,7 @@
         "name": "Global-MMLU",
         "subname": "CohereForAI",
         "bullets": ["A multilingual evaluation set spanning 42 languages", "Curated for assessing the performance of AI models on understanding and reasoning"],
-        "description": "",
+        "description": "Key feature: Addressing cultural biases in multilingual benchmarks by identifying and mitigating cultural biases, ensuring more accurate and fair evaluations across 42 languages.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/1678549441248-5e70f6048ce3c604d78fe133.png",
         "url": "https://huggingface.co/datasets/CohereForAI/Global-MMLU",
         "color": "#323185",

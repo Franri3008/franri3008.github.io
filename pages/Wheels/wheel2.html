@@ -17,7 +17,7 @@
             overflow: visible;
         }
         .small-circle {
-            transition: r 0.2s ease;
+            transition: r 0.2s ease, opacity 0.3s ease;
         }
         .central-circle {
             transition: fill 0.5s ease;
@@ -31,6 +31,9 @@
         }
         .main-text,
         .sub-text {
+            transition: opacity 0.3s ease;
+        }
+        .circle-icon {
             transition: opacity 0.3s ease;
         }
         #urlPreview {
@@ -55,10 +58,6 @@
             visibility: hidden;
             z-index: 2000;
             white-space: pre-wrap;
-        }
-        /* Add a class for icons so we can handle their opacity together with texts and circles */
-        .circle-icon {
-            transition: opacity 0.3s ease;
         }
     </style>
 </head>
@@ -86,6 +85,8 @@
             const centralCircleSize = central.centralCircleSize || 0.3;
             const smallCircleSize = central.smallCircleSize || 0.175; 
             const iconTransform = (central.icon_transform === null || central.icon_transform === "None") ? null : central.icon_transform;
+            const topN = central.top || 0;
+            const hoverScaleFactor = central.size_increase || 1.35; 
 
             svg.innerHTML = '';
             const topMargin = 110;
@@ -139,15 +140,43 @@
             const allSmallCircles = [];
             const allIcons = [];
 
-            function showTooltip(desc, evt) {
+            // Special icons configuration
+            const specialIcons = [
+                "Icons/first_place.svg",
+                "Icons/second_place.svg",
+                "Icons/third_place.svg",
+                "Icons/fourth_place.svg",
+                "Icons/fifth_place.svg"
+            ];
+            // Colors: gold, silver, bronze, gray, gray
+            const specialColorsFilters = {
+                "gold": "brightness(0) invert(1) sepia(1) saturate(10000%) hue-rotate(45deg)",
+                "silver": "brightness(0) invert(1) grayscale(100%) brightness(1.2)",
+                "bronze": "brightness(0) invert(1) sepia(1) saturate(500%) hue-rotate(20deg)",
+                "gray": "brightness(0) invert(1) grayscale(100%)"
+            };
+            const specialColors = ["gold", "silver", "bronze", "gray", "gray"];
+
+            function showTooltip(desc, evt, isRightSide) {
                 if (!desc || desc.trim() === '') return;
                 const formattedDesc = desc.replace(/\\n/g, '\n');
                 tooltip.textContent = formattedDesc;
                 tooltip.style.visibility = 'visible';
                 const mouseX = evt.pageX;
                 const mouseY = evt.pageY;
-                tooltip.style.left = (mouseX + 10) + 'px';
                 tooltip.style.top = (mouseY + 10) + 'px';
+
+                if (isRightSide) {
+                    tooltip.style.left = '-9999px';
+                    const tipWidth = tooltip.offsetWidth;
+                    let leftPos = mouseX - tipWidth - 10;
+                    if (leftPos < 0) {
+                        leftPos = 0;
+                    }
+                    tooltip.style.left = leftPos + 'px';
+                } else {
+                    tooltip.style.left = (mouseX + 10) + 'px';
+                }
             }
 
             function hideTooltip() {
@@ -164,17 +193,67 @@
                 urlPreview.style.visibility = 'hidden';
             }
 
-            document.addEventListener('mousemove', (evt) => {
-                if (tooltip.style.visibility === 'visible') {
-                    tooltip.style.left = (evt.pageX + 10) + 'px';
-                    tooltip.style.top = (evt.pageY + 10) + 'px';
-                }
-            });
-
             for (let i = 0; i < items.length; i++) {
                 const angle = (2 * Math.PI / items.length) * i - Math.PI / 2;
                 const x = centerX + circleRadius * Math.cos(angle);
                 const y = centerY + circleRadius * Math.sin(angle);
+
+                // Calculate text position now so we can place the place icon first
+                const textOffset = 80;
+                const textDistance = circleRadius + smallRadius + textOffset;
+                const adjustedX = (items[i].x || 0) * circleRadius;
+                const adjustedY = (items[i].y || 0) * circleRadius;
+                const textX = centerX + textDistance * Math.cos(angle) + adjustedX;
+                const textY = centerY + textDistance * Math.sin(angle) + adjustedY;
+
+                let textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
+                if (Math.abs(angle + Math.PI/2) < 0.0001 || Math.abs(angle - Math.PI/2) < 0.0001) {
+                    textAnchor = 'middle';
+                }
+
+                const mainTextFontSize = smallRadius * 0.6;
+                const subtitleFontSize = mainTextFontSize * 0.8; 
+                const bulletsFontSize = smallRadius * 0.35;
+
+                // Create fullGroup for this circle
+                const fullGroup = document.createElementNS(NS, 'g');
+                fullGroup.setAttribute('class', 'full-group');
+                fullGroup.setAttribute('data-index', i);
+                svg.appendChild(fullGroup);
+
+                // Draw place icon first if i < topN and i < 5 (behind everything)
+                if (i < topN && i < 5) {
+                    const placeIconHref = specialIcons[i];
+                    const placeColor = specialColors[i]; 
+                    const placeFilter = specialColorsFilters[placeColor];
+                    const largeIconSize = mainTextFontSize * 10; 
+                    // mainTextFontSize is small, let's pick a suitable size:
+                    // The user said x3 size from what? 
+                    // Initially we used iconSize * 3. Let's re-derive:
+                    // Previously, largeIcon was iconSize * 3 where iconSize = smallRadius * 1.2
+                    // For consistency, let's just pick a similar approach:
+                    // The text is small. Let's revert to how we did it before:
+                    // The user wants the icon at the main text position. 
+                    // Originally largeIconSize = iconSize * 3
+                    // iconSize = smallRadius * 1.2
+                    // Let's keep that logic:
+                    const iconSize = smallRadius * 1.2;
+                    const largeIconSizeFinal = iconSize * 3; 
+
+                    const placeIcon = document.createElementNS(NS, 'image');
+                    placeIcon.setAttribute('href', placeIconHref);
+                    placeIcon.setAttribute('x', textX - largeIconSizeFinal / 2);
+                    placeIcon.setAttribute('y', textY - largeIconSizeFinal / 2);
+                    placeIcon.setAttribute('width', largeIconSizeFinal);
+                    placeIcon.setAttribute('height', largeIconSizeFinal);
+                    placeIcon.setAttribute('opacity', '0.5');
+                    placeIcon.setAttribute('style', `filter: ${placeFilter};`);
+
+                    // Append first so it's behind everything else in fullGroup
+                    fullGroup.appendChild(placeIcon);
+                }
+
+                // Now create line and circleGroup
                 const line = document.createElementNS(NS, 'line');
                 line.setAttribute('x1', centerX);
                 line.setAttribute('y1', centerY);
@@ -185,17 +264,13 @@
                 line.setAttribute('class', 'line');
                 line.setAttribute('stroke-width', '1');
                 linesGroup.appendChild(line);
-                const originalStrokeWidth = 1;
-                const fullGroup = document.createElementNS(NS, 'g');
-                fullGroup.setAttribute('class', 'full-group');
-                fullGroup.setAttribute('data-index', i);
-                svg.appendChild(fullGroup);
+
                 const circleGroup = document.createElementNS(NS, 'g');
-                fullGroup.appendChild(circleGroup);
                 circleGroup.lineElement = line;
+                fullGroup.appendChild(circleGroup);
 
                 const circleColor = items[i].color || '#858585';
-                
+
                 const smallCircleElement = document.createElementNS(NS, 'circle');
                 smallCircleElement.setAttribute('cx', x);
                 smallCircleElement.setAttribute('cy', y);
@@ -221,7 +296,7 @@
                 if (iconTransform) {
                     let filterStr = 'brightness(0) invert(1)';
                     if (iconTransform.toLowerCase() !== '#ffffff') {
-                        filterStr += ' sepia(1) saturate(10000%) hue-rotate(0deg)';
+                        filterStr += ' sepia(1) saturate(10000%) hue-rotate(45deg)';
                     }
                     icon.setAttribute('style', `filter: ${filterStr};`);
                 } else {
@@ -235,22 +310,7 @@
                 circleGroup.appendChild(icon);
                 allIcons.push(icon);
 
-                const textOffset = 80;
-                const textDistance = circleRadius + smallRadius + textOffset;
-                const adjustedX = (items[i].x || 0) * circleRadius;
-                const adjustedY = (items[i].y || 0) * circleRadius;
-                const textX = centerX + textDistance * Math.cos(angle) + adjustedX;
-                const textY = centerY + textDistance * Math.sin(angle) + adjustedY;
-
-                let textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
-                if (Math.abs(angle + Math.PI/2) < 0.0001 || Math.abs(angle - Math.PI/2) < 0.0001) {
-                    textAnchor = 'middle';
-                }
-
-                const mainTextFontSize = smallRadius * 0.6;
-                const subtitleFontSize = mainTextFontSize * 0.8; 
-                const bulletsFontSize = smallRadius * 0.35;
-
+                // Now append texts after circleGroup (so text is on top)
                 const mainText = document.createElementNS(NS, 'text');
                 mainText.setAttribute('class', 'main-text');
                 mainText.setAttribute('x', textX);
@@ -271,7 +331,6 @@
                 const mainTextBBox = mainText.getBBox();
                 let currentY = mainTextBBox.y + mainTextBBox.height; 
 
-                // Subtitle
                 if (items[i].subname && items[i].subname.trim() !== '') {
                     const subText = document.createElementNS(NS, 'text');
                     subText.setAttribute('class', 'sub-text');
@@ -290,7 +349,6 @@
                     currentY = subTextBBox.y + subTextBBox.height + (subTextBBox.height * 0.2);
                 }
 
-                // Bullets
                 if (items[i].bullets && items[i].bullets.length > 0) {
                     const subtextGroup = document.createElementNS(NS, 'text');
                     subtextGroup.setAttribute('class', 'sub-text');
@@ -313,21 +371,20 @@
                 }
 
                 const onHover = (evt) => {
-                    const scaleFactor = 1.35;
                     const dx = x - centerX;
                     const dy = y - centerY;
-                    const translateX = -dx * (scaleFactor - 1);
-                    const translateY = -dy * (scaleFactor - 1);
-                    fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${scaleFactor})`);
+                    const translateX = -dx * (hoverScaleFactor - 1);
+                    const translateY = -dy * (hoverScaleFactor - 1);
+                    fullGroup.setAttribute('transform', `translate(${translateX}, ${translateY}) scale(${hoverScaleFactor})`);
                     centralCircle.setAttribute('fill', circleColor);
-                    centralCircle.setAttribute('stroke', 'none'); // remove black outline on hover
+                    centralCircle.setAttribute('stroke', 'none');
                     centralCircle.setAttribute('style', `filter: drop-shadow(0 0 20px ${circleColor});`);
-                    const hoverStrokeWidth = originalStrokeWidth * 20;
+                    const hoverStrokeWidth = 1 * 20;
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', circleColor);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
 
-                    // Make other texts, subtexts, circles, and icons opaque = 0.4
+                    // Make others transparent
                     allMainTexts.forEach((t) => {
                         if (t !== mainText) t.style.opacity = '0.4';
                     });
@@ -343,16 +400,17 @@
 
                     centralText1.setAttribute('fill', '#ffffff');
                     centralText2.setAttribute('fill', '#ffffff');
+                    const isRightSide = (textAnchor === 'start');
                     if (items[i].url) showURL(items[i].url);
-                    showTooltip(items[i].description, evt);
+                    showTooltip(items[i].description, evt, isRightSide);
                 };
 
                 const onLeave = () => {
                     fullGroup.setAttribute('transform', '');
                     centralCircle.setAttribute('fill', '#FFFFFF');
-                    centralCircle.setAttribute('stroke', '#000000'); // restore outline
+                    centralCircle.setAttribute('stroke', '#000000'); 
                     centralCircle.removeAttribute('style');
-                    circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke-width', '1');
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
 
@@ -368,8 +426,8 @@
                     hideTooltip();
                 };
 
-                circleGroup.addEventListener('mouseenter', onHover);
-                circleGroup.addEventListener('mouseleave', onLeave);
+                fullGroup.addEventListener('mouseenter', onHover);
+                fullGroup.addEventListener('mouseleave', onLeave);
 
                 if (items[i].url) {
                     const openLink = () => {
