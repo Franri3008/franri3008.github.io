@@ -56,6 +56,10 @@
             z-index: 2000;
             white-space: pre-wrap;
         }
+        /* Add a class for icons so we can handle their opacity together with texts and circles */
+        .circle-icon {
+            transition: opacity 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -132,6 +136,8 @@
 
             const allMainTexts = [];
             const allSubtexts = [];
+            const allSmallCircles = [];
+            const allIcons = [];
 
             function showTooltip(desc, evt) {
                 if (!desc || desc.trim() === '') return;
@@ -201,6 +207,7 @@
                     smallCircleElement.style.cursor = 'pointer';
                 }
                 circleGroup.appendChild(smallCircleElement);
+                allSmallCircles.push(smallCircleElement);
 
                 const iconSize = smallRadius * 1.2;
                 const icon = document.createElementNS(NS, 'image');
@@ -209,36 +216,24 @@
                 icon.setAttribute('y', y - iconSize / 2);
                 icon.setAttribute('width', iconSize);
                 icon.setAttribute('height', iconSize);
+                icon.setAttribute('class', 'circle-icon');
 
-                // Apply icon transform if specified
                 if (iconTransform) {
-                    // Currently they are being transformed to white with brightness/invert.
-                    // We'll do the same but if we want a custom color, we can approximate.
-                    // For simplicity, if icon_transform is a hex, we transform the icon from black to white,
-                    // then use a CSS filter approximation.
-                    // If user wants the exact color, they'd need inline SVG manipulation, 
-                    // but here we show a conceptual approach.
-                    
-                    // If user provided a hex color, we try to colorize it:
-                    // We'll first turn it white:
-                    let filterStr = 'brightness(0) invert(1)'; 
-                    // If the color is not white (#ffffff), we can try a rough approximation with sepia/hue-rotate
+                    let filterStr = 'brightness(0) invert(1)';
                     if (iconTransform.toLowerCase() !== '#ffffff') {
-                        // This won't produce exact matches for all colors, but it's a demonstration.
-                        // For a generic approach, you'd need a more complex calculation.
-                        // Let's try a simple sepia and hue-rotate:
-                        // We assume user picks a color and we try to approximate:
-                        filterStr += ' sepia(1) saturate(10000%) hue-rotate(0deg)'; 
-                        // With no hue-rotate, this gives a reddish tone. 
-                        // Perfect color mapping is complex via CSS filters.
+                        filterStr += ' sepia(1) saturate(10000%) hue-rotate(0deg)';
                     }
                     icon.setAttribute('style', `filter: ${filterStr};`);
                 } else {
-                    // No transform
                     icon.removeAttribute('style');
                 }
 
+                if (items[i].url) {
+                    icon.style.cursor = 'pointer';
+                }
+
                 circleGroup.appendChild(icon);
+                allIcons.push(icon);
 
                 const textOffset = 80;
                 const textDistance = circleRadius + smallRadius + textOffset;
@@ -317,7 +312,7 @@
                     allSubtexts.push(subtextGroup);
                 }
 
-                circleGroup.addEventListener('mouseenter', (evt) => {
+                const onHover = (evt) => {
                     const scaleFactor = 1.35;
                     const dx = x - centerX;
                     const dy = y - centerY;
@@ -331,41 +326,58 @@
                     circleGroup.lineElement.setAttribute('stroke-width', hoverStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', circleColor);
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '');
+
+                    // Make other texts, subtexts, circles, and icons opaque = 0.4
                     allMainTexts.forEach((t) => {
                         if (t !== mainText) t.style.opacity = '0.4';
                     });
                     allSubtexts.forEach((sub) => {
                         if (!fullGroup.contains(sub)) sub.style.opacity = '0.4';
                     });
+                    allSmallCircles.forEach((c) => {
+                        if (c !== smallCircleElement) c.style.opacity = '0.4';
+                    });
+                    allIcons.forEach((ic) => {
+                        if (ic !== icon) ic.style.opacity = '0.4';
+                    });
+
                     centralText1.setAttribute('fill', '#ffffff');
                     centralText2.setAttribute('fill', '#ffffff');
                     if (items[i].url) showURL(items[i].url);
                     showTooltip(items[i].description, evt);
-                });
+                };
 
-                circleGroup.addEventListener('mouseleave', () => {
+                const onLeave = () => {
                     fullGroup.setAttribute('transform', '');
                     centralCircle.setAttribute('fill', '#FFFFFF');
-                    centralCircle.setAttribute('stroke', '#000000'); // restore outline on mouse leave
+                    centralCircle.setAttribute('stroke', '#000000'); // restore outline
                     centralCircle.removeAttribute('style');
                     circleGroup.lineElement.setAttribute('stroke-width', originalStrokeWidth.toString());
                     circleGroup.lineElement.setAttribute('stroke', '#000000');
                     circleGroup.lineElement.setAttribute('stroke-dasharray', '5,5');
+
+                    // Restore opacity
                     allMainTexts.forEach((t) => { t.style.opacity = '1'; });
                     allSubtexts.forEach((sub) => { sub.style.opacity = '1'; });
+                    allSmallCircles.forEach((c) => { c.style.opacity = '1'; });
+                    allIcons.forEach((ic) => { ic.style.opacity = '1'; });
+
                     centralText1.setAttribute('fill', centralColor);
                     centralText2.setAttribute('fill', centralColor);
                     hideURL();
                     hideTooltip();
-                });
+                };
+
+                circleGroup.addEventListener('mouseenter', onHover);
+                circleGroup.addEventListener('mouseleave', onLeave);
 
                 if (items[i].url) {
-                    smallCircleElement.addEventListener('click', () => {
+                    const openLink = () => {
                         window.open(items[i].url, '_blank');
-                    });
-                    mainText.addEventListener('click', () => {
-                        window.open(items[i].url, '_blank');
-                    });
+                    };
+                    smallCircleElement.addEventListener('click', openLink);
+                    mainText.addEventListener('click', openLink);
+                    icon.addEventListener('click', openLink);
                 }
             }
         });
