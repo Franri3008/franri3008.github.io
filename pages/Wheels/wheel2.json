@@ -273,6 +273,28 @@
         "color": "#ffd11e",
         "x": 0.0,
         "y": -0.05
+      },
+      {
+        "name": "🐋 Orca-AgentInstruct-1M-v1-cleaned",
+        "subname": "mlabonne",
+        "bullets": ["Refined version of Microsoft’s synthetic dataset for instruction tuning", "Optimized for ease of use and instruction-following fine-tuning"],
+        "description": "A refined version of Microsoft’s synthetic dataset for instruction tuning, optimized for framework compatibility and improved model performance on benchmarks.",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/JtUGAwVh_4cDEsjNcfpye.png",
+        "url": "https://huggingface.co/datasets/mlabonne/orca-agentinstruct-1M-v1-cleaned",
+        "color": "#eb321b",
+        "x": 0.0,
+        "y": -0.05
+      },
+      {
+        "name": "synthetic_text_to_sql",
+        "subname": "gretelai",
+        "bullets": ["Designed to train and evaluate models for Text-to-SQL tasks", "Covers 100 domains including finance, energy or marine biology"],
+        "description": "A comprehensive dataset of 105k synthetic Text-to-SQL samples across 100 domains, featuring diverse SQL tasks and complexities. Designed for advanced model training.",
+        "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/620df72e917be1e25d20008d/RnsdKEkmNVZnAEn8XfQOw.png",
+        "url": "https://huggingface.co/datasets/gretelai/synthetic_text_to_sql",
+        "color": "#70a1d1",
+        "x": 0.0,
+        "y": -0.05
       }
     ]
   }
