@@ -6,31 +6,27 @@
 body {
   font-family: sans-serif;
 }
-
 .links path {
   fill: none;
   stroke-opacity: 0.4;
   transition: all 0.3s ease;
 }
-
 .nodes rect {
   stroke-width: 1px;
   transition: all 0.3s ease;
 }
-
 .nodes text {
   font-size: 14px;
   pointer-events: none;
   transition: all 0.3s ease;
 }
-
 .hoveredNode rect {
   filter: drop-shadow(0 0 5px #fff);
   stroke-width: 2px;
 }
 .hoveredNode text {
-  font-size: 16px; 
-  stroke: #fff; 
+  font-size: 16px;
+  stroke: #fff;
   stroke-width: 2px;
   paint-order: stroke fill;
   font-weight: bold;
@@ -44,19 +40,16 @@ body {
   stroke: #ccc !important;
   filter: none;
 }
-
 .dimmedNode text {
   fill: #666 !important;
   stroke: none;
   font-weight: normal;
   font-size: 14px;
 }
-
 .dimmedLink {
   stroke: #ccc !important;
   filter: none;
 }
-
 .tooltip {
   position: absolute;
   text-align: left;
@@ -84,7 +77,6 @@ const sankey = d3.sankey()
     .size([width, height]);
 
 const link = d3.sankeyLinkHorizontal();
-
 const tooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
@@ -92,117 +84,71 @@ const tooltip = d3.select("body").append("div")
 d3.json("sankey2.json").then(data => {
   // Extraer sets únicos
   const parentsRaw = Array.from(new Set(data.map(d => d.parent)));
+  const idsRaw = Array.from(new Set(data.map(d => d.id)));
   const domainsRaw = Array.from(new Set(data.map(d => d.domain)));
 
-  // Calcular sumas parent-domain
-  const parentDomainAgg = d3.nest()
-    .key(d => d.parent)
-    .key(d => d.domain)
-    .rollup(v => d3.sum(v, d => d.value))
-    .object(data);
-
-  // Ordenar los parents por total de valor
-  const parentTotals = parentsRaw.map(p => {
-    const domainVals = data.filter(d => d.parent === p).map(d => d.value);
-    return { parent: p, total: d3.sum(domainVals) };
-  });
-  parentTotals.sort((a, b) => b.total - a.total);
-  const parents = parentTotals.map(d => d.parent);
-
   // Crear nodos
-  // Índices: 
-  // parents: 0 ... parents.length-1
-  // intermediate: padres-dominios: a continuación
-  // domains: al final
+  // parents: izquierda
+  // ids: medio
+  // domains: derecha
+  const parentNodes = parentsRaw.map(p => ({ name: p, type: "parent" }));
+  const idNodes = idsRaw.map(i => ({ name: i, type: "id" }));
+  const domainNodes = domainsRaw.map(dm => ({ name: dm, type: "domain" }));
 
-  const intermediateNodes = [];
-  // Mapa para indexar nodos intermedios por parent-domain
-  const intermediateIndexMap = new Map();
+  const nodes = parentNodes.concat(idNodes, domainNodes);
 
-  // Crear nodos intermedios
-  parents.forEach(p => {
-    if (parentDomainAgg[p]) {
-      Object.entries(parentDomainAgg[p]).forEach(([dom, val]) => {
-        const key = p + " - " + dom; 
-        intermediateNodes.push({ name: key, parent: p, domain: dom, value: val });
-      });
-    }
-  });
+  const parentIndexMap = new Map(parentsRaw.map((p, i) => [p, i]));
+  const idStart = parentsRaw.length;
+  const idIndexMap = new Map(idsRaw.map((ii, i) => [ii, idStart + i]));
+  const domainStart = parentsRaw.length + idsRaw.length;
+  const domainIndexMap = new Map(domainsRaw.map((dm, i) => [dm, domainStart + i]));
 
-  const allIntermediateNames = intermediateNodes.map(d => d.name);
-
-  // Nodos finales: parents + intermediate + domains
-  const nodes = parents.map(c => ({ name: c, type: "parent" }))
-    .concat(intermediateNodes.map(d => ({ name: d.name, type: "intermediate" })))
-    .concat(domainsRaw.map(dm => ({ name: dm, type: "domain" })));
-
-  const parentIndex = new Map(parents.map((c, i) => [c, i]));
-  const intermediateStart = parents.length;
-  intermediateNodes.forEach((n, i) => {
-    intermediateIndexMap.set(n.name, intermediateStart + i);
-  });
-  const domainIndex = new Map(domainsRaw.map((dm, i) => [dm, parents.length + intermediateNodes.length + i]));
-
-  // Crear links
-  // parent -> intermediate
-  // intermediate -> domain
+  // Crear links:
+  // parent -> id
+  // id -> domain
   const links = [];
-  intermediateNodes.forEach(intNode => {
-    const pIndex = parentIndex.get(intNode.parent);
-    const iIndex = intermediateIndexMap.get(intNode.name);
-    const dIndex = domainIndex.get(intNode.domain);
-
-    // Link de parent a intermedio
-    links.push({
-      source: pIndex,
-      target: iIndex,
-      value: intNode.value
-    });
-
-    // Link de intermedio a domain
-    links.push({
-      source: iIndex,
-      target: dIndex,
-      value: intNode.value
-    });
+  data.forEach(d => {
+    const pIndex = parentIndexMap.get(d.parent);
+    const iIndex = idIndexMap.get(d.id);
+    const dmIndex = domainIndexMap.get(d.domain);
+    if (pIndex !== undefined && iIndex !== undefined && dmIndex !== undefined) {
+      // parent -> id
+      links.push({ source: pIndex, target: iIndex, value: d.value });
+      // id -> domain
+      links.push({ source: iIndex, target: dmIndex, value: d.value });
+    }
   });
 
   const graph = { nodes, links };
   sankey(graph);
 
-  // Colores: tomamos el color desde el data original
-  // Mapa de colores para parent
+  // Asignar colores
+  // Tomar el primer color encontrado para cada parent, id y domain
   const parentColorMap = {};
-  parents.forEach(p => {
+  parentsRaw.forEach(p => {
     const item = data.find(d => d.parent === p);
-    if(item && item.color) {
-      parentColorMap[p] = item.color;
-    } else {
-      parentColorMap[p] = "#ccc";
-    }
+    parentColorMap[p] = item && item.color ? item.color : "#ccc";
   });
 
-  // Mapa de colores para domain
+  const idColorMap = {};
+  idsRaw.forEach(i => {
+    const item = data.find(d => d.id === i);
+    idColorMap[i] = item && item.color ? item.color : "#ccc";
+  });
+
   const domainColorMap = {};
   domainsRaw.forEach(dm => {
     const item = data.find(d => d.domain === dm);
-    if(item && item.color) {
-      domainColorMap[dm] = item.color;
-    } else {
-      domainColorMap[dm] = "#ccc";
-    }
+    domainColorMap[dm] = item && item.color ? item.color : "#ccc";
   });
 
-  // Asignar colores a nodos según su tipo
-  graph.nodes.forEach((d) => {
+  graph.nodes.forEach(d => {
     if (d.type === "parent") {
       d.color = parentColorMap[d.name] || "#ccc";
+    } else if (d.type === "id") {
+      d.color = idColorMap[d.name] || "#ccc";
     } else if (d.type === "domain") {
       d.color = domainColorMap[d.name] || "#ccc";
-    } else {
-      // Nodos intermedios: tomamos el color del parent original
-      const [pName] = d.name.split(" - ");
-      d.color = parentColorMap[pName] || "#ccc";
     }
   });
 
@@ -226,7 +172,7 @@ d3.json("sankey2.json").then(data => {
       .attr("height", d => d.y1 - d.y0)
       .attr("width", sankey.nodeWidth())
       .attr("fill", d => d.color)
-      .attr("stroke", (d) => d.type === "domain" ? "#000" : "#fff");
+      .attr("stroke", d => d.type === "domain" ? "#000" : "#fff");
 
   nodeSelection.append("text")
       .attr("x", -6)
@@ -242,7 +188,6 @@ d3.json("sankey2.json").then(data => {
   nodeSelection
     .on("mouseover", function(d) {
       d3.select(this).style("cursor", "pointer");
-      
       tooltip.transition().duration(200).style("opacity", .9);
       tooltip.html("Name: " + d.name + "<br/>Total: " + d.value)
         .style("left", (d3.event.pageX + 10) + "px")
@@ -267,8 +212,9 @@ d3.json("sankey2.json").then(data => {
         .classed("hoveredLink", true);
     })
     .on("mousemove", function() {
-      tooltip.style("left", (d3.event.pageX + 10) + "px")
-             .style("top", (d3.event.pageY - 28) + "px");
+      tooltip
+        .style("left", (d3.event.pageX + 10) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
     })
     .on("mouseout", function() {
       tooltip.transition().duration(200).style("opacity", 0);
@@ -281,7 +227,6 @@ d3.json("sankey2.json").then(data => {
     .on("mouseover", function(d) {
       d3.select(this).style("cursor", "pointer");
       tooltip.transition().duration(200).style("opacity", .9);
-
       const sourceName = graph.nodes[d.source.index].name;
       const targetName = graph.nodes[d.target.index].name;
       tooltip.html("Source: " + sourceName + "<br/>Target: " + targetName + "<br/>Value: " + d.value)
@@ -298,8 +243,9 @@ d3.json("sankey2.json").then(data => {
       d3.select(this).classed("dimmedLink", false).classed("hoveredLink", true);
     })
     .on("mousemove", function() {
-      tooltip.style("left", (d3.event.pageX + 10) + "px")
-             .style("top", (d3.event.pageY - 28) + "px");
+      tooltip
+        .style("left", (d3.event.pageX + 10) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
     })
     .on("mouseout", function() {
       tooltip.transition().duration(200).style("opacity", 0);
@@ -307,7 +253,6 @@ d3.json("sankey2.json").then(data => {
       linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
       d3.select(this).style("cursor", null);
     });
-
 });
 </script>
 </body>
