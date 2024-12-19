@@ -205,7 +205,7 @@
         "bullets": ["Designed for fine-tuning language models", "Focuses on natural language understanding and question answering"],
         "description": "Number of rows: 77,685\nSize of the auto-converted Parquet files: 183 MB\nKey feature: Instruction-tuned dataset. Focused on supervised fine-tuning (SFT), featuring diverse tasks and instructions to improve model alignment and usability.",
         "icon": "https://cdn-avatars.huggingface.co/v1/production/uploads/65d2251f98b4a470bf6a26e3/4yeCUW8LBIlAP_gD19i0k.jpeg",
-        "url": "",
+        "url": "https://huggingface.co/datasets/O1-OPEN/OpenO1-SFT/tree/main",
         "color": "#6BC1C4",
         "x": 0.0,
         "y": 0.05
