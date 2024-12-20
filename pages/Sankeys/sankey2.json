@@ -1,130 +1,222 @@
 [
-    {
-        "id": "AutonLab",
-        "name": "AutonLab",
-        "parent": "AutonLab/MOMENT-1-large",
-        "domain": "AutonLab/Timeseries-PILE",
-        "value": 1,
-        "color": "#9CA3AF"
-    },
-    {
-        "id": "BAAI",
-        "name": "BAAI",
-        "parent": "BAAI/Aquila-VL-2B-llava-qwen",
-        "domain": "BAAI/Infinity-Instruct",
-        "value": 1,
-        "color": "#1E4CBD"
-    },
-    {
-        "id": "HuggingFaceM4",
-        "name": "HuggingFaceM4",
-        "parent": "HuggingFaceM4/Idefics3-8B-Llama3",
-        "domain": "HuggingFaceM4/Docmatix",
-        "value": 1,
-        "color": "#AA1EBD"
-    },
-    {
-        "id": "HuggingFaceM4",
-        "name": "HuggingFaceM4",
-        "parent": "HuggingFaceM4/idefics2-8b",
-        "domain": "pixparse/pdfa-eng-wds",
-        "value": 1,
-        "color": "#F9FF1B"
-    },
-    {
-        "id": "HuggingFaceM4",
-        "name": "HuggingFaceM4",
-        "parent": "HuggingFaceM4/idefics2-8b-AWQ",
-        "domain": "pixparse/pdfa-eng-wds",
-        "value": 1,
-        "color": "#F9FF1B"
-    },
-    {
-        "id": "HuggingFaceM4",
-        "name": "HuggingFaceM4",
-        "parent": "HuggingFaceM4/idefics2-8b-base",
-        "domain": "pixparse/pdfa-eng-wds",
-        "value": 1,
-        "color": "#F9FF1B"
-    },
-    {
-        "id": "HuggingFaceM4",
-        "name": "HuggingFaceM4",
-        "parent": "HuggingFaceM4/idefics2-8b-chatty",
-        "domain": "pixparse/pdfa-eng-wds",
-        "value": 1,
-        "color": "#F9FF1B"
-    },
-    {
-        "id": "HuggingFaceTB",
-        "name": "HuggingFaceTB",
-        "parent": "HuggingFaceTB/SmolVLM-Base",
-        "domain": "HuggingFaceM4/Docmatix",
-        "value": 1,
-        "color": "#AA1EBD"
-    },
-    {
-        "id": "HuggingFaceTB",
-        "name": "HuggingFaceTB",
-        "parent": "HuggingFaceTB/SmolVLM-Instruct",
-        "domain": "HuggingFaceM4/Docmatix",
-        "value": 1,
-        "color": "#AA1EBD"
-    },
-    {
-        "id": "MrLight",
-        "name": "MrLight",
-        "parent": "MrLight/dse-qwen2-2b-mrl-v1",
-        "domain": "HuggingFaceM4/Docmatix",
-        "value": 1,
-        "color": "#AA1EBD"
-    },
-    {
-        "id": "OuteAI",
-        "name": "OuteAI",
-        "parent": "Others",
-        "domain": "amphion/Emilia-Dataset",
-        "value": 2,
-        "color": "#47C446"
-    },
-    {
-        "id": "SWivid",
-        "name": "SWivid",
-        "parent": "Others",
-        "domain": "amphion/Emilia-Dataset",
-        "value": 2,
-        "color": "#47C446"
-    },
-    {
-        "id": "Salesforce",
-        "name": "Salesforce",
-        "parent": "Others",
-        "domain": "Salesforce/xlam-function-calling-60k",
-        "value": 4,
-        "color": "#D12020"
-    },
-    {
-        "id": "Zyphra",
-        "name": "Zyphra",
-        "parent": "Others",
-        "domain": "BAAI/Infinity-Instruct",
-        "value": 2,
-        "color": "#1E4CBD"
-    },
-    {
-        "id": "amphion",
-        "name": "amphion",
-        "parent": "Others",
-        "domain": "amphion/Emilia-Dataset",
-        "value": 1,
-        "color": "#47C446"
-    },
-    {
-        "id": "marduk-ra",
-        "name": "marduk-ra",
-        "parent": "Others",
-        "domain": "amphion/Emilia-Dataset",
-        "value": 1,
-        "color": "#47C446"
-    }
+  {
+    "id": "SWivid",
+    "name": "SWivid",
+    "parent": "SWivid/F5-TTS",
+    "domain": "amphion/Emilia-Dataset",
+    "value": 1,
+    "color": "#0D12FF",
+    "category": "Audio",
+    "modality": "audio"
+  },
+  {
+    "id": "HuggingFaceM4",
+    "name": "HuggingFaceM4",
+    "parent": "HuggingFaceM4/idefics2-8b",
+    "domain": "pixparse/pdfa-eng-wds",
+    "value": 1,
+    "color": "#EDFF0D",
+    "category": "Computer Vision",
+    "modality": "vision"
+  },
+  {
+    "id": "OuteAI",
+    "name": "OuteAI",
+    "parent": "OuteAI/OuteTTS-0.2-500M",
+    "domain": "amphion/Emilia-Dataset",
+    "value": 1,
+    "color": "#0D12FF",
+    "category": "Audio",
+    "modality": "audio"
+  },
+  {
+    "id": "HuggingFaceTB",
+    "name": "HuggingFaceTB",
+    "parent": "HuggingFaceTB/SmolVLM-Instruct",
+    "domain": "HuggingFaceM4/Docmatix",
+    "value": 1,
+    "color": "#0DFF1D",
+    "category": "Multimodal",
+    "modality": "multimodal"
+  },
+  {
+    "id": "amphion",
+    "name": "amphion",
+    "parent": "amphion/MaskGCT",
+    "domain": "amphion/Emilia-Dataset",
+    "value": 1,
+    "color": "#0D12FF",
+    "category": "Audio",
+    "modality": "audio"
+  },
+  {
+    "id": "HuggingFaceM4",
+    "name": "HuggingFaceM4",
+    "parent": "HuggingFaceM4/Idefics3-8B-Llama3",
+    "domain": "HuggingFaceM4/Docmatix",
+    "value": 1,
+    "color": "#0DFF1D",
+    "category": "Multimodal",
+    "modality": "multimodal"
+  },
+  {
+    "id": "OuteAI",
+    "name": "OuteAI",
+    "parent": "OuteAI/OuteTTS-0.2-500M-GGUF",
+    "domain": "amphion/Emilia-Dataset",
+    "value": 1,
+    "color": "#0D12FF",
+    "category": "Audio",
+    "modality": "audio"
+  },
+  {
+    "id": "HuggingFaceM4",
+    "name": "HuggingFaceM4",
+    "parent": "HuggingFaceM4/idefics2-8b-chatty",
+    "domain": "pixparse/pdfa-eng-wds",
+    "value": 1,
+    "color": "#EDFF0D",
+    "category": "Computer Vision",
+    "modality": "vision"
+  },
+  {
+    "id": "Zyphra",
+    "name": "Zyphra",
+    "parent": "Zyphra/Zamba2-2.7B-instruct",
+    "domain": "BAAI/Infinity-Instruct",
+    "value": 1,
+    "color": "#D02525",
+    "category": "Natural Language Processing",
+    "modality": "text"
+  },
+  {
+    "id": "Salesforce",
+    "name": "Salesforce",
+    "parent": "Salesforce/xLAM-7b-fc-r",
+    "domain": "Salesforce/xlam-function-calling-60k",
+    "value": 1,
+    "color": "#34D4B8",
+    "category": "Reinforcement Learning",
+    "modality": "rl"
+  },
+  {
+    "id": "BAAI",
+    "name": "BAAI",
+    "parent": "BAAI/Aquila-VL-2B-llava-qwen",
+    "domain": "BAAI/Infinity-Instruct",
+    "value": 1,
+    "color": "#D02525",
+    "category": "Natural Language Processing",
+    "modality": "text"
+  },
+  {
+    "id": "HuggingFaceTB",
+    "name": "HuggingFaceTB",
+    "parent": "HuggingFaceTB/SmolVLM-Base",
+    "domain": "HuggingFaceM4/Docmatix",
+    "value": 1,
+    "color": "#0DFF1D",
+    "category": "Multimodal",
+    "modality": "multimodal"
+  },
+  {
+    "id": "AutonLab",
+    "name": "AutonLab",
+    "parent": "AutonLab/MOMENT-1-large",
+    "domain": "AutonLab/Timeseries-PILE",
+    "value": 1,
+    "color": "#9CA3AF",
+    "category": "Tabular",
+    "modality": "tabular"
+  },
+  {
+    "id": "Salesforce",
+    "name": "Salesforce",
+    "parent": "Salesforce/xLAM-1b-fc-r",
+    "domain": "Salesforce/xlam-function-calling-60k",
+    "value": 1,
+    "color": "#34D4B8",
+    "category": "Reinforcement Learning",
+    "modality": "rl"
+  },
+  {
+    "id": "SWivid",
+    "name": "SWivid",
+    "parent": "SWivid/E2-TTS",
+    "domain": "amphion/Emilia-Dataset",
+    "value": 1,
+    "color": "#0D12FF",
+    "category": "Audio",
+    "modality": "audio"
+  },
+  {
+    "id": "Salesforce",
+    "name": "Salesforce",
+    "parent": "Salesforce/xLAM-8x22b-r",
+    "domain": "Salesforce/xlam-function-calling-60k",
+    "value": 1,
+    "color": "#34D4B8",
+    "category": "Reinforcement Learning",
+    "modality": "rl"
+  },
+  {
+    "id": "MrLight",
+    "name": "MrLight",
+    "parent": "MrLight/dse-qwen2-2b-mrl-v1",
+    "domain": "HuggingFaceM4/Docmatix",
+    "value": 1,
+    "color": "#0DFF1D",
+    "category": "Multimodal",
+    "modality": "multimodal"
+  },
+  {
+    "id": "Salesforce",
+    "name": "Salesforce",
+    "parent": "Salesforce/xLAM-7b-r",
+    "domain": "Salesforce/xlam-function-calling-60k",
+    "value": 1,
+    "color": "#34D4B8",
+    "category": "Reinforcement Learning",
+    "modality": "rl"
+  },
+  {
+    "id": "Zyphra",
+    "name": "Zyphra",
+    "parent": "Zyphra/Zamba2-1.2B-instruct",
+    "domain": "BAAI/Infinity-Instruct",
+    "value": 1,
+    "color": "#D02525",
+    "category": "Natural Language Processing",
+    "modality": "text"
+  },
+  {
+    "id": "HuggingFaceM4",
+    "name": "HuggingFaceM4",
+    "parent": "HuggingFaceM4/idefics2-8b-base",
+    "domain": "pixparse/pdfa-eng-wds",
+    "value": 1,
+    "color": "#EDFF0D",
+    "category": "Computer Vision",
+    "modality": "vision"
+  },
+  {
+    "id": "HuggingFaceM4",
+    "name": "HuggingFaceM4",
+    "parent": "HuggingFaceM4/idefics2-8b-AWQ",
+    "domain": "pixparse/pdfa-eng-wds",
+    "value": 1,
+    "color": "#EDFF0D",
+    "category": "Computer Vision",
+    "modality": "vision"
+  },
+  {
+    "id": "marduk-ra",
+    "name": "marduk-ra",
+    "parent": "marduk-ra/F5-TTS-German",
+    "domain": "amphion/Emilia-Dataset",
+    "value": 1,
+    "color": "#0D12FF",
+    "category": "Audio",
+    "modality": "audio"
+  }
 ]
