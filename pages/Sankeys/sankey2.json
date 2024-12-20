@@ -1,11 +1,19 @@
 [
     {
+        "id": "AutonLab",
+        "name": "AutonLab",
+        "parent": "AutonLab/MOMENT-1-large",
+        "domain": "AutonLab/Timeseries-PILE",
+        "value": 1,
+        "color": "#9CA3AF"
+    },
+    {
         "id": "BAAI",
         "name": "BAAI",
         "parent": "BAAI/Aquila-VL-2B-llava-qwen",
         "domain": "BAAI/Infinity-Instruct",
         "value": 1,
-        "color": "#FFD21E"
+        "color": "#1E4CBD"
     },
     {
         "id": "HuggingFaceM4",
@@ -13,7 +21,7 @@
         "parent": "HuggingFaceM4/Idefics3-8B-Llama3",
         "domain": "HuggingFaceM4/Docmatix",
         "value": 1,
-        "color": "#FF9D00"
+        "color": "#AA1EBD"
     },
     {
         "id": "HuggingFaceM4",
@@ -21,7 +29,7 @@
         "parent": "HuggingFaceM4/idefics2-8b",
         "domain": "pixparse/pdfa-eng-wds",
         "value": 1,
-        "color": "#2656D2"
+        "color": "#F9FF1B"
     },
     {
         "id": "HuggingFaceM4",
@@ -29,7 +37,7 @@
         "parent": "HuggingFaceM4/idefics2-8b-AWQ",
         "domain": "pixparse/pdfa-eng-wds",
         "value": 1,
-        "color": "#2656D2"
+        "color": "#F9FF1B"
     },
     {
         "id": "HuggingFaceM4",
@@ -37,7 +45,7 @@
         "parent": "HuggingFaceM4/idefics2-8b-base",
         "domain": "pixparse/pdfa-eng-wds",
         "value": 1,
-        "color": "#2656D2"
+        "color": "#F9FF1B"
     },
     {
         "id": "HuggingFaceM4",
@@ -45,7 +53,7 @@
         "parent": "HuggingFaceM4/idefics2-8b-chatty",
         "domain": "pixparse/pdfa-eng-wds",
         "value": 1,
-        "color": "#2656D2"
+        "color": "#F9FF1B"
     },
     {
         "id": "HuggingFaceTB",
@@ -53,7 +61,7 @@
         "parent": "HuggingFaceTB/SmolVLM-Base",
         "domain": "HuggingFaceM4/Docmatix",
         "value": 1,
-        "color": "#FF9D00"
+        "color": "#AA1EBD"
     },
     {
         "id": "HuggingFaceTB",
@@ -61,7 +69,7 @@
         "parent": "HuggingFaceTB/SmolVLM-Instruct",
         "domain": "HuggingFaceM4/Docmatix",
         "value": 1,
-        "color": "#FF9D00"
+        "color": "#AA1EBD"
     },
     {
         "id": "MrLight",
@@ -69,15 +77,15 @@
         "parent": "MrLight/dse-qwen2-2b-mrl-v1",
         "domain": "HuggingFaceM4/Docmatix",
         "value": 1,
-        "color": "#FF9D00"
+        "color": "#AA1EBD"
     },
     {
         "id": "OuteAI",
         "name": "OuteAI",
         "parent": "Others",
         "domain": "amphion/Emilia-Dataset",
-        "value": 1,
-        "color": "#791D81"
+        "value": 2,
+        "color": "#47C446"
     },
     {
         "id": "SWivid",
@@ -85,7 +93,7 @@
         "parent": "Others",
         "domain": "amphion/Emilia-Dataset",
         "value": 2,
-        "color": "#791D81"
+        "color": "#47C446"
     },
     {
         "id": "Salesforce",
@@ -93,7 +101,7 @@
         "parent": "Others",
         "domain": "Salesforce/xlam-function-calling-60k",
         "value": 4,
-        "color": "#106C4E"
+        "color": "#D12020"
     },
     {
         "id": "Zyphra",
@@ -101,7 +109,7 @@
         "parent": "Others",
         "domain": "BAAI/Infinity-Instruct",
         "value": 2,
-        "color": "#FFD21E"
+        "color": "#1E4CBD"
     },
     {
         "id": "amphion",
@@ -109,7 +117,7 @@
         "parent": "Others",
         "domain": "amphion/Emilia-Dataset",
         "value": 1,
-        "color": "#791D81"
+        "color": "#47C446"
     },
     {
         "id": "marduk-ra",
@@ -117,14 +125,6 @@
         "parent": "Others",
         "domain": "amphion/Emilia-Dataset",
         "value": 1,
-        "color": "#791D81"
-    },
-    {
-        "id": "OuteAI",
-        "name": "OuteAI",
-        "parent": "OuteAI/OuteTTS-0.2-500M",
-        "domain": "amphion/Emilia-Dataset",
-        "value": 1,
-        "color": "#791D81"
+        "color": "#47C446"
     }
 ]

@@ -1,247 +1,248 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<style>
-body {
-  font-family: sans-serif;
-}
-.links path {
-  fill: none;
-  stroke-opacity: 0.4;
-  transition: all 0.3s ease;
-}
-.nodes rect {
-  stroke-width: 1px;
-  transition: all 0.3s ease;
-}
-.nodes text {
-  font-size: 14px;
-  pointer-events: none;
-  transition: all 0.3s ease;
-}
-.hoveredNode rect {
-  filter: drop-shadow(0 0 5px #fff);
-  stroke-width: 2px;
-}
-.hoveredNode text {
-  font-size: 16px;
-  stroke: #fff;
-  stroke-width: 2px;
-  paint-order: stroke fill;
-  font-weight: bold;
-}
-.hoveredLink {
-  stroke-opacity: 1 !important;
-  filter: drop-shadow(0 0 5px #fff);
-}
-.dimmedNode rect {
-  fill: #ccc !important;
-  stroke: #ccc !important;
-  filter: none;
-}
-.dimmedNode text {
-  fill: #666 !important;
-  stroke: none;
-  font-weight: normal;
-  font-size: 14px;
-}
-.dimmedLink {
-  stroke: #ccc !important;
-  filter: none;
-}
-.tooltip {
-  position: absolute;
-  text-align: left;
-  padding: 4px;
-  background: #fff;
-  border: 1px solid #ccc;
-  font-size: 12px;
-  pointer-events: none;
-}
-</style>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .links path {
+      fill: none;
+      stroke-opacity: 0.4;
+      transition: all 0.3s ease;
+    }
+    .nodes rect {
+      stroke-width: 1px;
+      transition: all 0.3s ease;
+    }
+    .nodes text {
+      font-size: 14px;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .hoveredNode rect {
+      filter: drop-shadow(0 0 5px #fff);
+      stroke-width: 2px;
+    }
+    .hoveredNode text {
+      font-size: 16px;
+      stroke: #fff;
+      stroke-width: 2px;
+      paint-order: stroke fill;
+      font-weight: bold;
+    }
+    .hoveredLink {
+      stroke-opacity: 1 !important;
+      filter: drop-shadow(0 0 5px #fff);
+    }
+    .dimmedNode rect {
+      fill: #ccc !important;
+      stroke: #ccc !important;
+      filter: none;
+    }
+    .dimmedNode text {
+      fill: #666 !important;
+      stroke: none;
+      font-weight: normal;
+      font-size: 14px;
+    }
+    .dimmedLink {
+      stroke: #ccc !important;
+      filter: none;
+    }
+    .tooltip {
+      position: absolute;
+      text-align: left;
+      padding: 4px;
+      background: #fff;
+      border: 1px solid #ccc;
+      font-size: 12px;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
-<svg width="1100" height="560"></svg>
+<svg width="1200" height="700"></svg>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script>
-const svg = d3.select("svg"),
-      width = +svg.attr("width"),
-      height = +svg.attr("height");
+  const svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
 
-const sankey = d3.sankey()
-    .nodeWidth(20)
-    .nodePadding(10)
-    .size([width, height]);
+  const sankey = d3.sankey()
+      .nodeWidth(20)
+      .nodePadding(10)
+      .size([width, height]);
 
-const link = d3.sankeyLinkHorizontal();
-const tooltip = d3.select("body").append("div")
-  .attr("class", "tooltip")
-  .style("opacity", 0);
+  const link = d3.sankeyLinkHorizontal();
+  const tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
-d3.json("sankey2.json").then(data => {
-  const parentsRaw = Array.from(new Set(data.map(d => d.parent)));
-  const idsRaw = Array.from(new Set(data.map(d => d.id)));
-  const domainsRaw = Array.from(new Set(data.map(d => d.domain)));
+  d3.json("sankey2.json").then(data => {
+    // Build sets of domain, id, parent
+    const domainsRaw = Array.from(new Set(data.map(d => d.domain)));
+    const idsRaw = Array.from(new Set(data.map(d => d.id)));
+    const parentsRaw = Array.from(new Set(data.map(d => d.parent)));
 
-  const parentNodes = parentsRaw.map(p => ({ name: p, type: "parent" }));
-  const idNodes = idsRaw.map(i => ({ name: i, type: "id" }));
-  const domainNodes = domainsRaw.map(dm => ({ name: dm, type: "domain" }));
+    // Build the node arrays
+    const domainNodes = domainsRaw.map(dm => ({ name: dm, type: "domain" }));
+    const idNodes = idsRaw.map(i => ({ name: i, type: "id" }));
+    const parentNodes = parentsRaw.map(p => ({ name: p, type: "parent" }));
 
-  const nodes = parentNodes.concat(idNodes, domainNodes);
+    // Combine nodes in order: domain -> id -> parent
+    const nodes = domainNodes.concat(idNodes, parentNodes);
 
-  const parentIndexMap = new Map(parentsRaw.map((p, i) => [p, i]));
-  const idStart = parentsRaw.length;
-  const idIndexMap = new Map(idsRaw.map((ii, i) => [ii, idStart + i]));
-  const domainStart = parentsRaw.length + idsRaw.length;
-  const domainIndexMap = new Map(domainsRaw.map((dm, i) => [dm, domainStart + i]));
+    // Build index maps
+    const domainIndexMap = new Map(domainsRaw.map((dm, i) => [dm, i]));
+    const idStart = domainsRaw.length;
+    const idIndexMap = new Map(idsRaw.map((ii, i) => [ii, idStart + i]));
+    const parentStart = domainsRaw.length + idsRaw.length;
+    const parentIndexMap = new Map(parentsRaw.map((p, i) => [p, parentStart + i]));
 
-  const links = [];
-  data.forEach(d => {
-    const pIndex = parentIndexMap.get(d.parent);
-    const iIndex = idIndexMap.get(d.id);
-    const dmIndex = domainIndexMap.get(d.domain);
-    if (pIndex !== undefined && iIndex !== undefined && dmIndex !== undefined) {
-      links.push({ source: pIndex, target: iIndex, value: d.value });
-      links.push({ source: iIndex, target: dmIndex, value: d.value });
-    }
-  });
+    // Build links (2-step domain->id->parent)
+    const links = [];
+    data.forEach(d => {
+      const dmIndex = domainIndexMap.get(d.domain);
+      const iIndex = idIndexMap.get(d.id);
+      const pIndex = parentIndexMap.get(d.parent);
+      if (dmIndex !== undefined && iIndex !== undefined && pIndex !== undefined) {
+        // domain->id link
+        links.push({
+          source: dmIndex,
+          target: iIndex,
+          value: d.value,
+          color: d.color
+        });
+        // id->parent link
+        links.push({
+          source: iIndex,
+          target: pIndex,
+          value: d.value,
+          color: d.color
+        });
+      }
+    });
 
-  const graph = { nodes, links };
-  sankey(graph);
+    // Build the sankey graph, which modifies nodes/links in place
+    const graph = { nodes, links };
+    sankey(graph);
 
-  const parentColorMap = {};
-  parentsRaw.forEach(p => {
-    const item = data.find(d => d.parent === p);
-    parentColorMap[p] = item && item.color ? item.color : "#ccc";
-  });
+    // Instead of coloring nodes from data, give them a neutral color:
+    graph.nodes.forEach(d => {
+      // Force all nodes to a neutral gray
+      d.color = "#ccc";
+    });
 
-  const idColorMap = {};
-  idsRaw.forEach(i => {
-    const item = data.find(d => d.id === i);
-    idColorMap[i] = item && item.color ? item.color : "#ccc";
-  });
+    // Create link paths and color them from link data (d.color)
+    const linkSelection = svg.append("g")
+        .attr("class", "links")
+      .selectAll("path")
+      .data(graph.links)
+      .enter().append("path")
+        .attr("d", link)
+        .attr("stroke-width", d => d.width)
+        .attr("stroke", d => d.color);
 
-  const domainColorMap = {};
-  domainsRaw.forEach(dm => {
-    const item = data.find(d => d.domain === dm);
-    domainColorMap[dm] = item && item.color ? item.color : "#ccc";
-  });
+    // Create node groups
+    const nodeSelection = svg.append("g")
+        .attr("class", "nodes")
+      .selectAll("g")
+      .data(graph.nodes)
+      .enter().append("g")
+        .attr("transform", d => `translate(${d.x0},${d.y0})`);
 
-  graph.nodes.forEach(d => {
-    if (d.type === "parent") {
-      d.color = parentColorMap[d.name] || "#ccc";
-    } else if (d.type === "id") {
-      d.color = idColorMap[d.name] || "#ccc";
-    } else if (d.type === "domain") {
-      d.color = domainColorMap[d.name] || "#ccc";
-    }
-  });
+    // Draw each node as a gray rectangle
+    nodeSelection.append("rect")
+        .attr("height", d => d.y1 - d.y0)
+        .attr("width", sankey.nodeWidth())
+        .attr("fill", d => d.color)   // always "#ccc"
+        .attr("stroke", "#999");
 
-  const linkSelection = svg.append("g")
-      .attr("class", "links")
-    .selectAll("path")
-    .data(graph.links)
-    .enter().append("path")
-      .attr("d", link)
-      .attr("stroke-width", d => d.width)
-      .attr("stroke", d => graph.nodes[d.source.index].color);
+    nodeSelection.append("text")
+        .attr("x", -6)
+        .attr("y", d => (d.y1 - d.y0)/2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "end")
+        .attr("fill", "#000")
+        .text(d => d.name)
+        .filter(d => d.x0 < width / 2)
+        .attr("x", 6 + sankey.nodeWidth())
+        .attr("text-anchor", "start");
 
-  const nodeSelection = svg.append("g")
-      .attr("class", "nodes")
-    .selectAll("g")
-    .data(graph.nodes)
-    .enter().append("g")
-      .attr("transform", d => `translate(${d.x0},${d.y0})`);
+    // Node mouseover events
+    nodeSelection
+      .on("mouseover", function(d) {
+        d3.select(this).style("cursor", "pointer");
+        tooltip.transition().duration(200).style("opacity", .9);
+        tooltip.html("Name: " + d.name + "<br/>Total: " + d.value)
+          .style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
 
-  nodeSelection.append("rect")
-      .attr("height", d => d.y1 - d.y0)
-      .attr("width", sankey.nodeWidth())
-      .attr("fill", d => d.color)
-      .attr("stroke", d => d.type === "domain" ? "#000" : "#fff");
+        const nodeIndex = d.index;
+        const connectedLinks = graph.links.filter(l => l.source.index === nodeIndex || l.target.index === nodeIndex);
+        const connectedNodes = new Set([nodeIndex]);
+        connectedLinks.forEach(l => {
+          connectedNodes.add(l.source.index);
+          connectedNodes.add(l.target.index);
+        });
 
-  nodeSelection.append("text")
-      .attr("x", -6)
-      .attr("y", d => (d.y1 - d.y0)/2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", "end")
-      .attr("fill", "#000")
-      .text(d => d.name)
-      .filter(d => d.x0 < width / 2)
-      .attr("x", 6 + sankey.nodeWidth())
-      .attr("text-anchor", "start");
+        nodeSelection.classed("dimmedNode", true).classed("hoveredNode", false);
+        linkSelection.classed("dimmedLink", true).classed("hoveredLink", false);
 
-  nodeSelection
-    .on("mouseover", function(d) {
-      d3.select(this).style("cursor", "pointer");
-      tooltip.transition().duration(200).style("opacity", .9);
-      tooltip.html("Name: " + d.name + "<br/>Total: " + d.value)
-        .style("left", (d3.event.pageX + 10) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-
-      const nodeIndex = d.index;
-      const connectedLinks = graph.links.filter(l => l.source.index === nodeIndex || l.target.index === nodeIndex);
-      const connectedNodes = new Set([nodeIndex]);
-      connectedLinks.forEach(l => {
-        connectedNodes.add(l.source.index);
-        connectedNodes.add(l.target.index);
+        nodeSelection.filter(nd => connectedNodes.has(nd.index))
+          .classed("dimmedNode", false)
+          .classed("hoveredNode", true);
+        linkSelection.filter(ld => connectedLinks.includes(ld))
+          .classed("dimmedLink", false)
+          .classed("hoveredLink", true);
+      })
+      .on("mousemove", function() {
+        tooltip
+          .style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        tooltip.transition().duration(200).style("opacity", 0);
+        nodeSelection.classed("hoveredNode", false).classed("dimmedNode", false);
+        linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
+        d3.select(this).style("cursor", null);
       });
 
-      nodeSelection.classed("dimmedNode", true).classed("hoveredNode", false);
-      linkSelection.classed("dimmedLink", true).classed("hoveredLink", false);
+    // Link mouseover events
+    linkSelection
+      .on("mouseover", function(d) {
+        d3.select(this).style("cursor", "pointer");
+        tooltip.transition().duration(200).style("opacity", .9);
+        const sourceName = graph.nodes[d.source.index].name;
+        const targetName = graph.nodes[d.target.index].name;
+        tooltip.html("Source: " + sourceName + "<br/>Target: " + targetName + "<br/>Value: " + d.value)
+          .style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
 
-      nodeSelection.filter(nd => connectedNodes.has(nd.index))
-        .classed("dimmedNode", false)
-        .classed("hoveredNode", true);
-      linkSelection.filter(ld => connectedLinks.includes(ld))
-        .classed("dimmedLink", false)
-        .classed("hoveredLink", true);
-    })
-    .on("mousemove", function() {
-      tooltip
-        .style("left", (d3.event.pageX + 10) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-    })
-    .on("mouseout", function() {
-      tooltip.transition().duration(200).style("opacity", 0);
-      nodeSelection.classed("hoveredNode", false).classed("dimmedNode", false);
-      linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
-      d3.select(this).style("cursor", null);
-    });
+        const connectedNodes = new Set([d.source.index, d.target.index]);
+        nodeSelection.classed("dimmedNode", true).classed("hoveredNode", false);
+        linkSelection.classed("dimmedLink", true).classed("hoveredLink", false);
 
-  linkSelection
-    .on("mouseover", function(d) {
-      d3.select(this).style("cursor", "pointer");
-      tooltip.transition().duration(200).style("opacity", .9);
-      const sourceName = graph.nodes[d.source.index].name;
-      const targetName = graph.nodes[d.target.index].name;
-      tooltip.html("Source: " + sourceName + "<br/>Target: " + targetName + "<br/>Value: " + d.value)
-        .style("left", (d3.event.pageX + 10) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-
-      const connectedNodes = new Set([d.source.index, d.target.index]);
-      nodeSelection.classed("dimmedNode", true).classed("hoveredNode", false);
-      linkSelection.classed("dimmedLink", true).classed("hoveredLink", false);
-
-      nodeSelection.filter(nd => connectedNodes.has(nd.index))
-        .classed("dimmedNode", false)
-        .classed("hoveredNode", true);
-      d3.select(this).classed("dimmedLink", false).classed("hoveredLink", true);
-    })
-    .on("mousemove", function() {
-      tooltip
-        .style("left", (d3.event.pageX + 10) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-    })
-    .on("mouseout", function() {
-      tooltip.transition().duration(200).style("opacity", 0);
-      nodeSelection.classed("hoveredNode", false).classed("dimmedNode", false);
-      linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
-      d3.select(this).style("cursor", null);
-    });
-});
+        nodeSelection.filter(nd => connectedNodes.has(nd.index))
+          .classed("dimmedNode", false)
+          .classed("hoveredNode", true);
+        d3.select(this).classed("dimmedLink", false).classed("hoveredLink", true);
+      })
+      .on("mousemove", function() {
+        tooltip
+          .style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        tooltip.transition().duration(200).style("opacity", 0);
+        nodeSelection.classed("hoveredNode", false).classed("dimmedNode", false);
+        linkSelection.classed("hoveredLink", false).classed("dimmedLink", false);
+        d3.select(this).style("cursor", null);
+      });
+  });
 </script>
 </body>
 </html>
