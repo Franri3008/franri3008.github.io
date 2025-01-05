@@ -101,12 +101,13 @@
       margin-bottom: 10px;
       table-layout: fixed;
     }
-    .tabla-horarios th, .tabla-horarios td {
+    .tabla-horarios th,
+    .tabla-horarios td {
       border: 1px solid #ccc;
       padding: 6px;
       vertical-align: top;
       position: relative;
-      text-align: center; /* Center content in cells */
+      text-align: center; /* Alinear el contenido al centro */
     }
     .col-hora {
       width: 15%;
@@ -133,17 +134,29 @@
       padding: 4px 6px;
       font-size: 0.5em;
       cursor: move;
-      display: inline-flex;
-      align-items: center;
       position: relative;
       user-select: none; /* Prevent text selection while dragging */
+      display: inline-block;
     }
-    .profesor-block img {
+    /* Internamente habrá 2 divs editables (ramo y profesor),
+       y el ícono para el color (no editable). */
+    .profesor-block .ramo-line,
+    .profesor-block .prof-line {
+      display: block;
+      width: 100%;
+      min-height: 12px; /* ayuda a ver el recuadro cuando está vacío */
+      border-bottom: 1px dashed transparent;
+    }
+
+    .profesor-block img.color-icon {
       width: 12px;
       height: 12px;
       margin-left: 5px;
       cursor: pointer;
+      display: inline-block;
+      vertical-align: middle;
     }
+
     /* colorPicker tooltip */
     #colorPicker {
       display: none;
@@ -174,7 +187,7 @@
       flex-direction: column;
       align-items: flex-start;
       margin-top: 20px;
-      width: 200px; /* Adjust width as needed */
+      width: 200px; /* Ajustar según tus necesidades */
     }
     #profesorContainer button.boton-agregar {
       width: 100%;
@@ -218,70 +231,92 @@
   <script>
     // Generar horas en la tabla (08:00 a 18:00)
     function generarHoras() {
-      let cuerpo = document.getElementById('cuerpoTabla')
-      for(let h=8; h<=18; h++){
-        let fila = document.createElement('tr')
-        let tdHora = document.createElement('td')
-        tdHora.classList.add('col-hora')
-        tdHora.style.pointerEvents='none'
-        let hh = (h<10)? '0'+h : h
-        tdHora.textContent = hh + ':00'
-        fila.appendChild(tdHora)
-        cuerpo.appendChild(fila)
+      let cuerpo = document.getElementById('cuerpoTabla');
+      for (let h = 8; h <= 18; h++) {
+        let fila = document.createElement('tr');
+        let tdHora = document.createElement('td');
+        tdHora.classList.add('col-hora');
+        tdHora.style.pointerEvents='none';
+        let hh = (h < 10) ? '0' + h : h;
+        tdHora.textContent = hh + ':00';
+        fila.appendChild(tdHora);
+        cuerpo.appendChild(fila);
       }
     }
-    generarHoras()
+    generarHoras();
 
     // Agregar Columna = "Nuevo Curso"
-    function agregarColumna(){
-      let filaCabeceras = document.getElementById('filaCabeceras')
-      let nuevoTh = document.createElement('th')
-      nuevoTh.classList.add('editable')
-      nuevoTh.contentEditable = "true"
-      nuevoTh.textContent = 'Nuevo Curso'
-      filaCabeceras.appendChild(nuevoTh)
+    function agregarColumna() {
+      let filaCabeceras = document.getElementById('filaCabeceras');
+      let nuevoTh = document.createElement('th');
+      nuevoTh.classList.add('editable');
+      nuevoTh.contentEditable = "true";
+      nuevoTh.textContent = 'Nuevo Curso';
+      filaCabeceras.appendChild(nuevoTh);
 
-      let cuerpo = document.getElementById('cuerpoTabla')
-      let filas = cuerpo.getElementsByTagName('tr')
-      for(let i=0; i<filas.length; i++){
-        let nuevaTd = document.createElement('td')
-        nuevaTd.ondragover = allowDrop
-        nuevaTd.ondrop = drop
-        filas[i].appendChild(nuevaTd)
+      let cuerpo = document.getElementById('cuerpoTabla');
+      let filas = cuerpo.getElementsByTagName('tr');
+      for (let i = 0; i < filas.length; i++) {
+        let nuevaTd = document.createElement('td');
+        nuevaTd.ondragover = allowDrop;
+        nuevaTd.ondrop = drop;
+        filas[i].appendChild(nuevaTd);
       }
     }
 
-    // Crear profesor
-    let colorPicker = document.getElementById('colorPicker')
-    let profSeleccionado = null
+    // Crear profesor. Ahora tendrá 2 líneas:
+    //  1) Ramo
+    //  2) Nombre del profesor
+    // Más el ícono de color (fuera de la parte editable)
+    let colorPicker = document.getElementById('colorPicker');
+    let profSeleccionado = null;
     let profesorCounter = 0;
 
-    function crearProfesor(){
-      let nuevoDiv = document.createElement('div');
-      nuevoDiv.classList.add('profesor-block');
-      nuevoDiv.contentEditable = "true"; // Make the text editable
-      nuevoDiv.textContent = 'Prof. ' + (++profesorCounter);
+    function crearProfesor() {
+      // Contenedor principal
+      let profesorBlock = document.createElement('div');
+      profesorBlock.classList.add('profesor-block');
+      profesorBlock.draggable = true;
+      profesorBlock.ondragstart = dragStart;
+      // Asignamos un dragend para re-chequear conflictos
+      profesorBlock.ondragend = dragEnd;
+      
+      // Evitamos que todo el bloque sea editable de golpe
+      profesorBlock.contentEditable = "false";
 
-      // Icono color
+      // Primera línea (nombre del ramo)
+      let ramoLine = document.createElement('div');
+      ramoLine.classList.add('ramo-line');
+      ramoLine.contentEditable = "true";
+      ramoLine.textContent = "Ramo " + (profesorCounter + 1);
+
+      // Segunda línea (nombre del profesor)
+      let profLine = document.createElement('div');
+      profLine.classList.add('prof-line');
+      profLine.contentEditable = "true";
+      profLine.textContent = "Prof. " + (++profesorCounter);
+
+      // Ícono para cambiar color
       let colorIcon = document.createElement('img');
-      colorIcon.src='https://cdn-icons-png.flaticon.com/512/2917/2917995.png';
-      colorIcon.title='Cambiar color';
-      colorIcon.onclick= (ev)=>{
-        profSeleccionado = nuevoDiv;
-        colorPicker.style.display='block';
-        colorPicker.style.left= ev.pageX+'px';
-        colorPicker.style.top= ev.pageY+'px';
+      colorIcon.src = 'https://cdn-icons-png.flaticon.com/512/2917/2917995.png';
+      colorIcon.classList.add("color-icon");
+      colorIcon.title = 'Cambiar color';
+      colorIcon.onclick = (ev) => {
+        profSeleccionado = profesorBlock;
+        colorPicker.style.display = 'block';
+        colorPicker.style.left = ev.pageX + 'px';
+        colorPicker.style.top = ev.pageY + 'px';
         ev.stopPropagation();
-      }
-      nuevoDiv.appendChild(colorIcon);
+      };
 
-      // Permitimos arrastrar
-      nuevoDiv.draggable = true;
-      nuevoDiv.ondragstart = dragStart;
+      // Insertar todo en el bloque
+      profesorBlock.appendChild(ramoLine);
+      profesorBlock.appendChild(profLine);
+      profesorBlock.appendChild(colorIcon);
 
-      // Insert it into the professor container
+      // Insertarlo en el contenedor de profesores
       let profesorContainer = document.getElementById('profesorContainer');
-      profesorContainer.appendChild(nuevoDiv);
+      profesorContainer.appendChild(profesorBlock);
     }
 
     // Drag and Drop functions
@@ -289,32 +324,40 @@
 
     function dragStart(event) {
       event.dataTransfer.setData('text/plain', event.target.id);
-      draggedFromContainer = this.parentNode.id === 'profesorContainer';
+      draggedFromContainer = (this.parentNode.id === 'profesorContainer');
+
+      // Si el bloque no tiene id, asignarle uno
       if (!this.id) {
         this.id = 'prof_' + Date.now();
       }
-      profSeleccionado = this; // Select the dragged professor for color change
+      profSeleccionado = this; // Seleccionamos el profesor que se está arrastrando
     }
 
-    function allowDrop(ev){
-      ev.preventDefault()
+    // Cuando termina el drag (sin importar dónde se suelte),
+    // revisamos toda la tabla para quitar o poner rojos según corresponda
+    function dragEnd(/* event */) {
+      checkAllRowsForConflicts();
     }
 
-    function drop(ev){
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drop(ev) {
       ev.preventDefault();
       const id = ev.dataTransfer.getData('text/plain');
       const element = document.getElementById(id);
 
       if (element) {
+        // Si viene desde el contenedor original, clonarlo
         if (draggedFromContainer) {
-          // Duplicate the element if dragged from the container
           const clone = element.cloneNode(true);
-          clone.id = 'prof_' + Date.now() + '_clone'; // Give the clone a unique ID
+          clone.id = 'prof_' + Date.now() + '_clone'; // Nuevo ID para el clon
           clone.draggable = true;
           clone.ondragstart = dragStart;
-          clone.contentEditable = "true"; // Make the clone editable
-          // Reattach the color picker event to the clone
-          const colorIcon = clone.querySelector('img');
+          clone.ondragend = dragEnd; // Re-asignar el dragend al clon 
+          // Conectar de nuevo el evento del ícono de color
+          let colorIcon = clone.querySelector('img.color-icon');
           if (colorIcon) {
             colorIcon.onclick = (e) => {
               profSeleccionado = clone;
@@ -326,33 +369,93 @@
           }
           ev.target.appendChild(clone);
         } else if (ev.target.tagName === 'TD') {
-          // Move the existing element if dragged from within the table
+          // Si simplemente se está moviendo dentro de la tabla
           ev.target.appendChild(element);
         }
-        draggedFromContainer = false; // Reset the flag
+        draggedFromContainer = false;
+      }
+
+      // También revisamos conflictos en la fila del drop inmediato
+      let row = ev.target.closest('tr');
+      if (row) {
+        checkRowConflicts(row);
       }
     }
 
     // Cambiar color
-    function cambiarColor(e){
-      if(profSeleccionado){
-        profSeleccionado.style.backgroundColor = e.target.value
+    function cambiarColor(e) {
+      if (profSeleccionado) {
+        profSeleccionado.style.backgroundColor = e.target.value;
       }
-      colorPicker.style.display='none'
+      colorPicker.style.display = 'none';
     }
 
     // Ocultar colorPicker al hacer click fuera
-    document.addEventListener('click',(ev)=>{
-      if(colorPicker.style.display === 'block' && !colorPicker.contains(ev.target) && profSeleccionado && !profSeleccionado.contains(ev.target)){
-        colorPicker.style.display='none';
+    document.addEventListener('click', (ev) => {
+      if (colorPicker.style.display === 'block' &&
+          !colorPicker.contains(ev.target) &&
+          profSeleccionado && 
+          !profSeleccionado.contains(ev.target)) {
+        colorPicker.style.display = 'none';
         profSeleccionado = null;
       }
     });
 
-    // Prevent dragging the color picker itself
+    // Evitar arrastrar el colorPicker
     colorPicker.ondragstart = (event) => {
       event.preventDefault();
     };
+
+    //------------------------------------------
+    // Revisar conflictos en la fila (misma hora)
+    // Si un mismo profesor aparece en <td> distintos,
+    // esos <td> se colorean de rojo.
+    //------------------------------------------
+    function checkRowConflicts(row) {
+      // 1) Recorremos las celdas de la fila
+      let tds = row.querySelectorAll('td');
+
+      // 2) Mapeamos { nombreProfesor : [td1, td2, ...] }
+      //    considerando la segunda línea (.prof-line)
+      //    como el nombre del profesor.
+      let profesorMap = new Map();
+
+      tds.forEach(td => {
+        // Quitamos rojo previo, por si ya no hay conflicto
+        td.style.backgroundColor = "";
+
+        let blocks = td.querySelectorAll('.profesor-block');
+        blocks.forEach(block => {
+          let profLine = block.querySelector('.prof-line');
+          if (profLine) {
+            let nombreProf = profLine.textContent.trim().toLowerCase();
+            if (!profesorMap.has(nombreProf)) {
+              profesorMap.set(nombreProf, []);
+            }
+            profesorMap.get(nombreProf).push(td);
+          }
+        });
+      });
+
+      // 3) Si un profesor aparece en 2+ celdas, colorear en rojo
+      profesorMap.forEach((celditas) => {
+        if (celditas.length > 1) {
+          celditas.forEach(td => {
+            td.style.backgroundColor = 'red';
+          });
+        }
+      });
+    }
+
+    //------------------------------------------
+    // checkAllRowsForConflicts
+    // Recorre todas las filas de la tabla y llama checkRowConflicts.
+    // Esto permite actualizar los colores al finalizar un drag.
+    //------------------------------------------
+    function checkAllRowsForConflicts() {
+      let filas = document.querySelectorAll('#cuerpoTabla tr');
+      filas.forEach(fila => checkRowConflicts(fila));
+    }
   </script>
 </body>
 </html>
