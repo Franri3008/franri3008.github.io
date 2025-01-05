@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>NestorBOT</title>
+  <meta charset="UTF-8" />
+  <title>NestorBOT - Conversor</title>
   <style>
     body {
       margin: 0;
@@ -36,6 +36,7 @@
       color: #333;
       font-weight: bold;
       cursor: pointer;
+      background-color: #eee;
     }
     .sidebar-boton-seleccionado {
       background-color: #75BBB0;
@@ -51,7 +52,7 @@
     /* Contenedor principal para que todo quede debajo del header */
     .contenedor-principal {
       margin: 0 auto;
-      width: 100%; /* Para ocupar todo el ancho y centrar internamente */
+      width: 100%;
     }
     /* Contenedor que alberga la parte centrada de horas y flechas */
     .contenedor-horas {
@@ -130,7 +131,7 @@
     .contenedor-boton-discretizacion {
       text-align: center;
       margin-top: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 20px; /* Reduced margin */
     }
     #botonVerDiscretizacion {
       font-size: 1rem;
@@ -146,11 +147,10 @@
     }
     .seccion-inferior {
       max-width: 800px;
-      margin: 0 auto 20px auto;
+      margin: 0 auto 10px auto; /* Reduced margin-bottom */
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      transform: scale(0.8);
       transform-origin: top center;
     }
     .seccion-inferior h2 {
@@ -184,7 +184,7 @@
       display: flex;
       justify-content: space-around;
       gap: 30px;
-      margin-bottom: 20px;
+      margin-bottom: 15px; /* Reduced margin */
       text-align: left;
     }
     .box-grande {
@@ -240,14 +240,32 @@
       color: #333 !important;
       border-color: #999 !important;
     }
+    /* Botón para regresar al index si gustas */
+    .btn-regresar {
+      display: inline-block;
+      margin-left: 10px;
+      margin-top: 10px;
+      padding: 6px 12px;
+      background-color: #ccc;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #333;
+    }
+    .btn-regresar:hover {
+      background-color: #bbb;
+    }
   </style>
 </head>
 <body>
-  <div class="header-titulo">NestorBOT v1.0</div>
+  <div class="header-titulo">NestorBOT v2.0 - Conversor</div>
 
+  <!-- Sidebar a la izquierda -->
   <div class="sidebar-izquierda">
     <a class="sidebar-boton sidebar-boton-seleccionado">Conversor</a>
-    <a class="sidebar-boton sidebar-boton-no-disponible">Horarios</a>
+    <a class="sidebar-boton" href="horarios.html">Horarios</a>
+    <a class="sidebar-boton" href="index.html">Volver al Menú</a>
   </div>
 
   <div class="contenedor-principal">
@@ -280,9 +298,11 @@
           </div>
         </div>
       </div>
+
       <div class="contenedor-boton-discretizacion">
         <button id="botonVerDiscretizacion">Discretizar</button>
       </div>
+
       <div id="seccionInferior" class="seccion-inferior gris-luego">
         <h2>Discretización</h2>
         <div class="contenedor-tablas">
@@ -378,51 +398,69 @@
       document.getElementById('minReloj').value = minReloj
     }
 
+    function repintarGris() {
+      document.getElementById('seccionInferior').classList.add('gris-luego')
+    }
+
     document.getElementById('botonVerDiscretizacion').addEventListener('click', () => {
       let horas = parseInt(document.getElementById('hrReloj').value) || 0
       let entry = dataJSON.find(e => e.horasReloj === horas)
       if (!entry) {
-        document.getElementById('lectivasReloj').textContent = '-- : --'
-        document.getElementById('noLectReloj').textContent = '-- : --'
-        document.getElementById('recreoReloj').textContent = '-- : --'
-        document.getElementById('lectivasPed').textContent = '-- : --'
-        document.getElementById('noLectPed').textContent = '-- : --'
-        document.getElementById('recreoPed').textContent = '-- : --'
-        document.getElementById('tdMinNoLect').textContent = '--'
-        document.getElementById('tdMenosConsejo').textContent = '--'
+        document.getElementById('lectivasReloj').textContent     = '-- : --'
+        document.getElementById('noLectReloj').textContent       = '-- : --'
+        document.getElementById('recreoReloj').textContent       = '-- : --'
+        document.getElementById('lectivasPed').textContent       = '-- : --'
+        document.getElementById('noLectPed').textContent         = '-- : --'
+        document.getElementById('recreoPed').textContent         = '-- : --'
+        document.getElementById('tdMinNoLect').textContent       = '--'
+        document.getElementById('tdMenosConsejo').textContent    = '--'
         document.getElementById('tdBloquesCompleto').textContent = '--'
-        document.getElementById('tdMinSobrantes').textContent = '--'
+        document.getElementById('tdMinSobrantes').textContent    = '--'
         return
       }
+
+      // Lectivas Reloj
       let lectivasRelojStr =
         entry.lectivasHC_h + ' : ' +
         (entry.lectivasHC_m < 10 ? '0'+entry.lectivasHC_m : entry.lectivasHC_m)
-      let lectivasPedStr =
-        entry.lectivasHA + ' : 00'
+      document.getElementById('lectivasReloj').textContent  = lectivasRelojStr
+
+      // No Lectivas Reloj
       let noLectRelojStr =
         entry.noLect_h + ' : ' +
         (entry.noLect_m < 10 ? '0'+entry.noLect_m : entry.noLect_m)
+      document.getElementById('noLectReloj').textContent    = noLectRelojStr
+
+      // Recreo Reloj
       let recreoRelojStr =
         entry.recreo_h + ' : ' +
         (entry.recreo_m < 10 ? '0'+entry.recreo_m : entry.recreo_m)
+      document.getElementById('recreoReloj').textContent    = recreoRelojStr
+
+      // Lectivas Ped
+      let lectivasPedStr =
+        entry.lectivasHA + ' : 00'
+      document.getElementById('lectivasPed').textContent    = lectivasPedStr
+
+      // No Lectivas Ped
       let totalNoLectMin = entry.noLect_h * 60 + entry.noLect_m
       let noLectPedDecimal = totalNoLectMin / 45
       let noLectPedH = Math.floor(noLectPedDecimal)
       let noLectPedFrac = noLectPedDecimal - noLectPedH
       let noLectPedM = Math.round(noLectPedFrac * 45)
       let noLectPedStr = noLectPedH + ' : ' + (noLectPedM < 10 ? '0'+noLectPedM : noLectPedM)
+      document.getElementById('noLectPed').textContent = noLectPedStr
+
+      // Recreo Ped
       let totalRecreoMin = entry.recreo_h * 60 + entry.recreo_m
       let recreoPedDecimal = totalRecreoMin / 45
       let recreoPedH = Math.floor(recreoPedDecimal)
       let recreoPedFrac = recreoPedDecimal - recreoPedH
       let recreoPedM = Math.round(recreoPedFrac * 45)
       let recreoPedStr = recreoPedH + ' : ' + (recreoPedM < 10 ? '0'+recreoPedM : recreoPedM)
-      document.getElementById('lectivasReloj').textContent = lectivasRelojStr
-      document.getElementById('noLectReloj').textContent = noLectRelojStr
-      document.getElementById('recreoReloj').textContent = recreoRelojStr
-      document.getElementById('lectivasPed').textContent = lectivasPedStr
-      document.getElementById('noLectPed').textContent = noLectPedStr
       document.getElementById('recreoPed').textContent = recreoPedStr
+
+      // Minutos No Lectivos
       document.getElementById('tdMinNoLect').textContent = totalNoLectMin
       let menosConsejo = totalNoLectMin - 120
       document.getElementById('tdMenosConsejo').textContent =
@@ -431,12 +469,10 @@
       document.getElementById('tdBloquesCompleto').textContent = bloquesCompleto
       let minSobrantes = menosConsejo >= 0 ? (menosConsejo % 45) : '--'
       document.getElementById('tdMinSobrantes').textContent = minSobrantes
+
+      // Quitar la clase "gris-luego"
       document.getElementById('seccionInferior').classList.remove('gris-luego')
     })
-
-    function repintarGris() {
-      document.getElementById('seccionInferior').classList.add('gris-luego')
-    }
   </script>
 </body>
 </html>

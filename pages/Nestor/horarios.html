@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>NestorBOT - Horarios</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .header-titulo {
+      text-align: center;
+      background-color: #4b286d;
+      color: #fff;
+      padding: 15px 0;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    /* Sidebar a la izquierda */
+    .sidebar-izquierda {
+      width: 150px;
+      float: left;
+      padding: 10px;
+      margin-left: 10px;
+      background-color: #f8f8f8;
+      border-right: 1px solid #ccc;
+      min-height: 100vh;
+    }
+    .sidebar-boton {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: center;
+      text-decoration: none;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      padding: 8px 0;
+      color: #333;
+      font-weight: bold;
+      background-color: #eee;
+      cursor: pointer;
+    }
+    .sidebar-boton-seleccionado {
+      background-color: #75BBB0;
+      color: #fff;
+      border: none;
+    }
+    .sidebar-boton:hover {
+      background-color: #65A4E3;
+      color: #fff;
+    }
+    .contenedor-principal {
+      margin-left: 180px;
+      padding: 20px;
+      display: flex;
+    }
+
+    /* Contenedor principal para la sección de Horarios */
+    .horarios-contenedor {
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      padding: 10px;
+      margin-top: 20px;
+      width: 80%;
+      margin-right: 20px;
+    }
+    .horarios-contenedor h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.3rem;
+      background-color: #4b286d;
+      color: #fff;
+      padding: 8px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .contenedor-botones-horarios {
+      width: 100%;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    .boton-agregar {
+      background-color: #75BBB0;
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    .boton-agregar:hover {
+      background-color: #65A4E3;
+    }
+
+    .tabla-horarios {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      table-layout: fixed;
+    }
+    .tabla-horarios th, .tabla-horarios td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      vertical-align: top;
+      position: relative;
+      text-align: center; /* Center content in cells */
+    }
+    .col-hora {
+      width: 15%;
+      text-align: center;
+      font-size: 0.7em;
+    }
+    .tabla-horarios thead th {
+      font-size: 0.5em;
+    }
+
+    .editable {
+      outline: 1px dotted transparent;
+    }
+    .editable:focus {
+      outline: 1px dotted #aaa;
+    }
+
+    /* Bloques profesor */
+    .profesor-block {
+      background-color: #FFD700;
+      margin: 5px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.5em;
+      cursor: move;
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      user-select: none; /* Prevent text selection while dragging */
+    }
+    .profesor-block img {
+      width: 12px;
+      height: 12px;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    /* colorPicker tooltip */
+    #colorPicker {
+      display: none;
+      position: absolute;
+      z-index: 9999;
+    }
+
+    /* Enlace de retorno */
+    .btn-regresar {
+      display: inline-block;
+      margin-top: 10px;
+      margin-right: 10px;
+      padding: 6px 12px;
+      background-color: #ccc;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #333;
+    }
+    .btn-regresar:hover {
+      background-color: #bbb;
+    }
+
+    /* Container for professor blocks */
+    #profesorContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 20px;
+      width: 200px; /* Adjust width as needed */
+    }
+    #profesorContainer button.boton-agregar {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-titulo">NestorBOT v2.0 - Horarios</div>
+
+  <!-- Sidebar Izquierda -->
+  <div class="sidebar-izquierda">
+    <a href="conversor.html" class="sidebar-boton">Conversor</a>
+    <a class="sidebar-boton sidebar-boton-seleccionado">Horarios</a>
+    <a class="sidebar-boton" href="index.html">Menú Principal</a>
+  </div>
+
+  <div class="contenedor-principal">
+    <div class="horarios-contenedor">
+      <h2>Horario General</h2>
+      <div class="contenedor-botones-horarios">
+        <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+      </div>
+      <table class="tabla-horarios" id="tablaHorarios">
+        <thead>
+          <tr id="filaCabeceras">
+            <th class="col-hora">Hora</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpoTabla"></tbody>
+      </table>
+    </div>
+    <div id="profesorContainer">
+      <button class="boton-agregar" onclick="crearProfesor()">Agregar Profe</button>
+    </div>
+  </div>
+
+  <!-- colorPicker para cambiar color al profesor -->
+  <input type="color" id="colorPicker" oninput="cambiarColor(event)" onclick="event.stopPropagation()" />
+
+  <script>
+    // Generar horas en la tabla (08:00 a 18:00)
+    function generarHoras() {
+      let cuerpo = document.getElementById('cuerpoTabla')
+      for(let h=8; h<=18; h++){
+        let fila = document.createElement('tr')
+        let tdHora = document.createElement('td')
+        tdHora.classList.add('col-hora')
+        tdHora.style.pointerEvents='none'
+        let hh = (h<10)? '0'+h : h
+        tdHora.textContent = hh + ':00'
+        fila.appendChild(tdHora)
+        cuerpo.appendChild(fila)
+      }
+    }
+    generarHoras()
+
+    // Agregar Columna = "Nuevo Curso"
+    function agregarColumna(){
+      let filaCabeceras = document.getElementById('filaCabeceras')
+      let nuevoTh = document.createElement('th')
+      nuevoTh.classList.add('editable')
+      nuevoTh.contentEditable = "true"
+      nuevoTh.textContent = 'Nuevo Curso'
+      filaCabeceras.appendChild(nuevoTh)
+
+      let cuerpo = document.getElementById('cuerpoTabla')
+      let filas = cuerpo.getElementsByTagName('tr')
+      for(let i=0; i<filas.length; i++){
+        let nuevaTd = document.createElement('td')
+        nuevaTd.ondragover = allowDrop
+        nuevaTd.ondrop = drop
+        filas[i].appendChild(nuevaTd)
+      }
+    }
+
+    // Crear profesor
+    let colorPicker = document.getElementById('colorPicker')
+    let profSeleccionado = null
+    let profesorCounter = 0;
+
+    function crearProfesor(){
+      let nuevoDiv = document.createElement('div');
+      nuevoDiv.classList.add('profesor-block');
+      nuevoDiv.contentEditable = "true"; // Make the text editable
+      nuevoDiv.textContent = 'Prof. ' + (++profesorCounter);
+
+      // Icono color
+      let colorIcon = document.createElement('img');
+      colorIcon.src='https://cdn-icons-png.flaticon.com/512/2917/2917995.png';
+      colorIcon.title='Cambiar color';
+      colorIcon.onclick= (ev)=>{
+        profSeleccionado = nuevoDiv;
+        colorPicker.style.display='block';
+        colorPicker.style.left= ev.pageX+'px';
+        colorPicker.style.top= ev.pageY+'px';
+        ev.stopPropagation();
+      }
+      nuevoDiv.appendChild(colorIcon);
+
+      // Permitimos arrastrar
+      nuevoDiv.draggable = true;
+      nuevoDiv.ondragstart = dragStart;
+
+      // Insert it into the professor container
+      let profesorContainer = document.getElementById('profesorContainer');
+      profesorContainer.appendChild(nuevoDiv);
+    }
+
+    // Drag and Drop functions
+    let draggedFromContainer = false;
+
+    function dragStart(event) {
+      event.dataTransfer.setData('text/plain', event.target.id);
+      draggedFromContainer = this.parentNode.id === 'profesorContainer';
+      if (!this.id) {
+        this.id = 'prof_' + Date.now();
+      }
+      profSeleccionado = this; // Select the dragged professor for color change
+    }
+
+    function allowDrop(ev){
+      ev.preventDefault()
+    }
+
+    function drop(ev){
+      ev.preventDefault();
+      const id = ev.dataTransfer.getData('text/plain');
+      const element = document.getElementById(id);
+
+      if (element) {
+        if (draggedFromContainer) {
+          // Duplicate the element if dragged from the container
+          const clone = element.cloneNode(true);
+          clone.id = 'prof_' + Date.now() + '_clone'; // Give the clone a unique ID
+          clone.draggable = true;
+          clone.ondragstart = dragStart;
+          clone.contentEditable = "true"; // Make the clone editable
+          // Reattach the color picker event to the clone
+          const colorIcon = clone.querySelector('img');
+          if (colorIcon) {
+            colorIcon.onclick = (e) => {
+              profSeleccionado = clone;
+              colorPicker.style.display = 'block';
+              colorPicker.style.left = e.pageX + 'px';
+              colorPicker.style.top = e.pageY + 'px';
+              e.stopPropagation();
+            };
+          }
+          ev.target.appendChild(clone);
+        } else if (ev.target.tagName === 'TD') {
+          // Move the existing element if dragged from within the table
+          ev.target.appendChild(element);
+        }
+        draggedFromContainer = false; // Reset the flag
+      }
+    }
+
+    // Cambiar color
+    function cambiarColor(e){
+      if(profSeleccionado){
+        profSeleccionado.style.backgroundColor = e.target.value
+      }
+      colorPicker.style.display='none'
+    }
+
+    // Ocultar colorPicker al hacer click fuera
+    document.addEventListener('click',(ev)=>{
+      if(colorPicker.style.display === 'block' && !colorPicker.contains(ev.target) && profSeleccionado && !profSeleccionado.contains(ev.target)){
+        colorPicker.style.display='none';
+        profSeleccionado = null;
+      }
+    });
+
+    // Prevent dragging the color picker itself
+    colorPicker.ondragstart = (event) => {
+      event.preventDefault();
+    };
+  </script>
+</body>
+</html>
