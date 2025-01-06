@@ -18,6 +18,31 @@
       margin-bottom: 10px;
     }
 
+    /* Barra superior con botones de días */
+    .top-dias {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px;
+    }
+    .top-dias button {
+      margin: 0 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #bbb;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
+    }
+    .top-dias button:hover {
+      background-color: #999;
+    }
+    /* Botón de día activo */
+    .top-dias button.activo {
+      background-color: #666;
+    }
+
     /* Sidebar a la izquierda */
     .sidebar-izquierda {
       width: 150px;
@@ -51,10 +76,11 @@
       background-color: #65A4E3;
       color: #fff;
     }
+
     .contenedor-principal {
       margin-left: 180px;
       padding: 20px;
-      display: flex;
+      display: block; /* Contendrá varios subcontenedores (uno por día + contenedor de profes) */
     }
 
     /* Contenedor principal para la sección de Horarios */
@@ -63,8 +89,8 @@
       border-radius: 5px;
       padding: 10px;
       margin-top: 20px;
-      width: 80%;
-      margin-right: 20px;
+      margin-bottom: 20px;
+      width: 90%;
     }
     .horarios-contenedor h2 {
       margin: 0 0 10px 0;
@@ -107,7 +133,7 @@
       padding: 6px;
       vertical-align: top;
       position: relative;
-      text-align: center; /* Alinear el contenido al centro */
+      text-align: center;
     }
     .col-hora {
       width: 15%;
@@ -135,26 +161,22 @@
       font-size: 0.5em;
       cursor: move;
       position: relative;
-      user-select: none; /* Prevent text selection while dragging */
+      user-select: none; /* Evita seleccionar texto al arrastrar */
       display: inline-block;
     }
-    /* Internamente habrá 2 divs editables (ramo y profesor),
-       y el ícono para el color (no editable). */
     .profesor-block .ramo-line,
     .profesor-block .prof-line {
       display: block;
       width: 100%;
-      min-height: 12px; /* ayuda a ver el recuadro cuando está vacío */
-      border-bottom: 1px dashed transparent;
+      min-height: 12px;
     }
 
-    .profesor-block img.color-icon {
-      width: 12px;
-      height: 12px;
-      margin-left: 5px;
-      cursor: pointer;
-      display: inline-block;
-      vertical-align: middle;
+    /* celdas de recreo en gris, altura menor (x0.2 aprox) */
+    .recreo td {
+      background-color: #eee !important;
+      line-height: 0.2;
+      height: 0.2em;
+      min-height: 1px; /* Ajustar según se requiera */
     }
 
     /* colorPicker tooltip */
@@ -164,44 +186,49 @@
       z-index: 9999;
     }
 
-    /* Enlace de retorno */
-    .btn-regresar {
-      display: inline-block;
-      margin-top: 10px;
-      margin-right: 10px;
-      padding: 6px 12px;
-      background-color: #ccc;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      color: #333;
-    }
-    .btn-regresar:hover {
-      background-color: #bbb;
-    }
-
-    /* Container for professor blocks */
+    /* Container para los profesores: horizontal flex-wrap */
     #profesorContainer {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      flex-wrap: wrap; /* Para que bajen a la siguiente línea si son muchos */
       margin-top: 20px;
-      width: 200px; /* Ajustar según tus necesidades */
+      width: 95%;
+      border: 1px dashed #ccc;
+      padding: 10px;
     }
     #profesorContainer button.boton-agregar {
-      width: 100%;
+      width: auto;
       margin-bottom: 10px;
     }
 
-    /* Fila de recreo en gris */
-    .recreo td {
-      background-color: #eee !important;
+    /* item que contiene al block y al input debajo */
+    .profesor-item {
+      display: flex;
+      flex-direction: column; /* Bloque arriba, input abajo */
+      align-items: flex-start;
+      margin-right: 15px;
+      margin-bottom: 15px;
+    }
+
+    /* Cada día como un "tab" de contenido que se oculta/muestra */
+    .dia-contenedor {
+      display: none; /* Por defecto oculto */
+    }
+    .dia-contenedor.activo {
+      display: block;
     }
   </style>
 </head>
 <body>
   <div class="header-titulo">NestorBOT v2.0 - Horarios</div>
+
+  <!-- Barra superior con 5 botones de días -->
+  <div class="top-dias">
+    <button id="btn-lunes" onclick="mostrarDia('lunes')">Lunes</button>
+    <button id="btn-martes" onclick="mostrarDia('martes')">Martes</button>
+    <button id="btn-miercoles" onclick="mostrarDia('miercoles')">Miércoles</button>
+    <button id="btn-jueves" onclick="mostrarDia('jueves')">Jueves</button>
+    <button id="btn-viernes" onclick="mostrarDia('viernes')">Viernes</button>
+  </div>
 
   <!-- Sidebar Izquierda -->
   <div class="sidebar-izquierda">
@@ -211,23 +238,98 @@
   </div>
 
   <div class="contenedor-principal">
-    <div class="horarios-contenedor">
-      <h2>Horario General</h2>
-      <div class="contenedor-botones-horarios">
-        <!-- Botón para agregar columnas -->
-        <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-        <!-- Botón para guardar el horario en Excel -->
-        <button class="boton-agregar" onclick="guardarExcel()">Guardar Excel</button>
+    <!-- Cada día es un contenedor distinto -->
+    <div id="dia-lunes" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Lunes</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+          <button class="boton-agregar" onclick="guardarExcel('lunes')">Guardar Excel</button>
+        </div>
+        <table class="tabla-horarios" id="tablaHorarios-lunes">
+          <thead>
+            <tr id="filaCabeceras-lunes">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-lunes"></tbody>
+        </table>
       </div>
-      <table class="tabla-horarios" id="tablaHorarios">
-        <thead>
-          <tr id="filaCabeceras">
-            <th class="col-hora">Hora</th>
-          </tr>
-        </thead>
-        <tbody id="cuerpoTabla"></tbody>
-      </table>
     </div>
+
+    <div id="dia-martes" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Martes</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+          <button class="boton-agregar" onclick="guardarExcel('martes')">Guardar Excel</button>
+        </div>
+        <table class="tabla-horarios" id="tablaHorarios-martes">
+          <thead>
+            <tr id="filaCabeceras-martes">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-martes"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="dia-miercoles" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Miércoles</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+          <button class="boton-agregar" onclick="guardarExcel('miercoles')">Guardar Excel</button>
+        </div>
+        <table class="tabla-horarios" id="tablaHorarios-miercoles">
+          <thead>
+            <tr id="filaCabeceras-miercoles">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-miercoles"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="dia-jueves" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Jueves</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+          <button class="boton-agregar" onclick="guardarExcel('jueves')">Guardar Excel</button>
+        </div>
+        <table class="tabla-horarios" id="tablaHorarios-jueves">
+          <thead>
+            <tr id="filaCabeceras-jueves">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-jueves"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="dia-viernes" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Viernes</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+          <button class="boton-agregar" onclick="guardarExcel('viernes')">Guardar Excel</button>
+        </div>
+        <table class="tabla-horarios" id="tablaHorarios-viernes">
+          <thead>
+            <tr id="filaCabeceras-viernes">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-viernes"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Contenedor de profesores (abajo) -->
     <div id="profesorContainer">
       <button class="boton-agregar" onclick="crearProfesor()">Agregar Profe</button>
     </div>
@@ -241,118 +343,145 @@
 
   <script>
     /*
-      1) Ajuste de horas y recreos:
-         - Bloques de 45 min a partir de las 8:15.
-         - Recreos en:
-             9:45 - 10:00
-             11:30 - 11:45
-             13:15 - 14:00
-             15:30 - 15:45
-         - Termina alrededor de las 19:00.
+      1) Horas y recreos: se generan en cada tabla (lunes a viernes).
+      2) Columnas (cursos) deben ser constantes en todos los días.
+         -> Llevamos un array global de columnas. Al "agregarColumna" (nuevo curso),
+            se añade a este array y se actualizan todos los días.
     */
+
+    // Estructura de bloques de tiempo
     const BLOQUES = [
-      // Bloques normales (no recreo)
       { label: "08:15", isBreak: false },
       { label: "09:00", isBreak: false },
-      // Recreo
-      { label: "09:45 - 10:00 (Recreo)", isBreak: true },
-      // Bloques
+      // recreo 9:45-10:00
+      { label: "",      isBreak: true  },
       { label: "10:00", isBreak: false },
       { label: "10:45", isBreak: false },
-      // Recreo
-      { label: "11:30 - 11:45 (Recreo)", isBreak: true },
-      // Bloques
+      // recreo 11:30-11:45
+      { label: "",      isBreak: true  },
       { label: "11:45", isBreak: false },
       { label: "12:30", isBreak: false },
-      // Recreo
-      { label: "13:15 - 14:00 (Recreo)", isBreak: true },
-      // Bloques
+      // recreo 13:15-14:00
+      { label: "",      isBreak: true  },
       { label: "14:00", isBreak: false },
       { label: "14:45", isBreak: false },
-      // Recreo
-      { label: "15:30 - 15:45 (Recreo)", isBreak: true },
-      // Bloques
+      // recreo 15:30-15:45
+      { label: "",      isBreak: true  },
       { label: "15:45", isBreak: false },
       { label: "16:30", isBreak: false },
       { label: "17:15", isBreak: false },
       { label: "18:00", isBreak: false },
-      { label: "18:45 - 19:00", isBreak: false }
+      { label: "18:45", isBreak: false }
     ];
 
-    function generarHoras() {
-      let cuerpo = document.getElementById('cuerpoTabla');
+    // Días disponibles
+    const dias = ["lunes", "martes", "miercoles", "jueves", "viernes"];
+
+    // Array global de columnas (cursos)
+    let columnasGlobales = [];
+
+    window.onload = function(){
+      // Generar horas en cada tabla
+      dias.forEach(d => generarHorasParaDia(d));
+      // Mostrar lunes por defecto
+      mostrarDia("lunes");
+    };
+
+    // Generar la parte de las horas y recreos para la tabla de un día
+    function generarHorasParaDia(dia) {
+      let cuerpo = document.getElementById(`cuerpoTabla-${dia}`);
       BLOQUES.forEach(b => {
         let fila = document.createElement('tr');
-        // Si es recreo, marcamos la fila con la clase .recreo
         if (b.isBreak) {
           fila.classList.add('recreo');
         }
         let tdHora = document.createElement('td');
         tdHora.classList.add('col-hora');
         tdHora.style.pointerEvents = 'none';
-        tdHora.textContent = b.label;
+        tdHora.textContent = b.label; 
         fila.appendChild(tdHora);
         cuerpo.appendChild(fila);
       });
     }
-    generarHoras();
 
-    // Agregar Columna = "Nuevo Curso"
-    // Si una fila es de recreo, se deja SIN eventos de Drop/DragOver.
-    function agregarColumna() {
-      let filaCabeceras = document.getElementById('filaCabeceras');
-      let nuevoTh = document.createElement('th');
-      nuevoTh.classList.add('editable');
-      nuevoTh.contentEditable = "true";
-      nuevoTh.textContent = 'Nuevo Curso';
-      filaCabeceras.appendChild(nuevoTh);
-
-      let cuerpo = document.getElementById('cuerpoTabla');
-      let filas = cuerpo.getElementsByTagName('tr');
-      for (let i = 0; i < filas.length; i++) {
-        let nuevaTd = document.createElement('td');
-        // Si la fila es recreo, no permitimos drop
-        if (!filas[i].classList.contains('recreo')) {
-          nuevaTd.ondragover = allowDrop;
-          nuevaTd.ondrop = drop;
+    // Mostrar un día y ocultar el resto, además marcar botón activo
+    function mostrarDia(dia) {
+      dias.forEach(d => {
+        const contenedor = document.getElementById(`dia-${d}`);
+        const btnDia = document.getElementById(`btn-${d}`);
+        if(d===dia) {
+          contenedor.classList.add('activo');
+          btnDia.classList.add('activo');
+        } else {
+          contenedor.classList.remove('activo');
+          btnDia.classList.remove('activo');
         }
-        filas[i].appendChild(nuevaTd);
-      }
+      });
     }
 
-    // Crear profesor. Ahora tendrá 2 líneas:
-    //  1) Ramo
-    //  2) Nombre del profesor
-    // Más el ícono de color (fuera de la parte editable)
+    // Agregar un nuevo curso (columna) a TODAS las tablas
+    function agregarColumna() {
+      // Nombre por defecto
+      let nombreCurso = "Nuevo Curso " + (columnasGlobales.length + 1);
+
+      // Añadir a array global
+      columnasGlobales.push(nombreCurso);
+
+      // Para cada día, agregamos un TH y una TD para cada fila
+      dias.forEach(dia => {
+        let filaCabeceras = document.getElementById(`filaCabeceras-${dia}`);
+        let nuevoTh = document.createElement('th');
+        nuevoTh.classList.add('editable');
+        nuevoTh.contentEditable = "true";
+        nuevoTh.textContent = nombreCurso;
+        filaCabeceras.appendChild(nuevoTh);
+
+        let cuerpo = document.getElementById(`cuerpoTabla-${dia}`);
+        let filas = cuerpo.getElementsByTagName('tr');
+        for (let i = 0; i < filas.length; i++) {
+          let nuevaTd = document.createElement('td');
+          if (!filas[i].classList.contains('recreo')) {
+            nuevaTd.ondragover = allowDrop;
+            // Asignar la misma función drop, con el "dia"
+            nuevaTd.ondrop = (ev) => drop(ev, dia);
+          }
+          filas[i].appendChild(nuevaTd);
+        }
+      });
+    }
+
     let colorPicker = document.getElementById('colorPicker');
     let profSeleccionado = null;
     let profesorCounter = 0;
 
+    /*
+      Crear profesor 
+        - Contenedor (.profesor-item) con "flex-direction: column"
+        - Arriba: Bloque con 2 líneas + ícono color
+        - Debajo: input de número de bloques
+    */
     function crearProfesor() {
-      // Contenedor principal
+      let profesorItem = document.createElement('div');
+      profesorItem.classList.add('profesor-item');
+
+      // Bloque con 2 líneas + ícono de color
       let profesorBlock = document.createElement('div');
       profesorBlock.classList.add('profesor-block');
       profesorBlock.draggable = true;
       profesorBlock.ondragstart = dragStart;
-      // Asignamos un dragend para re-chequear conflictos
       profesorBlock.ondragend = dragEnd;
-
-      // Evitamos que todo el bloque sea editable de golpe
       profesorBlock.contentEditable = "false";
 
-      // Primera línea (nombre del ramo)
       let ramoLine = document.createElement('div');
       ramoLine.classList.add('ramo-line');
       ramoLine.contentEditable = "true";
       ramoLine.textContent = "Ramo " + (profesorCounter + 1);
 
-      // Segunda línea (nombre del profesor)
       let profLine = document.createElement('div');
       profLine.classList.add('prof-line');
       profLine.contentEditable = "true";
       profLine.textContent = "Prof. " + (++profesorCounter);
 
-      // Ícono para cambiar color
       let colorIcon = document.createElement('img');
       colorIcon.src = 'https://cdn-icons-png.flaticon.com/512/2917/2917995.png';
       colorIcon.classList.add("color-icon");
@@ -365,70 +494,89 @@
         ev.stopPropagation();
       };
 
-      // Insertar todo en el bloque
       profesorBlock.appendChild(ramoLine);
       profesorBlock.appendChild(profLine);
       profesorBlock.appendChild(colorIcon);
 
-      // Insertarlo en el contenedor de profesores
+      // Input de número de bloques (por defecto 1), debajo
+      let blockCountInput = document.createElement('input');
+      blockCountInput.type = 'number';
+      blockCountInput.value = '1';
+      blockCountInput.min = '1';
+      blockCountInput.style.width = '40px';
+      blockCountInput.style.marginTop = '5px';
+      blockCountInput.title = 'Nro. de bloques a asignar';
+
+      // Incluir ambos en el "profesorItem"
+      profesorItem.appendChild(profesorBlock);
+      profesorItem.appendChild(blockCountInput);
+
+      // Agregarlo al contenedor de profesores
       let profesorContainer = document.getElementById('profesorContainer');
-      profesorContainer.appendChild(profesorBlock);
+      profesorContainer.appendChild(profesorItem);
     }
 
-    // Drag and Drop functions
+    // Drag and Drop
     let draggedFromContainer = false;
 
     function dragStart(event) {
+      // Habilitar el "copy" en vez de "move", para no quitar el original del contenedor
+      event.dataTransfer.effectAllowed = "copy";
       event.dataTransfer.setData('text/plain', event.target.id);
-      draggedFromContainer = (this.parentNode.id === 'profesorContainer');
 
-      // Si el bloque no tiene id, asignarle uno
+      draggedFromContainer = (this.parentNode && this.parentNode.classList.contains('profesor-item'));
+      // Asegurar que cada profesorBlock tenga un ID único
       if (!this.id) {
         this.id = 'prof_' + Date.now();
       }
-      profSeleccionado = this; // Seleccionamos el profesor que se está arrastrando
+      profSeleccionado = this;
     }
 
     function dragEnd() {
-      checkAllRowsForConflicts();
+      // Revisa todas las tablas de todos los días
+      dias.forEach(d => checkAllRowsForConflicts(d));
     }
 
     function allowDrop(ev) {
+      // Indicar que permitimos soltar (copy)
       ev.preventDefault();
+      ev.dataTransfer.dropEffect = "copy";
     }
 
-    function drop(ev) {
+    /*
+      drop(ev, dia):
+        - Si viene del contenedor (draggedFromContainer==true), clonarlo (sin ícono color).
+          El original permanece en el contenedor.
+        - Si viene desde otra celda, moverlo tal cual.
+    */
+    function drop(ev, dia) {
       ev.preventDefault();
       const id = ev.dataTransfer.getData('text/plain');
       const element = document.getElementById(id);
+      if (!element) return;
 
-      if (element) {
-        // Si viene desde el contenedor original, clonarlo
-        if (draggedFromContainer) {
-          const clone = element.cloneNode(true);
-          clone.id = 'prof_' + Date.now() + '_clone'; // Nuevo ID para el clon
-          clone.draggable = true;
-          clone.ondragstart = dragStart;
-          clone.ondragend = dragEnd; // Re-asignar el dragend al clon
-          // Conectar de nuevo el evento del ícono de color
-          let colorIcon = clone.querySelector('img.color-icon');
-          if (colorIcon) {
-            colorIcon.onclick = (e) => {
-              profSeleccionado = clone;
-              colorPicker.style.display = 'block';
-              colorPicker.style.left = e.pageX + 'px';
-              colorPicker.style.top = e.pageY + 'px';
-              e.stopPropagation();
-            };
-          }
-          ev.target.appendChild(clone);
-        } else if (ev.target.tagName === 'TD') {
-          // Si simplemente se está moviendo dentro de la tabla
-          ev.target.appendChild(element);
+      if (draggedFromContainer) {
+        // Clonamos
+        const clone = element.cloneNode(true);
+        clone.id = 'prof_' + Date.now() + '_clone';
+        clone.draggable = true;
+        clone.ondragstart = dragStart;
+        clone.ondragend = dragEnd;
+
+        // Quitar ícono de color (si existe)
+        let icon = clone.querySelector('.color-icon');
+        if (icon) {
+          icon.remove();
         }
-        draggedFromContainer = false;
+        // Insertar el clon en la celda
+        ev.target.appendChild(clone);
+      } else {
+        // Si se arrastra desde otra celda, simplemente mover
+        ev.target.appendChild(element);
       }
 
+      draggedFromContainer = false;
+      // Revisar conflictos en la fila
       let row = ev.target.closest('tr');
       if (row) {
         checkRowConflicts(row);
@@ -443,34 +591,28 @@
       colorPicker.style.display = 'none';
     }
 
-    // Ocultar colorPicker al hacer click fuera
+    // Cerrar colorPicker si clic fuera
     document.addEventListener('click', (ev) => {
-      if (colorPicker.style.display === 'block' &&
-          !colorPicker.contains(ev.target) &&
-          profSeleccionado && 
-          !profSeleccionado.contains(ev.target)) {
+      if (
+        colorPicker.style.display === 'block' &&
+        !colorPicker.contains(ev.target) &&
+        profSeleccionado && 
+        !profSeleccionado.contains(ev.target)
+      ) {
         colorPicker.style.display = 'none';
         profSeleccionado = null;
       }
     });
 
-    // Evitar arrastrar el colorPicker
+    // Evitar arrastrar colorPicker
     colorPicker.ondragstart = (event) => {
       event.preventDefault();
     };
 
-    //------------------------------------------
-    // Revisar conflictos en la fila (misma hora)
-    // Si un mismo profesor aparece en <td> distintos,
-    // esos <td> se colorean de rojo.
-    //------------------------------------------
+    // Revisar conflictos en la fila
     function checkRowConflicts(row) {
       let tds = row.querySelectorAll('td');
-
-      // Limpia el color previo de cada <td>
       tds.forEach(td => td.style.backgroundColor = "");
-
-      // Mapeo { nombreProfesor -> [td, td, ...] }
       let profesorMap = new Map();
 
       tds.forEach(td => {
@@ -487,7 +629,6 @@
         });
       });
 
-      // Conflicto: mismo prof en 2+ celdas
       profesorMap.forEach(celdas => {
         if (celdas.length > 1) {
           celdas.forEach(td => {
@@ -497,23 +638,17 @@
       });
     }
 
-    //------------------------------------------
-    // checkAllRowsForConflicts: Revisa cada fila de la tabla
-    //------------------------------------------
-    function checkAllRowsForConflicts() {
-      let filas = document.querySelectorAll('#cuerpoTabla tr');
+    // Revisar tabla completa de un día
+    function checkAllRowsForConflicts(dia) {
+      let filas = document.querySelectorAll(`#cuerpoTabla-${dia} tr`);
       filas.forEach(fila => checkRowConflicts(fila));
     }
 
-    //------------------------------------------
-    // Guardar en Excel
-    //------------------------------------------
-    function guardarExcel() {
-      // Convertir la tabla a libro Excel con SheetJS
-      let tabla = document.getElementById("tablaHorarios");
-      let wb = XLSX.utils.table_to_book(tabla, { sheet: "Horario" });
-      // Guardar el archivo
-      XLSX.writeFile(wb, "horario.xlsx");
+    // Guardar en Excel la tabla de un día
+    function guardarExcel(dia) {
+      let tabla = document.getElementById(`tablaHorarios-${dia}`);
+      let wb = XLSX.utils.table_to_book(tabla, { sheet: `Horario-${dia}` });
+      XLSX.writeFile(wb, `horario-${dia}.xlsx`);
     }
   </script>
 </body>
