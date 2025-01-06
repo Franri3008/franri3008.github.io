@@ -80,7 +80,7 @@
     .contenedor-principal {
       margin-left: 180px;
       padding: 20px;
-      display: block; /* Contendrá varios subcontenedores (uno por día + contenedor de profes) */
+      /* No forzamos display:block para no interferir con la visibilidad de los días */
     }
 
     /* Contenedor principal para la sección de Horarios */
@@ -151,7 +151,7 @@
       outline: 1px dotted #aaa;
     }
 
-    /* Bloques profesor */
+    /* Bloques profesor: centrado de texto en su interior */
     .profesor-block {
       background-color: #FFD700;
       margin: 5px;
@@ -161,8 +161,9 @@
       font-size: 0.5em;
       cursor: move;
       position: relative;
-      user-select: none; /* Evita seleccionar texto al arrastrar */
+      user-select: none; 
       display: inline-block;
+      text-align: center; /* Centra el texto dentro del bloque */
     }
     .profesor-block .ramo-line,
     .profesor-block .prof-line {
@@ -176,7 +177,7 @@
       background-color: #eee !important;
       line-height: 0.2;
       height: 0.2em;
-      min-height: 1px; /* Ajustar según se requiera */
+      min-height: 1px;
     }
 
     /* colorPicker tooltip */
@@ -200,21 +201,42 @@
       margin-bottom: 10px;
     }
 
-    /* item que contiene al block y al input debajo */
+    /* item que contiene al block y elementos debajo (color, eliminar, input) */
     .profesor-item {
       display: flex;
-      flex-direction: column; /* Bloque arriba, input abajo */
+      flex-direction: column; 
       align-items: flex-start;
       margin-right: 15px;
       margin-bottom: 15px;
     }
 
-    /* Cada día como un "tab" de contenido que se oculta/muestra */
+    .profesor-item-icons {
+      margin-top: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;  /* Centra los íconos horizontalmente */
+      justify-content: center;
+    }
+
+    /* Hacemos los íconos de 15x15 y centrados */
+    .profesor-item-icons img {
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      display: inline-block;
+      user-select: none;
+    }
+    .profesor-item-icons img:hover {
+      opacity: 0.7;
+    }
+
+    /* Cada día se esconde por defecto, se muestra al estar activo */
     .dia-contenedor {
-      display: none; /* Por defecto oculto */
+      display: none !important;
     }
     .dia-contenedor.activo {
-      display: block;
+      display: block !important;
     }
   </style>
 </head>
@@ -238,7 +260,7 @@
   </div>
 
   <div class="contenedor-principal">
-    <!-- Cada día es un contenedor distinto -->
+    <!-- Cada día es un contenedor distinto (por defecto oculto, salvo el activo) -->
     <div id="dia-lunes" class="dia-contenedor">
       <div class="horarios-contenedor">
         <h2>Horario Lunes</h2>
@@ -343,30 +365,25 @@
 
   <script>
     /*
-      1) Horas y recreos: se generan en cada tabla (lunes a viernes).
-      2) Columnas (cursos) deben ser constantes en todos los días.
-         -> Llevamos un array global de columnas. Al "agregarColumna" (nuevo curso),
-            se añade a este array y se actualizan todos los días.
+      1) Se muestra un solo día a la vez.
+      2) Íconos de color y basurero de 15x15, centrados en su contenedor.
+      3) Texto dentro de cada bloque profesor está centrado.
+      4) Columnas globales para todos los días.
     */
 
-    // Estructura de bloques de tiempo
     const BLOQUES = [
       { label: "08:15", isBreak: false },
       { label: "09:00", isBreak: false },
-      // recreo 9:45-10:00
-      { label: "",      isBreak: true  },
+      { label: "",      isBreak: true  }, // 9:45-10:00
       { label: "10:00", isBreak: false },
       { label: "10:45", isBreak: false },
-      // recreo 11:30-11:45
-      { label: "",      isBreak: true  },
+      { label: "",      isBreak: true  }, // 11:30-11:45
       { label: "11:45", isBreak: false },
       { label: "12:30", isBreak: false },
-      // recreo 13:15-14:00
-      { label: "",      isBreak: true  },
+      { label: "",      isBreak: true  }, // 13:15-14:00
       { label: "14:00", isBreak: false },
       { label: "14:45", isBreak: false },
-      // recreo 15:30-15:45
-      { label: "",      isBreak: true  },
+      { label: "",      isBreak: true  }, // 15:30-15:45
       { label: "15:45", isBreak: false },
       { label: "16:30", isBreak: false },
       { label: "17:15", isBreak: false },
@@ -374,20 +391,14 @@
       { label: "18:45", isBreak: false }
     ];
 
-    // Días disponibles
     const dias = ["lunes", "martes", "miercoles", "jueves", "viernes"];
-
-    // Array global de columnas (cursos)
     let columnasGlobales = [];
 
     window.onload = function(){
-      // Generar horas en cada tabla
       dias.forEach(d => generarHorasParaDia(d));
-      // Mostrar lunes por defecto
-      mostrarDia("lunes");
+      mostrarDia("lunes"); // Muestra lunes por defecto 
     };
 
-    // Generar la parte de las horas y recreos para la tabla de un día
     function generarHorasParaDia(dia) {
       let cuerpo = document.getElementById(`cuerpoTabla-${dia}`);
       BLOQUES.forEach(b => {
@@ -404,7 +415,6 @@
       });
     }
 
-    // Mostrar un día y ocultar el resto, además marcar botón activo
     function mostrarDia(dia) {
       dias.forEach(d => {
         const contenedor = document.getElementById(`dia-${d}`);
@@ -419,15 +429,10 @@
       });
     }
 
-    // Agregar un nuevo curso (columna) a TODAS las tablas
     function agregarColumna() {
-      // Nombre por defecto
       let nombreCurso = "Nuevo Curso " + (columnasGlobales.length + 1);
-
-      // Añadir a array global
       columnasGlobales.push(nombreCurso);
 
-      // Para cada día, agregamos un TH y una TD para cada fila
       dias.forEach(dia => {
         let filaCabeceras = document.getElementById(`filaCabeceras-${dia}`);
         let nuevoTh = document.createElement('th');
@@ -442,7 +447,6 @@
           let nuevaTd = document.createElement('td');
           if (!filas[i].classList.contains('recreo')) {
             nuevaTd.ondragover = allowDrop;
-            // Asignar la misma función drop, con el "dia"
             nuevaTd.ondrop = (ev) => drop(ev, dia);
           }
           filas[i].appendChild(nuevaTd);
@@ -454,17 +458,11 @@
     let profSeleccionado = null;
     let profesorCounter = 0;
 
-    /*
-      Crear profesor 
-        - Contenedor (.profesor-item) con "flex-direction: column"
-        - Arriba: Bloque con 2 líneas + ícono color
-        - Debajo: input de número de bloques
-    */
     function crearProfesor() {
       let profesorItem = document.createElement('div');
       profesorItem.classList.add('profesor-item');
 
-      // Bloque con 2 líneas + ícono de color
+      // Bloque con 2 líneas
       let profesorBlock = document.createElement('div');
       profesorBlock.classList.add('profesor-block');
       profesorBlock.draggable = true;
@@ -482,9 +480,15 @@
       profLine.contentEditable = "true";
       profLine.textContent = "Prof. " + (++profesorCounter);
 
+      profesorBlock.appendChild(ramoLine);
+      profesorBlock.appendChild(profLine);
+
+      // Contenedor de íconos (color + basura) centrados
+      let iconContainer = document.createElement('div');
+      iconContainer.classList.add('profesor-item-icons');
+
       let colorIcon = document.createElement('img');
       colorIcon.src = 'https://cdn-icons-png.flaticon.com/512/2917/2917995.png';
-      colorIcon.classList.add("color-icon");
       colorIcon.title = 'Cambiar color';
       colorIcon.onclick = (ev) => {
         profSeleccionado = profesorBlock;
@@ -494,38 +498,44 @@
         ev.stopPropagation();
       };
 
-      profesorBlock.appendChild(ramoLine);
-      profesorBlock.appendChild(profLine);
-      profesorBlock.appendChild(colorIcon);
+      let trashIcon = document.createElement('img');
+      trashIcon.src = 'https://cdn-icons-png.flaticon.com/512/3096/3096673.png';
+      trashIcon.title = 'Eliminar profesor';
+      trashIcon.onclick = () => {
+        profesorItem.remove();
+      };
 
-      // Input de número de bloques (por defecto 1), debajo
+      iconContainer.appendChild(colorIcon);
+      iconContainer.appendChild(trashIcon);
+
+      // Input de número de bloques
       let blockCountInput = document.createElement('input');
       blockCountInput.type = 'number';
       blockCountInput.value = '1';
       blockCountInput.min = '1';
       blockCountInput.style.width = '40px';
-      blockCountInput.style.marginTop = '5px';
       blockCountInput.title = 'Nro. de bloques a asignar';
+      blockCountInput.style.marginTop = '5px';
 
-      // Incluir ambos en el "profesorItem"
+      // Agregar elementos al contenedor del profesor
       profesorItem.appendChild(profesorBlock);
+      profesorItem.appendChild(iconContainer);
       profesorItem.appendChild(blockCountInput);
 
-      // Agregarlo al contenedor de profesores
       let profesorContainer = document.getElementById('profesorContainer');
       profesorContainer.appendChild(profesorItem);
     }
 
-    // Drag and Drop
     let draggedFromContainer = false;
-
     function dragStart(event) {
-      // Habilitar el "copy" en vez de "move", para no quitar el original del contenedor
-      event.dataTransfer.effectAllowed = "copy";
+      event.dataTransfer.effectAllowed = "copy"; 
       event.dataTransfer.setData('text/plain', event.target.id);
 
-      draggedFromContainer = (this.parentNode && this.parentNode.classList.contains('profesor-item'));
-      // Asegurar que cada profesorBlock tenga un ID único
+      draggedFromContainer = (
+        this.parentNode &&
+        this.parentNode.classList &&
+        this.parentNode.classList.contains('profesor-item')
+      );
       if (!this.id) {
         this.id = 'prof_' + Date.now();
       }
@@ -533,22 +543,14 @@
     }
 
     function dragEnd() {
-      // Revisa todas las tablas de todos los días
       dias.forEach(d => checkAllRowsForConflicts(d));
     }
 
     function allowDrop(ev) {
-      // Indicar que permitimos soltar (copy)
       ev.preventDefault();
       ev.dataTransfer.dropEffect = "copy";
     }
 
-    /*
-      drop(ev, dia):
-        - Si viene del contenedor (draggedFromContainer==true), clonarlo (sin ícono color).
-          El original permanece en el contenedor.
-        - Si viene desde otra celda, moverlo tal cual.
-    */
     function drop(ev, dia) {
       ev.preventDefault();
       const id = ev.dataTransfer.getData('text/plain');
@@ -562,28 +564,19 @@
         clone.draggable = true;
         clone.ondragstart = dragStart;
         clone.ondragend = dragEnd;
-
-        // Quitar ícono de color (si existe)
-        let icon = clone.querySelector('.color-icon');
-        if (icon) {
-          icon.remove();
-        }
-        // Insertar el clon en la celda
         ev.target.appendChild(clone);
       } else {
-        // Si se arrastra desde otra celda, simplemente mover
+        // Mover de una celda a otra
         ev.target.appendChild(element);
       }
 
       draggedFromContainer = false;
-      // Revisar conflictos en la fila
       let row = ev.target.closest('tr');
       if (row) {
         checkRowConflicts(row);
       }
     }
 
-    // Cambiar color
     function cambiarColor(e) {
       if (profSeleccionado) {
         profSeleccionado.style.backgroundColor = e.target.value;
@@ -591,7 +584,6 @@
       colorPicker.style.display = 'none';
     }
 
-    // Cerrar colorPicker si clic fuera
     document.addEventListener('click', (ev) => {
       if (
         colorPicker.style.display === 'block' &&
@@ -604,12 +596,10 @@
       }
     });
 
-    // Evitar arrastrar colorPicker
     colorPicker.ondragstart = (event) => {
       event.preventDefault();
     };
 
-    // Revisar conflictos en la fila
     function checkRowConflicts(row) {
       let tds = row.querySelectorAll('td');
       tds.forEach(td => td.style.backgroundColor = "");
@@ -638,13 +628,11 @@
       });
     }
 
-    // Revisar tabla completa de un día
     function checkAllRowsForConflicts(dia) {
       let filas = document.querySelectorAll(`#cuerpoTabla-${dia} tr`);
       filas.forEach(fila => checkRowConflicts(fila));
     }
 
-    // Guardar en Excel la tabla de un día
     function guardarExcel(dia) {
       let tabla = document.getElementById(`tablaHorarios-${dia}`);
       let wb = XLSX.utils.table_to_book(tabla, { sheet: `Horario-${dia}` });
