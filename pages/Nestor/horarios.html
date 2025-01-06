@@ -193,6 +193,11 @@
       width: 100%;
       margin-bottom: 10px;
     }
+
+    /* Fila de recreo en gris */
+    .recreo td {
+      background-color: #eee !important;
+    }
   </style>
 </head>
 <body>
@@ -235,34 +240,65 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
   <script>
-    // 1) Ajuste de horas de 45 minutos a partir de las 8:15, con recreos en:
-    //    9:45-10:00, 11:30-11:45, 13:15-14:00 y 15:30-15:45.
-    //    Termina a las 19:00.
-    // Se define manualmente la lista de inicios de bloques.
+    /*
+      1) Ajuste de horas y recreos:
+         - Bloques de 45 min a partir de las 8:15.
+         - Recreos en:
+             9:45 - 10:00
+             11:30 - 11:45
+             13:15 - 14:00
+             15:30 - 15:45
+         - Termina alrededor de las 19:00.
+    */
     const BLOQUES = [
-      "08:15", "09:00", "09:45", // luego recreo 9:45-10:00
-      "10:00", "10:45", "11:30", // recreo 11:30-11:45
-      "11:45", "12:30", "13:15", // recreo 13:15-14:00
-      "14:00", "14:45", "15:30", // recreo 15:30-15:45
-      "15:45", "16:30", "17:15", "18:00", "18:45"
-      // a las 19:30 quedaría fuera del horario (termina a las 19:00).
+      // Bloques normales (no recreo)
+      { label: "08:15", isBreak: false },
+      { label: "09:00", isBreak: false },
+      // Recreo
+      { label: "09:45 - 10:00 (Recreo)", isBreak: true },
+      // Bloques
+      { label: "10:00", isBreak: false },
+      { label: "10:45", isBreak: false },
+      // Recreo
+      { label: "11:30 - 11:45 (Recreo)", isBreak: true },
+      // Bloques
+      { label: "11:45", isBreak: false },
+      { label: "12:30", isBreak: false },
+      // Recreo
+      { label: "13:15 - 14:00 (Recreo)", isBreak: true },
+      // Bloques
+      { label: "14:00", isBreak: false },
+      { label: "14:45", isBreak: false },
+      // Recreo
+      { label: "15:30 - 15:45 (Recreo)", isBreak: true },
+      // Bloques
+      { label: "15:45", isBreak: false },
+      { label: "16:30", isBreak: false },
+      { label: "17:15", isBreak: false },
+      { label: "18:00", isBreak: false },
+      { label: "18:45 - 19:00", isBreak: false }
     ];
 
     function generarHoras() {
       let cuerpo = document.getElementById('cuerpoTabla');
-      BLOQUES.forEach((hora) => {
+      BLOQUES.forEach(b => {
         let fila = document.createElement('tr');
+        // Si es recreo, marcamos la fila con la clase .recreo
+        if (b.isBreak) {
+          fila.classList.add('recreo');
+        }
         let tdHora = document.createElement('td');
         tdHora.classList.add('col-hora');
         tdHora.style.pointerEvents = 'none';
-        tdHora.textContent = hora;
+        tdHora.textContent = b.label;
         fila.appendChild(tdHora);
         cuerpo.appendChild(fila);
       });
     }
     generarHoras();
 
-    // 2) Agregar columna = "Nuevo Curso"
+    // Agregar Columna = "Nuevo Curso"
+    // Si una fila es de recreo, se deja SIN eventos de Drop/DragOver.
     function agregarColumna() {
       let filaCabeceras = document.getElementById('filaCabeceras');
       let nuevoTh = document.createElement('th');
@@ -275,13 +311,19 @@
       let filas = cuerpo.getElementsByTagName('tr');
       for (let i = 0; i < filas.length; i++) {
         let nuevaTd = document.createElement('td');
-        nuevaTd.ondragover = allowDrop;
-        nuevaTd.ondrop = drop;
+        // Si la fila es recreo, no permitimos drop
+        if (!filas[i].classList.contains('recreo')) {
+          nuevaTd.ondragover = allowDrop;
+          nuevaTd.ondrop = drop;
+        }
         filas[i].appendChild(nuevaTd);
       }
     }
 
-    // 3) Crear profesor con 2 líneas (ramo y profesor) + ícono color
+    // Crear profesor. Ahora tendrá 2 líneas:
+    //  1) Ramo
+    //  2) Nombre del profesor
+    // Más el ícono de color (fuera de la parte editable)
     let colorPicker = document.getElementById('colorPicker');
     let profSeleccionado = null;
     let profesorCounter = 0;
@@ -294,7 +336,7 @@
       profesorBlock.ondragstart = dragStart;
       // Asignamos un dragend para re-chequear conflictos
       profesorBlock.ondragend = dragEnd;
-      
+
       // Evitamos que todo el bloque sea editable de golpe
       profesorBlock.contentEditable = "false";
 
@@ -333,9 +375,7 @@
       profesorContainer.appendChild(profesorBlock);
     }
 
-    //-------------------------------------------------------------------
-    // Drag and Drop
-    //-------------------------------------------------------------------
+    // Drag and Drop functions
     let draggedFromContainer = false;
 
     function dragStart(event) {
@@ -349,8 +389,6 @@
       profSeleccionado = this; // Seleccionamos el profesor que se está arrastrando
     }
 
-    // Cuando termina el drag (sin importar dónde se suelte),
-    // revisamos toda la tabla para quitar o poner rojos según corresponda
     function dragEnd() {
       checkAllRowsForConflicts();
     }
@@ -371,7 +409,7 @@
           clone.id = 'prof_' + Date.now() + '_clone'; // Nuevo ID para el clon
           clone.draggable = true;
           clone.ondragstart = dragStart;
-          clone.ondragend = dragEnd; // Re-asignar el dragend al clon 
+          clone.ondragend = dragEnd; // Re-asignar el dragend al clon
           // Conectar de nuevo el evento del ícono de color
           let colorIcon = clone.querySelector('img.color-icon');
           if (colorIcon) {
@@ -391,16 +429,13 @@
         draggedFromContainer = false;
       }
 
-      // Revisa conflictos en la fila donde se soltó
       let row = ev.target.closest('tr');
       if (row) {
         checkRowConflicts(row);
       }
     }
 
-    //-------------------------------------------------------------------
-    // Color Picker
-    //-------------------------------------------------------------------
+    // Cambiar color
     function cambiarColor(e) {
       if (profSeleccionado) {
         profSeleccionado.style.backgroundColor = e.target.value;
@@ -424,15 +459,17 @@
       event.preventDefault();
     };
 
-    //-------------------------------------------------------------------
-    // Conflictos
-    //-------------------------------------------------------------------
-    // checkRowConflicts(row): Revisa si en la misma fila aparece el mismo
-    // profesor en 2+ celdas. Si es así, colorea en rojo las celdas conflictivas.
+    //------------------------------------------
+    // Revisar conflictos en la fila (misma hora)
+    // Si un mismo profesor aparece en <td> distintos,
+    // esos <td> se colorean de rojo.
+    //------------------------------------------
     function checkRowConflicts(row) {
       let tds = row.querySelectorAll('td');
+
       // Limpia el color previo de cada <td>
       tds.forEach(td => td.style.backgroundColor = "");
+
       // Mapeo { nombreProfesor -> [td, td, ...] }
       let profesorMap = new Map();
 
@@ -449,6 +486,7 @@
           }
         });
       });
+
       // Conflicto: mismo prof en 2+ celdas
       profesorMap.forEach(celdas => {
         if (celdas.length > 1) {
@@ -459,15 +497,17 @@
       });
     }
 
+    //------------------------------------------
     // checkAllRowsForConflicts: Revisa cada fila de la tabla
+    //------------------------------------------
     function checkAllRowsForConflicts() {
       let filas = document.querySelectorAll('#cuerpoTabla tr');
       filas.forEach(fila => checkRowConflicts(fila));
     }
 
-    //-------------------------------------------------------------------
+    //------------------------------------------
     // Guardar en Excel
-    //-------------------------------------------------------------------
+    //------------------------------------------
     function guardarExcel() {
       // Convertir la tabla a libro Excel con SheetJS
       let tabla = document.getElementById("tablaHorarios");
