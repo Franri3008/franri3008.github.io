@@ -209,7 +209,10 @@
     <div class="horarios-contenedor">
       <h2>Horario General</h2>
       <div class="contenedor-botones-horarios">
+        <!-- Botón para agregar columnas -->
         <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+        <!-- Botón para guardar el horario en Excel -->
+        <button class="boton-agregar" onclick="guardarExcel()">Guardar Excel</button>
       </div>
       <table class="tabla-horarios" id="tablaHorarios">
         <thead>
@@ -228,24 +231,38 @@
   <!-- colorPicker para cambiar color al profesor -->
   <input type="color" id="colorPicker" oninput="cambiarColor(event)" onclick="event.stopPropagation()" />
 
+  <!-- Librería para exportar a Excel (SheetJS) -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
   <script>
-    // Generar horas en la tabla (08:00 a 18:00)
+    // 1) Ajuste de horas de 45 minutos a partir de las 8:15, con recreos en:
+    //    9:45-10:00, 11:30-11:45, 13:15-14:00 y 15:30-15:45.
+    //    Termina a las 19:00.
+    // Se define manualmente la lista de inicios de bloques.
+    const BLOQUES = [
+      "08:15", "09:00", "09:45", // luego recreo 9:45-10:00
+      "10:00", "10:45", "11:30", // recreo 11:30-11:45
+      "11:45", "12:30", "13:15", // recreo 13:15-14:00
+      "14:00", "14:45", "15:30", // recreo 15:30-15:45
+      "15:45", "16:30", "17:15", "18:00", "18:45"
+      // a las 19:30 quedaría fuera del horario (termina a las 19:00).
+    ];
+
     function generarHoras() {
       let cuerpo = document.getElementById('cuerpoTabla');
-      for (let h = 8; h <= 18; h++) {
+      BLOQUES.forEach((hora) => {
         let fila = document.createElement('tr');
         let tdHora = document.createElement('td');
         tdHora.classList.add('col-hora');
-        tdHora.style.pointerEvents='none';
-        let hh = (h < 10) ? '0' + h : h;
-        tdHora.textContent = hh + ':00';
+        tdHora.style.pointerEvents = 'none';
+        tdHora.textContent = hora;
         fila.appendChild(tdHora);
         cuerpo.appendChild(fila);
-      }
+      });
     }
     generarHoras();
 
-    // Agregar Columna = "Nuevo Curso"
+    // 2) Agregar columna = "Nuevo Curso"
     function agregarColumna() {
       let filaCabeceras = document.getElementById('filaCabeceras');
       let nuevoTh = document.createElement('th');
@@ -264,10 +281,7 @@
       }
     }
 
-    // Crear profesor. Ahora tendrá 2 líneas:
-    //  1) Ramo
-    //  2) Nombre del profesor
-    // Más el ícono de color (fuera de la parte editable)
+    // 3) Crear profesor con 2 líneas (ramo y profesor) + ícono color
     let colorPicker = document.getElementById('colorPicker');
     let profSeleccionado = null;
     let profesorCounter = 0;
@@ -319,7 +333,9 @@
       profesorContainer.appendChild(profesorBlock);
     }
 
-    // Drag and Drop functions
+    //-------------------------------------------------------------------
+    // Drag and Drop
+    //-------------------------------------------------------------------
     let draggedFromContainer = false;
 
     function dragStart(event) {
@@ -335,7 +351,7 @@
 
     // Cuando termina el drag (sin importar dónde se suelte),
     // revisamos toda la tabla para quitar o poner rojos según corresponda
-    function dragEnd(/* event */) {
+    function dragEnd() {
       checkAllRowsForConflicts();
     }
 
@@ -375,14 +391,16 @@
         draggedFromContainer = false;
       }
 
-      // También revisamos conflictos en la fila del drop inmediato
+      // Revisa conflictos en la fila donde se soltó
       let row = ev.target.closest('tr');
       if (row) {
         checkRowConflicts(row);
       }
     }
 
-    // Cambiar color
+    //-------------------------------------------------------------------
+    // Color Picker
+    //-------------------------------------------------------------------
     function cambiarColor(e) {
       if (profSeleccionado) {
         profSeleccionado.style.backgroundColor = e.target.value;
@@ -406,24 +424,19 @@
       event.preventDefault();
     };
 
-    //------------------------------------------
-    // Revisar conflictos en la fila (misma hora)
-    // Si un mismo profesor aparece en <td> distintos,
-    // esos <td> se colorean de rojo.
-    //------------------------------------------
+    //-------------------------------------------------------------------
+    // Conflictos
+    //-------------------------------------------------------------------
+    // checkRowConflicts(row): Revisa si en la misma fila aparece el mismo
+    // profesor en 2+ celdas. Si es así, colorea en rojo las celdas conflictivas.
     function checkRowConflicts(row) {
-      // 1) Recorremos las celdas de la fila
       let tds = row.querySelectorAll('td');
-
-      // 2) Mapeamos { nombreProfesor : [td1, td2, ...] }
-      //    considerando la segunda línea (.prof-line)
-      //    como el nombre del profesor.
+      // Limpia el color previo de cada <td>
+      tds.forEach(td => td.style.backgroundColor = "");
+      // Mapeo { nombreProfesor -> [td, td, ...] }
       let profesorMap = new Map();
 
       tds.forEach(td => {
-        // Quitamos rojo previo, por si ya no hay conflicto
-        td.style.backgroundColor = "";
-
         let blocks = td.querySelectorAll('.profesor-block');
         blocks.forEach(block => {
           let profLine = block.querySelector('.prof-line');
@@ -436,25 +449,31 @@
           }
         });
       });
-
-      // 3) Si un profesor aparece en 2+ celdas, colorear en rojo
-      profesorMap.forEach((celditas) => {
-        if (celditas.length > 1) {
-          celditas.forEach(td => {
+      // Conflicto: mismo prof en 2+ celdas
+      profesorMap.forEach(celdas => {
+        if (celdas.length > 1) {
+          celdas.forEach(td => {
             td.style.backgroundColor = 'red';
           });
         }
       });
     }
 
-    //------------------------------------------
-    // checkAllRowsForConflicts
-    // Recorre todas las filas de la tabla y llama checkRowConflicts.
-    // Esto permite actualizar los colores al finalizar un drag.
-    //------------------------------------------
+    // checkAllRowsForConflicts: Revisa cada fila de la tabla
     function checkAllRowsForConflicts() {
       let filas = document.querySelectorAll('#cuerpoTabla tr');
       filas.forEach(fila => checkRowConflicts(fila));
+    }
+
+    //-------------------------------------------------------------------
+    // Guardar en Excel
+    //-------------------------------------------------------------------
+    function guardarExcel() {
+      // Convertir la tabla a libro Excel con SheetJS
+      let tabla = document.getElementById("tablaHorarios");
+      let wb = XLSX.utils.table_to_book(tabla, { sheet: "Horario" });
+      // Guardar el archivo
+      XLSX.writeFile(wb, "horario.xlsx");
     }
   </script>
 </body>
