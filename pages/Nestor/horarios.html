@@ -412,17 +412,34 @@
     window.onload = async function() {
       colorPicker = document.getElementById('colorPicker');
       dias.forEach(d => generarHorasParaDia(d));
-      // Intentar cargar un horarios.json
-      try {
-        let resp = await fetch("./horarios.json", { cache: 'no-store' });
-        if (!resp.ok) throw new Error("No existe archivo");
-        let data = await resp.json();
-        reconstruirDesdeJSON(data);
-      } catch(e) {
-        columnasGlobales = [];
+      // Intentar cargar desde localStorage
+      const savedData = localStorage.getItem('horariosData');
+      if (savedData) {
+        try {
+          const data = JSON.parse(savedData);
+          reconstruirDesdeJSON(data);
+        } catch (e) {
+          console.error("Error parsing saved data:", e);
+          columnasGlobales = [];
+        }
+      } else {
+        // Intentar cargar un horarios.json
+        try {
+          let resp = await fetch("./horarios.json", { cache: 'no-store' });
+          if (!resp.ok) throw new Error("No existe archivo");
+          let data = await resp.json();
+          reconstruirDesdeJSON(data);
+        } catch(e) {
+          columnasGlobales = [];
+        }
       }
       mostrarDia("lunes");
     };
+
+    window.addEventListener('beforeunload', () => {
+      const data = construirJSONCompleto();
+      localStorage.setItem('horariosData', JSON.stringify(data));
+    });
 
     function generarHorasParaDia(dia) {
       let cuerpo = document.getElementById(`cuerpoTabla-${dia}`);
@@ -741,6 +758,7 @@
       let data = construirJSONCompleto()
       let jsonStr = JSON.stringify(data, null, 2)
       descargarArchivo(jsonStr, "horarios.json", "application/json")
+      localStorage.setItem('horariosData', JSON.stringify(data));
     }
     function construirJSONCompleto() {
       let data = { columnas: columnasGlobales.slice(), dias: {}, profesores: [] }
