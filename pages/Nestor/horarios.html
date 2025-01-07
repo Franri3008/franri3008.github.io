@@ -2,68 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>NestorBOT v2.3 - 📅 Horarios</title>
+  <title>NestorBOT v3.0 - 📅 Horarios</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
     }
-    .header-titulo {
-      text-align: center;
-      background-color: #4b286d;
-      color: #fff;
-      padding: 15px 0;
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-    }
-    .top-dias {
+
+    /* Contenedor principal en layout flex */
+    .page-container {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 10px;
+      flex-direction: row;
+      min-height: 100vh; /* Para que el sidebar se mantenga a la izquierda a todo alto */
     }
-    .top-dias button {
-      margin: 0 5px;
-      padding: 6px 12px;
-      cursor: pointer;
-      background-color: #bbb;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-weight: bold;
-    }
-    .top-dias button:hover {
-      background-color: #999;
-    }
-    .top-dias button.activo {
-      background-color: #666;
-    }
-    .top-global-buttons {
-      text-align: center;
-      margin-top: 10px;
-    }
-    .top-global-buttons button {
-      cursor: pointer;
-      background-color: #999;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-weight: bold;
-      padding: 6px 12px;
-      margin: 0 5px;
-    }
-    .top-global-buttons button:hover {
-      background-color: #666;
-    }
+
+    /* Barra lateral izquierda */
     .sidebar-izquierda {
       width: 150px;
-      float: left;
-      padding: 10px;
-      margin-left: 10px;
       background-color: #f8f8f8;
       border-right: 1px solid #ccc;
-      min-height: 100vh;
+      padding: 10px;
+      margin-left: 20px;
+      box-sizing: border-box; 
     }
     .sidebar-boton {
       display: block;
@@ -88,10 +49,110 @@
       background-color: #65A4E3;
       color: #fff;
     }
-    .contenedor-principal {
-      margin-left: 180px;
-      padding: 20px;
+
+    /* Iconos de descarga en la barra lateral */
+    .sidebar-iconos {
+      margin-top: 20px;
+      text-align: center;
     }
+    .sidebar-iconos img {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    .sidebar-iconos img:hover {
+      opacity: 0.7;
+    }
+
+    /* Área de contenido principal */
+    .main-content {
+      flex: 1;
+      display: block;
+      box-sizing: border-box;
+      padding: 0 20px 20px 20px; 
+    }
+
+    /* Cabecera */
+    .header-titulo {
+      text-align: center;
+      background-color: #4b286d;
+      color: #fff;
+      padding: 15px 0;
+      font-size: 1.3rem;
+      margin-bottom: 0;
+    }
+
+    /* Sección de Modo */
+    .modo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 5px;
+    }
+    .modo-container button {
+      margin: 0 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #b8b8ff;
+      border: none;
+      border-radius: 5px;
+      color: #333;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .modo-container button:hover {
+      background-color: #9797e6;
+    }
+    /* Color más oscuro para el modo activo */
+    .modo-activo {
+      background-color: #4840AC;
+      color: #fff;
+    }
+
+    /* Botones de días */
+    .top-dias {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .top-dias button {
+      margin: 0 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #2b83f0;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
+    }
+    .top-dias button:hover {
+      background-color: #1f67b8;
+    }
+    .top-dias button.activo {
+      background-color: #1b5590;
+    }
+
+    /* Contenedor principal modo "General" */
+    .contenedor-principal {
+      padding: 0px 0;
+      display: block; /* visible en modo General */
+    }
+
+    /* Contenedor principal modo "Por profesor" */
+    .contenedor-profesor {
+      padding: 20px 0;
+      display: none; /* se mostrará solo cuando se presione "Por profesor" */
+    }
+
+    /* Contenedor principal modo "Por curso" */
+    .contenedor-curso {
+      padding: 20px 0;
+      display: none; /* se mostrará solo cuando se presione "Por curso" */
+    }
+
+    /* Horarios */
     .horarios-contenedor {
       border: 1px solid #aaa;
       border-radius: 5px;
@@ -99,6 +160,7 @@
       margin-top: 20px;
       margin-bottom: 20px;
       width: 90%;
+      box-sizing: border-box;
     }
     .horarios-contenedor h2 {
       margin: 0 0 10px 0;
@@ -190,6 +252,8 @@
       position: absolute;
       z-index: 9999;
     }
+
+    /* Contenedor de Bloques y sección Profesores */
     #profesorContainer {
       display: flex;
       flex-wrap: wrap;
@@ -197,10 +261,7 @@
       width: 95%;
       border: 1px dashed #ccc;
       padding: 10px;
-    }
-    #profesorContainer button.boton-agregar {
-      width: auto;
-      margin-bottom: 10px;
+      box-sizing: border-box;
     }
     .profesor-item {
       display: flex;
@@ -236,6 +297,38 @@
       width: 100%;
     }
 
+    /* Nueva sección para definir lista de profesores */
+    #seccionProfesores {
+      margin-top: 20px;
+      width: 95%;
+      border: 1px dashed #ccc;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    #seccionProfesores h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    #listaProfesores {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    #listaProfesores li {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #listaProfesores li button {
+      cursor: pointer;
+      padding: 3px 5px;
+      border: none;
+      border-radius: 3px;
+      background-color: #ff5b5b;
+      color: #fff;
+    }
+
     .dia-contenedor {
       display: none !important;
     }
@@ -244,14 +337,13 @@
     }
 
     /* Resaltado */
-    /* Cambiamos el color de amarillo a un azul intenso */
     .prof-highlight-original {
-      outline: 2px dashed #0055FF !important; 
+      outline: 2px dashed #0055FF !important;
       z-index: 2;
       position: relative;
     }
     .prof-highlight-other {
-      outline: 2px dashed #222; 
+      outline: 2px dashed #222;
       z-index: 2;
       position: relative;
     }
@@ -260,7 +352,6 @@
       opacity: 0.3;
     }
 
-    /* Estilo para mostrar el recuadro punteado gris oscuro al hacer dragover */
     .drag-over {
       outline: 2px dotted #333 !important;
     }
@@ -276,7 +367,8 @@
       z-index: 10000;
       border-radius: 8px;
     }
-    #editTooltip input {
+    #editTooltip input,
+    #editTooltip select {
       width: 90%;
       margin-bottom: 10px;
       font-size: 1em;
@@ -301,129 +393,273 @@
     #cancelTooltip {
       background-color: #eeeeee;
     }
+
+    /* Sección contenedor de horario por profesor */
+    .prof-selector {
+      margin-bottom: 10px;
+      display: flex;
+    }
+    .prof-selector label {
+      margin-right: 10px;
+      font-weight: bold;
+      font-size: 1em;
+      line-height: 2em;
+    }
+    .prof-selector select {
+      font-size: 1em;
+      padding: 5px;
+    }
+    .profesor-activo {
+      margin-left: 20px;
+      font-style: italic;
+      font-weight: bold;
+      color: #444;
+    }
+
+    /* Sección contenedor de horario "Por curso" */
+    .curso-selector {
+      margin-bottom: 10px;
+      display: flex;
+    }
+    .curso-selector label {
+      margin-right: 10px;
+      font-weight: bold;
+      font-size: 1em;
+      line-height: 2em;
+    }
+    .curso-selector select {
+      font-size: 1em;
+      padding: 5px;
+    }
+    .curso-activo {
+      margin-left: 20px;
+      font-style: italic;
+      font-weight: bold;
+      color: #444;
+    }
   </style>
 </head>
 <body>
-  <div class="header-titulo">NestorBOT v2.3 - 📅 Horarios</div>
 
-  <div class="top-dias">
-    <button id="btn-lunes" onclick="mostrarDia('lunes')">Lunes</button>
-    <button id="btn-martes" onclick="mostrarDia('martes')">Martes</button>
-    <button id="btn-miercoles" onclick="mostrarDia('miercoles')">Miércoles</button>
-    <button id="btn-jueves" onclick="mostrarDia('jueves')">Jueves</button>
-    <button id="btn-viernes" onclick="mostrarDia('viernes')">Viernes</button>
-  </div>
+  <!-- Cabecera arriba -->
+  <div class="header-titulo">NestorBOT v3.0 - 📅 Horarios</div>
 
-  <div class="top-global-buttons">
-    <button onclick="guardarEnJSON()">GUARDAR JSON</button>
-    <button onclick="guardarExcelUnico()">DESCARGAR EXCEL</button>
-  </div>
+  <!-- Estructura en flex: sidebar a la izquierda, contenido principal a la derecha -->
+  <div class="page-container">
 
-  <div class="sidebar-izquierda">
-    <a href="conversor.html" class="sidebar-boton">↔️ Conversor</a>
-    <a class="sidebar-boton sidebar-boton-seleccionado">📅 Horarios</a>
-    <a class="sidebar-boton" href="index.html">🏠 Menú Principal</a>
-  </div>
+    <!-- Barra lateral izquierda -->
+    <div class="sidebar-izquierda">
+      <a href="conversor.html" class="sidebar-boton">↔️ Conversor</a>
+      <a class="sidebar-boton sidebar-boton-seleccionado">📅 Horarios</a>
+      <a class="sidebar-boton" href="index.html">🏠 Menú Principal</a>
 
-  <div class="contenedor-principal">
-    <div id="dia-lunes" class="dia-contenedor">
-      <div class="horarios-contenedor">
-        <h2>Horario Lunes</h2>
-        <div class="contenedor-botones-horarios">
-          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-        </div>
-        <table class="tabla-horarios" id="tablaHorarios-lunes">
-          <thead>
-            <tr id="filaCabeceras-lunes">
-              <th class="col-hora">Hora</th>
-            </tr>
-          </thead>
-          <tbody id="cuerpoTabla-lunes"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <div id="dia-martes" class="dia-contenedor">
-      <div class="horarios-contenedor">
-        <h2>Horario Martes</h2>
-        <div class="contenedor-botones-horarios">
-          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-        </div>
-        <table class="tabla-horarios" id="tablaHorarios-martes">
-          <thead>
-            <tr id="filaCabeceras-martes">
-              <th class="col-hora">Hora</th>
-            </tr>
-          </thead>
-          <tbody id="cuerpoTabla-martes"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <div id="dia-miercoles" class="dia-contenedor">
-      <div class="horarios-contenedor">
-        <h2>Horario Miércoles</h2>
-        <div class="contenedor-botones-horarios">
-          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-        </div>
-        <table class="tabla-horarios" id="tablaHorarios-miercoles">
-          <thead>
-            <tr id="filaCabeceras-miercoles">
-              <th class="col-hora">Hora</th>
-            </tr>
-          </thead>
-          <tbody id="cuerpoTabla-miercoles"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <div id="dia-jueves" class="dia-contenedor">
-      <div class="horarios-contenedor">
-        <h2>Horario Jueves</h2>
-        <div class="contenedor-botones-horarios">
-          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-        </div>
-        <table class="tabla-horarios" id="tablaHorarios-jueves">
-          <thead>
-            <tr id="filaCabeceras-jueves">
-              <th class="col-hora">Hora</th>
-            </tr>
-          </thead>
-          <tbody id="cuerpoTabla-jueves"></tbody>
-        </table>
-      </div>
-    </div>
-    
-    <div id="dia-viernes" class="dia-contenedor">
-      <div class="horarios-contenedor">
-        <h2>Horario Viernes</h2>
-        <div class="contenedor-botones-horarios">
-          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-        </div>
-        <table class="tabla-horarios" id="tablaHorarios-viernes">
-          <thead>
-            <tr id="filaCabeceras-viernes">
-              <th class="col-hora">Hora</th>
-            </tr>
-          </thead>
-          <tbody id="cuerpoTabla-viernes"></tbody>
-        </table>
+      <!-- Iconos de descarga JSON / Excel -->
+      <div class="sidebar-iconos">
+        <!-- JSON -->
+        <img src="download-icon.svg"
+             title="Descargar JSON"
+             onclick="guardarEnJSON()" />
+
+        <!-- EXCEL -->
+        <img src="excel-icon.svg"
+             title="Descargar Excel"
+             onclick="descargarExcelSegunModo()" />
       </div>
     </div>
 
-    <div id="profesorContainer">
-      <button class="boton-agregar" onclick="crearProfesor()">Agregar Profe</button>
-    </div>
-  </div>
+    <!-- Área de contenido principal -->
+    <div class="main-content">
+      <!-- Sección de Modo (arriba-centro) -->
+      <div class="modo-container">
+        <button id="btnModoGeneral" class="modo-activo" onclick="toggleModo('general')">General</button>
+        <button id="btnModoProfesor" onclick="toggleModo('profesor')">Por profesor</button>
+        <button id="btnModoCurso" onclick="toggleModo('curso')">Por curso</button>
+      </div>
 
+      <!-- Botones de días (solo se muestran en modo General) -->
+      <div class="top-dias" id="topDiasContainer">
+        <button id="btn-lunes" onclick="mostrarDia('lunes')">Lunes</button>
+        <button id="btn-martes" onclick="mostrarDia('martes')">Martes</button>
+        <button id="btn-miercoles" onclick="mostrarDia('miercoles')">Miércoles</button>
+        <button id="btn-jueves" onclick="mostrarDia('jueves')">Jueves</button>
+        <button id="btn-viernes" onclick="mostrarDia('viernes')">Viernes</button>
+      </div>
+
+      <!-- Contenedor principal (modo General) -->
+      <div class="contenedor-principal" id="contenedorGeneral">
+        <!-- Día: Lunes -->
+        <div id="dia-lunes" class="dia-contenedor">
+          <div class="horarios-contenedor">
+            <h2>Horario Lunes</h2>
+            <div class="contenedor-botones-horarios">
+              <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+            </div>
+            <table class="tabla-horarios" id="tablaHorarios-lunes">
+              <thead>
+                <tr id="filaCabeceras-lunes">
+                  <th class="col-hora">Hora</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla-lunes"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Día: Martes -->
+        <div id="dia-martes" class="dia-contenedor">
+          <div class="horarios-contenedor">
+            <h2>Horario Martes</h2>
+            <div class="contenedor-botones-horarios">
+              <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+            </div>
+            <table class="tabla-horarios" id="tablaHorarios-martes">
+              <thead>
+                <tr id="filaCabeceras-martes">
+                  <th class="col-hora">Hora</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla-martes"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Día: Miércoles -->
+        <div id="dia-miercoles" class="dia-contenedor">
+          <div class="horarios-contenedor">
+            <h2>Horario Miércoles</h2>
+            <div class="contenedor-botones-horarios">
+              <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+            </div>
+            <table class="tabla-horarios" id="tablaHorarios-miercoles">
+              <thead>
+                <tr id="filaCabeceras-miercoles">
+                  <th class="col-hora">Hora</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla-miercoles"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Día: Jueves -->
+        <div id="dia-jueves" class="dia-contenedor">
+          <div class="horarios-contenedor">
+            <h2>Horario Jueves</h2>
+            <div class="contenedor-botones-horarios">
+              <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+            </div>
+            <table class="tabla-horarios" id="tablaHorarios-jueves">
+              <thead>
+                <tr id="filaCabeceras-jueves">
+                  <th class="col-hora">Hora</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla-jueves"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Día: Viernes -->
+        <div id="dia-viernes" class="dia-contenedor">
+          <div class="horarios-contenedor">
+            <h2>Horario Viernes</h2>
+            <div class="contenedor-botones-horarios">
+              <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
+            </div>
+            <table class="tabla-horarios" id="tablaHorarios-viernes">
+              <thead>
+                <tr id="filaCabeceras-viernes">
+                  <th class="col-hora">Hora</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoTabla-viernes"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Contenedor de Bloques -->
+        <div id="profesorContainer">
+          <button class="boton-agregar" onclick="crearBloque()">Agregar Bloque</button>
+        </div>
+
+        <!-- Sección lista de profesores -->
+        <div id="seccionProfesores">
+          <h3>Profesores</h3>
+          <ul id="listaProfesores"></ul>
+          <input type="text" id="inputNuevoProfesor" placeholder="Nuevo profesor..." />
+          <button onclick="agregarProfesor()">+</button>
+        </div>
+      </div>
+
+      <!-- Contenedor modo "Por Profesor" -->
+      <div class="contenedor-profesor" id="contenedorProfesor">
+        <h2>Horario "Por Profesor"</h2>
+        <div class="prof-selector">
+          <label for="profesorSelect">Seleccionar profesor:</label>
+          <select id="profesorSelect" onchange="mostrarHorarioProfesor(this.value)"></select>
+          <span id="profesorActivo" class="profesor-activo"></span>
+        </div>
+
+        <!-- Sección de horario "Por profesor" -->
+        <div class="horarios-contenedor">
+          <h2 id="profesorHorarioTitulo"></h2>
+          <table class="tabla-horarios" id="tablaPorProfesor">
+            <thead>
+              <tr>
+                <th class="col-hora">Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPorProfesorBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contenedor modo "Por Curso" -->
+      <div class="contenedor-curso" id="contenedorCurso">
+        <h2>Horario "Por curso"</h2>
+        <div class="curso-selector">
+          <label for="cursoSelect">Seleccionar curso:</label>
+          <select id="cursoSelect" onchange="mostrarHorarioCurso(this.value)"></select>
+          <span id="cursoActivo" class="curso-activo"></span>
+        </div>
+
+        <div class="horarios-contenedor">
+          <h2 id="cursoHorarioTitulo"></h2>
+          <table class="tabla-horarios" id="tablaPorCurso">
+            <thead>
+              <tr>
+                <th class="col-hora">Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPorCursoBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- Fin main-content -->
+
+  </div><!-- Fin page-container -->
+
+  <!-- Control de color -->
   <input type="color" id="colorPicker" oninput="cambiarColor(event)" onclick="event.stopPropagation()" />
 
   <!-- Tooltip de edición de bloque -->
   <div id="editTooltip">
     <label>Ramo:</label>
     <input id="inputRamo" type="text" />
+    <!-- Ahora, en lugar de input, ponemos un select de profesores -->
     <label>Profesor:</label>
-    <input id="inputProf" type="text" />
+    <select id="selectProf"></select>
     <br/>
     <button id="saveTooltip">Guardar</button>
     <button id="cancelTooltip">Cancelar</button>
@@ -455,6 +691,14 @@
     ];
     const dias = ["lunes","martes","miercoles","jueves","viernes"];
 
+    // Variables para guardar el último estado:
+    let lastGeneralDay = "lunes";     // Último día mostrado en modo "general"
+    let lastProfesorSelected = "";    // Último profesor seleccionado en modo "profesor"
+    let lastCursoSelected = "";       // Último curso seleccionado en modo "curso"
+
+    // Aquí guardaremos la lista de profesores
+    let listaProfesores = [];
+
     let columnasGlobales = [];
     let colorPicker = null;
     let profSeleccionado = null;
@@ -465,10 +709,13 @@
     // Asocia profId => número de bloques en el horario
     const profBlockCount = {};
 
+    // Modo actual: 'general', 'profesor' o 'curso'
+    let currentMode = 'general';
+
     window.onload = async function() {
       colorPicker = document.getElementById('colorPicker');
       dias.forEach(d => generarHorasParaDia(d));
-      // Intentar cargar desde localStorage
+
       const savedData = localStorage.getItem('horariosData');
       if (savedData) {
         try {
@@ -479,7 +726,6 @@
           columnasGlobales = [];
         }
       } else {
-        // Intentar cargar un horarios.json
         try {
           let resp = await fetch("./horarios.json", { cache: 'no-store' });
           if (!resp.ok) throw new Error("No existe archivo");
@@ -489,13 +735,116 @@
           columnasGlobales = [];
         }
       }
-      mostrarDia("lunes");
+      // Mostrar el último día que teníamos (por defecto: lunes)
+      mostrarDia(lastGeneralDay);
     };
 
     window.addEventListener('beforeunload', () => {
       const data = construirJSONCompleto();
       localStorage.setItem('horariosData', JSON.stringify(data));
     });
+
+    function toggleModo(mode) {
+      // Guardamos estado anterior:
+      if (currentMode === 'general') {
+        // nada más que lastGeneralDay ya se guarda cuando se hace "mostrarDia(...)"
+      } else if (currentMode === 'profesor') {
+        let profSelect = document.getElementById('profesorSelect');
+        if (profSelect) {
+          lastProfesorSelected = profSelect.value;
+        }
+      } else if (currentMode === 'curso') {
+        let cursoSelect = document.getElementById('cursoSelect');
+        if (cursoSelect) {
+          lastCursoSelected = cursoSelect.value;
+        }
+      }
+
+      // Cambiamos modo actual
+      currentMode = mode;
+
+      let btnGeneral = document.getElementById('btnModoGeneral');
+      let btnProfesor = document.getElementById('btnModoProfesor');
+      let btnCurso = document.getElementById('btnModoCurso');
+
+      let contGeneral = document.getElementById('contenedorGeneral');
+      let contProfesor = document.getElementById('contenedorProfesor');
+      let contCurso = document.getElementById('contenedorCurso');
+
+      let topDias = document.getElementById('topDiasContainer');
+
+      // Reset botones
+      btnGeneral.classList.remove('modo-activo');
+      btnProfesor.classList.remove('modo-activo');
+      btnCurso.classList.remove('modo-activo');
+
+      // Reset contenedores
+      contGeneral.style.display = 'none';
+      contProfesor.style.display = 'none';
+      contCurso.style.display = 'none';
+      topDias.style.display = 'none';
+
+      // Activar el que corresponda
+      if (mode === 'general') {
+        btnGeneral.classList.add('modo-activo');
+        contGeneral.style.display = 'block';
+        topDias.style.display = 'flex';
+        // Volvemos a mostrar el último día
+        mostrarDia(lastGeneralDay);
+      }
+      else if (mode === 'profesor') {
+        btnProfesor.classList.add('modo-activo');
+        contProfesor.style.display = 'block';
+        buildProfesorSelect();
+        // Re-seleccionar el último profesor
+        let profSelect = document.getElementById('profesorSelect');
+        if (profSelect && lastProfesorSelected) {
+          profSelect.value = lastProfesorSelected;
+          mostrarHorarioProfesor(lastProfesorSelected);
+        }
+      }
+      else if (mode === 'curso') {
+        btnCurso.classList.add('modo-activo');
+        contCurso.style.display = 'block';
+        buildCursoSelect();
+        // Re-seleccionar el último curso
+        let cursoSelect = document.getElementById('cursoSelect');
+        if (cursoSelect && lastCursoSelected) {
+          cursoSelect.value = lastCursoSelected;
+          mostrarHorarioCurso(lastCursoSelected);
+        }
+      }
+    }
+
+    /* ======================= GESTIONAR PROFESORES ======================= */
+    function agregarProfesor() {
+      let input = document.getElementById('inputNuevoProfesor');
+      let nombre = input.value.trim();
+      if (!nombre) return;
+      listaProfesores.push(nombre);
+      input.value = "";
+      refrescarListaProfesores();
+    }
+
+    function refrescarListaProfesores() {
+      let ul = document.getElementById('listaProfesores');
+      ul.innerHTML = "";
+      listaProfesores.forEach((nombre, idx) => {
+        let li = document.createElement('li');
+        li.innerHTML = `
+          <span>${nombre}</span>
+          <button onclick="eliminarProfesor(${idx})">X</button>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function eliminarProfesor(index) {
+      listaProfesores.splice(index, 1);
+      refrescarListaProfesores();
+    }
+
+    /* ===================== FIN GESTIÓN DE PROFESORES =================== */
 
     function generarHorasParaDia(dia) {
       let cuerpo = document.getElementById(`cuerpoTabla-${dia}`);
@@ -511,7 +860,9 @@
       });
     }
 
+    // Guarda el último día que se visualiza para recuperarlo
     function mostrarDia(dia) {
+      lastGeneralDay = dia;  // Guardamos lo que el usuario está viendo
       dias.forEach(d => {
         let contenedor = document.getElementById(`dia-${d}`);
         let btnDia = document.getElementById(`btn-${d}`);
@@ -526,6 +877,8 @@
       });
     }
 
+    /* ====================== AGREGAR COLUMNA/GESTIÓN NOMBRE ====================== */
+
     function agregarColumna(nombreCurso = "") {
       if (!nombreCurso && !isReconstructing) {
         nombreCurso = "Nuevo Curso " + (columnasGlobales.length + 1);
@@ -533,13 +886,34 @@
       } else if (nombreCurso && !isReconstructing) {
         columnasGlobales.push(nombreCurso);
       }
+
       dias.forEach(dia => {
         let filaCabeceras = document.getElementById(`filaCabeceras-${dia}`);
         if (!filaCabeceras) return;
+
         let nuevoTh = document.createElement('th');
         nuevoTh.classList.add('editable');
         nuevoTh.contentEditable = "true";
+
+        // El nombre que se asigna (o recupera de la reconstrucción)
         nuevoTh.textContent = nombreCurso;
+
+        // El índice en la fila (para saber a qué curso de columnasGlobales corresponde)
+        let colIndex = filaCabeceras.children.length; 
+        // Pero recuerda que children[0] es la columna "Hora",
+        // así que colIndex - 1 se usará para asignar en columnasGlobales
+
+        // Al perder foco, sincroniza el texto con columnsGlobales y refresca
+        nuevoTh.addEventListener('blur', e => {
+          let newName = e.target.textContent.trim();
+          let globalIndex = colIndex - 1;
+          columnasGlobales[globalIndex] = newName;
+          actualizarTodasCabeceras(globalIndex, newName);
+          if (currentMode === 'curso') {
+            buildCursoSelect();
+          }
+        });
+
         filaCabeceras.appendChild(nuevoTh);
 
         let cuerpo = document.getElementById(`cuerpoTabla-${dia}`);
@@ -548,52 +922,61 @@
         for (let i = 0; i < filas.length; i++) {
           let nuevaTd = document.createElement('td');
 
-          // Asignamos ondragover, ondragenter, ondragleave, ondrop
           if (!filas[i].classList.contains('recreo')) {
             nuevaTd.ondragover = allowDrop;
             nuevaTd.ondragenter = handleDragEnter;
             nuevaTd.ondragleave = handleDragLeave;
             nuevaTd.ondrop = ev => drop(ev, dia);
           }
-
           filas[i].appendChild(nuevaTd);
         }
       });
     }
 
-    function crearProfesor() {
+    // Actualiza todas las cabeceras (en todos los días) en la posición globalIndex
+    // con el nuevo nombre newName
+    function actualizarTodasCabeceras(globalIndex, newName) {
+      dias.forEach(dia => {
+        let filaCabeceras = document.getElementById(`filaCabeceras-${dia}`);
+        if (!filaCabeceras) return;
+        if (filaCabeceras.children[globalIndex + 1]) {
+          filaCabeceras.children[globalIndex + 1].textContent = newName;
+        }
+      });
+    }
+
+    function crearBloque() {
       let profesorItem = document.createElement('div');
       profesorItem.classList.add('profesor-item');
 
-      // Bloque "plantilla" del profesor
       let profesorBlock = document.createElement('div');
       profesorBlock.classList.add('profesor-block');
+      profesorBlock.id = "prof_" + Date.now() + "_" + Math.floor(Math.random()*10000);
       profesorBlock.draggable = true;
       profesorBlock.ondragstart = dragStart;
       profesorBlock.ondragend = dragEnd;
       
-      // Editar con tooltip al hacer doble click
       profesorBlock.ondblclick = e => {
         e.stopPropagation();
         openBlockEditor(profesorBlock, e.pageX, e.pageY);
       };
 
-      // Líneas de texto (NO contentEditable, se modifican via tooltip)
       let ramoLine = document.createElement('div');
       ramoLine.classList.add('ramo-line');
       ramoLine.textContent = "Ramo " + (profesorCounter + 1);
 
       let profLine = document.createElement('div');
       profLine.classList.add('prof-line');
-      profLine.textContent = "Prof. " + (++profesorCounter);
+      profLine.textContent = "Profesor...?"; 
+
+      profesorCounter++;
 
       profesorBlock.appendChild(ramoLine);
       profesorBlock.appendChild(profLine);
 
-      // Un ID único para este profesor (todos sus clones lo compartirán)
-      let uniqueId = "prof_" + Date.now();
+      let uniqueId = "profId_" + Date.now() + "_" + Math.floor(Math.random()*10000);
       profesorBlock.dataset.profId = uniqueId;
-      profBlockCount[uniqueId] = 0; // inicial
+      profBlockCount[uniqueId] = 0; 
 
       let iconContainer = document.createElement('div');
       iconContainer.classList.add('profesor-item-icons');
@@ -611,9 +994,8 @@
 
       let trashIcon = document.createElement('img');
       trashIcon.src = "https://cdn-icons-png.flaticon.com/512/3096/3096673.png";
-      trashIcon.title = "Eliminar profesor";
+      trashIcon.title = "Eliminar bloque";
       trashIcon.onclick = () => {
-        // quitar su conteo
         delete profBlockCount[uniqueId];
         profesorItem.remove();
       };
@@ -621,10 +1003,9 @@
       iconContainer.appendChild(colorIcon);
       iconContainer.appendChild(trashIcon);
 
-      // Contador de bloques
       let blockCountSpan = document.createElement('span');
       blockCountSpan.classList.add('prof-count-span');
-      blockCountSpan.textContent = "0"; // inicia en 0
+      blockCountSpan.textContent = "0";
 
       profesorItem.appendChild(profesorBlock);
       profesorItem.appendChild(iconContainer);
@@ -633,15 +1014,80 @@
       document.getElementById('profesorContainer').appendChild(profesorItem);
     }
 
-    // Eventos para el recuadro punteado gris oscuro
+    /* ===================== DRAG AND DROP ===================== */
+    let draggedFromContainer = false;
+
+    function dragStart(e) {
+      e.dataTransfer.effectAllowed = "copy";
+      if (!this.id) {
+        this.id = "prof_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+      }
+      e.dataTransfer.setData("text/plain", this.id);
+
+      draggedFromContainer = this.parentNode && this.parentNode.classList && this.parentNode.classList.contains('profesor-item');
+      profSeleccionado = this;
+    }
+
+    function dragEnd() {
+      dias.forEach(d => checkAllRowsForConflicts(d));
+    }
+
     function handleDragEnter(e) {
       e.currentTarget.classList.add('drag-over');
     }
     function handleDragLeave(e) {
       e.currentTarget.classList.remove('drag-over');
     }
+    function allowDrop(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+    }
 
-    // Función para abrir el "tooltip" de edición
+    function drop(e, dia) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+
+      if (e.target.classList.contains('profesor-block')) return;
+      if (e.target.closest('.profesor-block')) return;
+
+      let id = e.dataTransfer.getData("text/plain");
+      let element = document.getElementById(id);
+      if (!element) return;
+
+      let profId = element.dataset.profId;
+
+      if (draggedFromContainer) {
+        let clone = element.cloneNode(true);
+        clone.id = "prof_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+        clone.draggable = true;
+        clone.ondragstart = dragStart;
+        clone.ondragend = dragEnd;
+        clone.ondblclick = ev => {
+          ev.stopPropagation();
+          openBlockEditor(clone, ev.pageX, ev.pageY);
+        };
+        clone.dataset.profId = profId;
+
+        e.target.appendChild(clone);
+
+        profBlockCount[profId]++;
+        updateProfessorCount(profId);
+      } else {
+        e.target.appendChild(element);
+      }
+
+      draggedFromContainer = false;
+      let row = e.target.closest('tr');
+      if (row) checkRowConflicts(row);
+
+      if (currentMode === 'profesor') {
+        buildProfesorSelect();
+      } else if (currentMode === 'curso') {
+        buildCursoSelect();
+      }
+    }
+
+    /* ===================== EDICIÓN DE BLOQUES ===================== */
     function openBlockEditor(block, x, y) {
       let tooltip = document.getElementById('editTooltip');
       tooltip.style.left = x + 'px';
@@ -652,82 +1098,38 @@
       let profLine = block.querySelector('.prof-line');
 
       document.getElementById('inputRamo').value = ramoLine.textContent.trim();
-      document.getElementById('inputProf').value = profLine.textContent.trim();
+
+      // Poblar el select con la lista de profesores
+      let select = document.getElementById('selectProf');
+      select.innerHTML = "";
+      let optEmpty = document.createElement('option');
+      optEmpty.value = "";
+      optEmpty.textContent = "Seleccione...";
+      select.appendChild(optEmpty);
+
+      listaProfesores.forEach(nombre => {
+        let opt = document.createElement('option');
+        opt.value = nombre;
+        opt.textContent = nombre;
+        select.appendChild(opt);
+      });
+
+      select.value = profLine.textContent.trim() || "";
 
       document.getElementById('saveTooltip').onclick = function() {
         ramoLine.textContent = document.getElementById('inputRamo').value;
-        profLine.textContent = document.getElementById('inputProf').value;
+        profLine.textContent = select.value ? select.value : "Profesor...?";
         tooltip.style.display = 'none';
+        if (currentMode === 'profesor') {
+          buildProfesorSelect();
+        } else if (currentMode === 'curso') {
+          buildCursoSelect();
+        }
       };
 
       document.getElementById('cancelTooltip').onclick = function() {
         tooltip.style.display = 'none';
       };
-    }
-
-    let draggedFromContainer = false;
-
-    function dragStart(e) {
-      e.dataTransfer.effectAllowed = "copy";
-      e.dataTransfer.setData("text/plain", e.target.id);
-      draggedFromContainer = this.parentNode && this.parentNode.classList && this.parentNode.classList.contains('profesor-item');
-      if (!this.id) {
-        this.id = 'prof_' + Date.now();
-      }
-      profSeleccionado = this;
-    }
-
-    function dragEnd() {
-      dias.forEach(d => checkAllRowsForConflicts(d));
-    }
-
-    function allowDrop(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "copy";
-    }
-
-    function drop(e, dia) {
-      e.preventDefault();
-      // Eliminamos el recuadro punteado al soltar
-      e.currentTarget.classList.remove('drag-over');
-
-      // Impedir "anidar" un bloque dentro de otro
-      if (e.target.classList.contains('profesor-block')) return; 
-      if (e.target.closest('.profesor-block')) return;
-
-      let id = e.dataTransfer.getData("text/plain");
-      let element = document.getElementById(id);
-      if (!element) return;
-
-      let profId = element.dataset.profId;
-
-      if (draggedFromContainer) {
-        // Se clona un "nuevo" bloque de este profesor
-        let clone = element.cloneNode(true);
-        clone.id = "prof_" + Date.now() + "_clone";
-        clone.draggable = true;
-        clone.ondragstart = dragStart;
-        clone.ondragend = dragEnd;
-        clone.ondblclick = ev => {
-          ev.stopPropagation();
-          openBlockEditor(clone, ev.pageX, ev.pageY);
-        };
-        // Mantener el mismo profId
-        clone.dataset.profId = profId;
-
-        e.target.appendChild(clone);
-
-        // Aumentar el conteo de bloques
-        profBlockCount[profId]++;
-        updateProfessorCount(profId);
-      } else {
-        // Mover el bloque actual dentro del horario
-        e.target.appendChild(element);
-      }
-
-      draggedFromContainer = false;
-      let row = e.target.closest('tr');
-      if (row) checkRowConflicts(row);
     }
 
     function cambiarColor(e) {
@@ -747,7 +1149,6 @@
       } else {
         clearHighlight();
       }
-      // Oculta el colorPicker si hacemos click fuera
       if (
         colorPicker.style.display === 'block' &&
         !colorPicker.contains(e.target) &&
@@ -759,7 +1160,7 @@
       }
     });
 
-    // --- Tecla SUPR
+    // Tecla SUPR
     document.addEventListener('keydown', e => {
       if (e.key === "Delete" || e.keyCode === 46) {
         if (selectedBlock && selectedBlock.parentNode) {
@@ -770,11 +1171,16 @@
           }
           selectedBlock.parentNode.removeChild(selectedBlock);
           clearHighlight();
+          if (currentMode === 'profesor') {
+            buildProfesorSelect();
+          } else if (currentMode === 'curso') {
+            buildCursoSelect();
+          }
         }
       }
     });
 
-    // --- Conflictos (chocan celdas con mismo prof)
+    /* ===================== DETECCIÓN DE CONFLICTOS ===================== */
     function checkRowConflicts(row) {
       let tds = row.querySelectorAll('td');
       tds.forEach(td => td.style.backgroundColor = "");
@@ -800,12 +1206,12 @@
         }
       });
     }
-
     function checkAllRowsForConflicts(dia) {
       let filas = document.querySelectorAll(`#cuerpoTabla-${dia} tr`);
       filas.forEach(fila => checkRowConflicts(fila));
     }
 
+    /* ===================== AYUDANTE RGBA->HEX ===================== */
     function rgbToHex(colorStr) {
       let match = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
       if (!match) return null;
@@ -816,7 +1222,19 @@
       return ("000000" + hex).slice(-6);
     }
 
-    function guardarExcelUnico() {
+    /* ===================== GUARDAR A EXCEL ===================== */
+    // Descargar Excel dependiendo del modo actual
+    function descargarExcelSegunModo() {
+      if (currentMode === 'general') {
+        guardarExcelGeneral();
+      } else if (currentMode === 'profesor') {
+        guardarExcelProfesor();
+      } else if (currentMode === 'curso') {
+        guardarExcelCurso();
+      }
+    }
+
+    function guardarExcelGeneral() {
       let wb = XLSX.utils.book_new();
       dias.forEach(dia => {
         let tabla = document.getElementById(`tablaHorarios-${dia}`);
@@ -824,7 +1242,37 @@
         let ws = tableToSheetConEstilos(tabla);
         XLSX.utils.book_append_sheet(wb, ws, dia.toUpperCase());
       });
-      XLSX.writeFile(wb, "horarios-completos.xlsx");
+      XLSX.writeFile(wb, "horarios-general.xlsx");
+    }
+
+    // Exporta la tabla #tablaPorProfesor con el nombre del profesor
+    function guardarExcelProfesor() {
+      let selectedProfessorValue = document.getElementById('profesorSelect').value.trim();
+      if (!selectedProfessorValue) {
+        selectedProfessorValue = "profesor_sin_nombre";
+      }
+      let safeFileName = selectedProfessorValue.toLowerCase().replace(/\s+/g, '_');
+
+      let tabla = document.getElementById("tablaPorProfesor");
+      let ws = tableToSheetConEstilos(tabla);
+      let wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Profesor");
+      XLSX.writeFile(wb, `horario_${safeFileName}.xlsx`);
+    }
+
+    // Exporta la tabla #tablaPorCurso con el nombre del curso
+    function guardarExcelCurso() {
+      let selectedCursoValue = document.getElementById('cursoSelect').value.trim();
+      if (!selectedCursoValue) {
+        selectedCursoValue = "curso_sin_nombre";
+      }
+      let safeFileName = selectedCursoValue.toLowerCase().replace(/\s+/g, '_');
+
+      let tabla = document.getElementById("tablaPorCurso");
+      let ws = tableToSheetConEstilos(tabla);
+      let wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Curso");
+      XLSX.writeFile(wb, `horario_${safeFileName}.xlsx`);
     }
 
     function tableToSheetConEstilos(tabla) {
@@ -855,6 +1303,7 @@
       return XLSX.utils.aoa_to_sheet(aoa);
     }
 
+    /* ===================== GUARDAR A JSON ===================== */
     function guardarEnJSON() {
       let data = construirJSONCompleto();
       let jsonStr = JSON.stringify(data, null, 2);
@@ -862,8 +1311,30 @@
       localStorage.setItem('horariosData', JSON.stringify(data));
     }
 
+    function descargarArchivo(dataStr, fileName, mimeType) {
+      let blob = new Blob([dataStr], { type: mimeType });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* Estructura de data:
+       {
+         columnas: [...],
+         dias: { lunes: [...], martes: [...], ... },
+         bloques: [ ... ],
+         profNames: ["Profesor Uno", "Profesor Dos", ... ]
+       }
+    */
     function construirJSONCompleto() {
-      let data = { columnas: columnasGlobales.slice(), dias: {}, profesores: [] };
+      let data = { columnas: columnasGlobales.slice(), dias: {}, bloques: [], profNames: [...listaProfesores] };
+
+      // Recorrer celdas de la tabla general
       dias.forEach(dia => {
         let tabla = document.getElementById(`tablaHorarios-${dia}`);
         if (!tabla) return;
@@ -892,9 +1363,11 @@
         data.dias[dia] = dayMatrix;
       });
 
-      let profItems = document.querySelectorAll("#profesorContainer .profesor-item");
-      profItems.forEach(item => {
+      // Recorrer la lista de bloques en #profesorContainer
+      let blockItems = document.querySelectorAll("#profesorContainer .profesor-item");
+      blockItems.forEach(item => {
         let block = item.querySelector(".profesor-block");
+        if (!block) return;
         let ramo = block.querySelector(".ramo-line")?.textContent.trim() || "";
         let prof = block.querySelector(".prof-line")?.textContent.trim() || "";
         let bgColor = window.getComputedStyle(block).backgroundColor;
@@ -902,11 +1375,9 @@
         if (bgColor && bgColor !== "rgba(0, 0, 0, 0)" && bgColor !== "transparent") {
           hex = rgbToHex(bgColor);
         }
-        // Tomamos el conteo desde profBlockCount en vez de un input
         let profId = block.dataset.profId;
         let count = profBlockCount[profId] || 0;
-
-        data.profesores.push({
+        data.bloques.push({
           ramo: ramo,
           prof: prof,
           color: hex,
@@ -919,10 +1390,15 @@
     function reconstruirDesdeJSON(data) {
       isReconstructing = true;
       columnasGlobales = data.columnas ? [...data.columnas] : [];
+      listaProfesores = data.profNames ? [...data.profNames] : [];
+      refrescarListaProfesores();
+
       dias.forEach(dia => {
         let tabla = document.getElementById(`tablaHorarios-${dia}`);
         if (!tabla) return;
         let filaCabeceras = tabla.querySelector("thead tr");
+
+        // Retirar cualquier columna adicional
         while (filaCabeceras.children.length > 1) {
           filaCabeceras.removeChild(filaCabeceras.lastChild);
         }
@@ -939,9 +1415,13 @@
           tbody.appendChild(fila);
         });
       });
+
+      // Volver a crear columnas
       for (let colName of columnasGlobales) {
         agregarColumna(colName);
       }
+
+      // Rellenar
       for (let dia in data.dias) {
         let dayMatrix = data.dias[dia];
         let tabla = document.getElementById(`tablaHorarios-${dia}`);
@@ -957,6 +1437,7 @@
             blocksInfo.forEach(binfo => {
               let block = document.createElement("div");
               block.classList.add("profesor-block");
+              block.id = "reconstr_" + Date.now() + "_" + Math.floor(Math.random()*10000);
               block.draggable = true;
               block.ondragstart = dragStart;
               block.ondragend = dragEnd;
@@ -975,22 +1456,29 @@
               if (binfo.color) {
                 block.style.backgroundColor = "#" + binfo.color;
               }
+              let uniqueId = "profId_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+              block.dataset.profId = uniqueId;
+              if (!(uniqueId in profBlockCount)) {
+                profBlockCount[uniqueId] = 0;
+              }
               celdas[j].appendChild(block);
+              profBlockCount[uniqueId]++;
             });
           }
         }
       }
 
+      // Reconstruir contenedor de bloques
       let profContainer = document.getElementById("profesorContainer");
       profContainer.querySelectorAll(".profesor-item").forEach(p => p.remove());
-
-      if (data.profesores) {
-        data.profesores.forEach(p => {
+      if (data.bloques) {
+        data.bloques.forEach(b => {
           let profesorItem = document.createElement("div");
           profesorItem.classList.add("profesor-item");
 
           let profesorBlock = document.createElement("div");
           profesorBlock.classList.add("profesor-block");
+          profesorBlock.id = "prof_" + Date.now() + "_" + Math.floor(Math.random()*10000);
           profesorBlock.draggable = true;
           profesorBlock.ondragstart = dragStart;
           profesorBlock.ondragend = dragEnd;
@@ -1001,21 +1489,20 @@
 
           let ramoLine = document.createElement("div");
           ramoLine.classList.add("ramo-line");
-          ramoLine.textContent = p.ramo || "";
+          ramoLine.textContent = b.ramo || "";
           let profLine = document.createElement("div");
           profLine.classList.add("prof-line");
-          profLine.textContent = p.prof || "";
+          profLine.textContent = b.prof || "";
 
           profesorBlock.appendChild(ramoLine);
           profesorBlock.appendChild(profLine);
 
-          if (p.color) {
-            profesorBlock.style.backgroundColor = "#" + p.color;
+          if (b.color) {
+            profesorBlock.style.backgroundColor = "#" + b.color;
           }
-          // Generamos un nuevo profId y seteamos el contador
-          let uniqueId = "prof_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+          let uniqueId = "profId_" + Date.now() + "_" + Math.floor(Math.random()*10000);
           profesorBlock.dataset.profId = uniqueId;
-          profBlockCount[uniqueId] = parseInt(p.blockCount || "0",10);
+          profBlockCount[uniqueId] = parseInt(b.blockCount || "0",10);
 
           let iconContainer = document.createElement("div");
           iconContainer.classList.add("profesor-item-icons");
@@ -1033,7 +1520,7 @@
 
           let trashIcon = document.createElement("img");
           trashIcon.src = "https://cdn-icons-png.flaticon.com/512/3096/3096673.png";
-          trashIcon.title = "Eliminar profesor";
+          trashIcon.title = "Eliminar bloque";
           trashIcon.onclick = () => {
             delete profBlockCount[uniqueId];
             profesorItem.remove();
@@ -1056,55 +1543,182 @@
       isReconstructing = false;
     }
 
-    function descargarArchivo(dataStr, fileName, mimeType) {
-      let blob = new Blob([dataStr], { type: mimeType });
-      let url = URL.createObjectURL(blob);
-      let a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+    /* =================== MODO "POR PROFESOR" ======================== */
+    function buildProfesorSelect() {
+      if (currentMode !== 'profesor') return;
+      let select = document.getElementById('profesorSelect');
+      if (!select) return; 
+      select.innerHTML = "";
+
+      const placeholder = document.createElement('option');
+      placeholder.value = "";
+      placeholder.textContent = "Seleccione un profesor...";
+      select.appendChild(placeholder);
+
+      listaProfesores.forEach(nombre => {
+        let opt = document.createElement('option');
+        opt.value = nombre;
+        opt.textContent = nombre;
+        select.appendChild(opt);
+      });
     }
 
-    function highlightSameProfessor(block) {
-      let profLine = block.querySelector('.prof-line');
-      if (!profLine) return;
-      let profName = profLine.textContent.trim().toLowerCase();
-      let allBlocks = document.querySelectorAll('tbody .profesor-block');
-      allBlocks.forEach(b => {
-        b.classList.remove('prof-highlight-original','prof-highlight-other','prof-faded');
-        let bName = b.querySelector('.prof-line')?.textContent.trim().toLowerCase();
-        if (bName === profName) {
-          if (b === block) {
-            b.classList.add('prof-highlight-original');
+    function mostrarHorarioProfesor(nombreProf) {
+      let profHorarioTitulo = document.getElementById('profesorHorarioTitulo');
+      let profesorActivo = document.getElementById('profesorActivo');
+      let tbody = document.getElementById('tablaPorProfesorBody');
+
+      // Guardamos la última selección
+      lastProfesorSelected = nombreProf;
+
+      if (!nombreProf) {
+        profHorarioTitulo.textContent = "";
+        profesorActivo.textContent = "";
+        tbody.innerHTML = "";
+        return;
+      }
+      profHorarioTitulo.textContent = "Horario de " + nombreProf;
+      profesorActivo.textContent = "Profesor seleccionado: " + nombreProf;
+
+      // Limpia el tbody
+      tbody.innerHTML = "";
+
+      for (let i = 0; i < BLOQUES.length; i++) {
+        let tr = document.createElement('tr');
+
+        let tdHora = document.createElement('td');
+        tdHora.classList.add('col-hora');
+        tdHora.textContent = BLOQUES[i].label;
+        tr.appendChild(tdHora);
+
+        for (let d = 0; d < dias.length; d++) {
+          let diaId = dias[d];
+          let tdDia = document.createElement('td');
+
+          if (!BLOQUES[i].isBreak) {
+            let filaCabeceras = document.getElementById(`filaCabeceras-${diaId}`);
+            let tableBody = document.getElementById(`cuerpoTabla-${diaId}`);
+            if (!filaCabeceras || !tableBody) continue;
+            let originalRow = tableBody.querySelectorAll('tr')[i];
+
+            if (originalRow) {
+              let originalCells = originalRow.querySelectorAll('td');
+              for (let cellIndex = 1; cellIndex < originalCells.length; cellIndex++) {
+                let blocks = originalCells[cellIndex].querySelectorAll('.profesor-block');
+                let nombreColumna = filaCabeceras.children[cellIndex].textContent.trim();
+
+                blocks.forEach(b => {
+                  let bProfLine = b.querySelector('.prof-line')?.textContent.trim().toLowerCase();
+                  if (bProfLine === nombreProf.toLowerCase()) {
+                    let clone = b.cloneNode(true);
+                    clone.id = "";
+                    clone.draggable = false;
+                    clone.ondblclick = null;
+                    clone.ondragstart = null;
+                    // Sustituimos la línea del "prof" con el nombre de la columna
+                    let profLineClone = clone.querySelector('.prof-line');
+                    if (profLineClone) {
+                      profLineClone.textContent = nombreColumna;
+                    }
+                    tdDia.appendChild(clone);
+                  }
+                });
+              }
+            }
           } else {
-            b.classList.add('prof-highlight-other');
+            tdDia.style.backgroundColor = "#eee";
           }
-        } else {
-          b.classList.add('prof-faded');
+          tr.appendChild(tdDia);
         }
+        tbody.appendChild(tr);
+      }
+    }
+
+    /* =================== MODO "POR CURSO" ======================== */
+    function buildCursoSelect() {
+      if (currentMode !== 'curso') return;
+      let select = document.getElementById('cursoSelect');
+      if (!select) return;
+      select.innerHTML = "";
+
+      const placeholder = document.createElement('option');
+      placeholder.value = "";
+      placeholder.textContent = "Seleccione un curso...";
+      select.appendChild(placeholder);
+
+      columnasGlobales.forEach(col => {
+        let opt = document.createElement('option');
+        opt.value = col;
+        opt.textContent = col;
+        select.appendChild(opt);
       });
     }
 
-    function clearHighlight() {
-      selectedBlock = null;
-      let allBlocks = document.querySelectorAll('tbody .profesor-block');
-      allBlocks.forEach(b => {
-        b.classList.remove('prof-highlight-original','prof-highlight-other','prof-faded');
-      });
-    }
+    function mostrarHorarioCurso(nombreCurso) {
+      let cursoHorarioTitulo = document.getElementById('cursoHorarioTitulo');
+      let cursoActivo = document.getElementById('cursoActivo');
+      let tbody = document.getElementById('tablaPorCursoBody');
 
-    function updateProfessorCount(profId) {
-      const container = document.getElementById("profesorContainer");
-      const theBlock = container.querySelector(`.profesor-block[data-prof-id="${profId}"]`);
-      if (!theBlock) return;
-      const profesorItem = theBlock.closest(".profesor-item");
-      if (!profesorItem) return;
-      const span = profesorItem.querySelector(".prof-count-span");
-      if (!span) return;
-      span.textContent = profBlockCount[profId].toString();
+      // Guardamos la última selección
+      lastCursoSelected = nombreCurso;
+
+      if (!nombreCurso) {
+        cursoHorarioTitulo.textContent = "";
+        cursoActivo.textContent = "";
+        tbody.innerHTML = "";
+        return;
+      }
+      cursoHorarioTitulo.textContent = "Horario del curso: " + nombreCurso;
+      cursoActivo.textContent = "Curso seleccionado: " + nombreCurso;
+
+      tbody.innerHTML = "";
+
+      for (let i = 0; i < BLOQUES.length; i++) {
+        let tr = document.createElement('tr');
+
+        let tdHora = document.createElement('td');
+        tdHora.classList.add('col-hora');
+        tdHora.textContent = BLOQUES[i].label;
+        tr.appendChild(tdHora);
+
+        for (let d = 0; d < dias.length; d++) {
+          let diaId = dias[d];
+          let tdDia = document.createElement('td');
+          if (!BLOQUES[i].isBreak) {
+            let filaCabeceras = document.getElementById(`filaCabeceras-${diaId}`);
+            let tableBody = document.getElementById(`cuerpoTabla-${diaId}`);
+            if (!filaCabeceras || !tableBody) continue;
+            let originalRow = tableBody.querySelectorAll('tr')[i];
+
+            if (originalRow) {
+              let originalCells = originalRow.querySelectorAll('td');
+              let colIndex = -1;
+              for (let k = 1; k < filaCabeceras.children.length; k++) {
+                if (filaCabeceras.children[k].textContent.trim() === nombreCurso) {
+                  colIndex = k;
+                  break;
+                }
+              }
+
+              if (colIndex >= 1 && colIndex < originalCells.length) {
+                let blocks = originalCells[colIndex].querySelectorAll('.profesor-block');
+                blocks.forEach(b => {
+                  let clone = b.cloneNode(true);
+                  clone.id = "";
+                  clone.draggable = false;
+                  clone.ondblclick = null;
+                  clone.ondragstart = null;
+                  tdDia.appendChild(clone);
+                });
+              }
+            }
+          } else {
+            tdDia.style.backgroundColor = "#eee";
+          }
+          tr.appendChild(tdDia);
+        }
+        tbody.appendChild(tr);
+      }
     }
   </script>
 </body>
