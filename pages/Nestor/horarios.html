@@ -159,7 +159,7 @@
     /* Bloques de profesor */
     .profesor-block {
       background-color: #FFD700;
-      margin: 5px;
+      margin: 2px 0;
       border: 1px solid #aaa;
       border-radius: 4px;
       padding: 4px 6px;
@@ -167,14 +167,16 @@
       cursor: move;
       position: relative;
       user-select: none;
-      display: inline-block;
-      text-align: center;
-    }
-    .profesor-block .ramo-line,
-    .profesor-block .prof-line {
       display: block;
       width: 100%;
-      min-height: 12px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .ramo-line,
+    .prof-line {
+      display: block;
+      margin: 2px 0;
+      /* Quitamos contentEditable: ahora se edita desde el tooltip */
     }
 
     .recreo td {
@@ -228,11 +230,11 @@
       opacity: 0.7;
     }
     .prof-count-span {
-    font-size: 0.8em;
-    margin-top: 4px;
-    display: block;
-    text-align: center;
-    width: 100%;
+      font-size: 0.8em;
+      margin-top: 4px;
+      display: block;
+      text-align: center;
+      width: 100%;
     }
 
     .dia-contenedor {
@@ -257,10 +259,47 @@
       filter: grayscale(50%);
       opacity: 0.3;
     }
+
+    /* Tooltip para edición */
+    #editTooltip {
+      position: absolute;
+      width: 300px;
+      background: #fff;
+      border: 2px solid #333;
+      display: none;
+      padding: 10px;
+      z-index: 10000;
+      border-radius: 8px;
+    }
+    #editTooltip input {
+      width: 90%;
+      margin-bottom: 10px;
+      font-size: 1em;
+      padding: 5px;
+    }
+    #editTooltip label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    #editTooltip button {
+      padding: 6px 12px;
+      margin: 3px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #saveTooltip {
+      background-color: #75BBB0;
+      color: #fff;
+    }
+    #cancelTooltip {
+      background-color: #eeeeee;
+    }
   </style>
 </head>
 <body>
-  <div class="header-titulo">NestorBOT v2.2 - Horarios</div>
+  <div class="header-titulo">NestorBOT v2.3 - 📅 Horarios</div>
 
   <div class="top-dias">
     <button id="btn-lunes" onclick="mostrarDia('lunes')">Lunes</button>
@@ -276,96 +315,96 @@
   </div>
 
   <div class="sidebar-izquierda">
-    <a href="conversor.html" class="sidebar-boton">Conversor</a>
-    <a class="sidebar-boton sidebar-boton-seleccionado">Horarios</a>
-    <a class="sidebar-boton" href="index.html">Menú Principal</a>
+    <a href="conversor.html" class="sidebar-boton">↔️ Conversor</a>
+    <a class="sidebar-boton sidebar-boton-seleccionado">📅 Horarios</a>
+    <a class="sidebar-boton" href="index.html">🏠 Menú Principal</a>
   </div>
 
   <div class="contenedor-principal">
     <div id="dia-lunes" class="dia-contenedor">
-        <div class="horarios-contenedor">
-          <h2>Horario Lunes</h2>
-          <div class="contenedor-botones-horarios">
-            <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-          </div>
-          <table class="tabla-horarios" id="tablaHorarios-lunes">
-            <thead>
-              <tr id="filaCabeceras-lunes">
-                <th class="col-hora">Hora</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTabla-lunes"></tbody>
-          </table>
+      <div class="horarios-contenedor">
+        <h2>Horario Lunes</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
         </div>
+        <table class="tabla-horarios" id="tablaHorarios-lunes">
+          <thead>
+            <tr id="filaCabeceras-lunes">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-lunes"></tbody>
+        </table>
       </div>
-      
-      <div id="dia-martes" class="dia-contenedor">
-        <div class="horarios-contenedor">
-          <h2>Horario Martes</h2>
-          <div class="contenedor-botones-horarios">
-            <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-          </div>
-          <table class="tabla-horarios" id="tablaHorarios-martes">
-            <thead>
-              <tr id="filaCabeceras-martes">
-                <th class="col-hora">Hora</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTabla-martes"></tbody>
-          </table>
+    </div>
+    
+    <div id="dia-martes" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Martes</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
         </div>
+        <table class="tabla-horarios" id="tablaHorarios-martes">
+          <thead>
+            <tr id="filaCabeceras-martes">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-martes"></tbody>
+        </table>
       </div>
-      
-      <div id="dia-miercoles" class="dia-contenedor">
-        <div class="horarios-contenedor">
-          <h2>Horario Miércoles</h2>
-          <div class="contenedor-botones-horarios">
-            <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-          </div>
-          <table class="tabla-horarios" id="tablaHorarios-miercoles">
-            <thead>
-              <tr id="filaCabeceras-miercoles">
-                <th class="col-hora">Hora</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTabla-miercoles"></tbody>
-          </table>
+    </div>
+    
+    <div id="dia-miercoles" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Miércoles</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
         </div>
+        <table class="tabla-horarios" id="tablaHorarios-miercoles">
+          <thead>
+            <tr id="filaCabeceras-miercoles">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-miercoles"></tbody>
+        </table>
       </div>
-      
-      <div id="dia-jueves" class="dia-contenedor">
-        <div class="horarios-contenedor">
-          <h2>Horario Jueves</h2>
-          <div class="contenedor-botones-horarios">
-            <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-          </div>
-          <table class="tabla-horarios" id="tablaHorarios-jueves">
-            <thead>
-              <tr id="filaCabeceras-jueves">
-                <th class="col-hora">Hora</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTabla-jueves"></tbody>
-          </table>
+    </div>
+    
+    <div id="dia-jueves" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Jueves</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
         </div>
+        <table class="tabla-horarios" id="tablaHorarios-jueves">
+          <thead>
+            <tr id="filaCabeceras-jueves">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-jueves"></tbody>
+        </table>
       </div>
-      
-      <div id="dia-viernes" class="dia-contenedor">
-        <div class="horarios-contenedor">
-          <h2>Horario Viernes</h2>
-          <div class="contenedor-botones-horarios">
-            <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
-          </div>
-          <table class="tabla-horarios" id="tablaHorarios-viernes">
-            <thead>
-              <tr id="filaCabeceras-viernes">
-                <th class="col-hora">Hora</th>
-              </tr>
-            </thead>
-            <tbody id="cuerpoTabla-viernes"></tbody>
-          </table>
+    </div>
+    
+    <div id="dia-viernes" class="dia-contenedor">
+      <div class="horarios-contenedor">
+        <h2>Horario Viernes</h2>
+        <div class="contenedor-botones-horarios">
+          <button class="boton-agregar" onclick="agregarColumna()">Agregar Curso</button>
         </div>
+        <table class="tabla-horarios" id="tablaHorarios-viernes">
+          <thead>
+            <tr id="filaCabeceras-viernes">
+              <th class="col-hora">Hora</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla-viernes"></tbody>
+        </table>
       </div>
+    </div>
 
     <div id="profesorContainer">
       <button class="boton-agregar" onclick="crearProfesor()">Agregar Profe</button>
@@ -373,6 +412,17 @@
   </div>
 
   <input type="color" id="colorPicker" oninput="cambiarColor(event)" onclick="event.stopPropagation()" />
+
+  <!-- Tooltip de edición de bloque -->
+  <div id="editTooltip">
+    <label>Ramo:</label>
+    <input id="inputRamo" type="text" />
+    <label>Profesor:</label>
+    <input id="inputProf" type="text" />
+    <br/>
+    <button id="saveTooltip">Guardar</button>
+    <button id="cancelTooltip">Cancelar</button>
+  </div>
 
   <!-- Librería para exportar a Excel (opcional) -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -404,6 +454,7 @@
     let colorPicker = null;
     let profSeleccionado = null;
     let profesorCounter = 0;
+    let profesoresGuardados = [];
     let selectedBlock = null;
 
     // Asocia profId => número de bloques en el horario
@@ -510,16 +561,20 @@
       profesorBlock.draggable = true;
       profesorBlock.ondragstart = dragStart;
       profesorBlock.ondragend = dragEnd;
-      profesorBlock.contentEditable = "false";
+      
+      // Editar con tooltip al hacer doble click
+      profesorBlock.ondblclick = e => {
+        e.stopPropagation();
+        openBlockEditor(profesorBlock, e.pageX, e.pageY);
+      };
 
+      // Líneas de texto (NO contentEditable, se modifican via tooltip)
       let ramoLine = document.createElement('div');
       ramoLine.classList.add('ramo-line');
-      ramoLine.contentEditable = "true";
       ramoLine.textContent = "Ramo " + (profesorCounter + 1);
 
       let profLine = document.createElement('div');
       profLine.classList.add('prof-line');
-      profLine.contentEditable = "true";
       profLine.textContent = "Prof. " + (++profesorCounter);
 
       profesorBlock.appendChild(ramoLine);
@@ -556,7 +611,7 @@
       iconContainer.appendChild(colorIcon);
       iconContainer.appendChild(trashIcon);
 
-      // Contador de bloques (sin "bloques", texto pequeño)
+      // Contador de bloques
       let blockCountSpan = document.createElement('span');
       blockCountSpan.classList.add('prof-count-span');
       blockCountSpan.textContent = "0"; // inicia en 0
@@ -566,6 +621,30 @@
       profesorItem.appendChild(blockCountSpan);
 
       document.getElementById('profesorContainer').appendChild(profesorItem);
+    }
+
+    // Función para abrir el "tooltip" de edición
+    function openBlockEditor(block, x, y) {
+      let tooltip = document.getElementById('editTooltip');
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+      tooltip.style.display = 'block';
+
+      let ramoLine = block.querySelector('.ramo-line');
+      let profLine = block.querySelector('.prof-line');
+
+      document.getElementById('inputRamo').value = ramoLine.textContent.trim();
+      document.getElementById('inputProf').value = profLine.textContent.trim();
+
+      document.getElementById('saveTooltip').onclick = function() {
+        ramoLine.textContent = document.getElementById('inputRamo').value;
+        profLine.textContent = document.getElementById('inputProf').value;
+        tooltip.style.display = 'none';
+      };
+
+      document.getElementById('cancelTooltip').onclick = function() {
+        tooltip.style.display = 'none';
+      };
     }
 
     let draggedFromContainer = false;
@@ -592,7 +671,7 @@
     function drop(e, dia) {
       e.preventDefault();
 
-      // 1) Impedir "anidar" un bloque dentro de otro:
+      // Impedir "anidar" un bloque dentro de otro
       if (e.target.classList.contains('profesor-block')) return; 
       if (e.target.closest('.profesor-block')) return;
 
@@ -609,8 +688,11 @@
         clone.draggable = true;
         clone.ondragstart = dragStart;
         clone.ondragend = dragEnd;
-
-        // Importante: mantener el mismo profId
+        clone.ondblclick = ev => {
+          ev.stopPropagation();
+          openBlockEditor(clone, ev.pageX, ev.pageY);
+        };
+        // Mantener el mismo profId
         clone.dataset.profId = profId;
 
         e.target.appendChild(clone);
@@ -619,8 +701,7 @@
         profBlockCount[profId]++;
         updateProfessorCount(profId);
       } else {
-        // Mover un bloque dentro del horario (ya existente)
-        // Sin cambiar su ID
+        // Mover el bloque actual dentro del horario
         e.target.appendChild(element);
       }
 
@@ -646,6 +727,7 @@
       } else {
         clearHighlight();
       }
+      // Oculta el colorPicker si hacemos click fuera
       if (
         colorPicker.style.display === 'block' &&
         !colorPicker.contains(e.target) &&
@@ -671,10 +753,6 @@
         }
       }
     });
-
-    colorPicker.ondragstart = e => {
-      e.preventDefault();
-    };
 
     // --- Conflictos (chocan celdas con mismo prof)
     function checkRowConflicts(row) {
@@ -709,263 +787,287 @@
     }
 
     function rgbToHex(colorStr) {
-      let match = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i)
-      if (!match) return null
-      let r = parseInt(match[1], 10)
-      let g = parseInt(match[2], 10)
-      let b = parseInt(match[3], 10)
-      let hex = ((r << 16) | (g << 8) | b).toString(16).toUpperCase()
-      return ("000000" + hex).slice(-6)
+      let match = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (!match) return null;
+      let r = parseInt(match[1], 10);
+      let g = parseInt(match[2], 10);
+      let b = parseInt(match[3], 10);
+      let hex = ((r << 16) | (g << 8) | b).toString(16).toUpperCase();
+      return ("000000" + hex).slice(-6);
     }
+
     function guardarExcelUnico() {
-      let wb = XLSX.utils.book_new()
+      let wb = XLSX.utils.book_new();
       dias.forEach(dia => {
-        let tabla = document.getElementById(`tablaHorarios-${dia}`)
-        if (!tabla) return
-        let ws = tableToSheetConEstilos(tabla)
-        XLSX.utils.book_append_sheet(wb, ws, dia.toUpperCase())
-      })
-      XLSX.writeFile(wb, "horarios-completos.xlsx")
+        let tabla = document.getElementById(`tablaHorarios-${dia}`);
+        if (!tabla) return;
+        let ws = tableToSheetConEstilos(tabla);
+        XLSX.utils.book_append_sheet(wb, ws, dia.toUpperCase());
+      });
+      XLSX.writeFile(wb, "horarios-completos.xlsx");
     }
+
     function tableToSheetConEstilos(tabla) {
-      let aoa = []
-      let rows = tabla.querySelectorAll("tr")
+      let aoa = [];
+      let rows = tabla.querySelectorAll("tr");
       for (let r = 0; r < rows.length; r++) {
-        let rowData = []
-        let cells = rows[r].querySelectorAll("th, td")
+        let rowData = [];
+        let cells = rows[r].querySelectorAll("th, td");
         for (let c = 0; c < cells.length; c++) {
-          let cellEl = cells[c]
-          let cellText = cellEl.textContent.trim()
-          let styleObj = {}
-          let bgColor = window.getComputedStyle(cellEl).backgroundColor
+          let cellEl = cells[c];
+          let cellText = cellEl.textContent.trim();
+          let styleObj = {};
+          let bgColor = window.getComputedStyle(cellEl).backgroundColor;
           if (bgColor && bgColor !== "rgba(0, 0, 0, 0)" && bgColor !== "transparent") {
-            let hex = rgbToHex(bgColor)
+            let hex = rgbToHex(bgColor);
             if (hex) {
-              styleObj.fill = { patternType: "solid", fgColor: { rgb: hex } }
+              styleObj.fill = { patternType: "solid", fgColor: { rgb: hex } };
             }
           }
-          let cellObj = { t: 's', v: cellText }
+          let cellObj = { t: 's', v: cellText };
           if (Object.keys(styleObj).length > 0) {
-            cellObj.s = styleObj
+            cellObj.s = styleObj;
           }
-          rowData.push(cellObj)
+          rowData.push(cellObj);
         }
-        aoa.push(rowData)
+        aoa.push(rowData);
       }
-      return XLSX.utils.aoa_to_sheet(aoa)
+      return XLSX.utils.aoa_to_sheet(aoa);
     }
+
     function guardarEnJSON() {
-      let data = construirJSONCompleto()
-      let jsonStr = JSON.stringify(data, null, 2)
-      descargarArchivo(jsonStr, "horarios.json", "application/json")
+      let data = construirJSONCompleto();
+      let jsonStr = JSON.stringify(data, null, 2);
+      descargarArchivo(jsonStr, "horarios.json", "application/json");
       localStorage.setItem('horariosData', JSON.stringify(data));
     }
+
     function construirJSONCompleto() {
-      let data = { columnas: columnasGlobales.slice(), dias: {}, profesores: [] }
+      let data = { columnas: columnasGlobales.slice(), dias: {}, profesores: [] };
       dias.forEach(dia => {
-        let tabla = document.getElementById(`tablaHorarios-${dia}`)
-        if (!tabla) return
-        let filas = tabla.querySelectorAll("tbody tr")
-        let dayMatrix = []
+        let tabla = document.getElementById(`tablaHorarios-${dia}`);
+        if (!tabla) return;
+        let filas = tabla.querySelectorAll("tbody tr");
+        let dayMatrix = [];
         for (let i = 0; i < filas.length; i++) {
-          let celdas = filas[i].querySelectorAll("td")
-          let rowInfo = []
+          let celdas = filas[i].querySelectorAll("td");
+          let rowInfo = [];
           for (let j = 0; j < celdas.length; j++) {
-            let cellData = []
-            let blocks = celdas[j].querySelectorAll(".profesor-block")
+            let cellData = [];
+            let blocks = celdas[j].querySelectorAll(".profesor-block");
             blocks.forEach(block => {
-              let ramoLine = block.querySelector(".ramo-line")?.textContent.trim() || ""
-              let profLine = block.querySelector(".prof-line")?.textContent.trim() || ""
-              let bgColor = window.getComputedStyle(block).backgroundColor
-              let hexColor = null
+              let ramoLine = block.querySelector(".ramo-line")?.textContent.trim() || "";
+              let profLine = block.querySelector(".prof-line")?.textContent.trim() || "";
+              let bgColor = window.getComputedStyle(block).backgroundColor;
+              let hexColor = null;
               if (bgColor && bgColor !== "rgba(0, 0, 0, 0)" && bgColor !== "transparent") {
-                hexColor = rgbToHex(bgColor)
+                hexColor = rgbToHex(bgColor);
               }
-              cellData.push({ ramo: ramoLine, prof: profLine, color: hexColor })
-            })
-            rowInfo.push(cellData)
+              cellData.push({ ramo: ramoLine, prof: profLine, color: hexColor });
+            });
+            rowInfo.push(cellData);
           }
-          dayMatrix.push(rowInfo)
+          dayMatrix.push(rowInfo);
         }
-        data.dias[dia] = dayMatrix
-      })
-      let profItems = document.querySelectorAll("#profesorContainer .profesor-item")
+        data.dias[dia] = dayMatrix;
+      });
+
+      let profItems = document.querySelectorAll("#profesorContainer .profesor-item");
       profItems.forEach(item => {
-        let block = item.querySelector(".profesor-block")
-        let ramo = block.querySelector(".ramo-line")?.textContent.trim() || ""
-        let prof = block.querySelector(".prof-line")?.textContent.trim() || ""
-        let bgColor = window.getComputedStyle(block).backgroundColor
-        let hex = null
+        let block = item.querySelector(".profesor-block");
+        let ramo = block.querySelector(".ramo-line")?.textContent.trim() || "";
+        let prof = block.querySelector(".prof-line")?.textContent.trim() || "";
+        let bgColor = window.getComputedStyle(block).backgroundColor;
+        let hex = null;
         if (bgColor && bgColor !== "rgba(0, 0, 0, 0)" && bgColor !== "transparent") {
-          hex = rgbToHex(bgColor)
+          hex = rgbToHex(bgColor);
         }
-        let blockCountInput = item.querySelector('input[type="number"]')
+        // Tomamos el conteo desde profBlockCount en vez de un input
+        let profId = block.dataset.profId;
+        let count = profBlockCount[profId] || 0;
+
         data.profesores.push({
           ramo: ramo,
           prof: prof,
           color: hex,
-          blockCount: blockCountInput ? blockCountInput.value : "1"
-        })
-      })
-      return data
+          blockCount: count.toString()
+        });
+      });
+      return data;
     }
+
     function reconstruirDesdeJSON(data) {
-      isReconstructing = true
-      columnasGlobales = data.columnas ? [...data.columnas] : []
+      isReconstructing = true;
+      columnasGlobales = data.columnas ? [...data.columnas] : [];
       dias.forEach(dia => {
-        let tabla = document.getElementById(`tablaHorarios-${dia}`)
-        if (!tabla) return
-        let filaCabeceras = tabla.querySelector("thead tr")
+        let tabla = document.getElementById(`tablaHorarios-${dia}`);
+        if (!tabla) return;
+        let filaCabeceras = tabla.querySelector("thead tr");
         while (filaCabeceras.children.length > 1) {
-          filaCabeceras.removeChild(filaCabeceras.lastChild)
+          filaCabeceras.removeChild(filaCabeceras.lastChild);
         }
-        let tbody = tabla.querySelector("tbody")
-        tbody.innerHTML = ""
+        let tbody = tabla.querySelector("tbody");
+        tbody.innerHTML = "";
         BLOQUES.forEach(b => {
-          let fila = document.createElement('tr')
-          if (b.isBreak) fila.classList.add('recreo')
-          let tdHora = document.createElement('td')
-          tdHora.classList.add('col-hora')
-          tdHora.style.pointerEvents = 'none'
-          tdHora.textContent = b.label
-          fila.appendChild(tdHora)
-          tbody.appendChild(fila)
-        })
-      })
+          let fila = document.createElement('tr');
+          if (b.isBreak) fila.classList.add('recreo');
+          let tdHora = document.createElement('td');
+          tdHora.classList.add('col-hora');
+          tdHora.style.pointerEvents = 'none';
+          tdHora.textContent = b.label;
+          fila.appendChild(tdHora);
+          tbody.appendChild(fila);
+        });
+      });
       for (let colName of columnasGlobales) {
-        agregarColumna(colName)
+        agregarColumna(colName);
       }
       for (let dia in data.dias) {
-        let dayMatrix = data.dias[dia]
-        let tabla = document.getElementById(`tablaHorarios-${dia}`)
-        if (!tabla) continue
-        let filas = tabla.querySelectorAll("tbody tr")
+        let dayMatrix = data.dias[dia];
+        let tabla = document.getElementById(`tablaHorarios-${dia}`);
+        if (!tabla) continue;
+        let filas = tabla.querySelectorAll("tbody tr");
         for (let i = 0; i < dayMatrix.length; i++) {
-          if (i >= filas.length) break
-          let rowCells = dayMatrix[i]
-          let celdas = filas[i].querySelectorAll("td")
+          if (i >= filas.length) break;
+          let rowCells = dayMatrix[i];
+          let celdas = filas[i].querySelectorAll("td");
           for (let j = 0; j < rowCells.length; j++) {
-            if (j >= celdas.length) break
-            let blocksInfo = rowCells[j]
+            if (j >= celdas.length) break;
+            let blocksInfo = rowCells[j];
             blocksInfo.forEach(binfo => {
-              let block = document.createElement("div")
-              block.classList.add("profesor-block")
-              block.draggable = true
-              block.ondragstart = dragStart
-              block.ondragend = dragEnd
-              block.contentEditable = "false"
-              let ramoLine = document.createElement('div')
-              ramoLine.classList.add('ramo-line')
-              ramoLine.contentEditable = "true"
-              ramoLine.textContent = binfo.ramo || ""
-              let profLine = document.createElement('div')
-              profLine.classList.add('prof-line')
-              profLine.contentEditable = "true"
-              profLine.textContent = binfo.prof || ""
-              block.appendChild(ramoLine)
-              block.appendChild(profLine)
+              let block = document.createElement("div");
+              block.classList.add("profesor-block");
+              block.draggable = true;
+              block.ondragstart = dragStart;
+              block.ondragend = dragEnd;
+              block.ondblclick = ev => {
+                ev.stopPropagation();
+                openBlockEditor(block, ev.pageX, ev.pageY);
+              };
+              let ramoLine = document.createElement('div');
+              ramoLine.classList.add('ramo-line');
+              ramoLine.textContent = binfo.ramo || "";
+              let profLine = document.createElement('div');
+              profLine.classList.add('prof-line');
+              profLine.textContent = binfo.prof || "";
+              block.appendChild(ramoLine);
+              block.appendChild(profLine);
               if (binfo.color) {
-                block.style.backgroundColor = "#" + binfo.color
+                block.style.backgroundColor = "#" + binfo.color;
               }
-              celdas[j].appendChild(block)
-            })
+              celdas[j].appendChild(block);
+            });
           }
         }
       }
-      let profContainer = document.getElementById("profesorContainer")
-      profContainer.querySelectorAll(".profesor-item").forEach(p => p.remove())
+
+      let profContainer = document.getElementById("profesorContainer");
+      profContainer.querySelectorAll(".profesor-item").forEach(p => p.remove());
+
       if (data.profesores) {
         data.profesores.forEach(p => {
-          let profesorItem = document.createElement("div")
-          profesorItem.classList.add("profesor-item")
-          let profesorBlock = document.createElement("div")
-          profesorBlock.classList.add("profesor-block")
-          profesorBlock.draggable = true
-          profesorBlock.ondragstart = dragStart
-          profesorBlock.ondragend = dragEnd
-          profesorBlock.contentEditable = "false"
-          let ramoLine = document.createElement("div")
-          ramoLine.classList.add("ramo-line")
-          ramoLine.contentEditable = "true"
-          ramoLine.textContent = p.ramo || ""
-          let profLine = document.createElement("div")
-          profLine.classList.add("prof-line")
-          profLine.contentEditable = "true"
-          profLine.textContent = p.prof || ""
-          profesorBlock.appendChild(ramoLine)
-          profesorBlock.appendChild(profLine)
+          let profesorItem = document.createElement("div");
+          profesorItem.classList.add("profesor-item");
+
+          let profesorBlock = document.createElement("div");
+          profesorBlock.classList.add("profesor-block");
+          profesorBlock.draggable = true;
+          profesorBlock.ondragstart = dragStart;
+          profesorBlock.ondragend = dragEnd;
+          profesorBlock.ondblclick = ev => {
+            ev.stopPropagation();
+            openBlockEditor(profesorBlock, ev.pageX, ev.pageY);
+          };
+
+          let ramoLine = document.createElement("div");
+          ramoLine.classList.add("ramo-line");
+          ramoLine.textContent = p.ramo || "";
+          let profLine = document.createElement("div");
+          profLine.classList.add("prof-line");
+          profLine.textContent = p.prof || "";
+
+          profesorBlock.appendChild(ramoLine);
+          profesorBlock.appendChild(profLine);
+
           if (p.color) {
-            profesorBlock.style.backgroundColor = "#" + p.color
+            profesorBlock.style.backgroundColor = "#" + p.color;
           }
-          let iconContainer = document.createElement("div")
-          iconContainer.classList.add("profesor-item-icons")
-          let colorIcon = document.createElement("img")
-          colorIcon.src = "https://cdn-icons-png.flaticon.com/512/2917/2917995.png"
-          colorIcon.title = "Cambiar color"
+          // Generamos un nuevo profId y seteamos el contador
+          let uniqueId = "prof_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+          profesorBlock.dataset.profId = uniqueId;
+          profBlockCount[uniqueId] = parseInt(p.blockCount || "0",10);
+
+          let iconContainer = document.createElement("div");
+          iconContainer.classList.add("profesor-item-icons");
+
+          let colorIcon = document.createElement("img");
+          colorIcon.src = "https://cdn-icons-png.flaticon.com/512/2917/2917995.png";
+          colorIcon.title = "Cambiar color";
           colorIcon.onclick = ev => {
-            profSeleccionado = profesorBlock
-            colorPicker.style.display = 'block'
-            colorPicker.style.left = ev.pageX + 'px'
-            colorPicker.style.top = ev.pageY + 'px'
-            ev.stopPropagation()
-          }
-          let trashIcon = document.createElement("img")
-          trashIcon.src = "https://cdn-icons-png.flaticon.com/512/3096/3096673.png"
-          trashIcon.title = "Eliminar profesor"
+            profSeleccionado = profesorBlock;
+            colorPicker.style.display = 'block';
+            colorPicker.style.left = ev.pageX + 'px';
+            colorPicker.style.top = ev.pageY + 'px';
+            ev.stopPropagation();
+          };
+
+          let trashIcon = document.createElement("img");
+          trashIcon.src = "https://cdn-icons-png.flaticon.com/512/3096/3096673.png";
+          trashIcon.title = "Eliminar profesor";
           trashIcon.onclick = () => {
-            profesorItem.remove()
-          }
-          iconContainer.appendChild(colorIcon)
-          iconContainer.appendChild(trashIcon)
-          let blockCountInput = document.createElement("input")
-          blockCountInput.type = "number"
-          blockCountInput.value = p.blockCount || "1"
-          blockCountInput.min = "1"
-          blockCountInput.style.width = "40px"
-          blockCountInput.style.marginTop = "5px"
-          blockCountInput.title = "Nro. de bloques a asignar"
-          profesorItem.appendChild(profesorBlock)
-          profesorItem.appendChild(iconContainer)
-          profesorItem.appendChild(blockCountInput)
-          profContainer.appendChild(profesorItem)
-        })
+            delete profBlockCount[uniqueId];
+            profesorItem.remove();
+          };
+
+          iconContainer.appendChild(colorIcon);
+          iconContainer.appendChild(trashIcon);
+
+          let blockCountSpan = document.createElement('span');
+          blockCountSpan.classList.add('prof-count-span');
+          blockCountSpan.textContent = profBlockCount[uniqueId].toString();
+
+          profesorItem.appendChild(profesorBlock);
+          profesorItem.appendChild(iconContainer);
+          profesorItem.appendChild(blockCountSpan);
+
+          profContainer.appendChild(profesorItem);
+        });
       }
-      isReconstructing = false
+      isReconstructing = false;
     }
+
     function descargarArchivo(dataStr, fileName, mimeType) {
-      let blob = new Blob([dataStr], { type: mimeType })
-      let url = URL.createObjectURL(blob)
-      let a = document.createElement('a')
-      a.href = url
-      a.download = fileName
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
+      let blob = new Blob([dataStr], { type: mimeType });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
+
     function highlightSameProfessor(block) {
       let profLine = block.querySelector('.prof-line');
       if (!profLine) return;
       let profName = profLine.textContent.trim().toLowerCase();
-
       let allBlocks = document.querySelectorAll('tbody .profesor-block');
       allBlocks.forEach(b => {
         b.classList.remove('prof-highlight-original','prof-highlight-other','prof-faded');
         let bName = b.querySelector('.prof-line')?.textContent.trim().toLowerCase();
         if (bName === profName) {
-          // si es el bloque original clickeado => amarillo
           if (b === block) {
             b.classList.add('prof-highlight-original');
           } else {
-            // mismo profesor => borde negro
             b.classList.add('prof-highlight-other');
           }
         } else {
-          // distinto profesor => fade
           b.classList.add('prof-faded');
         }
       });
     }
+
     function clearHighlight() {
       selectedBlock = null;
       let allBlocks = document.querySelectorAll('tbody .profesor-block');
@@ -975,14 +1077,14 @@
     }
 
     function updateProfessorCount(profId) {
-    const container = document.getElementById("profesorContainer");
-    const theBlock = container.querySelector(`.profesor-block[data-prof-id="${profId}"]`);
-    if (!theBlock) return;
-    const profesorItem = theBlock.closest(".profesor-item");
-    if (!profesorItem) return;
-    const span = profesorItem.querySelector(".prof-count-span");
-    if (!span) return;
-    span.textContent = profBlockCount[profId].toString();
+      const container = document.getElementById("profesorContainer");
+      const theBlock = container.querySelector(`.profesor-block[data-prof-id="${profId}"]`);
+      if (!theBlock) return;
+      const profesorItem = theBlock.closest(".profesor-item");
+      if (!profesorItem) return;
+      const span = profesorItem.querySelector(".prof-count-span");
+      if (!span) return;
+      span.textContent = profBlockCount[profId].toString();
     }
   </script>
 </body>
