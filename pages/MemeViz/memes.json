@@ -1,0 +1,48 @@
+[
+    {
+      "image": "meme1.jpg",
+      "summary": "Robert's worst nightmare",
+      "description": "You see, because Robert thinks he's SO GOOD at making memes but the intern is just as good, so he's worried that the intern might take his spot as the CEO of memes",
+      "likes": 509832
+    },
+    {
+      "image": "meme2.jpg",
+      "description": "Placeholder 2",
+      "likes": 0
+    },
+    {
+      "image": "meme3.jpg",
+      "description": "Placeholder 3",
+      "likes": 0
+    },
+    {
+      "image": "meme4.jpg",
+      "description": "Placeholder 4",
+      "likes": 0
+    },
+    {
+      "image": "meme5.jpg",
+      "description": "Placeholder 5",
+      "likes": 0
+    },
+    {
+        "image": "meme6.jpg",
+        "description": "Placeholder 6",
+        "likes": 0
+    },
+    {
+        "image": "meme7.jpg",
+        "description": "Placeholder 7",
+        "likes": 0
+    },
+    {
+        "image": "meme8.jpg",
+        "description": "Placeholder 8",
+        "likes": 0
+    },
+    {
+        "image": "meme9.jpg",
+        "description": "Placeholder 9",
+        "likes": 0
+    }
+  ]
