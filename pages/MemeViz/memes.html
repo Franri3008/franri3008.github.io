@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Meme Grid with Likes & Heart Toggle</title>
-  <!-- Include Font Awesome for heart icons -->
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     rel="stylesheet"
@@ -22,15 +21,11 @@
       justify-content: center;
       padding: 20px;
     }
-
-    /* Main container housing the grid and info box side by side */
     .container {
       display: flex;
       gap: 20px;
       align-items: flex-start;
     }
-
-    /* Grid container */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -38,11 +33,10 @@
       max-width: 600px;
     }
 
-    /* Each square: fixed width/height, background color, plus center text */
     .square {
       width: 150px;
       height: 150px;
-      background-color: #2756d3; /* The requested color */
+      background-color: #2756d3;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
@@ -55,14 +49,12 @@
       transition: transform 0.2s;
     }
 
-    /* Hover effect */
     .square:hover {
       transform: scale(1.05);
     }
 
-    /* Active (clicked) state - slightly different color & small bounce animation */
     .square.active {
-      background-color: #3f7bf5; /* A slightly lighter shade of blue */
+      background-color: #3f7bf5;
       animation: bounce 0.3s ease;
     }
 
@@ -80,8 +72,6 @@
         transform: scale(1);
       }
     }
-
-    /* Info box: hidden by default */
     .info-box {
       width: 280px;
       background-color: #fff;
@@ -91,10 +81,8 @@
       display: none;
       opacity: 0;
       transform: translateX(20px);
-      position: relative;  /* So we can position the close button in the corner */
+      position: relative;
     }
-
-    /* Show the box with a slide-in or fade effect */
     .info-box.show {
       display: block;
       animation: slideInRight 0.3s forwards;
@@ -111,7 +99,6 @@
       }
     }
 
-    /* Close button (the "X") in the top-right corner of the info box */
     .close-btn {
       position: absolute;
       top: 8px;
@@ -134,12 +121,12 @@
       align-items: center;
       gap: 8px;
       margin-bottom: 10px;
-      cursor: pointer; /* So we can click the heart/likes area */
+      cursor: pointer; 
     }
 
     .heart-likes .fa-heart {
       font-size: 1.2rem;
-      color: #e53935; /* A common color for hearts */
+      color: #e53935;
     }
 
     .info-box img {
@@ -153,23 +140,19 @@
       font-size: 1rem;
       color: #555;
       line-height: 1.4;
-      white-space: pre-wrap; /* in case the description has line breaks */
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Grid of squares -->
     <div class="grid" id="memesGrid"></div>
 
-    <!-- Info box that appears to the right -->
     <div class="info-box" id="infoBox">
-      <!-- Close button -->
       <button class="close-btn" id="closeBtn">&times;</button>
 
       <h2 id="memeTitle">Meme Title</h2>
 
-      <!-- Heart icon + likes count -->
       <div class="heart-likes" id="heartLikesWrapper">
         <i id="heartIcon" class="fa-regular fa-heart"></i>
         <span id="likesCount">0</span>
@@ -190,65 +173,44 @@
     const heartIcon = document.getElementById("heartIcon");
     const likesCount = document.getElementById("likesCount");
     const heartLikesWrapper = document.getElementById("heartLikesWrapper");
-
-    // Track the currently active square so we can remove "active" class on close
     let activeSquare = null;
 
-    // We'll store the displayed meme object here
     let currentMeme = null;
 
-    // Fetch memes from the JSON file
     fetch("memes.json")
       .then((response) => response.json())
       .then((memes) => {
         memes.forEach((meme, index) => {
-          // Create the square
           const squareDiv = document.createElement("div");
           squareDiv.classList.add("square");
-          // Write the summary on each square
-          squareDiv.textContent = meme.summary || `No summary provided`;
-
-          // Store the entire meme object in a data attribute as JSON
+          squareDiv.textContent = meme.summary || `No summary`;
           squareDiv.dataset.memeData = JSON.stringify(meme);
 
-          // On click: show the info box with the image, description, likes, etc.
           squareDiv.addEventListener("click", () => {
-            // set active state on the clicked square
             if (activeSquare) {
               activeSquare.classList.remove("active");
             }
             squareDiv.classList.add("active");
             activeSquare = squareDiv;
-
-            // Parse the data
             currentMeme = JSON.parse(squareDiv.dataset.memeData);
 
-            // Update the info box
             memeTitle.textContent = currentMeme.title
               ? currentMeme.title
               : `Meme #${index + 1}`;
             memeImage.src = currentMeme.image;
             descriptionText.textContent = currentMeme.description;
-
-            // Set the likes count
             likesCount.textContent = currentMeme.likes || 0;
-
-            // Reset heart icon to unfilled if we want fresh state on each open
             heartIcon.classList.remove("fa-solid");
             heartIcon.classList.add("fa-regular");
 
             infoBox.classList.add("show");
           });
-
-          // Add the square to the grid
           memesGrid.appendChild(squareDiv);
         });
       })
       .catch((error) => {
         console.error("Error fetching memes:", error);
       });
-
-    // Clicking the "X" closes the info box and resets the active square
     closeBtn.addEventListener("click", () => {
       infoBox.classList.remove("show");
       if (activeSquare) {
@@ -257,23 +219,16 @@
       activeSquare = null;
       currentMeme = null;
     });
-
-    // Clicking the heart toggles its state and increments likes
     heartLikesWrapper.addEventListener("click", () => {
       if (!currentMeme) return;
 
-      // Check if our heart is currently unfilled (fa-regular) vs filled (fa-solid)
       if (heartIcon.classList.contains("fa-regular")) {
-        // Switch to filled heart
         heartIcon.classList.remove("fa-regular");
         heartIcon.classList.add("fa-solid");
-
-        // Increment the meme's likes in memory
         currentMeme.likes = (currentMeme.likes || 0) + 1;
         likesCount.textContent = currentMeme.likes;
       } else {
-        // If we wanted to allow unliking, here's where you'd decrement.
-        // For now, we only add likes. 
+        // Unliking code is neeeded here
       }
     });
   </script>
