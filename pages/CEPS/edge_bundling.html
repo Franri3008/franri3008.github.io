@@ -183,13 +183,10 @@
                 simulation.tick();
             }
 
-            // Draw final link paths
             link.attr("d", line);
 
-            // Hide the spinner after the layout is computed
             d3.select("#spinner").style("display", "none");
 
-            // highlight a node's outgoing links on click
             function highlightLinks(clickedNode) {
                 link.each(function(d) {
                     const isActive = d.source === clickedNode;
@@ -199,11 +196,9 @@
                 });
             }
 
-            // Create segment nodes for bundling
             function generateSegments(nodes, links) {
                 let bundle = { nodes: [], links: [], paths: [] };
 
-                // Lock main nodes
                 bundle.nodes = nodes.map(d => {
                     d.fx = d.x;
                     d.fy = d.y;
