@@ -2,15 +2,28 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Edge bundling</title>
+    <title>Edge Bundling</title>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        svg {
+            background: #ADD8E6;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .land {
+            fill: #fff;
+        }
+
         .link {
-            stroke: #69b3a2;
             fill: none;
-            stroke-width: 1px;
-            opacity: 0.35;
+            opacity: 0.3;
             pointer-events: none;
         }
+
         circle {
             fill: red;
             stroke: #fff;
@@ -26,15 +39,15 @@
             pointer-events: none;
             opacity: 0;
         }
+
         #spinner {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
             width: 50px;
             height: 50px;
-            border: 5px solid #888;
-            border-top: 5px solid #555;
+            border: 5px solid #444;
+            border-top: 5px solid #888;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             z-index: 9999;
@@ -51,7 +64,9 @@
 </head>
 <body>
     <div id="spinner"></div>
+
     <svg width="960" height="600"></svg>
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     <script>
@@ -75,13 +90,13 @@
         ]).then(([us, nodesData, linksData]) => {
             svg.append("path")
                 .datum(topojson.feature(us, us.objects.nation))
-                .attr("fill", "#aaa")
+                .attr("class", "land")
                 .attr("d", path);
 
             svg.append("path")
                 .datum(topojson.mesh(us, us.objects.states, (a, b) => a !== b))
                 .attr("fill", "none")
-                .attr("stroke", "#fff")
+                .attr("stroke", "#999")
                 .attr("stroke-width", 0.5)
                 .attr("d", path);
 
@@ -94,7 +109,8 @@
                     x: coords[0],
                     y: coords[1],
                     color: d.color,
-                    size: d.size
+                    size: d.size,
+                    weightSum: 0 
                 };
             });
 
@@ -108,6 +124,11 @@
                 };
             }).filter(d => d.source && d.target);
 
+            links.forEach(l => {
+                l.source.weightSum += l.weight;
+                l.target.weightSum += l.weight;
+            });
+
             let bundle = generateSegments(nodes, links);
 
             let line = d3.line()
@@ -120,13 +141,16 @@
                 .enter()
                 .append("path")
                 .attr("class", "link")
-                .attr("stroke-width", d => Math.sqrt(d.weight || 1));
+                .attr("stroke-width", d => {
+                    return 1 + Math.log(1 + d.weight);
+                })
+                .attr("stroke", "#69b3a2");
 
             svg.selectAll("circle")
                 .data(nodes)
                 .enter()
                 .append("circle")
-                .attr("r", d => d.size * 4)
+                .attr("r", d => (d.size * 2) + Math.log(1 + d.weightSum))
                 .attr("cx", d => d.x)
                 .attr("cy", d => d.y)
                 .style("fill", d => d.color)
@@ -155,15 +179,17 @@
 
             simulation.stop();
 
-            let iterations = 300;
-            for (let i = 0; i < iterations; i++) {
+            for (let i = 0; i < 300; i++) {
                 simulation.tick();
             }
 
+            // Draw final link paths
             link.attr("d", line);
 
+            // Hide the spinner after the layout is computed
             d3.select("#spinner").style("display", "none");
 
+            // highlight a node's outgoing links on click
             function highlightLinks(clickedNode) {
                 link.each(function(d) {
                     const isActive = d.source === clickedNode;
@@ -173,25 +199,32 @@
                 });
             }
 
+            // Create segment nodes for bundling
             function generateSegments(nodes, links) {
                 let bundle = { nodes: [], links: [], paths: [] };
+
+                // Lock main nodes
                 bundle.nodes = nodes.map(d => {
                     d.fx = d.x;
                     d.fy = d.y;
                     return d;
                 });
+
                 links.forEach(d => {
                     let length = distance(d.source, d.target);
                     let total = Math.max(1, Math.round(length / 50));
+
                     let xscale = d3.scaleLinear()
                         .domain([0, total + 1])
                         .range([d.source.x, d.target.x]);
                     let yscale = d3.scaleLinear()
                         .domain([0, total + 1])
                         .range([d.source.y, d.target.y]);
+
                     let source = d.source;
                     let target = null;
                     let local = [source];
+
                     for (let j = 1; j <= total; j++) {
                         target = { x: xscale(j), y: yscale(j) };
                         local.push(target);
@@ -201,6 +234,7 @@
                     }
                     local.push(d.target);
                     bundle.links.push({ source: target, target: d.target });
+
                     local.weight = d.weight;
                     local.source = d.source;
                     local.target = d.target;
