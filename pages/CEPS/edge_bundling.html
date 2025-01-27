@@ -89,6 +89,11 @@
                 <input type="range" id="bundlingBeta" min="0" max="1" step="0.01" value="0.65">
                 <span id="bundlingBetaValue">0.65</span>
             </div>
+            <div>
+                <label for="weightEmphasis">Weight Emphasis</label>
+                <input type="range" id="weightEmphasis" min="0" max="2" step="0.1" value="1">
+                <span id="weightEmphasisValue">1</span>
+            </div>
         </div>
         <div id="spinner"></div>
         <svg></svg>
@@ -107,6 +112,7 @@
 
         let bundlingBeta = 0.65
         let baseThickness = 1
+        let weightEmphasis = 1
         let currentlySelectedNode = null
 
         const projection = d3.geoAlbersUsa()
@@ -152,15 +158,17 @@
                 }
             })
 
-            const links = linksData.map(d => {
-                const sourceNode = nodes.find(n => n.id === d.source)
-                const targetNode = nodes.find(n => n.id === d.target)
-                return {
-                    source: sourceNode,
-                    target: targetNode,
-                    weight: d.weight
-                }
-            }).filter(d => d.source && d.target)
+            const links = linksData
+                .map(d => {
+                    const sourceNode = nodes.find(n => n.id === d.source)
+                    const targetNode = nodes.find(n => n.id === d.target)
+                    return {
+                        source: sourceNode,
+                        target: targetNode,
+                        weight: d.weight
+                    }
+                })
+                .filter(d => d.source && d.target)
 
             links.forEach(l => {
                 l.source.weightSum += l.weight
@@ -174,7 +182,11 @@
                 .enter()
                 .append("path")
                 .attr("class", "link")
-                .attr("stroke-width", d => baseThickness * (0.5 + 0.5 * Math.log(1 + d.weight)))
+                .attr("stroke-width", d => {
+                    let logVal = Math.log(1 + d.weight)
+                    let emphasisVal = Math.pow(logVal, weightEmphasis)
+                    return baseThickness * (0.5 + 0.5 * emphasisVal)
+                })
                 .attr("d", line)
 
             nodeLayer.selectAll("circle")
@@ -225,7 +237,10 @@
 
             function highlightLinks(clickedNode) {
                 linkSelection.each(function(d) {
-                    const isActive = d.source.id === clickedNode.id || d.target.id === clickedNode.id
+                    const isActive =
+                        d.originalSource.id === clickedNode.id ||
+                        d.originalTarget.id === clickedNode.id
+
                     if (isActive) {
                         linkLayer.node().appendChild(this)
                         d3.select(this)
@@ -267,6 +282,7 @@
                     let yscale = d3.scaleLinear()
                         .domain([0, total + 1])
                         .range([d.source.y, d.target.y])
+
                     let source = d.source
                     let target = null
                     let local = [source]
@@ -279,9 +295,11 @@
                     }
                     local.push(d.target)
                     bundle.links.push({ source: target, target: d.target })
+
                     local.weight = d.weight
-                    local.source = d.source
-                    local.target = d.target
+                    local.originalSource = d.source
+                    local.originalTarget = d.target
+
                     bundle.paths.push(local)
                 })
                 return bundle
@@ -300,7 +318,11 @@
             baseThickness = +this.value
             document.getElementById("linkThicknessValue").textContent = this.value
             if (linkSelection) {
-                linkSelection.attr("stroke-width", d => baseThickness * (0.5 + 0.5 * Math.log(1 + d.weight)))
+                linkSelection.attr("stroke-width", d => {
+                    let logVal = Math.log(1 + d.weight)
+                    let emphasisVal = Math.pow(logVal, weightEmphasis)
+                    return baseThickness * (0.5 + 0.5 * emphasisVal)
+                })
             }
         })
 
@@ -310,6 +332,18 @@
             line.curve(d3.curveBundle.beta(bundlingBeta))
             if (linkSelection) {
                 linkSelection.attr("d", line)
+            }
+        })
+
+        d3.select("#weightEmphasis").on("input", function() {
+            weightEmphasis = +this.value
+            document.getElementById("weightEmphasisValue").textContent = this.value
+            if (linkSelection) {
+                linkSelection.attr("stroke-width", d => {
+                    let logVal = Math.log(1 + d.weight)
+                    let emphasisVal = Math.pow(logVal, weightEmphasis)
+                    return baseThickness * (0.5 + 0.5 * emphasisVal)
+                })
             }
         })
     </script>
