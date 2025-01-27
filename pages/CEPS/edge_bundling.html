@@ -4,14 +4,51 @@
     <meta charset="utf-8">
     <title>Edge Bundling</title>
     <style>
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
         }
+        #container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        #sliderContainer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.8);
+            padding: 5px;
+            border-radius: 4px;
+            font-family: sans-serif;
+        }
+        #spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #444;
+            border-top: 5px solid #888;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 9999;
+        }
+        @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
         svg {
+            width: 100%;
+            height: 100%;
             background: #ADD8E6;
             display: block;
-            margin: 0 auto;
         }
         .land {
             fill: #fff;
@@ -37,52 +74,40 @@
             pointer-events: none;
             opacity: 0;
         }
-        #spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50px;
-            height: 50px;
-            border: 5px solid #444;
-            border-top: 5px solid #888;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 9999;
-        }
-        @keyframes spin {
-            0% {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-            100% {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
-        }
     </style>
 </head>
 <body>
-    <div id="spinner"></div>
-    <svg width="960" height="600"></svg>
+    <div id="container">
+        <div id="sliderContainer">
+            <label for="linkThickness">Link Thickness</label>
+            <input type="range" id="linkThickness" min="0.1" max="5" step="0.1" value="1">
+        </div>
+        <div id="spinner"></div>
+        <svg></svg>
+    </div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     <script>
-        const svg = d3.select("svg");
-        const width = +svg.attr("width");
-        const height = +svg.attr("height");
-        const tooltip = d3.select("body").append("div").attr("class", "tooltip");
+        const svg = d3.select("svg")
+        const width = window.innerWidth
+        const height = window.innerHeight
+        const tooltip = d3.select("body").append("div").attr("class", "tooltip")
 
-        const mapLayer = svg.append("g").attr("id", "mapLayer");
-        const linkLayer = svg.append("g").attr("id", "linkLayer");
-        const nodeLayer = svg.append("g").attr("id", "nodeLayer");
+        const mapLayer = svg.append("g").attr("id", "mapLayer")
+        const linkLayer = svg.append("g").attr("id", "linkLayer")
+        const nodeLayer = svg.append("g").attr("id", "nodeLayer")
 
-        let bundlingBeta = 0.65;
+        let bundlingBeta = 0.65
+        let baseThickness = 1
+        let currentlySelectedNode = null
 
         const projection = d3.geoAlbersUsa()
             .scale(1300)
-            .translate([width / 2, height / 2]);
+            .translate([width / 2, height / 2])
 
-        const path = d3.geoPath().projection(projection);
+        const path = d3.geoPath().projection(projection)
 
-        let linkSelection;
+        let linkSelection
 
         Promise.all([
             d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"),
@@ -92,17 +117,17 @@
             mapLayer.append("path")
                 .datum(topojson.feature(us, us.objects.nation))
                 .attr("class", "land")
-                .attr("d", path);
+                .attr("d", path)
 
             mapLayer.append("path")
                 .datum(topojson.mesh(us, us.objects.states, (a, b) => a !== b))
                 .attr("fill", "none")
                 .attr("stroke", "#999")
                 .attr("stroke-width", 0.5)
-                .attr("d", path);
+                .attr("d", path)
 
             const nodes = nodesData.map(d => {
-                const coords = projection([d.y, d.x]);
+                const coords = projection([d.y, d.x])
                 return {
                     id: d.id2,
                     name: d.id,
@@ -112,37 +137,37 @@
                     color: d.color,
                     size: d.size,
                     weightSum: 0
-                };
-            });
+                }
+            })
 
             const links = linksData.map(d => {
-                const sourceNode = nodes.find(n => n.id === d.source);
-                const targetNode = nodes.find(n => n.id === d.target);
+                const sourceNode = nodes.find(n => n.id === d.source)
+                const targetNode = nodes.find(n => n.id === d.target)
                 return {
                     source: sourceNode,
                     target: targetNode,
                     weight: d.weight
-                };
-            }).filter(d => d.source && d.target);
+                }
+            }).filter(d => d.source && d.target)
 
             links.forEach(l => {
-                l.source.weightSum += l.weight;
-                l.target.weightSum += l.weight;
-            });
+                l.source.weightSum += l.weight
+                l.target.weightSum += l.weight
+            })
 
-            let bundle = generateSegments(nodes, links);
+            let bundle = generateSegments(nodes, links)
 
             let line = d3.line()
                 .curve(d3.curveBundle.beta(bundlingBeta))
                 .x(d => d.x)
-                .y(d => d.y);
+                .y(d => d.y)
 
             linkSelection = linkLayer.selectAll(".link")
                 .data(bundle.paths)
                 .enter()
                 .append("path")
                 .attr("class", "link")
-                .attr("stroke-width", d => 0.5 + 0.5 * Math.log(1 + d.weight));
+                .attr("stroke-width", d => baseThickness * (0.5 + 0.5 * Math.log(1 + d.weight)))
 
             nodeLayer.selectAll("circle")
                 .data(nodes)
@@ -157,111 +182,117 @@
                         .style("opacity", 1)
                         .html(d.parent + "<br>" + d.name)
                         .style("left", (event.pageX + 5) + "px")
-                        .style("top", (event.pageY + 5) + "px");
+                        .style("top", (event.pageY + 5) + "px")
                 })
                 .on("mousemove", event => {
                     tooltip
                         .style("left", (event.pageX + 5) + "px")
-                        .style("top", (event.pageY + 5) + "px");
+                        .style("top", (event.pageY + 5) + "px")
                 })
                 .on("mouseout", () => {
-                    tooltip.style("opacity", 0);
+                    tooltip.style("opacity", 0)
                 })
                 .on("click", (event, d) => {
-                    event.stopPropagation();
-                    console.log("Clicked node", d);
-                    highlightLinks(d);
-                });
-
-            svg.on("click", () => {
-                resetHighlights();
-            });
+                    event.stopPropagation()
+                    if (currentlySelectedNode && currentlySelectedNode.id === d.id) {
+                        resetHighlights()
+                        currentlySelectedNode = null
+                    } else {
+                        highlightLinks(d)
+                        currentlySelectedNode = d
+                    }
+                })
 
             let simulation = d3.forceSimulation()
                 .nodes(bundle.nodes)
                 .force("charge", d3.forceManyBody().strength(10).distanceMax(50))
-                .force("link", d3.forceLink(bundle.links).strength(0.7).distance(0));
+                .force("link", d3.forceLink(bundle.links).strength(0.7).distance(0))
 
-            simulation.stop();
+            simulation.stop()
             for (let i = 0; i < 300; i++) {
-                simulation.tick();
+                simulation.tick()
             }
 
-            linkSelection.attr("d", line);
-            d3.select("#spinner").style("display", "none");
+            linkSelection.attr("d", line)
+            d3.select("#spinner").style("display", "none")
 
             function highlightLinks(clickedNode) {
                 linkSelection.each(function(d) {
-                    const isActive = d.source.id === clickedNode.id || d.target.id === clickedNode.id;
+                    const isActive = d.source.id === clickedNode.id || d.target.id === clickedNode.id
                     if (isActive) {
-                        linkLayer.node().appendChild(this);
+                        linkLayer.node().appendChild(this)
                         d3.select(this)
                             .attr("stroke", "#69b3a2")
-                            .attr("opacity", 1);
+                            .attr("opacity", 1)
                     } else {
                         d3.select(this)
                             .attr("stroke", "#999")
-                            .attr("opacity", 0.2);
+                            .attr("opacity", 0.2)
                     }
-                });
+                })
                 nodeLayer.selectAll("circle")
                     .attr("stroke", n => n.id === clickedNode.id ? "yellow" : "#fff")
-                    .attr("stroke-width", n => n.id === clickedNode.id ? 2 : 1);
+                    .attr("stroke-width", n => n.id === clickedNode.id ? 2 : 1)
             }
 
             function resetHighlights() {
                 linkSelection
                     .attr("stroke", "#69b3a2")
-                    .attr("opacity", 0.2);
+                    .attr("opacity", 0.2)
                 nodeLayer.selectAll("circle")
                     .attr("stroke", "#fff")
-                    .attr("stroke-width", 1);
+                    .attr("stroke-width", 1)
             }
 
             function generateSegments(nodes, links) {
-                let bundle = { nodes: [], links: [], paths: [] };
+                let bundle = { nodes: [], links: [], paths: [] }
                 bundle.nodes = nodes.map(d => {
-                    d.fx = d.x;
-                    d.fy = d.y;
-                    return d;
-                });
+                    d.fx = d.x
+                    d.fy = d.y
+                    return d
+                })
                 links.forEach(d => {
-                    let length = distance(d.source, d.target);
-                    let total = Math.max(1, Math.round(length / 50));
+                    let length = distance(d.source, d.target)
+                    let total = Math.max(1, Math.round(length / 50))
                     let xscale = d3.scaleLinear()
                         .domain([0, total + 1])
-                        .range([d.source.x, d.target.x]);
+                        .range([d.source.x, d.target.x])
                     let yscale = d3.scaleLinear()
                         .domain([0, total + 1])
-                        .range([d.source.y, d.target.y]);
-                    let source = d.source;
-                    let target = null;
-                    let local = [source];
+                        .range([d.source.y, d.target.y])
+                    let source = d.source
+                    let target = null
+                    let local = [source]
                     for (let j = 1; j <= total; j++) {
-                        target = { x: xscale(j), y: yscale(j) };
-                        local.push(target);
-                        bundle.nodes.push(target);
-                        bundle.links.push({ source: source, target: target });
-                        source = target;
+                        target = { x: xscale(j), y: yscale(j) }
+                        local.push(target)
+                        bundle.nodes.push(target)
+                        bundle.links.push({ source: source, target: target })
+                        source = target
                     }
-                    local.push(d.target);
-                    bundle.links.push({ source: target, target: d.target });
-                    local.weight = d.weight;
-                    local.source = d.source;
-                    local.target = d.target;
-                    bundle.paths.push(local);
-                });
-                return bundle;
+                    local.push(d.target)
+                    bundle.links.push({ source: target, target: d.target })
+                    local.weight = d.weight
+                    local.source = d.source
+                    local.target = d.target
+                    bundle.paths.push(local)
+                })
+                return bundle
             }
 
             function distance(a, b) {
-                const dx = b.x - a.x;
-                const dy = b.y - a.y;
-                return Math.sqrt(dx * dx + dy * dy);
+                const dx = b.x - a.x
+                const dy = b.y - a.y
+                return Math.sqrt(dx * dx + dy * dy)
             }
         }).catch(err => {
-            console.error("Error loading data:", err);
-        });
+            console.error("Error loading data:", err)
+        })
+
+        d3.select("#linkThickness").on("input", function() {
+            baseThickness = +this.value
+            linkSelection.attr("stroke-width", d => baseThickness * (0.5 + 0.5 * Math.log(1 + d.weight)))
+        })
     </script>
 </body>
 </html>
