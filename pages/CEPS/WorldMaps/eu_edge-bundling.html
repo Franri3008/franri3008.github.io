@@ -19,7 +19,7 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            width: 200px;
+            width: 180px;
             padding: 10px;
             background: rgba(255,255,255,0.8);
             border-radius: 4px;
@@ -107,7 +107,7 @@
             </div>
             <hr>
             <div>
-                <label for="linkRemover">Link Remover</label><br>
+                <label for="linkRemover">Link Display (%)</label><br>
                 <input type="range" id="linkRemover" min="0" max="100" step="1" value="100">
                 <span id="linkRemoverValue">100</span>
             </div>
@@ -124,9 +124,10 @@
         const height = window.innerHeight
         const tooltip = d3.select("body").append("div").attr("class", "tooltip")
 
-        const mapLayer = svg.append("g").attr("id", "mapLayer")
-        const linkLayer = svg.append("g").attr("id", "linkLayer")
-        const nodeLayer = svg.append("g").attr("id", "nodeLayer")
+        const allLayers = svg.append("g")
+        const mapLayer = allLayers.append("g").attr("id", "mapLayer")
+        const linkLayer = allLayers.append("g").attr("id", "linkLayer")
+        const nodeLayer = allLayers.append("g").attr("id", "nodeLayer")
 
         let baseThickness = 1
         let linkAlpha = 0.2
@@ -156,12 +157,19 @@
             .attr("width", "300%")
             .attr("height", "300%")
             .html(`
-                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
                 <feMerge>
                     <feMergeNode in="blur"/>
                     <feMergeNode in="SourceGraphic"/>
                 </feMerge>
             `)
+
+        const zoom = d3.zoom()
+            .scaleExtent([0.5, 8])
+            .on("zoom", (event) => {
+                allLayers.attr("transform", event.transform)
+            })
+        svg.call(zoom)
 
         Promise.all([
             d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"),
@@ -274,11 +282,10 @@
             linkSelection.attr("d", line)
 
             d3.select("#spinner").style("display", "none")
-            svg.on("click", (event) => {
-                if (event.target === svg.node()) {
-                    resetHighlights()
-                    currentlySelectedNode = null
-                }
+
+            svg.on("click", () => {
+                resetHighlights()
+                currentlySelectedNode = null
             })
 
             function calculateStrokeWidth(weightValue) {
@@ -290,7 +297,6 @@
             function filterLinksByPercent(sliderValue) {
                 const keepFrac = sliderValue / 100
                 let threshold
-
                 if (keepFrac === 1) {
                     threshold = Number.NEGATIVE_INFINITY
                 } else if (keepFrac === 0) {
@@ -299,7 +305,6 @@
                     const index = Math.floor((1 - keepFrac) * linkWeightsSorted.length)
                     threshold = linkWeightsSorted[index]
                 }
-
                 linkSelection.attr("display", d => (d.weight >= threshold) ? "inline" : "none")
             }
 
@@ -380,7 +385,6 @@
                     local.originalTarget = d.target
                     bundle.paths.push(local)
                 })
-
                 return bundle
             }
 
