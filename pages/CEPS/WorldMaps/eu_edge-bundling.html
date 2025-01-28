@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Edge Bundling</title>
+    <title>Edge Bundling Europe</title>
     <style>
         html, body {
             width: 100%;
@@ -133,11 +133,11 @@
         let bundlingBeta = 0.65
         let weightEmphasis = 1
         let currentlySelectedNode = null
-
         let linkWeightsSorted = []
 
-        const projection = d3.geoAlbersUsa()
-            .scale(1300)
+        const projection = d3.geoMercator()
+            .scale(600)
+            .center([13, 52])
             .translate([width / 2, height / 2])
 
         const path = d3.geoPath().projection(projection)
@@ -147,7 +147,6 @@
             .curve(d3.curveBundle.beta(bundlingBeta))
             .x(d => d.x)
             .y(d => d.y)
-
 
         svg.append("defs")
             .append("filter")
@@ -165,17 +164,17 @@
             `)
 
         Promise.all([
-            d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"), // for the US coordenates and states and everything
-            d3.json("https://www.paballand.com/ceps-ai/json/nodes-us.json"), // your json file for the nodes
-            d3.json("https://www.paballand.com/ceps-ai/json/links-us.json") // for json file for the links
-        ]).then(([us, nodesData, linksData]) => {
+            d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"),
+            d3.json("https://www.paballand.com/ceps-ai/json/nodes-eu.json"),
+            d3.json("https://www.paballand.com/ceps-ai/json/links-eu.json")
+        ]).then(([world, nodesData, linksData]) => {
             mapLayer.append("path")
-                .datum(topojson.feature(us, us.objects.nation))
+                .datum(topojson.feature(world, world.objects.countries))
                 .attr("class", "land")
                 .attr("d", path)
 
             mapLayer.append("path")
-                .datum(topojson.mesh(us, us.objects.states, (a, b) => a !== b))
+                .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
                 .attr("fill", "none")
                 .attr("stroke", "#999")
                 .attr("stroke-width", 0.5)
@@ -212,6 +211,7 @@
                 l.source.weightSum += l.weight
                 l.target.weightSum += l.weight
             })
+
             const bundle = generateSegments(nodes, links)
 
             linkSelection = linkLayer.selectAll(".link")
@@ -224,6 +224,7 @@
                 .attr("opacity", linkAlpha)
                 .classed("highlighted", false)
                 .attr("d", line)
+
             nodeLayer.selectAll("circle")
                 .data(nodes)
                 .enter()
@@ -301,6 +302,7 @@
 
                 linkSelection.attr("display", d => (d.weight >= threshold) ? "inline" : "none")
             }
+
             function highlightLinks(clickedNode) {
                 nodeLayer.selectAll("circle").classed("highlighted-node", false)
                 nodeLayer.selectAll("circle")
@@ -329,7 +331,6 @@
 
             function resetHighlights() {
                 nodeLayer.selectAll("circle").classed("highlighted-node", false)
-
                 linkSelection
                     .classed("highlighted", false)
                     .attr("stroke", "#69b3a2")
@@ -345,7 +346,6 @@
 
             function generateSegments(nodes, links) {
                 let bundle = { nodes: [], links: [], paths: [] }
-
                 bundle.nodes = nodes.map(d => {
                     d.fx = d.x
                     d.fy = d.y
@@ -378,7 +378,6 @@
                     local.weight = d.weight
                     local.originalSource = d.source
                     local.originalTarget = d.target
-
                     bundle.paths.push(local)
                 })
 
