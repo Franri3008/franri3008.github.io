@@ -172,8 +172,8 @@
 
         Promise.all([
             d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"),
-            d3.json("https://www.paballand.com/ceps-ai/json/nodes-us.json"),
-            d3.json("https://www.paballand.com/ceps-ai/json/links-us.json")
+            d3.json("https://www.paballand.com/ceps-ai/json/nodes-us.json"), //for the nodes
+            d3.json("https://www.paballand.com/ceps-ai/json/links-us.json") //for the links
         ]).then(([us, nodesData, linksData]) => {
             mapLayer.append("path")
                 .datum(topojson.feature(us, us.objects.nation))

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Meme Grid with Likes & Heart Toggle</title>
+  <title>AI World Meme Page</title>
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     rel="stylesheet"
@@ -13,51 +13,133 @@
       margin: 0;
       padding: 0;
     }
-
     body {
       font-family: sans-serif;
       background-color: #f0f2f5;
       display: flex;
       justify-content: center;
+      padding: 40px;
+      position: relative;
+    }
+    .left-panel {
+      position: fixed;
+      top: 20px;
+      left: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: flex-start;
+      background-color: #dcdcdc;
       padding: 20px;
+      border-radius: 8px;
+      z-index: 999;
+    }
+    #randomMemeBtn {
+      background-color: #2756d3;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 180px;
+    }
+    #randomMemeBtn:hover {
+      background-color: #3f7bf5;
+    }
+    .sort-section,
+    .filter-section {
+      width: 180px;
+    }
+    .sort-section h3,
+    .filter-section h3 {
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    .sort-section button,
+    .filter-section button {
+      background-color: #2756d3;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px 0;
+      width: 100%;
+    }
+    .sort-section button:hover,
+    .filter-section button:hover {
+      background-color: #3f7bf5;
     }
     .container {
       display: flex;
       gap: 20px;
       align-items: flex-start;
+      margin-left: 240px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
-      max-width: 600px;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
     }
-
+    .latest-wrapper,
+    .trending-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+    .latest-label,
+    .trending-label {
+      position: absolute;
+      top: 5px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 6px;
+      padding: 3px 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      z-index: 99;
+    }
+    .latest-label {
+      background: linear-gradient(135deg, #ffea00 0%, #ff00f0 100%);
+      color: #000;
+      left: 5px;
+    }
+    .trending-label {
+      background: linear-gradient(135deg, #ff5722 0%, #ff9800 100%);
+      color: #fff;
+      right: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
     .square {
-      width: 150px;
-      height: 150px;
       background-color: #2756d3;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
       text-align: center;
       color: #fff;
-      padding: 10px;
-      font-size: 0.9rem;
+      font-size: 1rem;
       transition: transform 0.2s;
+      position: relative;
+      overflow: hidden;
+      height: 120px;
     }
-
+    .square p {
+      background: rgba(0, 0, 0, 0.4);
+      width: 100%;
+      margin: 0;
+      padding: 10px;
+    }
     .square:hover {
       transform: scale(1.05);
     }
-
     .square.active {
       background-color: #3f7bf5;
+      box-shadow: 0 0 10px 3px rgba(63, 123, 245, 0.8);
       animation: bounce 0.3s ease;
     }
-
     @keyframes bounce {
       0% {
         transform: scale(1);
@@ -87,7 +169,6 @@
       display: block;
       animation: slideInRight 0.3s forwards;
     }
-
     @keyframes slideInRight {
       0% {
         opacity: 0;
@@ -98,7 +179,6 @@
         transform: translateX(0);
       }
     }
-
     .close-btn {
       position: absolute;
       top: 8px;
@@ -109,33 +189,41 @@
       cursor: pointer;
       color: #222;
     }
-
     .info-box h2 {
       margin-bottom: 10px;
       font-size: 1.1rem;
       color: #333;
     }
-
-    .info-box .heart-likes {
+    .likes-download-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .heart-likes {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 10px;
-      cursor: pointer; 
+      cursor: pointer;
     }
-
     .heart-likes .fa-heart {
       font-size: 1.2rem;
       color: #e53935;
     }
-
+    #downloadBtn {
+      color: #2756d3;
+      text-decoration: none;
+      font-size: 1.2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
     .info-box img {
       display: block;
       max-width: 100%;
       border-radius: 6px;
       margin-bottom: 10px;
     }
-
     .info-box p {
       font-size: 1rem;
       color: #555;
@@ -145,24 +233,39 @@
   </style>
 </head>
 <body>
+  <div class="left-panel">
+    <button id="randomMemeBtn">Random Meme</button>
+    <div class="sort-section">
+      <h3>Sort by</h3>
+      <button id="sortLatest">Latest</button>
+      <button id="sortOldest">Oldest</button>
+      <button id="sortMoreLiked">More liked</button>
+      <button id="sortRandom">Random</button>
+    </div>
+    <div class="filter-section">
+      <h3>Filter by</h3>
+      <button id="filterAll">All</button>
+      <button id="filterAI">Artificial Intelligence</button>
+      <button id="filterCompanies">Companies</button>
+      <button id="filterMisc">Miscellaneous</button>
+    </div>
+  </div>
   <div class="container">
     <div class="grid" id="memesGrid"></div>
-
     <div class="info-box" id="infoBox">
       <button class="close-btn" id="closeBtn">&times;</button>
-
       <h2 id="memeTitle">Meme Title</h2>
-
-      <div class="heart-likes" id="heartLikesWrapper">
-        <i id="heartIcon" class="fa-regular fa-heart"></i>
-        <span id="likesCount">0</span>
+      <div class="likes-download-row">
+        <div class="heart-likes" id="heartLikesWrapper">
+          <i id="heartIcon" class="fa-regular fa-heart"></i>
+          <span id="likesCount">0</span>
+        </div>
+        <a id="downloadBtn" href="" download><i class="fa-solid fa-download"></i></a>
       </div>
-
       <img id="memeImage" src="" alt="Meme" />
       <p id="descriptionText"></p>
     </div>
   </div>
-
   <script>
     const memesGrid = document.getElementById("memesGrid");
     const infoBox = document.getElementById("infoBox");
@@ -173,44 +276,115 @@
     const heartIcon = document.getElementById("heartIcon");
     const likesCount = document.getElementById("likesCount");
     const heartLikesWrapper = document.getElementById("heartLikesWrapper");
-    let activeSquare = null;
+    const randomMemeBtn = document.getElementById("randomMemeBtn");
+    const sortLatestBtn = document.getElementById("sortLatest");
+    const sortOldestBtn = document.getElementById("sortOldest");
+    const sortMoreLikedBtn = document.getElementById("sortMoreLiked");
+    const sortRandomBtn = document.getElementById("sortRandom");
+    const filterAllBtn = document.getElementById("filterAll");
+    const filterAIBtn = document.getElementById("filterAI");
+    const filterCompaniesBtn = document.getElementById("filterCompanies");
+    const filterMiscBtn = document.getElementById("filterMisc");
+    const downloadBtn = document.getElementById("downloadBtn");
 
+    let activeSquare = null;
     let currentMeme = null;
+    let allMemes = [];
+
+    function parseKeywords(keywordsString) {
+      if (!keywordsString) return [];
+      return keywordsString.split(";").map((k) => k.trim());
+    }
+
+    function renderMemes(memes) {
+      memesGrid.innerHTML = "";
+      let topLikedIndex = 0;
+      let topLikes = -1;
+      memes.forEach((m, i) => {
+        if (m.likes && m.likes > topLikes) {
+          topLikes = m.likes;
+          topLikedIndex = i;
+        }
+      });
+
+      memes.forEach((meme, index) => {
+        const squareDiv = document.createElement("div");
+        squareDiv.classList.add("square");
+        if (meme.image) {
+          squareDiv.style.backgroundImage = "url(" + meme.image + ")";
+          squareDiv.style.backgroundSize = "cover";
+          squareDiv.style.backgroundPosition = "center";
+        }
+        const textOverlay = document.createElement("p");
+        textOverlay.textContent = meme.summary || "No summary";
+        squareDiv.appendChild(textOverlay);
+        squareDiv.dataset.memeData = JSON.stringify(meme);
+
+        squareDiv.addEventListener("click", () => {
+          if (activeSquare) {
+            activeSquare.classList.remove("active");
+          }
+          squareDiv.classList.add("active");
+          activeSquare = squareDiv;
+          currentMeme = JSON.parse(squareDiv.dataset.memeData);
+          memeTitle.textContent = currentMeme.title
+            ? currentMeme.title
+            : "Meme #" + (index + 1);
+          memeImage.src = currentMeme.image;
+          descriptionText.textContent = currentMeme.description;
+          likesCount.textContent = currentMeme.likes || 0;
+          heartIcon.classList.remove("fa-solid");
+          heartIcon.classList.add("fa-regular");
+          downloadBtn.href = currentMeme.image ? currentMeme.image : "";
+          infoBox.classList.add("show");
+        });
+
+        if (index === 0) {
+          const latestWrapper = document.createElement("div");
+          latestWrapper.classList.add("latest-wrapper");
+          const latestLabel = document.createElement("div");
+          latestLabel.classList.add("latest-label");
+          latestLabel.textContent = "Latest❗";
+          latestWrapper.appendChild(squareDiv);
+          latestWrapper.appendChild(latestLabel);
+          memesGrid.appendChild(latestWrapper);
+        } else if (index === topLikedIndex && topLikedIndex !== 0) {
+          const trendingWrapper = document.createElement("div");
+          trendingWrapper.classList.add("trending-wrapper");
+          const trendingLabel = document.createElement("div");
+          trendingLabel.classList.add("trending-label");
+          trendingLabel.textContent = "🔥 Trending";
+          trendingWrapper.appendChild(squareDiv);
+          trendingWrapper.appendChild(trendingLabel);
+          memesGrid.appendChild(trendingWrapper);
+        } else {
+          memesGrid.appendChild(squareDiv);
+        }
+      });
+    }
+
+    function filterMemesByKeyword(keyword) {
+      if (keyword === "All") {
+        renderMemes(allMemes);
+        return;
+      }
+      const filtered = allMemes.filter((m) => {
+        const keywordList = parseKeywords(m.keywords);
+        return keywordList.includes(keyword);
+      });
+      renderMemes(filtered);
+    }
 
     fetch("memes.json")
       .then((response) => response.json())
       .then((memes) => {
-        memes.forEach((meme, index) => {
-          const squareDiv = document.createElement("div");
-          squareDiv.classList.add("square");
-          squareDiv.textContent = meme.summary || `No summary`;
-          squareDiv.dataset.memeData = JSON.stringify(meme);
-
-          squareDiv.addEventListener("click", () => {
-            if (activeSquare) {
-              activeSquare.classList.remove("active");
-            }
-            squareDiv.classList.add("active");
-            activeSquare = squareDiv;
-            currentMeme = JSON.parse(squareDiv.dataset.memeData);
-
-            memeTitle.textContent = currentMeme.title
-              ? currentMeme.title
-              : `Meme #${index + 1}`;
-            memeImage.src = currentMeme.image;
-            descriptionText.textContent = currentMeme.description;
-            likesCount.textContent = currentMeme.likes || 0;
-            heartIcon.classList.remove("fa-solid");
-            heartIcon.classList.add("fa-regular");
-
-            infoBox.classList.add("show");
-          });
-          memesGrid.appendChild(squareDiv);
-        });
+        allMemes = memes;
+        renderMemes(allMemes);
       })
       .catch((error) => {
         console.error("Error fetching memes:", error);
       });
+
     closeBtn.addEventListener("click", () => {
       infoBox.classList.remove("show");
       if (activeSquare) {
@@ -219,17 +393,55 @@
       activeSquare = null;
       currentMeme = null;
     });
+
     heartLikesWrapper.addEventListener("click", () => {
       if (!currentMeme) return;
-
       if (heartIcon.classList.contains("fa-regular")) {
         heartIcon.classList.remove("fa-regular");
         heartIcon.classList.add("fa-solid");
         currentMeme.likes = (currentMeme.likes || 0) + 1;
         likesCount.textContent = currentMeme.likes;
-      } else {
-        // Unliking code is neeeded here
       }
+    });
+
+    randomMemeBtn.addEventListener("click", () => {
+      if (!allMemes.length) return;
+      const randomIndex = Math.floor(Math.random() * allMemes.length);
+      const squares = document.querySelectorAll(".square");
+      if (squares[randomIndex]) squares[randomIndex].click();
+    });
+
+    sortLatestBtn.addEventListener("click", () => {
+      const sorted = [...allMemes];
+      renderMemes(sorted);
+    });
+
+    sortOldestBtn.addEventListener("click", () => {
+      const sorted = [...allMemes];
+      renderMemes(sorted.reverse());
+    });
+
+    sortMoreLikedBtn.addEventListener("click", () => {
+      const sorted = [...allMemes].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      renderMemes(sorted);
+    });
+
+    sortRandomBtn.addEventListener("click", () => {
+      const shuffled = [...allMemes].sort(() => 0.5 - Math.random());
+      renderMemes(shuffled);
+    });
+
+    filterAllBtn.addEventListener("click", () => {
+      filterMemesByKeyword("All");
+    });
+    filterAIBtn.addEventListener("click", () => {
+      filterMemesByKeyword("Artificial Intelligence");
+    });
+    filterCompaniesBtn.addEventListener("click", () => {
+      filterMemesByKeyword("Companies");
+    });
+    filterMiscBtn.addEventListener("click", () => {
+      filterMemesByKeyword("Miscellaneous");
     });
   </script>
 </body>
