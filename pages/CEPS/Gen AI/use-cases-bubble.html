@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AI use cases</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    html, body {
+      margin: 0; height: 100%; overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .sidebar {
+      position: absolute; top: 0; left: 0; bottom: 0;
+      width: 230px; background: rgba(0,0,0,.83); color: #fff;
+      padding: 18px 16px; box-sizing: border-box; z-index: 10;
+    }
+    .sidebar h3 { margin: 2px 0 4px; font-size: 18px; }
+    .sidebar label {
+      display: block; margin: 6px 0; font-size: 14px;
+      cursor: pointer;
+    }
+    .swatch {
+      display: inline-block; width: 18px; height: 18px;
+      margin-right: 6px; border-radius: 4px; border: 2px solid #fff;
+      cursor: pointer; vertical-align: middle; transition: outline .15s;
+    }
+    .swatch.active { outline: 3px solid #fff; }
+    .label {
+      fill: #fff; stroke: #000; stroke-width: 3px; paint-order: stroke;
+      text-anchor: middle; font-weight: bold; pointer-events: none;
+    }
+    .tooltip {
+      position: absolute; left: 0; top: 0; opacity: 0;
+      padding: 8px; border-radius: 4px; font-size: 12px;
+      max-width: 260px; pointer-events: none;
+      z-index: 1000;
+      background: #fff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="pane">
+    <div>
+      <h3>Background</h3>
+      <label><input type="radio" name="theme" value="dark" checked> Dark</label>
+      <label><input type="radio" name="theme" value="light"> Light</label>
+    </div>
+    <div>
+      <h3>Filter by Type</h3>
+      <div id="swatches"></div>
+    </div>
+  </div>
+
+  <div id="tt" class="tooltip"></div>
+
+  <script>
+  const typeColor = {
+    "Customer Agents":"#33a852",
+    "Employee Agents":"#ea4335",
+    "Creative Agents":"#fabc05",
+    "Code Agents":"#4284f3",
+    "Data Agents":"#cda5f9",
+    "Security Agents":"#545692"
+  };
+  const sidebar = document.getElementById("pane");
+  const tooltip = d3.select("#tt");
+  const svg     = d3.select("body").append("svg").style("position","absolute");
+  const g       = svg.append("g");
+  let W, H, root, pack, focus, view, node, label, activeFilter = null;
+
+  const swatchBox = d3.select("#swatches");
+  Object.entries(typeColor).forEach(([t, c]) => {
+    swatchBox.append("span")
+      .attr("class","swatch")
+      .attr("data-type", t)
+      .style("background", c)
+      .on("click", () => toggleFilter(t));
+    swatchBox.append("span").style("font-size","13px").text(t);
+    swatchBox.append("br");
+  });
+  function toggleFilter(t) {
+    activeFilter = activeFilter === t ? null : t;
+    d3.selectAll(".swatch").classed("active", function() {
+      return this.getAttribute("data-type") === activeFilter;
+    });
+    applyFilter();
+  }
+
+  document.querySelectorAll('input[name="theme"]').forEach(radio =>
+    radio.addEventListener('change', () => {
+      if (radio.value === 'light') {
+        document.body.style.background = "#f4f6fb";
+        tooltip.style("background", "#000").style("color", "#fff");
+      } else {
+        document.body.style.background = "#111";
+        tooltip.style("background", "#fff").style("color", "#000");
+      }
+    })
+  );
+  document.body.style.background = "#111";
+
+  d3.json("https://www.paballand.com/ai-world/google-use-cases.json")
+    .then(raw => {
+      if (!raw.length) console.warn("No data loaded!");
+      buildChart(raw);
+      window.addEventListener("resize", resize);
+    })
+    .catch(err => console.error("Error loading JSON:", err));
+
+  function buildChart(raw) {
+    const industries = d3.groups(raw, d => d.Industry)
+      .map(([ind, recs]) => ({
+        name: ind,
+        color: recs[0].Color || "#555",
+        children: d3.groups(recs, d => d.Company)
+          .map(([comp, cs]) => ({
+            name: comp,
+            type: cs[0].Type,
+            description: cs[0].Description,
+            size: 1
+          }))
+      }));
+
+    root = d3.hierarchy({ name:"root", children: industries })
+             .sum(d => d.size || 0)
+             .sort((a, b) => b.value - a.value);
+    focus = root;
+    resize();
+    draw();
+    zoomTo([focus.x, focus.y, focus.r * 2]);
+  }
+
+  function draw() {
+    const allNodes = root.descendants().filter(d => d.depth > 0)
+                       .sort((a, b) => a.depth - b.depth);
+
+    node = g.selectAll("circle")
+      .data(allNodes).enter().append("circle")
+      .attr("stroke", d => d.depth===1? "none":"#111")
+      .attr("stroke-width", 1.2)
+      .attr("fill", d => d.depth===1? d.data.color : typeColor[d.data.type])
+      .attr("fill-opacity", d => d.depth===1? 0.3 : 1)
+      .attr("data-type",    d => d.children? null : d.data.type)
+      .attr("data-original", d => d.children? null : typeColor[d.data.type])
+      .on("mouseenter", function(e,d){
+        if (!d.children) d3.select(this)
+          .transition().duration(150)
+          .attr("r", this.__baseR*1.4);
+      })
+      .on("mouseleave", function(e,d){
+        if (!d.children) d3.select(this)
+          .transition().duration(150)
+          .attr("r", this.__baseR);
+      })
+      .on("click",(e,d)=>{
+        if(focus!==d){ zoom(e,d); e.stopPropagation(); }
+      })
+      .on("mousemove",(e,d)=>{
+        if(!d.children){
+          tooltip.style("opacity",1)
+            .html(`<strong>${d.data.name}</strong><br>${d.data.description}`)
+            .style("left",(e.pageX+15)+"px")
+            .style("top",(e.pageY+15)+"px");
+        }
+      })
+      .on("mouseout",()=> tooltip.style("opacity",0));
+
+    label = g.selectAll("text")
+      .data(allNodes).enter().append("text")
+      .attr("class","label")
+      .style("fill-opacity", d => d.parent===root?1:0)
+      .style("display",      d => d.parent===root?null:"none")
+      .text(d => d.data.name);
+
+    svg.on("click", e => zoom(e, root));
+    applyFilter();
+  }
+
+  function zoom(event, d) {
+    focus = d;
+    const t = svg.transition()
+      .duration(event.altKey?3500:750)
+      .tween("zoom", () => {
+        const i = d3.interpolateZoom(view, [d.x,d.y,d.r*2]);
+        return t => zoomTo(i(t));
+      });
+
+    label.filter(l => l.parent===focus || this.style.display!=="none")
+      .transition(t)
+      .style("fill-opacity", l=> l.parent===focus?1:0)
+      .on("start", function(l){ if(l.parent===focus) this.style.display=null; })
+      .on("end",   function(l){ if(l.parent!==focus) this.style.display="none"; });
+  }
+
+  function zoomTo(v) {
+    view = v;
+    const k = Math.min(W,H)/v[2];
+    node.attr("transform", d=>
+      `translate(${(d.x-v[0])*k+W/2},${(d.y-v[1])*k+H/2})`
+    ).attr("r", function(d){
+      this.__baseR = d.r*k; return this.__baseR;
+    });
+
+    label.attr("transform", d=>
+      `translate(${(d.x-v[0])*k+W/2},${(d.y-v[1])*k+H/2})`
+    ).style("font-size", `${Math.max(8,12*k)}px`);
+  }
+
+  function applyFilter() {
+    if (!node) return;
+    node.each(function(d){
+      if (d.children) return;
+      const sel = d3.select(this);
+      if (!activeFilter || d.data.type===activeFilter) {
+        sel.attr("fill", sel.attr("data-original"))
+           .attr("fill-opacity",1);
+      } else {
+        sel.attr("fill","#777")
+           .attr("fill-opacity",0.35);
+      }
+    });
+  }
+
+  function resize() {
+    const sidebarW = sidebar.offsetWidth;
+    W = innerWidth - sidebarW;
+    H = innerHeight;
+    svg.style("left", sidebarW+"px")
+       .attr("width", W)
+       .attr("height", H);
+    if (!root) return;
+    pack = d3.pack().size([W-2,H-2]).padding(5);
+    pack(root);
+    if (view) zoomTo(view);
+  }
+  </script>
+</body>
+</html>
