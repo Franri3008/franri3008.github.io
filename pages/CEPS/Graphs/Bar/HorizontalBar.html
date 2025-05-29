@@ -1,192 +1,154 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2821
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
-{\colortbl;\red255\green255\blue255;\red109\green109\blue109;\red24\green24\blue24;\red70\green137\blue204;
-\red193\green193\blue193;\red140\green211\blue254;\red194\green126\blue101;\red205\green173\blue106;\red202\green202\blue202;
-\red167\green197\blue152;\red212\green214\blue154;\red183\green111\blue179;\red66\green179\blue255;\red67\green192\blue160;
-}
-{\*\expandedcolortbl;;\cssrgb\c50196\c50196\c50196;\cssrgb\c12157\c12157\c12157;\cssrgb\c33725\c61176\c83922;
-\cssrgb\c80000\c80000\c80000;\cssrgb\c61176\c86275\c99608;\cssrgb\c80784\c56863\c47059;\cssrgb\c84314\c72941\c49020;\cssrgb\c83137\c83137\c83137;
-\cssrgb\c70980\c80784\c65882;\cssrgb\c86275\c86275\c66667;\cssrgb\c77255\c52549\c75294;\cssrgb\c30980\c75686\c100000;\cssrgb\c30588\c78824\c69020;
-}
-\margl1440\margr1440\vieww38200\viewh18200\viewkind0
-\deftab720
-\pard\pardeftab720\partightenfactor0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>horizontal v2</title>
+<style>
+:root{--font-scale:1.3;--gap-scale:1.3;}
+body{font-family:Arial,sans-serif;padding:20px;font-size:calc(14px*var(--font-scale));}
 
-\f0\fs24 \cf2 \cb3 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 <!\cf4 \strokec4 DOCTYPE\cf5 \strokec5  \cf6 \strokec6 html\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 html\cf5 \strokec5  \cf6 \strokec6 lang\cf5 \strokec5 =\cf7 \strokec7 "en"\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 head\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 meta\cf5 \strokec5  \cf6 \strokec6 charset\cf5 \strokec5 =\cf7 \strokec7 "UTF-8"\cf5 \strokec5  \cf2 \strokec2 />\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 meta\cf5 \strokec5  \cf6 \strokec6 name\cf5 \strokec5 =\cf7 \strokec7 "viewport"\cf5 \strokec5  \cf6 \strokec6 content\cf5 \strokec5 =\cf7 \strokec7 "width=device-width,initial-scale=1"\cf5 \strokec5  \cf2 \strokec2 />\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 title\cf2 \strokec2 >\cf5 \strokec5 horizontal v2\cf2 \strokec2 </\cf4 \strokec4 title\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 style\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf8 \cb3 \strokec8 :root\cf9 \strokec9 \{\cf6 \strokec6 --font-scale\cf9 \strokec9 :\cf10 \strokec10 1.3\cf9 \strokec9 ;\cf6 \strokec6 --gap-scale\cf9 \strokec9 :\cf10 \strokec10 1.3\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 body\cf9 \strokec9 \{\cf6 \strokec6 font-family\cf9 \strokec9 :\cf7 \strokec7 Arial\cf9 \strokec9 ,\cf7 \strokec7 sans-serif\cf9 \strokec9 ;\cf6 \strokec6 padding\cf9 \strokec9 :\cf10 \strokec10 20px\cf9 \strokec9 ;\cf6 \strokec6 font-size\cf9 \strokec9 :\cf11 \strokec11 calc\cf9 \strokec9 (\cf10 \strokec10 14px\cf9 \strokec9 *\cf11 \strokec11 var\cf9 \strokec9 (\cf6 \strokec6 --font-scale\cf9 \strokec9 ));\}\cf5 \cb1 \strokec5 \
-\
-\cf8 \cb3 \strokec8 #chart-wrapper\cf9 \strokec9 \{\cf6 \strokec6 max-width\cf9 \strokec9 :\cf10 \strokec10 900px\cf9 \strokec9 ; \cf6 \strokec6 margin\cf9 \strokec9 :\cf10 \strokec10 0\cf9 \strokec9  \cf7 \strokec7 auto\cf9 \strokec9 ; \cf6 \strokec6 background\cf9 \strokec9 :\cf11 \strokec11 rgba\cf9 \strokec9 (\cf10 \strokec10 158\cf9 \strokec9 ,\cf10 \strokec10 158\cf9 \strokec9 ,\cf10 \strokec10 158\cf9 \strokec9 ,\cf10 \strokec10 .15\cf9 \strokec9 ); \cf6 \strokec6 border-radius\cf9 \strokec9 :\cf10 \strokec10 12px\cf9 \strokec9 ; \cf6 \strokec6 padding\cf9 \strokec9 :\cf10 \strokec10 16px\cf9 \strokec9  \cf10 \strokec10 20px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 #chart\cf9 \strokec9 \{\cf6 \strokec6 position\cf9 \strokec9 :\cf7 \strokec7 relative\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\
-\cf8 \cb3 \strokec8 .chart-row\cf9 \strokec9 \{\cf6 \strokec6 display\cf9 \strokec9 :\cf7 \strokec7 flex\cf9 \strokec9 ; \cf6 \strokec6 align-items\cf9 \strokec9 :\cf7 \strokec7 center\cf9 \strokec9 ; \cf6 \strokec6 margin-bottom\cf9 \strokec9 :\cf11 \strokec11 calc\cf9 \strokec9 (\cf10 \strokec10 8px\cf9 \strokec9 *\cf11 \strokec11 var\cf9 \strokec9 (\cf6 \strokec6 --gap-scale\cf9 \strokec9 ));\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .position-label\cf9 \strokec9 \{\cf6 \strokec6 width\cf9 \strokec9 :\cf10 \strokec10 35px\cf9 \strokec9 ; \cf6 \strokec6 text-align\cf9 \strokec9 :\cf7 \strokec7 center\cf9 \strokec9 ; \cf6 \strokec6 color\cf9 \strokec9 :\cf7 \strokec7 #000\cf9 \strokec9 ; \cf6 \strokec6 font-weight\cf9 \strokec9 :\cf10 \strokec10 700\cf9 \strokec9 ; \cf6 \strokec6 margin-right\cf9 \strokec9 :\cf10 \strokec10 10px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .name-cell\cf9 \strokec9 \{\cf6 \strokec6 display\cf9 \strokec9 :\cf7 \strokec7 flex\cf9 \strokec9 ; \cf6 \strokec6 align-items\cf9 \strokec9 :\cf7 \strokec7 center\cf9 \strokec9 ; \cf6 \strokec6 justify-content\cf9 \strokec9 :\cf7 \strokec7 flex-end\cf9 \strokec9 ; \cf6 \strokec6 text-align\cf9 \strokec9 :\cf7 \strokec7 right\cf9 \strokec9 ; \cf6 \strokec6 flex\cf9 \strokec9 :\cf10 \strokec10 0\cf9 \strokec9  \cf10 \strokec10 0\cf9 \strokec9  \cf10 \strokec10 160px\cf9 \strokec9 ; \cf6 \strokec6 margin-right\cf9 \strokec9 :\cf10 \strokec10 10px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .name-cell\cf9 \strokec9  \cf8 \strokec8 span\cf9 \strokec9 \{\cf6 \strokec6 font-size\cf9 \strokec9 :\cf10 \strokec10 .83em\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .name-cell\cf9 \strokec9  \cf8 \strokec8 .emoji\cf9 \strokec9 \{\cf6 \strokec6 font-size\cf9 \strokec9 :\cf10 \strokec10 1.2em\cf9 \strokec9 ; \cf6 \strokec6 margin-right\cf9 \strokec9 :\cf10 \strokec10 5px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .bar-container\cf9 \strokec9 \{\cf6 \strokec6 position\cf9 \strokec9 :\cf7 \strokec7 relative\cf9 \strokec9 ; \cf6 \strokec6 display\cf9 \strokec9 :\cf7 \strokec7 flex\cf9 \strokec9 ; \cf6 \strokec6 height\cf9 \strokec9 :\cf10 \strokec10 24px\cf9 \strokec9 ;\cf6 \strokec6 cursor\cf9 \strokec9 :\cf7 \strokec7 pointer\cf9 \strokec9 ; \cf6 \strokec6 flex-grow\cf9 \strokec9 :\cf10 \strokec10 1\cf9 \strokec9 ; \cf6 \strokec6 border-radius\cf9 \strokec9 :\cf10 \strokec10 4px\cf9 \strokec9 ; \cf6 \strokec6 overflow\cf9 \strokec9 :\cf7 \strokec7 visible\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .bar-segment\cf9 \strokec9 \{\cf6 \strokec6 position\cf9 \strokec9 :\cf7 \strokec7 relative\cf9 \strokec9 ; \cf6 \strokec6 height\cf9 \strokec9 :\cf10 \strokec10 100%\cf9 \strokec9 ; \cf6 \strokec6 transition\cf9 \strokec9 :box-shadow \cf10 \strokec10 .3s\cf9 \strokec9  \cf7 \strokec7 ease\cf9 \strokec9 , opacity \cf10 \strokec10 .3s\cf9 \strokec9  \cf7 \strokec7 ease\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .bar-segment:first-child\cf9 \strokec9 \{\cf6 \strokec6 border-top-left-radius\cf9 \strokec9 :\cf10 \strokec10 4px\cf9 \strokec9 ; \cf6 \strokec6 border-bottom-left-radius\cf9 \strokec9 :\cf10 \strokec10 4px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .bar-segment\cf9 \strokec9 [\cf6 \strokec6 data-last\cf9 \strokec9 =\cf7 \strokec7 "1"\cf9 \strokec9 ]\{\cf6 \strokec6 border-top-right-radius\cf9 \strokec9 :\cf10 \strokec10 4px\cf9 \strokec9 ; \cf6 \strokec6 border-bottom-right-radius\cf9 \strokec9 :\cf10 \strokec10 4px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .seg-label\cf9 \strokec9 \{\cf6 \strokec6 position\cf9 \strokec9 :\cf7 \strokec7 absolute\cf9 \strokec9 ; \cf6 \strokec6 top\cf9 \strokec9 :\cf10 \strokec10 50%\cf9 \strokec9 ; \cf6 \strokec6 left\cf9 \strokec9 :\cf10 \strokec10 50%\cf9 \strokec9 ; \cf6 \strokec6 transform\cf9 \strokec9 :\cf11 \strokec11 translate\cf9 \strokec9 (\cf10 \strokec10 -50%\cf9 \strokec9 ,\cf10 \strokec10 -50%\cf9 \strokec9 ); \cf6 \strokec6 font-size\cf9 \strokec9 :\cf10 \strokec10 .8em\cf9 \strokec9 ; \cf6 \strokec6 font-weight\cf9 \strokec9 :\cf10 \strokec10 700\cf9 \strokec9 ;\cf6 \strokec6 color\cf9 \strokec9 :\cf7 \strokec7 #fff\cf9 \strokec9 ; \cf6 \strokec6 opacity\cf9 \strokec9 :\cf10 \strokec10 0\cf9 \strokec9 ; \cf6 \strokec6 transition\cf9 \strokec9 :opacity \cf10 \strokec10 .25s\cf9 \strokec9  \cf7 \strokec7 ease\cf9 \strokec9 ; \cf6 \strokec6 pointer-events\cf9 \strokec9 :\cf7 \strokec7 none\cf9 \strokec9 ; \cf6 \strokec6 white-space\cf9 \strokec9 :\cf7 \strokec7 nowrap\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .seg-label.visible\cf9 \strokec9 \{\cf6 \strokec6 opacity\cf9 \strokec9 :\cf10 \strokec10 1\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .row-sum\cf9 \strokec9 \{\cf6 \strokec6 position\cf9 \strokec9 :\cf7 \strokec7 absolute\cf9 \strokec9 ; \cf6 \strokec6 top\cf9 \strokec9 :\cf10 \strokec10 50%\cf9 \strokec9 ; \cf6 \strokec6 transform\cf9 \strokec9 :\cf11 \strokec11 translateY\cf9 \strokec9 (\cf10 \strokec10 -50%\cf9 \strokec9 ); \cf6 \strokec6 margin-left\cf9 \strokec9 :\cf10 \strokec10 4px\cf9 \strokec9 ; \cf6 \strokec6 font-size\cf9 \strokec9 :\cf10 \strokec10 .8em\cf9 \strokec9 ; \cf6 \strokec6 font-weight\cf9 \strokec9 :\cf10 \strokec10 700\cf9 \strokec9 ; \cf6 \strokec6 color\cf9 \strokec9 :\cf7 \strokec7 #333\cf9 \strokec9 ; \cf6 \strokec6 pointer-events\cf9 \strokec9 :\cf7 \strokec7 none\cf9 \strokec9 ; \cf6 \strokec6 transition\cf9 \strokec9 :opacity \cf10 \strokec10 .25s\cf9 \strokec9  \cf7 \strokec7 ease\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 #legend\cf9 \strokec9 \{\cf6 \strokec6 display\cf9 \strokec9 :\cf7 \strokec7 flex\cf9 \strokec9 ; \cf6 \strokec6 gap\cf9 \strokec9 :\cf10 \strokec10 12px\cf9 \strokec9 ; \cf6 \strokec6 margin-top\cf9 \strokec9 :\cf10 \strokec10 18px\cf9 \strokec9 ; \cf6 \strokec6 flex-wrap\cf9 \strokec9 :\cf7 \strokec7 wrap\cf9 \strokec9 ; \cf6 \strokec6 align-items\cf9 \strokec9 :\cf7 \strokec7 center\cf9 \strokec9 ; \cf6 \strokec6 justify-content\cf9 \strokec9 :\cf7 \strokec7 center\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .legend-item\cf9 \strokec9 \{\cf6 \strokec6 display\cf9 \strokec9 :\cf7 \strokec7 flex\cf9 \strokec9 ;\cf6 \strokec6 align-items\cf9 \strokec9 :\cf7 \strokec7 center\cf9 \strokec9 ;\cf6 \strokec6 font-size\cf9 \strokec9 :\cf10 \strokec10 .85em\cf9 \strokec9 ;\cf6 \strokec6 cursor\cf9 \strokec9 :\cf7 \strokec7 pointer\cf9 \strokec9 ;\cf6 \strokec6 transition\cf9 \strokec9 :box-shadow \cf10 \strokec10 .2s\cf9 \strokec9  \cf7 \strokec7 ease\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .legend-item.active\cf9 \strokec9 \{\cf6 \strokec6 box-shadow\cf9 \strokec9 :\cf10 \strokec10 0\cf9 \strokec9  \cf10 \strokec10 0\cf9 \strokec9  \cf10 \strokec10 10px\cf9 \strokec9  \cf10 \strokec10 3px\cf9 \strokec9  \cf11 \strokec11 rgba\cf9 \strokec9 (\cf10 \strokec10 0\cf9 \strokec9 ,\cf10 \strokec10 0\cf9 \strokec9 ,\cf10 \strokec10 0\cf9 \strokec9 ,\cf10 \strokec10 .4\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf8 \cb3 \strokec8 .legend-swatch\cf9 \strokec9 \{\cf6 \strokec6 width\cf9 \strokec9 :\cf10 \strokec10 14px\cf9 \strokec9 ; \cf6 \strokec6 height\cf9 \strokec9 :\cf10 \strokec10 14px\cf9 \strokec9 ; \cf6 \strokec6 border-radius\cf9 \strokec9 :\cf10 \strokec10 2px\cf9 \strokec9 ; \cf6 \strokec6 margin-right\cf9 \strokec9 :\cf10 \strokec10 6px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf12 \cb3 \strokec12 @media\cf9 \strokec9  (\cf6 \strokec6 max-width\cf9 \strokec9 :\cf10 \strokec10 600px\cf9 \strokec9 )\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf8 \strokec8 body\cf9 \strokec9 \{\cf6 \strokec6 font-size\cf9 \strokec9 :\cf11 \strokec11 calc\cf9 \strokec9 (\cf10 \strokec10 12px\cf9 \strokec9 *\cf11 \strokec11 var\cf9 \strokec9 (\cf6 \strokec6 --font-scale\cf9 \strokec9 )); \cf6 \strokec6 padding\cf9 \strokec9 :\cf10 \strokec10 10px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf8 \strokec8 .position-label\cf9 \strokec9 \{\cf6 \strokec6 width\cf9 \strokec9 :\cf10 \strokec10 32px\cf9 \strokec9 ; \cf6 \strokec6 font-size\cf9 \strokec9 :\cf10 \strokec10 .9em\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf8 \strokec8 .bar-container\cf9 \strokec9 \{\cf6 \strokec6 height\cf9 \strokec9 :\cf10 \strokec10 20px\cf9 \strokec9 ;\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf2 \cb3 \strokec2 </\cf4 \strokec4 style\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 </\cf4 \strokec4 head\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 body\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 div\cf5 \strokec5  \cf6 \strokec6 id\cf5 \strokec5 =\cf7 \strokec7 "chart-wrapper"\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf5 \cb3   \cf2 \strokec2 <\cf4 \strokec4 div\cf5 \strokec5  \cf6 \strokec6 id\cf5 \strokec5 =\cf7 \strokec7 "chart"\cf2 \strokec2 ></\cf4 \strokec4 div\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cb3   \cf2 \strokec2 <\cf4 \strokec4 div\cf5 \strokec5  \cf6 \strokec6 id\cf5 \strokec5 =\cf7 \strokec7 "legend"\cf2 \strokec2 ></\cf4 \strokec4 div\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf2 \cb3 \strokec2 </\cf4 \strokec4 div\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 <\cf4 \strokec4 script\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf4 \cb3 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 data\cf9 \strokec9 =[\{\cf6 \strokec6 id:\cf7 \strokec7 "United States"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 78.88\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56826 \u55356 \u56824 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "United States"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 10.5\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "United States"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 5.2\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "China"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 46.89\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56808 \u55356 \u56819 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "China"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 17.67\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "China"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 25.71\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Japan"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 40.2\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56815 \u55356 \u56821 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Japan"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 18.3\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Japan"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 22.1\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Germany"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 30.5\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56809 \u55356 \u56810 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Germany"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 20.1\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Germany"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 15.4\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Canada"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 28.5\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56808 \u55356 \u56806 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Canada"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 17.2\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Canada"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 14.3\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Brazil"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 25.7\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56807 \u55356 \u56823 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Brazil"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 15.4\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Brazil"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 10.9\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "India"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 35.6\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56814 \u55356 \u56819 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "India"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 19.5\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "India"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 12.1\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Australia"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 22.8\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56806 \u55356 \u56826 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Australia"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 14.3\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Australia"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 9.6\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "France"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 29.2\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56811 \u55356 \u56823 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "France"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 16.7\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "France"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 11.4\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Spain"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 26.4\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56810 \u55356 \u56824 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Spain"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 15.8\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Spain"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 12.2\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Italy"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 24.7\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56814 \u55356 \u56825 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Italy"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 14.1\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Italy"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 11.3\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "South Korea"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 27.3\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56816 \u55356 \u56823 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "South Korea"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 16.5\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "South Korea"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 13.0\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Netherlands"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 23.4\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56819 \u55356 \u56817 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Netherlands"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 15.2\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Netherlands"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 12.8\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Mexico"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 21.7\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Mexico"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 13.9\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Mexico"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 11.0\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Switzerland"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank1"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#FFD21E"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 24.9\cf9 \strokec9 ,\cf6 \strokec6 emoji:\cf7 \strokec7 "\uc0\u55356 \u56808 \u55356 \u56813 "\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Switzerland"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank2"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#3C76B0"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 17.1\cf9 \strokec9 \},\{\cf6 \strokec6 id:\cf7 \strokec7 "Switzerland"\cf9 \strokec9 ,\cf6 \strokec6 domain:\cf7 \strokec7 "Rank3"\cf9 \strokec9 ,\cf6 \strokec6 color:\cf7 \strokec7 "#70CA6D"\cf9 \strokec9 ,\cf6 \strokec6 value:\cf10 \strokec10 13.6\cf9 \strokec9 \}];\cf5 \cb1 \strokec5 \
-\
-\cf4 \cb3 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 selected\cf9 \strokec9 =\cf4 \strokec4 new\cf9 \strokec9  \cf14 \strokec14 Set\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf4 \cb3 \strokec4 let\cf9 \strokec9  \cf6 \strokec6 sortMetric\cf9 \strokec9 =\cf4 \strokec4 null\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\
-\cf4 \cb3 \strokec4 function\cf9 \strokec9  \cf11 \strokec11 buildChart\cf9 \strokec9 ()\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 grouped\cf9 \strokec9 =\{\};\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf13 \strokec13 data\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 d\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf12 \strokec12 if\cf9 \strokec9 (!\cf13 \strokec13 grouped\cf9 \strokec9 [\cf6 \strokec6 d\cf9 \strokec9 .\cf6 \strokec6 id\cf9 \strokec9 ])\cf13 \strokec13 grouped\cf9 \strokec9 [\cf6 \strokec6 d\cf9 \strokec9 .\cf6 \strokec6 id\cf9 \strokec9 ]=\{\cf6 \strokec6 emoji:d\cf9 \strokec9 .\cf6 \strokec6 emoji\cf9 \strokec9 ||\cf4 \strokec4 null\cf9 \strokec9 ,\cf6 \strokec6 segments:\cf9 \strokec9 []\};\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 grouped\cf9 \strokec9 [\cf6 \strokec6 d\cf9 \strokec9 .\cf6 \strokec6 id\cf9 \strokec9 ].\cf6 \strokec6 segments\cf9 \strokec9 .\cf11 \strokec11 push\cf9 \strokec9 (\{\cf6 \strokec6 domain:d\cf9 \strokec9 .\cf6 \strokec6 domain\cf9 \strokec9 ,\cf6 \strokec6 color:d\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ,\cf6 \strokec6 value:d\cf9 \strokec9 .\cf6 \strokec6 value\cf9 \strokec9 \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 rows\cf9 \strokec9 =\cf14 \strokec14 Object\cf9 \strokec9 .\cf11 \strokec11 entries\cf9 \strokec9 (\cf13 \strokec13 grouped\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf13 \strokec13 rows\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 r\cf4 \strokec4 =>\cf6 \strokec6 r\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 total\cf9 \strokec9 =\cf6 \strokec6 r\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 segments\cf9 \strokec9 .\cf11 \strokec11 reduce\cf9 \strokec9 ((\cf6 \strokec6 s\cf9 \strokec9 ,\cf6 \strokec6 x\cf9 \strokec9 )\cf4 \strokec4 =>\cf6 \strokec6 s\cf9 \strokec9 +\cf6 \strokec6 x\cf9 \strokec9 .\cf6 \strokec6 value\cf9 \strokec9 ,\cf10 \strokec10 0\cf9 \strokec9 ));\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf12 \strokec12 if\cf9 \strokec9 (\cf6 \strokec6 sortMetric\cf9 \strokec9 )\{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 rows\cf9 \strokec9 .\cf11 \strokec11 sort\cf9 \strokec9 ((\cf6 \strokec6 a\cf9 \strokec9 ,\cf6 \strokec6 b\cf9 \strokec9 )\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 av\cf9 \strokec9 =\cf6 \strokec6 a\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 segments\cf9 \strokec9 .\cf11 \strokec11 find\cf9 \strokec9 (\cf6 \strokec6 x\cf4 \strokec4 =>\cf6 \strokec6 x\cf9 \strokec9 .\cf6 \strokec6 domain\cf9 \strokec9 ===\cf6 \strokec6 sortMetric\cf9 \strokec9 )?.\cf6 \strokec6 value\cf9 \strokec9 ||\cf10 \strokec10 0\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 bv\cf9 \strokec9 =\cf6 \strokec6 b\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 segments\cf9 \strokec9 .\cf11 \strokec11 find\cf9 \strokec9 (\cf6 \strokec6 x\cf4 \strokec4 =>\cf6 \strokec6 x\cf9 \strokec9 .\cf6 \strokec6 domain\cf9 \strokec9 ===\cf6 \strokec6 sortMetric\cf9 \strokec9 )?.\cf6 \strokec6 value\cf9 \strokec9 ||\cf10 \strokec10 0\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf12 \strokec12 return\cf9 \strokec9  \cf13 \strokec13 bv\cf9 \strokec9 -\cf13 \strokec13 av\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \}\cf12 \strokec12 else\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 rows\cf9 \strokec9 .\cf11 \strokec11 sort\cf9 \strokec9 ((\cf6 \strokec6 a\cf9 \strokec9 ,\cf6 \strokec6 b\cf9 \strokec9 )\cf4 \strokec4 =>\cf6 \strokec6 b\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 total\cf9 \strokec9 -\cf6 \strokec6 a\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 total\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 maxTotal\cf9 \strokec9 =\cf6 \strokec6 Math\cf9 \strokec9 .\cf11 \strokec11 max\cf9 \strokec9 (...\cf13 \strokec13 rows\cf9 \strokec9 .\cf11 \strokec11 map\cf9 \strokec9 (\cf6 \strokec6 r\cf4 \strokec4 =>\cf6 \strokec6 r\cf9 \strokec9 [\cf10 \strokec10 1\cf9 \strokec9 ].\cf6 \strokec6 total\cf9 \strokec9 ));\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 chart\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 getElementById\cf9 \strokec9 (\cf7 \strokec7 "chart"\cf9 \strokec9 );\cf13 \strokec13 chart\cf9 \strokec9 .\cf6 \strokec6 innerHTML\cf9 \strokec9 =\cf7 \strokec7 ""\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf13 \strokec13 rows\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (([\cf6 \strokec6 country\cf9 \strokec9 ,\cf6 \strokec6 obj\cf9 \strokec9 ],\cf6 \strokec6 i\cf9 \strokec9 )\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 row\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 row\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "chart-row"\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 rank\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 rank\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "position-label"\cf9 \strokec9 ;\cf13 \strokec13 rank\cf9 \strokec9 .\cf6 \strokec6 textContent\cf9 \strokec9 =\cf7 \strokec7 `#\cf4 \strokec4 $\{\cf6 \strokec6 i\cf9 \strokec9 +\cf10 \strokec10 1\cf4 \strokec4 \}\cf7 \strokec7 `\cf9 \strokec9 ;\cf13 \strokec13 row\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 rank\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 name\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 name\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "name-cell"\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf12 \strokec12 if\cf9 \strokec9 (\cf6 \strokec6 obj\cf9 \strokec9 .\cf6 \strokec6 emoji\cf9 \strokec9 )\{\cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 em\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "span"\cf9 \strokec9 );\cf13 \strokec13 em\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "emoji"\cf9 \strokec9 ;\cf13 \strokec13 em\cf9 \strokec9 .\cf6 \strokec6 textContent\cf9 \strokec9 =\cf6 \strokec6 obj\cf9 \strokec9 .\cf6 \strokec6 emoji\cf9 \strokec9 ;\cf13 \strokec13 name\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 em\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 name\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf14 \strokec14 Object\cf9 \strokec9 .\cf11 \strokec11 assign\cf9 \strokec9 (\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "span"\cf9 \strokec9 ),\{\cf6 \strokec6 textContent:country\cf9 \strokec9 \}));\cf13 \strokec13 row\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 name\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 container\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 container\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "bar-container"\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 let\cf9 \strokec9  \cf6 \strokec6 last\cf9 \strokec9 =\cf4 \strokec4 null\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf6 \strokec6 obj\cf9 \strokec9 .\cf6 \strokec6 segments\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 s\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 seg\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 seg\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "bar-segment"\cf9 \strokec9 ;\cf13 \strokec13 seg\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 width\cf9 \strokec9 =\cf7 \strokec7 `\cf4 \strokec4 $\{\cf9 \strokec9 (\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 value\cf9 \strokec9 /\cf13 \strokec13 maxTotal\cf9 \strokec9 )*\cf10 \strokec10 100\cf4 \strokec4 \}\cf7 \strokec7 %`\cf9 \strokec9 ;\cf13 \strokec13 seg\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 backgroundColor\cf9 \strokec9 =\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ;\cf13 \strokec13 seg\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 =\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 lbl\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "span"\cf9 \strokec9 );\cf13 \strokec13 lbl\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "seg-label"\cf9 \strokec9 ;\cf13 \strokec13 lbl\cf9 \strokec9 .\cf6 \strokec6 textContent\cf9 \strokec9 =\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 value\cf9 \strokec9 .\cf11 \strokec11 toFixed\cf9 \strokec9 (\cf10 \strokec10 2\cf9 \strokec9 );\cf13 \strokec13 seg\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 lbl\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf13 \strokec13 seg\cf9 \strokec9 .\cf11 \strokec11 addEventListener\cf9 \strokec9 (\cf7 \strokec7 "mouseenter"\cf9 \strokec9 ,()\cf4 \strokec4 =>\cf11 \strokec11 hoverColor\cf9 \strokec9 (\cf13 \strokec13 seg\cf9 \strokec9 ));\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf13 \strokec13 seg\cf9 \strokec9 .\cf11 \strokec11 addEventListener\cf9 \strokec9 (\cf7 \strokec7 "mouseleave"\cf9 \strokec9 ,\cf11 \strokec11 hoverEnd\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf13 \strokec13 seg\cf9 \strokec9 .\cf11 \strokec11 addEventListener\cf9 \strokec9 (\cf7 \strokec7 "click"\cf9 \strokec9 ,\cf6 \strokec6 e\cf4 \strokec4 =>\cf9 \strokec9 \{\cf6 \strokec6 e\cf9 \strokec9 .\cf11 \strokec11 stopPropagation\cf9 \strokec9 ();\cf11 \strokec11 toggleSelect\cf9 \strokec9 (\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 );\});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf6 \strokec6 last\cf9 \strokec9 =\cf13 \strokec13 seg\cf9 \strokec9 ;\cf13 \strokec13 container\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 seg\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf12 \strokec12 if\cf9 \strokec9 (\cf6 \strokec6 last\cf9 \strokec9 )\cf6 \strokec6 last\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 last\cf9 \strokec9 =\cf7 \strokec7 "1"\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 sum\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 sum\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "row-sum"\cf9 \strokec9 ;\cf13 \strokec13 sum\cf9 \strokec9 .\cf6 \strokec6 textContent\cf9 \strokec9 =\cf6 \strokec6 obj\cf9 \strokec9 .\cf6 \strokec6 total\cf9 \strokec9 .\cf11 \strokec11 toFixed\cf9 \strokec9 (\cf10 \strokec10 2\cf9 \strokec9 );\cf13 \strokec13 sum\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 left\cf9 \strokec9 =\cf7 \strokec7 `\cf4 \strokec4 $\{\cf9 \strokec9 (\cf6 \strokec6 obj\cf9 \strokec9 .\cf6 \strokec6 total\cf9 \strokec9 /\cf13 \strokec13 maxTotal\cf9 \strokec9 )*\cf10 \strokec10 100\cf4 \strokec4 \}\cf7 \strokec7 %`\cf9 \strokec9 ;\cf13 \strokec13 container\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 sum\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 row\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 container\cf9 \strokec9 );\cf13 \strokec13 chart\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 row\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf11 \strokec11 buildLegend\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf11 \strokec11 updateDisplay\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf4 \cb3 \strokec4 function\cf9 \strokec9  \cf11 \strokec11 buildLegend\cf9 \strokec9 ()\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 legend\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 getElementById\cf9 \strokec9 (\cf7 \strokec7 "legend"\cf9 \strokec9 );\cf13 \strokec13 legend\cf9 \strokec9 .\cf6 \strokec6 innerHTML\cf9 \strokec9 =\cf7 \strokec7 ""\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 domains\cf9 \strokec9 =[...\cf4 \strokec4 new\cf9 \strokec9  \cf14 \strokec14 Set\cf9 \strokec9 (\cf13 \strokec13 data\cf9 \strokec9 .\cf11 \strokec11 map\cf9 \strokec9 (\cf6 \strokec6 d\cf4 \strokec4 =>\cf6 \strokec6 d\cf9 \strokec9 .\cf6 \strokec6 domain\cf9 \strokec9 ))];\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf13 \strokec13 domains\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 dom\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 color\cf9 \strokec9 =\cf13 \strokec13 data\cf9 \strokec9 .\cf11 \strokec11 find\cf9 \strokec9 (\cf6 \strokec6 d\cf4 \strokec4 =>\cf6 \strokec6 d\cf9 \strokec9 .\cf6 \strokec6 domain\cf9 \strokec9 ===\cf6 \strokec6 dom\cf9 \strokec9 ).\cf6 \strokec6 color\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 item\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "div"\cf9 \strokec9 );\cf13 \strokec13 item\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "legend-item"\cf9 \strokec9 ;\cf13 \strokec13 item\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 metric\cf9 \strokec9 =\cf6 \strokec6 dom\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 sw\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createElement\cf9 \strokec9 (\cf7 \strokec7 "span"\cf9 \strokec9 );\cf13 \strokec13 sw\cf9 \strokec9 .\cf6 \strokec6 className\cf9 \strokec9 =\cf7 \strokec7 "legend-swatch"\cf9 \strokec9 ;\cf13 \strokec13 sw\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 backgroundColor\cf9 \strokec9 =\cf13 \strokec13 color\cf9 \strokec9 ;\cf13 \strokec13 item\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 sw\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 item\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 createTextNode\cf9 \strokec9 (\cf6 \strokec6 dom\cf9 \strokec9 ));\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 item\cf9 \strokec9 .\cf6 \strokec6 classList\cf9 \strokec9 .\cf11 \strokec11 toggle\cf9 \strokec9 (\cf7 \strokec7 "active"\cf9 \strokec9 ,\cf6 \strokec6 sortMetric\cf9 \strokec9 ===\cf6 \strokec6 dom\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 item\cf9 \strokec9 .\cf11 \strokec11 onclick\cf9 \strokec9 =\cf6 \strokec6 e\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf6 \strokec6 e\cf9 \strokec9 .\cf11 \strokec11 stopPropagation\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf6 \strokec6 sortMetric\cf9 \strokec9 =(\cf6 \strokec6 sortMetric\cf9 \strokec9 ===\cf6 \strokec6 dom\cf9 \strokec9 )?\cf4 \strokec4 null\cf9 \strokec9 :\cf6 \strokec6 dom\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf11 \strokec11 buildChart\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \};\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 legend\cf9 \strokec9 .\cf11 \strokec11 appendChild\cf9 \strokec9 (\cf13 \strokec13 item\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf4 \cb3 \strokec4 function\cf9 \strokec9  \cf11 \strokec11 hoverColor\cf9 \strokec9 (\cf6 \strokec6 seg\cf9 \strokec9 )\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 col\cf9 \strokec9 =\cf6 \strokec6 seg\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 querySelectorAll\cf9 \strokec9 (\cf7 \strokec7 ".row-sum"\cf9 \strokec9 ).\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 r\cf4 \strokec4 =>\cf6 \strokec6 r\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 "0"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 querySelectorAll\cf9 \strokec9 (\cf7 \strokec7 ".bar-segment"\cf9 \strokec9 ).\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 s\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 boxShadow\cf9 \strokec9 =\cf7 \strokec7 ""\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 l\cf9 \strokec9 =\cf6 \strokec6 s\cf9 \strokec9 .\cf11 \strokec11 querySelector\cf9 \strokec9 (\cf7 \strokec7 ".seg-label"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf12 \strokec12 if\cf9 \strokec9 (\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ===\cf13 \strokec13 col\cf9 \strokec9 )\{\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 "1"\cf9 \strokec9 ;\cf13 \strokec13 l\cf9 \strokec9 .\cf6 \strokec6 classList\cf9 \strokec9 .\cf11 \strokec11 add\cf9 \strokec9 (\cf7 \strokec7 "visible"\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf12 \strokec12 else\cf9 \strokec9  \cf12 \strokec12 if\cf9 \strokec9 (!\cf13 \strokec13 selected\cf9 \strokec9 .\cf11 \strokec11 has\cf9 \strokec9 (\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ))\{\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 "0.25"\cf9 \strokec9 ;\cf13 \strokec13 l\cf9 \strokec9 .\cf6 \strokec6 classList\cf9 \strokec9 .\cf11 \strokec11 remove\cf9 \strokec9 (\cf7 \strokec7 "visible"\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf6 \strokec6 seg\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 boxShadow\cf9 \strokec9 =\cf7 \strokec7 `0 0 14px 4px \cf4 \strokec4 $\{\cf13 \strokec13 col\cf4 \strokec4 \}\cf7 \strokec7 `\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf4 \cb3 \strokec4 function\cf9 \strokec9  \cf11 \strokec11 hoverEnd\cf9 \strokec9 ()\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 querySelectorAll\cf9 \strokec9 (\cf7 \strokec7 ".row-sum"\cf9 \strokec9 ).\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 r\cf4 \strokec4 =>\cf6 \strokec6 r\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 "1"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 querySelectorAll\cf9 \strokec9 (\cf7 \strokec7 ".bar-segment"\cf9 \strokec9 ).\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 s\cf4 \strokec4 =>\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 boxShadow\cf9 \strokec9 =\cf7 \strokec7 ""\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf11 \strokec11 updateDisplay\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf4 \cb3 \strokec4 function\cf9 \strokec9  \cf11 \strokec11 toggleSelect\cf9 \strokec9 (\cf6 \strokec6 col\cf9 \strokec9 )\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf12 \strokec12 if\cf9 \strokec9 (\cf13 \strokec13 selected\cf9 \strokec9 .\cf11 \strokec11 has\cf9 \strokec9 (\cf6 \strokec6 col\cf9 \strokec9 ))\{\cf13 \strokec13 selected\cf9 \strokec9 .\cf11 \strokec11 delete\cf9 \strokec9 (\cf6 \strokec6 col\cf9 \strokec9 );\}\cf12 \strokec12 else\cf9 \strokec9 \{\cf13 \strokec13 selected\cf9 \strokec9 .\cf11 \strokec11 add\cf9 \strokec9 (\cf6 \strokec6 col\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf11 \strokec11 updateDisplay\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf4 \cb3 \strokec4 function\cf9 \strokec9  \cf11 \strokec11 updateDisplay\cf9 \strokec9 ()\{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 segs\cf9 \strokec9 =\cf6 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 querySelectorAll\cf9 \strokec9 (\cf7 \strokec7 ".bar-segment"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf12 \strokec12 if\cf9 \strokec9 (\cf13 \strokec13 selected\cf9 \strokec9 .\cf6 \strokec6 size\cf9 \strokec9 ===\cf10 \strokec10 0\cf9 \strokec9 )\{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 segs\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 s\cf4 \strokec4 =>\cf9 \strokec9 \{\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 ""\cf9 \strokec9 ;\cf6 \strokec6 s\cf9 \strokec9 .\cf11 \strokec11 querySelector\cf9 \strokec9 (\cf7 \strokec7 ".seg-label"\cf9 \strokec9 ).\cf6 \strokec6 classList\cf9 \strokec9 .\cf11 \strokec11 remove\cf9 \strokec9 (\cf7 \strokec7 "visible"\cf9 \strokec9 );\});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \}\cf12 \strokec12 else\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \cf13 \strokec13 segs\cf9 \strokec9 .\cf11 \strokec11 forEach\cf9 \strokec9 (\cf6 \strokec6 s\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf4 \strokec4 const\cf9 \strokec9  \cf13 \strokec13 l\cf9 \strokec9 =\cf6 \strokec6 s\cf9 \strokec9 .\cf11 \strokec11 querySelector\cf9 \strokec9 (\cf7 \strokec7 ".seg-label"\cf9 \strokec9 );\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf12 \strokec12 if\cf9 \strokec9 (\cf13 \strokec13 selected\cf9 \strokec9 .\cf11 \strokec11 has\cf9 \strokec9 (\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 dataset\cf9 \strokec9 .\cf6 \strokec6 color\cf9 \strokec9 ))\{\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 "1"\cf9 \strokec9 ;\cf13 \strokec13 l\cf9 \strokec9 .\cf6 \strokec6 classList\cf9 \strokec9 .\cf11 \strokec11 add\cf9 \strokec9 (\cf7 \strokec7 "visible"\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9    \cf12 \strokec12 else\cf9 \strokec9 \{\cf6 \strokec6 s\cf9 \strokec9 .\cf6 \strokec6 style\cf9 \strokec9 .\cf6 \strokec6 opacity\cf9 \strokec9 =\cf7 \strokec7 "0.25"\cf9 \strokec9 ;\cf13 \strokec13 l\cf9 \strokec9 .\cf6 \strokec6 classList\cf9 \strokec9 .\cf11 \strokec11 remove\cf9 \strokec9 (\cf7 \strokec7 "visible"\cf9 \strokec9 );\}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9   \});\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \}\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \}\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf6 \cb3 \strokec6 document\cf9 \strokec9 .\cf11 \strokec11 addEventListener\cf9 \strokec9 (\cf7 \strokec7 "click"\cf9 \strokec9 ,()\cf4 \strokec4 =>\cf9 \strokec9 \{\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf9 \cb3 \strokec9  \cf13 \strokec13 selected\cf9 \strokec9 .\cf11 \strokec11 clear\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf6 \strokec6 sortMetric\cf9 \strokec9 =\cf4 \strokec4 null\cf9 \strokec9 ;\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9  \cf11 \strokec11 buildChart\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\cf9 \cb3 \strokec9 \});\cf5 \cb1 \strokec5 \
-\
-\pard\pardeftab720\partightenfactor0
-\cf11 \cb3 \strokec11 buildChart\cf9 \strokec9 ();\cf5 \cb1 \strokec5 \
-\pard\pardeftab720\partightenfactor0
-\cf2 \cb3 \strokec2 </\cf4 \strokec4 script\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 </\cf4 \strokec4 body\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
-\cf2 \cb3 \strokec2 </\cf4 \strokec4 html\cf2 \strokec2 >\cf5 \cb1 \strokec5 \
+#chart-wrapper{max-width:900px; margin:0 auto; background:rgba(158,158,158,.15); border-radius:12px; padding:16px 20px;}
+#chart{position:relative;}
+
+.chart-row{display:flex; align-items:center; margin-bottom:calc(8px*var(--gap-scale));}
+.position-label{width:35px; text-align:center; color:#000; font-weight:700; margin-right:10px;}
+.name-cell{display:flex; align-items:center; justify-content:flex-end; text-align:right; flex:0 0 160px; margin-right:10px;}
+.name-cell span{font-size:.83em;}
+.name-cell .emoji{font-size:1.2em; margin-right:5px;}
+.bar-container{position:relative; display:flex; height:24px;cursor:pointer; flex-grow:1; border-radius:4px; overflow:visible;}
+.bar-segment{position:relative; height:100%; transition:box-shadow .3s ease, opacity .3s ease;}
+.bar-segment:first-child{border-top-left-radius:4px; border-bottom-left-radius:4px;}
+.bar-segment[data-last="1"]{border-top-right-radius:4px; border-bottom-right-radius:4px;}
+.seg-label{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:.8em; font-weight:700;color:#fff; opacity:0; transition:opacity .25s ease; pointer-events:none; white-space:nowrap;}
+.seg-label.visible{opacity:1;}
+.row-sum{position:absolute; top:50%; transform:translateY(-50%); margin-left:4px; font-size:.8em; font-weight:700; color:#333; pointer-events:none; transition:opacity .25s ease;}
+#legend{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; align-items:center; justify-content:center;}
+.legend-item{display:flex;align-items:center;font-size:.85em;cursor:pointer;transition:box-shadow .2s ease;}
+.legend-item.active{box-shadow:0 0 10px 3px rgba(0,0,0,.4);}
+.legend-swatch{width:14px; height:14px; border-radius:2px; margin-right:6px;}
+@media (max-width:600px){
+ body{font-size:calc(12px*var(--font-scale)); padding:10px;}
+ .position-label{width:32px; font-size:.9em;}
+ .bar-container{height:20px;}
 }
+</style>
+</head>
+<body>
+<div id="chart-wrapper">
+  <div id="chart"></div>
+  <div id="legend"></div>
+</div>
+<script>
+const data=[{id:"United States",domain:"Rank1",color:"#FFD21E",value:78.88,emoji:"🇺🇸"},{id:"United States",domain:"Rank2",color:"#3C76B0",value:10.5},{id:"United States",domain:"Rank3",color:"#70CA6D",value:5.2},{id:"China",domain:"Rank1",color:"#FFD21E",value:46.89,emoji:"🇨🇳"},{id:"China",domain:"Rank2",color:"#3C76B0",value:17.67},{id:"China",domain:"Rank3",color:"#70CA6D",value:25.71},{id:"Japan",domain:"Rank1",color:"#FFD21E",value:40.2,emoji:"🇯🇵"},{id:"Japan",domain:"Rank2",color:"#3C76B0",value:18.3},{id:"Japan",domain:"Rank3",color:"#70CA6D",value:22.1},{id:"Germany",domain:"Rank1",color:"#FFD21E",value:30.5,emoji:"🇩🇪"},{id:"Germany",domain:"Rank2",color:"#3C76B0",value:20.1},{id:"Germany",domain:"Rank3",color:"#70CA6D",value:15.4},{id:"Canada",domain:"Rank1",color:"#FFD21E",value:28.5,emoji:"🇨🇦"},{id:"Canada",domain:"Rank2",color:"#3C76B0",value:17.2},{id:"Canada",domain:"Rank3",color:"#70CA6D",value:14.3},{id:"Brazil",domain:"Rank1",color:"#FFD21E",value:25.7,emoji:"🇧🇷"},{id:"Brazil",domain:"Rank2",color:"#3C76B0",value:15.4},{id:"Brazil",domain:"Rank3",color:"#70CA6D",value:10.9},{id:"India",domain:"Rank1",color:"#FFD21E",value:35.6,emoji:"🇮🇳"},{id:"India",domain:"Rank2",color:"#3C76B0",value:19.5},{id:"India",domain:"Rank3",color:"#70CA6D",value:12.1},{id:"Australia",domain:"Rank1",color:"#FFD21E",value:22.8,emoji:"🇦🇺"},{id:"Australia",domain:"Rank2",color:"#3C76B0",value:14.3},{id:"Australia",domain:"Rank3",color:"#70CA6D",value:9.6},{id:"France",domain:"Rank1",color:"#FFD21E",value:29.2,emoji:"🇫🇷"},{id:"France",domain:"Rank2",color:"#3C76B0",value:16.7},{id:"France",domain:"Rank3",color:"#70CA6D",value:11.4},{id:"Spain",domain:"Rank1",color:"#FFD21E",value:26.4,emoji:"🇪🇸"},{id:"Spain",domain:"Rank2",color:"#3C76B0",value:15.8},{id:"Spain",domain:"Rank3",color:"#70CA6D",value:12.2},{id:"Italy",domain:"Rank1",color:"#FFD21E",value:24.7,emoji:"🇮🇹"},{id:"Italy",domain:"Rank2",color:"#3C76B0",value:14.1},{id:"Italy",domain:"Rank3",color:"#70CA6D",value:11.3},{id:"South Korea",domain:"Rank1",color:"#FFD21E",value:27.3,emoji:"🇰🇷"},{id:"South Korea",domain:"Rank2",color:"#3C76B0",value:16.5},{id:"South Korea",domain:"Rank3",color:"#70CA6D",value:13.0},{id:"Netherlands",domain:"Rank1",color:"#FFD21E",value:23.4,emoji:"🇳🇱"},{id:"Netherlands",domain:"Rank2",color:"#3C76B0",value:15.2},{id:"Netherlands",domain:"Rank3",color:"#70CA6D",value:12.8},{id:"Mexico",domain:"Rank1",color:"#FFD21E",value:21.7},{id:"Mexico",domain:"Rank2",color:"#3C76B0",value:13.9},{id:"Mexico",domain:"Rank3",color:"#70CA6D",value:11.0},{id:"Switzerland",domain:"Rank1",color:"#FFD21E",value:24.9,emoji:"🇨🇭"},{id:"Switzerland",domain:"Rank2",color:"#3C76B0",value:17.1},{id:"Switzerland",domain:"Rank3",color:"#70CA6D",value:13.6}];
+
+const selected=new Set();
+let sortMetric=null;
+
+function buildChart(){
+ const grouped={};
+ data.forEach(d=>{
+  if(!grouped[d.id])grouped[d.id]={emoji:d.emoji||null,segments:[]};
+  grouped[d.id].segments.push({domain:d.domain,color:d.color,value:d.value});
+ });
+ const rows=Object.entries(grouped);
+ rows.forEach(r=>r[1].total=r[1].segments.reduce((s,x)=>s+x.value,0));
+ if(sortMetric){
+  rows.sort((a,b)=>{
+   const av=a[1].segments.find(x=>x.domain===sortMetric)?.value||0;
+   const bv=b[1].segments.find(x=>x.domain===sortMetric)?.value||0;
+   return bv-av;
+  });
+ }else{
+  rows.sort((a,b)=>b[1].total-a[1].total);
+ }
+ const maxTotal=Math.max(...rows.map(r=>r[1].total));
+ const chart=document.getElementById("chart");chart.innerHTML="";
+ rows.forEach(([country,obj],i)=>{
+  const row=document.createElement("div");row.className="chart-row";
+  const rank=document.createElement("div");rank.className="position-label";rank.textContent=`#${i+1}`;row.appendChild(rank);
+  const name=document.createElement("div");name.className="name-cell";
+  if(obj.emoji){const em=document.createElement("span");em.className="emoji";em.textContent=obj.emoji;name.appendChild(em);}
+  name.appendChild(Object.assign(document.createElement("span"),{textContent:country}));row.appendChild(name);
+  const container=document.createElement("div");container.className="bar-container";
+  let last=null;
+  obj.segments.forEach(s=>{
+   const seg=document.createElement("div");seg.className="bar-segment";seg.style.width=`${(s.value/maxTotal)*100}%`;seg.style.backgroundColor=s.color;seg.dataset.color=s.color;
+   const lbl=document.createElement("span");lbl.className="seg-label";lbl.textContent=s.value.toFixed(2);seg.appendChild(lbl);
+   seg.addEventListener("mouseenter",()=>hoverColor(seg));
+   seg.addEventListener("mouseleave",hoverEnd);
+   seg.addEventListener("click",e=>{e.stopPropagation();toggleSelect(s.color);});
+   last=seg;container.appendChild(seg);
+  });
+  if(last)last.dataset.last="1";
+  const sum=document.createElement("div");sum.className="row-sum";sum.textContent=obj.total.toFixed(2);sum.style.left=`${(obj.total/maxTotal)*100}%`;container.appendChild(sum);
+  row.appendChild(container);chart.appendChild(row);
+ });
+ buildLegend();
+ updateDisplay();
+}
+
+function buildLegend(){
+ const legend=document.getElementById("legend");legend.innerHTML="";
+ const domains=[...new Set(data.map(d=>d.domain))];
+ domains.forEach(dom=>{
+  const color=data.find(d=>d.domain===dom).color;
+  const item=document.createElement("div");item.className="legend-item";item.dataset.metric=dom;
+  const sw=document.createElement("span");sw.className="legend-swatch";sw.style.backgroundColor=color;item.appendChild(sw);
+  item.appendChild(document.createTextNode(dom));
+  item.classList.toggle("active",sortMetric===dom);
+  item.onclick=e=>{
+   e.stopPropagation();
+   sortMetric=(sortMetric===dom)?null:dom;
+   buildChart();
+  };
+  legend.appendChild(item);
+ });
+}
+
+function hoverColor(seg){
+ const col=seg.dataset.color;
+ document.querySelectorAll(".row-sum").forEach(r=>r.style.opacity="0");
+ document.querySelectorAll(".bar-segment").forEach(s=>{
+  s.style.boxShadow="";
+  const l=s.querySelector(".seg-label");
+  if(s.dataset.color===col){s.style.opacity="1";l.classList.add("visible");}
+  else if(!selected.has(s.dataset.color)){s.style.opacity="0.25";l.classList.remove("visible");}
+ });
+ seg.style.boxShadow=`0 0 14px 4px ${col}`;
+}
+
+function hoverEnd(){
+ document.querySelectorAll(".row-sum").forEach(r=>r.style.opacity="1");
+ document.querySelectorAll(".bar-segment").forEach(s=>s.style.boxShadow="");
+ updateDisplay();
+}
+
+function toggleSelect(col){
+ if(selected.has(col)){selected.delete(col);}else{selected.add(col);}
+ updateDisplay();
+}
+
+function updateDisplay(){
+ const segs=document.querySelectorAll(".bar-segment");
+ if(selected.size===0){
+  segs.forEach(s=>{s.style.opacity="";s.querySelector(".seg-label").classList.remove("visible");});
+ }else{
+  segs.forEach(s=>{
+   const l=s.querySelector(".seg-label");
+   if(selected.has(s.dataset.color)){s.style.opacity="1";l.classList.add("visible");}
+   else{s.style.opacity="0.25";l.classList.remove("visible");}
+  });
+ }
+}
+
+document.addEventListener("click",()=>{
+ selected.clear();
+ sortMetric=null;
+ buildChart();
+});
+
+buildChart();
+</script>
+</body>
+</html>
