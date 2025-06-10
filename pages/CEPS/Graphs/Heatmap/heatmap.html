@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DST heatmap</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    body {font-family: sans-serif; margin: 0; padding: 0; }
+    #heatmap {width: 100%; max-width: 600px; margin: 0 auto;}
+    #heatmap svg {width: 100%; height: auto; display: block;}
+    .tooltip {
+      position: absolute; background: white; padding: 5px;
+      border: 1px solid #ccc; border-radius: 4px;
+      pointer-events: none; font-size: 12px; opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .axis text {font-size: 12px;}
+    rect {stroke: none;}
+  </style>
+</head>
+<body>
+  <div id="heatmap"></div>
+  <div class="tooltip"></div>
+  <script>
+    const data = [
+      {from:"A",to:"W", value:25, index_from:0,index_to:4, color:"#4101E9"},
+      {from:"A",to:"X", value:30, index_from:0,index_to:3, color:"#440154"},
+      {from:"A",to:"Y", value:80, index_from:0,index_to:2, color:"#482878"},
+      {from:"A",to:"Z", value:45, index_from:0,index_to:1, color:"#3E4989"},
+      {from:"A",to:"V", value:55, index_from:0,index_to:0, color:"#31688E"},
+      {from:"B",to:"W", value:80, index_from:1,index_to:4, color:"#231EFE"},
+      {from:"B",to:"X", value:60, index_from:1,index_to:3, color:"#31688E"},
+      {from:"B",to:"Y", value:20, index_from:1,index_to:2, color:"#26828E"},
+      {from:"B",to:"Z", value:90, index_from:1,index_to:1, color:"#1F9E89"},
+      {from:"B",to:"V", value:35, index_from:1,index_to:0, color:"#35B779"},
+      {from:"C",to:"W", value:85, index_from:2,index_to:4, color:"#6DCD59"},
+      {from:"C",to:"X", value:10, index_from:2,index_to:3, color:"#35B779"},
+      {from:"C",to:"Y", value:50, index_from:2,index_to:2, color:"#6DCD59"},
+      {from:"C",to:"Z", value:70, index_from:2,index_to:1, color:"#B4DE2C"},
+      {from:"C",to:"V", value:65, index_from:2,index_to:0, color:"#FDE725"},
+      {from:"D",to:"W", value:55, index_from:3,index_to:4, color:"#FDE725"},
+      {from:"D",to:"X", value:40, index_from:3,index_to:3, color:"#3E4989"},
+      {from:"D",to:"Y", value:15, index_from:3,index_to:2, color:"#26828E"},
+      {from:"D",to:"Z", value:95, index_from:3,index_to:1, color:"#440154"},
+      {from:"D",to:"V", value:75, index_from:3,index_to:0, color:"#482878"},
+      {from:"E",to:"W", value:45, index_from:4,index_to:4, color:"#3E4989"},
+      {from:"E",to:"X", value:70, index_from:4,index_to:3, color:"#482878"},
+      {from:"E",to:"Y", value:25, index_from:4,index_to:2, color:"#31688E"},
+      {from:"E",to:"Z", value:85, index_from:4,index_to:1, color:"#26828E"},
+      {from:"E",to:"V", value:95, index_from:4,index_to:0, color:"#35B779"}
+    ];
+
+    const margin = {top: 30, right: 30, bottom: 30, left: 30};
+    const size = 450;
+    const width = size + margin.left + margin.right;
+    const height = size + margin.top + margin.bottom;
+
+    const svg = d3.select("#heatmap")
+      .append("svg")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+      .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const tooltip = d3.select(".tooltip");
+    const x = d3.scaleBand().range([0, size]).padding(0.05);
+    const y = d3.scaleBand().range([size, 0]).padding(0.05);
+    const xAxisG = svg.append("g").attr("transform", `translate(0,${size})`);
+    const yAxisG = svg.append("g");
+
+    let rowOrder = Array.from(new Set(data.map(d => d.from)));
+    let colOrder = Array.from(new Set(data.map(d => d.to)));
+
+    const idxFrom = new Map(data.map(d => [d.from, d.index_from]));
+    const idxTo = new Map(data.map(d => [d.to, d.index_to]));
+
+    function updateHeatmap() {
+      x.domain(rowOrder);
+      y.domain(colOrder);
+      xAxisG.call(d3.axisBottom(x).tickSize(0)).select(".domain").remove();
+      yAxisG.call(d3.axisLeft(y).tickSize(0)).select(".domain").remove();
+      const bw = x.bandwidth(), bh = y.bandwidth();
+      const dx = bw * 0.02, dy = bh * 0.02;
+
+      const cells = svg.selectAll("rect").data(data, d => d.from + ":" + d.to);
+
+      cells.join("rect")
+        .attr("x", d => x(d.from))
+        .attr("y", d => y(d.to))
+        .attr("width", bw)
+        .attr("height", bh)
+        .style("fill", d => d.color)
+        .style("opacity", 0.8)
+        .on("mouseover", (event, d) => {
+          d3.select(event.currentTarget).raise()
+            .transition().duration(100)
+            .style("stroke", "#000").style("stroke-width","3px")
+            .attr("x", x(d.from)-dx).attr("y", y(d.to)-dy)
+            .attr("width", bw+2*dx).attr("height", bh+2*dy);
+          tooltip.style("opacity", 1)
+                 .html(`Value: ${d.value}`);
+        })
+        .on("mousemove", event => {
+          tooltip.style("left", (event.pageX + 10) + "px")
+                 .style("top",  (event.pageY - 28) + "px");
+        })
+        .on("mouseout", (event, d) => {
+          d3.select(event.currentTarget)
+            .transition().duration(100)
+            .style("stroke-width", "0px")
+            .attr("x", x(d.from)).attr("y", y(d.to))
+            .attr("width", bw).attr("height", bh);
+          tooltip.style("opacity", 0);
+        });
+    }
+
+    function sortData(option) {
+      const groups = Array.from(idxFrom.keys());
+      const vars   = Array.from(idxTo.keys());
+      switch(option) {
+        case "from":
+          rowOrder = groups.slice().sort(d3.ascending);
+          colOrder = vars;
+          break;
+        case "to":
+          rowOrder = groups;
+          colOrder = vars.slice().sort(d3.ascending);
+          break;
+        case "rowSum":
+          rowOrder = Array.from(d3.rollup(data, v=>d3.sum(v,d=>d.value), d=>d.from))
+                         .sort((a,b)=>b[1]-a[1]).map(d=>d[0]);
+          colOrder = vars;
+          break;
+        case "colSum":
+          colOrder = Array.from(d3.rollup(data, v=>d3.sum(v,d=>d.value), d=>d.to))
+                         .sort((a,b)=>b[1]-a[1]).map(d=>d[0]);
+          rowOrder = groups;
+          break;
+        case "rowMedian":
+          rowOrder = Array.from(d3.rollup(data, v=>d3.median(v,d=>d.value), d=>d.from))
+                         .sort((a,b)=>b[1]-a[1]).map(d=>d[0]);
+          colOrder = vars;
+          break;
+        case "colMedian":
+          colOrder = Array.from(d3.rollup(data, v=>d3.median(v,d=>d.value), d=>d.to))
+                         .sort((a,b)=>b[1]-a[1]).map(d=>d[0]);
+          rowOrder = groups;
+          break;
+        case "index_from":
+          rowOrder = groups.slice().sort((a,b)=>idxFrom.get(a)-idxFrom.get(b));
+          colOrder = vars;
+          break;
+        case "index_to":
+          colOrder = vars.slice().sort((a,b)=>idxTo.get(a)-idxTo.get(b));
+          rowOrder = groups;
+          break;
+      }
+      updateHeatmap();
+    }
+
+    const sortOption = "rowSum";
+    sortData(sortOption);
+  </script>
+</body>
+</html>
