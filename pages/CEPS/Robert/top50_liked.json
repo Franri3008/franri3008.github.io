@@ -1,0 +1,502 @@
+[
+  {
+    "id": "fka/awesome-chatgpt-prompts",
+    "name": "fka",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 8006,
+    "downloads_all_time": 188184,
+    "downloads": 22907,
+    "likes": 8006
+  },
+  {
+    "id": "HuggingFaceFW/fineweb",
+    "name": "HuggingFaceFW",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 2203,
+    "downloads_all_time": 3723068,
+    "downloads": 209694,
+    "likes": 2203
+  },
+  {
+    "id": "Open-Orca/OpenOrca",
+    "name": "Open-Orca",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 1413,
+    "downloads_all_time": 385213,
+    "downloads": 8990,
+    "likes": 1413
+  },
+  {
+    "id": "OpenAssistant/oasst1",
+    "name": "OpenAssistant",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 1399,
+    "downloads_all_time": 272800,
+    "downloads": 6249,
+    "likes": 1399
+  },
+  {
+    "id": "Anthropic/hh-rlhf",
+    "name": "Anthropic",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 1364,
+    "downloads_all_time": 1598842,
+    "downloads": 11040,
+    "likes": 1364
+  },
+  {
+    "id": "gsdf/EasyNegative",
+    "name": "gsdf",
+    "parent": "image",
+    "color": "#FF9D00",
+    "value": 1149,
+    "downloads_all_time": 308547,
+    "downloads": 24071,
+    "likes": 1149
+  },
+  {
+    "id": "togethercomputer/RedPajama-Data-1T",
+    "name": "togethercomputer",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 1092,
+    "downloads_all_time": 433688,
+    "downloads": 1991,
+    "likes": 1092
+  },
+  {
+    "id": "Nerfgun3/bad_prompt",
+    "name": "Nerfgun3",
+    "parent": "image",
+    "color": "#FF9D00",
+    "value": 925,
+    "downloads_all_time": 56852,
+    "downloads": 4405,
+    "likes": 925
+  },
+  {
+    "id": "allenai/dolma",
+    "name": "allenai",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 912,
+    "downloads_all_time": 356713,
+    "downloads": 1796,
+    "likes": 912
+  },
+  {
+    "id": "tiiuae/falcon-refinedweb",
+    "name": "tiiuae",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 857,
+    "downloads_all_time": 752693,
+    "downloads": 10055,
+    "likes": 857
+  },
+  {
+    "id": "wikimedia/wikipedia",
+    "name": "wikimedia",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 847,
+    "downloads_all_time": 1218765,
+    "downloads": 74863,
+    "likes": 847
+  },
+  {
+    "id": "bigcode/the-stack",
+    "name": "bigcode",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 829,
+    "downloads_all_time": 202471,
+    "downloads": 13979,
+    "likes": 829
+  },
+  {
+    "id": "databricks/databricks-dolly-15k",
+    "name": "databricks",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 826,
+    "downloads_all_time": 635978,
+    "downloads": 13408,
+    "likes": 826
+  },
+  {
+    "id": "anon8231489123/ShareGPT_Vicuna_unfiltered",
+    "name": "anon8231489123",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 800,
+    "downloads_all_time": 239137,
+    "downloads": 43191,
+    "likes": 800
+  },
+  {
+    "id": "openai/gsm8k",
+    "name": "openai",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 776,
+    "downloads_all_time": 5709237,
+    "downloads": 510808,
+    "likes": 776
+  },
+  {
+    "id": "tatsu-lab/alpaca",
+    "name": "tatsu-lab",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 774,
+    "downloads_all_time": 1412075,
+    "downloads": 37938,
+    "likes": 774
+  },
+  {
+    "id": "FreedomIntelligence/medical-o1-reasoning-SFT",
+    "name": "FreedomIntelligence",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 753,
+    "downloads_all_time": 80178,
+    "downloads": 9238,
+    "likes": 753
+  },
+  {
+    "id": "teknium/OpenHermes-2.5",
+    "name": "teknium",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 733,
+    "downloads_all_time": 133728,
+    "downloads": 3195,
+    "likes": 733
+  },
+  {
+    "id": "QingyiSi/Alpaca-CoT",
+    "name": "QingyiSi",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 731,
+    "downloads_all_time": 143955,
+    "downloads": 36198,
+    "likes": 731
+  },
+  {
+    "id": "open-thoughts/OpenThoughts-114k",
+    "name": "open-thoughts",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 714,
+    "downloads_all_time": 228559,
+    "downloads": 40080,
+    "likes": 714
+  },
+  {
+    "id": "HuggingFaceFW/fineweb-edu",
+    "name": "HuggingFaceFW",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 698,
+    "downloads_all_time": 3651729,
+    "downloads": 118343,
+    "likes": 698
+  },
+  {
+    "id": "yahma/alpaca-cleaned",
+    "name": "yahma",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 693,
+    "downloads_all_time": 684142,
+    "downloads": 24865,
+    "likes": 693
+  },
+  {
+    "id": "roneneldan/TinyStories",
+    "name": "roneneldan",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 684,
+    "downloads_all_time": 682696,
+    "downloads": 24879,
+    "likes": 684
+  },
+  {
+    "id": "lmsys/lmsys-chat-1m",
+    "name": "lmsys",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 682,
+    "downloads_all_time": 239174,
+    "downloads": 6172,
+    "likes": 682
+  },
+  {
+    "id": "Congliu/Chinese-DeepSeek-R1-Distill-data-110k",
+    "name": "Congliu",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 670,
+    "downloads_all_time": 15679,
+    "downloads": 1079,
+    "likes": 670
+  },
+  {
+    "id": "BAAI/Infinity-Instruct",
+    "name": "BAAI",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 639,
+    "downloads_all_time": 59310,
+    "downloads": 2768,
+    "likes": 639
+  },
+  {
+    "id": "m-a-p/COIG-CQIA",
+    "name": "m-a-p",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 635,
+    "downloads_all_time": 53572,
+    "downloads": 5250,
+    "likes": 635
+  },
+  {
+    "id": "HuggingFaceTB/cosmopedia",
+    "name": "HuggingFaceTB",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 621,
+    "downloads_all_time": 220212,
+    "downloads": 5280,
+    "likes": 621
+  },
+  {
+    "id": "legacy-datasets/wikipedia",
+    "name": "legacy-datasets",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 596,
+    "downloads_all_time": 2069500,
+    "downloads": 28715,
+    "likes": 596
+  },
+  {
+    "id": "proj-persona/PersonaHub",
+    "name": "proj-persona",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 594,
+    "downloads_all_time": 60445,
+    "downloads": 6358,
+    "likes": 594
+  },
+  {
+    "id": "open-r1/OpenR1-Math-220k",
+    "name": "open-r1",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 592,
+    "downloads_all_time": 156811,
+    "downloads": 27220,
+    "likes": 592
+  },
+  {
+    "id": "gretelai/synthetic_text_to_sql",
+    "name": "gretelai",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 559,
+    "downloads_all_time": 53913,
+    "downloads": 2993,
+    "likes": 559
+  },
+  {
+    "id": "liwu/MNBVC",
+    "name": "liwu",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 546,
+    "downloads_all_time": 176787,
+    "downloads": 15893,
+    "likes": 546
+  },
+  {
+    "id": "HuggingFaceH4/ultrachat_200k",
+    "name": "HuggingFaceH4",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 544,
+    "downloads_all_time": 562780,
+    "downloads": 17979,
+    "likes": 544
+  },
+  {
+    "id": "liuhaotian/LLaVA-Instruct-150K",
+    "name": "liuhaotian",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 522,
+    "downloads_all_time": 33503,
+    "downloads": 3035,
+    "likes": 522
+  },
+  {
+    "id": "uonlp/CulturaX",
+    "name": "uonlp",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 521,
+    "downloads_all_time": 301249,
+    "downloads": 7561,
+    "likes": 521
+  },
+  {
+    "id": "ILSVRC/imagenet-1k",
+    "name": "ILSVRC",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 518,
+    "downloads_all_time": 1149947,
+    "downloads": 31383,
+    "likes": 518
+  },
+  {
+    "id": "nvidia/Llama-Nemotron-Post-Training-Dataset",
+    "name": "nvidia",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 516,
+    "downloads_all_time": 26903,
+    "downloads": 9893,
+    "likes": 516
+  },
+  {
+    "id": "JosephusCheung/GuanacoDataset",
+    "name": "JosephusCheung",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 515,
+    "downloads_all_time": 14087,
+    "downloads": 31,
+    "likes": 515
+  },
+  {
+    "id": "facebook/natural_reasoning",
+    "name": "facebook",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 506,
+    "downloads_all_time": 23469,
+    "downloads": 1349,
+    "likes": 506
+  },
+  {
+    "id": "poloclub/diffusiondb",
+    "name": "poloclub",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 501,
+    "downloads_all_time": 2281572,
+    "downloads": 8367,
+    "likes": 501
+  },
+  {
+    "id": "HuggingFaceFW/fineweb-2",
+    "name": "HuggingFaceFW",
+    "parent": "tabular",
+    "color": "#106C4E",
+    "value": 495,
+    "downloads_all_time": 420375,
+    "downloads": 38242,
+    "likes": 495
+  },
+  {
+    "id": "cais/mmlu",
+    "name": "cais",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 491,
+    "downloads_all_time": 37596417,
+    "downloads": 161937,
+    "likes": 491
+  },
+  {
+    "id": "Gustavosta/Stable-Diffusion-Prompts",
+    "name": "Gustavosta",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 488,
+    "downloads_all_time": 130805,
+    "downloads": 6173,
+    "likes": 488
+  },
+  {
+    "id": "openai/MMMLU",
+    "name": "openai",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 488,
+    "downloads_all_time": 63748,
+    "downloads": 5415,
+    "likes": 488
+  },
+  {
+    "id": "HuggingFaceH4/no_robots",
+    "name": "HuggingFaceH4",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 483,
+    "downloads_all_time": 69634,
+    "downloads": 1714,
+    "likes": 483
+  },
+  {
+    "id": "cerebras/SlimPajama-627B",
+    "name": "cerebras",
+    "parent": "unknown",
+    "color": "#6B7280",
+    "value": 476,
+    "downloads_all_time": 1294074,
+    "downloads": 48786,
+    "likes": 476
+  },
+  {
+    "id": "Salesforce/wikitext",
+    "name": "Salesforce",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 466,
+    "downloads_all_time": 21250951,
+    "downloads": 693231,
+    "likes": 466
+  },
+  {
+    "id": "b-mc2/sql-create-context",
+    "name": "b-mc2",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 466,
+    "downloads_all_time": 130633,
+    "downloads": 2401,
+    "likes": 466
+  },
+  {
+    "id": "nvidia/OpenCodeReasoning",
+    "name": "nvidia",
+    "parent": "text",
+    "color": "#FFD21E",
+    "value": 466,
+    "downloads_all_time": 30584,
+    "downloads": 5364,
+    "likes": 466
+  }
+]
