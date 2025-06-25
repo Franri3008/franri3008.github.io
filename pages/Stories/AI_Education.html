@@ -11,16 +11,18 @@
       height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: stretch;
       background: #f4f6fa;
       font-family: Arial, sans-serif;
     }
     .chart-container {
       position: relative;
-      width: 80%;
-      max-width: 800px;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
       background: #fff;
       padding: 20px;
+      padding-bottom: 60px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
@@ -41,6 +43,8 @@
     }
     canvas {
       display: block;
+      width: 100% !important;
+      height: 100% !important;
     }
   </style>
 </head>
@@ -76,7 +80,7 @@
     const options = {
       indexAxis: 'y',
       responsive: true,
-      layout: { padding: 16 },
+      maintainAspectRatio: false,
       scales: {
         x: {
           max: 50,
