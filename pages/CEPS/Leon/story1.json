@@ -1,0 +1,22 @@
+{
+  "labels": [
+    "Claude Opus 4",
+    "DeepSeek-R1",
+    "Gemini-2.5-Pro",
+    "GPT-4.1",
+    "Grok-3-Beta"
+  ],
+  "datasets": [
+    {
+      "label": "Simulated Blackmail Rate",
+      "data": [0.96, 0.79, 0.95, 0.80, 0.80],
+      "backgroundColor": "rgba(54, 99, 235, 0.7)",
+      "borderRadius": 4
+    }
+  ],
+  "options": {
+    "xAxisLabel": "Simulated Blackmail Rate",
+    "yAxisLabel": "Model",
+    "maxX": 1.0
+  }
+}

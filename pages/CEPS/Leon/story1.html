@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2024 vs 2025 AI in Education</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      background: #f4f6fa;
+      font-family: Arial, sans-serif;
+    }
+    .chart-container {
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      padding: 20px;
+      padding-bottom: 60px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .chart-container .logo {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+    .chart-container .source {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: #888;
+      font-style: italic;
+    }
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    #surveyChart {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-container">
+    <div id="surveyChart"></div>
+    <a href="https://aiworld.eu/" target="_blank" rel="noopener">
+      <img id="logo" src="" class="logo" alt="Logo">
+    </a>
+    <div id="source" class="source"></div>
+  </div>
+  <script>
+    let jsonData;
+    let activeYears;
+    function initializeChart(config) {
+      jsonData = config;
+      activeYears = new Set(jsonData.datasets.map(ds => ds.label));
+      renderChart();
+    }
+
+    const logoUrl = 'https://aiworld.eu/logo-transparent.svg';
+    const sourceText = 'Source: Data from Anthoropic Research';
+
+    const showArrows = true;
+
+    fetch('./story1.json')
+      .then(res => res.json())
+      .then(config => initializeChart(config));
+
+    document.getElementById('logo').src = logoUrl;
+    document.getElementById('source').textContent = sourceText;
+
+    function renderChart() {
+      const categories = jsonData.labels;
+
+      const displayedDatasets = jsonData.datasets.filter(ds => activeYears.has(ds.label));
+      const displayedYears = displayedDatasets.map(ds => ds.label);
+      const chartDiv = document.getElementById('surveyChart');
+      chartDiv.innerHTML = '';
+
+      const canvasContext = document.createElement('canvas').getContext('2d');
+      canvasContext.font = '16px Arial';
+      const maxLabelWidth = d3.max(categories.map(cat => canvasContext.measureText(cat).width));
+      const margin = { top: 40, right: 20, bottom: 40, left: maxLabelWidth + 20 };
+      const width = chartDiv.clientWidth - margin.left - margin.right;
+      const height = chartDiv.clientHeight - margin.top - margin.bottom;
+      const svg = d3.select(chartDiv)
+        .append('svg')
+        .attr('width', chartDiv.clientWidth)
+        .attr('height', chartDiv.clientHeight)
+        .append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+
+      const tickSuffix = jsonData.options.unit !== undefined ? jsonData.options.unit : '%';
+
+      const x = d3.scaleLinear()
+        .domain([0, jsonData.options.maxX])
+        .range([0, width]);
+      const y0 = d3.scaleBand()
+        .domain(categories)
+        .range([0, height])
+        .paddingInner(0.2);
+      const y1 = d3.scaleBand()
+        .domain(displayedYears)
+        .range([0, y0.bandwidth()])
+        .padding(0.05);
+
+      const valueFontSize = Math.min(14, y1.bandwidth() * 0.5);
+
+      const yAxis = d3.axisLeft(y0);
+      const yAxisG = svg.append('g').call(yAxis);
+
+      const yLabelFontSize = Math.min(16, Math.max(10, y0.bandwidth() * 0.4));
+      yAxisG.selectAll('text')
+        .style('font-size', `${yLabelFontSize}px`);
+      svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(x).ticks(5).tickFormat(d => d + tickSuffix))
+        .selectAll('text')
+          .style('font-size', '14px');
+      svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height + margin.bottom - 5)
+        .attr('text-anchor', 'middle')
+        .text(jsonData.options.xAxisLabel);
+
+
+      if (jsonData.datasets.length > 1) {
+        const legendItems = svg.append('g').attr('transform', 'translate(0,-30)')
+          .selectAll('g.legend-item')
+          .data(jsonData.datasets.map(ds => ds.label))
+          .join('g')
+            .attr('class', 'legend-item')
+            .attr('transform', (d,i) => `translate(${i * 100},0)`)
+            .style('cursor', 'pointer')
+            .on('click', (event, year) => {
+              if (activeYears.has(year)) activeYears.delete(year);
+              else activeYears.add(year);
+              renderChart();
+            });
+        legendItems.append('rect')
+          .attr('width', 12)
+          .attr('height', 12)
+          .attr('fill', d => jsonData.datasets.find(ds => ds.label === d).backgroundColor)
+          .attr('opacity', d => activeYears.has(d) ? 1 : 0.3);
+        legendItems.append('text')
+          .attr('x', 16)
+          .attr('y', 10)
+          .attr('alignment-baseline', 'middle')
+          .text(d => d)
+          .attr('fill', d => activeYears.has(d) ? '#000' : '#888');
+      }
+
+      const groups = svg.selectAll('g.category')
+        .data(categories)
+        .join('g')
+        .attr('class', 'category')
+        .attr('transform', d => `translate(0,${y0(d)})`);
+
+      const bars = groups.selectAll('path.bar')
+        .data(cat => displayedDatasets.map(ds => ({
+          label: ds.label,
+          category: cat,
+          value: ds.data[categories.indexOf(cat)],
+          color: ds.backgroundColor,
+          borderRadius: ds.borderRadius
+        })));
+      bars.join('path')
+        .attr('class', 'bar')
+        .attr('d', d => {
+          const barY = y1(d.label);
+          const barHeight = y1.bandwidth();
+          const barWidth = x(d.value);
+          const r = Math.min(d.borderRadius, barHeight/2, barWidth/2);
+          return `M0,${barY} h${barWidth - r} a${r},${r},0,0,1,${r},${r} v${barHeight - 2*r} a${r},${r},0,0,1,-${r},${r} h-${barWidth - r} Z`;
+        })
+        .attr('fill', d => d.color);
+
+      groups.selectAll('text.value')
+        .data(cat => displayedDatasets.map(ds => ({
+          label: ds.label,
+          category: cat,
+          value: ds.data[categories.indexOf(cat)]
+        })))
+        .join('text')
+        .attr('class', 'value')
+        .attr('x', d => x(d.value) - 5)
+        .attr('y', d => y1(d.label) + y1.bandwidth() / 2)
+        .attr('dy', '0.35em')
+        .attr('fill', 'white')
+        .attr('text-anchor', 'end')
+        .style('font-weight', 'bold')
+        .style('font-size', `${valueFontSize}px`)
+        .text(d => d.value + '%');
+
+      if (showArrows && displayedDatasets.length > 1) {
+        const arrowFontSize = y1.bandwidth() * 0.5;
+        const arrowMargin = y1.bandwidth() * 0.2;
+        const arrowData = categories.flatMap(cat => {
+          return displayedDatasets.slice(1).map((ds, i) => {
+            const prev = displayedDatasets[i];
+            const idx = categories.indexOf(cat);
+            const prevVal = prev.data[idx];
+            const currVal = ds.data[idx];
+            const delta = currVal - prevVal;
+            return {
+              label: ds.label,
+              category: cat,
+              value: currVal,
+              delta: delta,
+              symbol: delta > 0 ? '→' : '←',
+              color: delta > 0 ? 'green' : 'red'
+            };
+          });
+        });
+
+        const arrowSel = groups.selectAll('text.arrow')
+          .data(cat => arrowData.filter(a => a.category === cat))
+          .join('text')
+            .attr('class', 'arrow')
+            .attr('x', d => x(d.value) + arrowMargin)
+            .attr('y', d => y1(d.label) + y1.bandwidth() / 1.8)
+            .attr('dy', '0.35em')
+            .attr('fill', d => d.color)
+            .style('font-size', `${arrowFontSize}px`)
+            .style('font-weight', 'bold')
+            .text(d => d.symbol);
+
+        groups.selectAll('text.delta')
+          .data(cat => arrowData.filter(a => a.category === cat))
+          .join('text')
+            .attr('class', 'delta')
+            .attr('x', d => x(d.value) + arrowMargin + arrowFontSize / 2)
+            .attr('y', d => y1(d.label) + y1.bandwidth() / 2)
+            .attr('dy', '-0.3em')
+            .attr('text-anchor', 'middle')
+            .attr('fill', d => d.color)
+            .style('font-size', `${arrowFontSize * 0.5}px`)
+            .text(d => (d.delta > 0 ? '+' : '') + d.delta + tickSuffix);
+      }
+
+      const container = document.querySelector('.chart-container');
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const logoEl = document.getElementById('logo');
+      const sourceEl = document.getElementById('source');
+
+      const logoSize = Math.min(cw * 0.1, ch * 0.15);
+      logoEl.style.width = logoSize + 'px';
+      logoEl.style.height = 'auto';
+
+      const srcFs = Math.min(18, Math.max(10, cw * 0.012));
+      sourceEl.style.fontSize = srcFs + 'px';
+    }
+
+    window.addEventListener('resize', renderChart);
+  </script>
+</body>
+</html>
