@@ -99,7 +99,7 @@
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-      const tickSuffix = jsonData.options.unit !== undefined ? jsonData.options.unit : '%';
+      const tickSuffix = jsonData.options.unit !== undefined ? jsonData.options.unit : '';
 
       const x = d3.scaleLinear()
         .domain([0, jsonData.options.maxX])
@@ -199,7 +199,7 @@
         .attr('text-anchor', 'end')
         .style('font-weight', 'bold')
         .style('font-size', `${valueFontSize}px`)
-        .text(d => d.value + '%');
+        .text(d => d.value + tickSuffix);
 
       if (showArrows && displayedDatasets.length > 1) {
         const arrowFontSize = y1.bandwidth() * 0.5;
