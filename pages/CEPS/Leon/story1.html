@@ -69,8 +69,6 @@
     const logoUrl = 'https://aiworld.eu/logo-transparent.svg';
     const sourceText = 'Source: Data from Anthropic Research';
 
-    const showArrows = true;
-
     fetch('./story1.json')
       .then(res => res.json())
       .then(config => initializeChart(config));
@@ -121,6 +119,14 @@
       const yLabelFontSize = Math.min(16, Math.max(10, y0.bandwidth() * 0.4));
       yAxisG.selectAll('text')
         .style('font-size', `${yLabelFontSize}px`);
+      svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -margin.left + 15)
+        .attr('x', -height / 2)
+        .attr('dy', '-1.25em')
+        .attr('text-anchor', 'middle')
+        .style('font-size', `${yLabelFontSize}px`)
+        .text(jsonData.options.yAxisLabel);
       svg.append('g')
         .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x).ticks(5).tickFormat(d => d + tickSuffix))
@@ -201,7 +207,7 @@
         .style('font-size', `${valueFontSize}px`)
         .text(d => d.value + tickSuffix);
 
-      if (showArrows && displayedDatasets.length > 1) {
+      if ((jsonData.options.showArrows ?? true) && displayedDatasets.length > 1) {
         const arrowFontSize = y1.bandwidth() * 0.5;
         const arrowMargin = y1.bandwidth() * 0.2;
         const arrowData = categories.flatMap(cat => {

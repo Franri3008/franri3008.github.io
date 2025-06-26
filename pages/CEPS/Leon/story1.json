@@ -9,14 +9,15 @@
   "datasets": [
     {
       "label": "Simulated Blackmail Rate",
-      "data": [0.96, 0.79, 0.95, 0.80, 0.80],
+      "data": [96, 79, 95, 80, 80],
       "backgroundColor": "rgba(54, 99, 235, 0.7)",
       "borderRadius": 4
     }
   ],
   "options": {
-    "xAxisLabel": "Simulated Blackmail Rate",
+    "unit": "%",
+    "xAxisLabel": "Simulated Blackmail %",
     "yAxisLabel": "Model",
-    "maxX": 1.0
+    "maxX": 100
   }
 }
