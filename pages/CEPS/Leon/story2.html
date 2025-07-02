@@ -108,6 +108,9 @@
       .source-text.overlapped:hover {
         opacity: 1;
       }
+      .d3plus-legend {
+        bottom: 80px !important;
+      }
     </style>
       </head>
       <body>
@@ -144,13 +147,13 @@
       new d3plus.Treemap()
         .select("#treemap")
         .data(data)
-        .groupBy(["parent", "country", "region", "city", "id"])
+        .groupBy(["parent2", "parent", "region", "city", "name"])
         .tooltipConfig({
           body: function(d) {
             var table ="<table class='tooltip-table'>";
             table +="<tr><td class='title'>Total Funding Amount (million $):</td><td class='data'>"+ d.value/1000000 +"</td></tr>";
             table +="<tr><td class='title'>Zone:</td><td class='data'>"+ d.parent + "</td></tr>";
-            table +="<tr><td class='title'>Country:</td><td class='data'>"+ d.country + "</td></tr>";
+            table +="<tr><td class='title'>Country:</td><td class='data'>"+ d.parent2 + "</td></tr>";
             table +="<tr><td class='title'>Region:</td><td class='data'>"+ d.region + "</td></tr>";
             table +="<tr><td class='title'>City:</td><td class='data'>"+ d.city + "</td></tr>";
             table +="<tr><td class='title'>Description:</td><td class='data'>"+ d.Description + "</td></tr>";
@@ -175,7 +178,7 @@
             }
           }
         })
-        .color("color")
+        .color("parent2")
         .render();
 
       const observer = new MutationObserver(debouncedCheckOverlap);
@@ -188,7 +191,7 @@
 
       </script>
       <a href="https://www.crunchbase.com/" target="_blank" rel="noopener" > 
-        <div class="source-text">Source: Crunchbase </div>
+        <div class="source-text">Source: Data from Anthropic </div>
       </a>
       <a href="https://aiworld.eu/" target="_blank" rel="noopener">
         <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
