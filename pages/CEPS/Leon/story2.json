@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Improve written and interpersonal communication skills across contexts",
+    "parent": "Representative topics",
+    "parent2": "Interpersonal advice",
+    "color": "#FFD21E",
+    "value": 0.0874
+  },
+  {
+    "name": "Navigate and improve romantic relationship dynamics",
+    "parent": "Representative topics",
+    "parent2": "Interpersonal advice", 
+    "color": "#FFD21E",
+    "value": 0.0805
+  },
+  {
+    "name": "Analyze psychological patterns and relationship dynamics",
+    "parent": "Representative topics",
+    "parent2": "Interpersonal advice",
+    "color": "#FFD21E", 
+    "value": 0.0506
+  },
+  {
+    "name": "Struggling with comprehensive understanding of developmental stages",
+    "parent": "Specific challenges",
+    "parent2": "Interpersonal advice",
+    "color": "#FF9D00",
+    "value": 0.0322
+  },
+  {
+    "name": "Navigating professional boundaries and employment uncertainty",
+    "parent": "Specific challenges", 
+    "parent2": "Interpersonal advice",
+    "color": "#FF9D00",
+    "value": 0.0299
+  },
+  {
+    "name": "Navigating uncertainty and emotional depth in romantic relationships",
+    "parent": "Specific challenges",
+    "parent2": "Interpersonal advice", 
+    "color": "#FF9D00",
+    "value": 0.023
+  },
+  {
+    "name": "Create comprehensive personal development frameworks and growth strategies",
+    "parent": "Representative topics",
+    "parent2": "Coaching",
+    "color": "#2656D2",
+    "value": 0.0495
+  },
+  {
+    "name": "Explore philosophical concepts of existence, consciousness and meaning",
+    "parent": "Representative topics",
+    "parent2": "Coaching", 
+    "color": "#2656D2",
+    "value": 0.0275
+  },
+  {
+    "name": "Navigate career transitions and optimize job search strategies",
+    "parent": "Representative topics",
+    "parent2": "Coaching",
+    "color": "#2656D2", 
+    "value": 0.0275
+  },
+  {
+    "name": "Navigate major life transitions and manage ongoing uncertainty",
+    "parent": "Specific challenges",
+    "parent2": "Coaching",
+    "color": "#791D81",
+    "value": 0.0176
+  },
+  {
+    "name": "Navigating workplace burnout and professional exhaustion",
+    "parent": "Specific challenges",
+    "parent2": "Coaching", 
+    "color": "#791D81",
+    "value": 0.0165
+  },
+  {
+    "name": "Navigating emotional and communication challenges in intimate relationships",
+    "parent": "Specific challenges",
+    "parent2": "Coaching",
+    "color": "#791D81",
+    "value": 0.0143
+  },
+  {
+    "name": "Develop strategies for managing mental health challenges and emotional wellbeing",
+    "parent": "Representative topics",
+    "parent2": "Psychotherapy or counseling",
+    "color": "#106C4E",
+    "value": 0.0138
+  },
+  {
+    "name": "Develop professional skills and knowledge in mental health practice",
+    "parent": "Representative topics", 
+    "parent2": "Psychotherapy or counseling",
+    "color": "#106C4E",
+    "value": 0.0135
+  },
+  {
+    "name": "Create and manage clinical psychological documentation and assessment materials",
+    "parent": "Representative topics",
+    "parent2": "Psychotherapy or counseling",
+    "color": "#106C4E",
+    "value": 0.0093
+  },
+  {
+    "name": "Coping with unexplained chronic symptoms and health anxiety",
+    "parent": "Specific challenges",
+    "parent2": "Psychotherapy or counseling",
+    "color": "#AF191E",
+    "value": 0.0099
+  },
+  {
+    "name": "Coping with existential crisis and loss of meaning",
+    "parent": "Specific challenges",
+    "parent2": "Psychotherapy or counseling", 
+    "color": "#AF191E",
+    "value": 0.0087
+  },
+  {
+    "name": "Coping with workplace stress and professional mental health challenges",
+    "parent": "Specific challenges",
+    "parent2": "Psychotherapy or counseling",
+    "color": "#AF191E",
+    "value": 0.0081
+  },
+  {
+    "name": "Navigate complex dynamics and communication challenges in romantic relationships",
+    "parent": "Representative topics",
+    "parent2": "Companionship",
+    "color": "#6B7280",
+    "value": 0.0216
+  },
+  {
+    "name": "Navigate personal identity and life questions through self-reflection",
+    "parent": "Representative topics",
+    "parent2": "Companionship", 
+    "color": "#6B7280",
+    "value": 0.0141
+  },
+  {
+    "name": "Craft supportive messages for people experiencing emotional distress",
+    "parent": "Representative topics",
+    "parent2": "Companionship",
+    "color": "#6B7280",
+    "value": 0.0096
+  },
+  {
+    "name": "Coping with overwhelming emotional distress during life challenges",
+    "parent": "Specific challenges",
+    "parent2": "Companionship",
+    "color": "#E54C1C",
+    "value": 0.0084
+  },
+  {
+    "name": "Managing persistent loneliness and difficulty forming connections",
+    "parent": "Specific challenges",
+    "parent2": "Companionship",
+    "color": "#E54C1C",
+    "value": 0.0069
+  },
+  {
+    "name": "Confronting existential dread and meaning-related distress",
+    "parent": "Specific challenges", 
+    "parent2": "Companionship",
+    "color": "#E54C1C",
+    "value": 0.0057
+  }
+]
