@@ -112,14 +112,12 @@
       .color("color")
       .render();
 
-    /* observe DOM changes to detect legend render */
     const observer = new MutationObserver(debouncedCheckOverlap);
     observer.observe(document.body, {childList:true, subtree:true});
     window.addEventListener('resize', debouncedCheckOverlap);
     setTimeout(debouncedCheckOverlap, 250);
   </script>
 
-  <!-- Attribution & branding -->
   <a href="https://www.huggingface.co/" target="_blank" rel="noopener">
     <div class="source-text">Source: Data from Hugging Face</div>
   </a>
