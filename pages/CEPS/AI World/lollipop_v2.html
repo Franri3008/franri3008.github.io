@@ -69,7 +69,7 @@ function createChart() {
   
   const containerWidth = Math.max(window.innerWidth - 40, 400);
   const containerHeight = Math.max(window.innerHeight - 100, 300);
-
+  
   const tempSvg = d3.select("body").append("svg").style("visibility", "hidden");
   const tempText = tempSvg.append("text").style("font-size", "12px").style("font-family", "sans-serif");
 
@@ -86,7 +86,6 @@ function createChart() {
   const padding = 16;
   const dynamicLeftMargin = maxLabelWidth + logoWidth + padding;
 
-  // Responsive margins
   const margin = {
     top: 20, 
     right: Math.max(30, containerWidth * 0.05), 
@@ -197,8 +196,12 @@ function createChart() {
     .attr("marker-end", d => (d.inc && Math.abs(x(d.y) - x(d.x)) > minArrow) ? "url(#arrowGreen)" : null)
     .attr("marker-start", d => (d.dec && Math.abs(x(d.x) - x(d.y)) > minArrow) ? "url(#arrowRed)" : null);
     
+  const formatNumber = (num) => {
+    return num % 1 === 0 ? num.toString() : num.toFixed(2);
+  };
+
   const showNode = (e, node, val) => {
-    const tt = tooltip.style("opacity",1).html(val.toFixed(2));
+    const tt = tooltip.style("opacity",1).html(formatNumber(val));
     const nb = node.getBoundingClientRect();
     const tb = tt.node().getBoundingClientRect();
     const left = nb.left + nb.width/2 - tb.width/2 + window.scrollX;
@@ -228,7 +231,7 @@ function createChart() {
     .on("mouseover", function(e,d){enlarge.call(this,e,d.y);})
     .on("mouseout", shrink);
     
-  const diff = d => Math.abs(d.delta).toFixed(2);
+  const diff = d => formatNumber(Math.abs(d.delta));
 
   g.selectAll("text.diffUp").data(data.filter(d=>d.inc && !d.same)).enter().append("text")
     .attr("class","diffUp")
@@ -260,7 +263,7 @@ function createChart() {
     .attr("y", 0)
     .attr("width", logoSize)
     .attr("height", logoSize * 0.3)
-    .attr("xlink:href", `https://aiworld.eu/logo-transparent.svg`);
+    .attr("xlink:href", "https://aiworld.eu/logo-transparent.svg");
 
   const source = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${height + margin.top + 50})`);
