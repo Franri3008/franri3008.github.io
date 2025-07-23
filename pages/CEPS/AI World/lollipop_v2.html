@@ -9,9 +9,12 @@ body{font-family:sans-serif; margin:0; padding:20px;}
 .axis path,.axis line{stroke:#bbb;}
 .tick text{font-size: 12px;}
 #tooltip{position:absolute;background:#fff; border:1px solid #ccc; padding:4px 8px;font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.2s;}
-#chart{display:block;margin:0 auto;}
+#chart{display:block;margin:0 auto; width: 100%; height: auto;}
 #tooltip:after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-width:6px 6px 0 6px;border-style:solid;border-color:#ccc transparent transparent transparent;}
 #tooltip:before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;border-width:7px 7px 0 7px;border-style:solid;border-color:#fff transparent transparent transparent;}
+.axis text {
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -37,25 +40,6 @@ const data = [
   {id: "OpenAI", x: 39, y: 44}
 ];
 
-const tempSvg = d3.select("body").append("svg").style("visibility", "hidden");
-const tempText = tempSvg.append("text").style("font-size", "12px").style("font-family", "sans-serif");
-
-let maxLabelWidth = 0;
-data.forEach(d => {
-  tempText.text(d.id);
-  const textWidth = tempText.node().getBoundingClientRect().width;
-  maxLabelWidth = Math.max(maxLabelWidth, textWidth);
-});
-
-tempSvg.remove();
-
-const logoWidth = 24;
-const padding = 16;
-const dynamicLeftMargin = maxLabelWidth + logoWidth + padding;
-
-const margin = {top:20, right:30, bottom:20, left: dynamicLeftMargin};
-const width = 860 - margin.left - margin.right;
-
 const addLogo = (id) => {
   if (!id) {
     console.error("Missing id:", id);
@@ -72,13 +56,53 @@ data.forEach(d => {
   d.dec = d.delta < 0;
   d.same = Math.abs(d.delta) < 0.01;
 });
-  const startColor = "#cccccc"; const upColor = "#2ecc71"; const downColor = "#e74c3c";
-  data.sort((a,b) => (b.x+b.y) - (a.x+a.y));
-  data.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-  const height = data.length * 30;
+
+const startColor = "#cccccc"; 
+const upColor = "#2ecc71"; 
+const downColor = "#e74c3c";
+
+data.sort((a,b) => (b.x+b.y) - (a.x+a.y));
+data.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+function createChart() {
+  d3.select("#chart").selectAll("*").remove();
+  
+  const containerWidth = Math.max(window.innerWidth - 40, 400);
+  const containerHeight = Math.max(window.innerHeight - 100, 300);
+
+  const tempSvg = d3.select("body").append("svg").style("visibility", "hidden");
+  const tempText = tempSvg.append("text").style("font-size", "12px").style("font-family", "sans-serif");
+
+  let maxLabelWidth = 0;
+  data.forEach(d => {
+    tempText.text(d.id);
+    const textWidth = tempText.node().getBoundingClientRect().width;
+    maxLabelWidth = Math.max(maxLabelWidth, textWidth);
+  });
+
+  tempSvg.remove();
+
+  const logoWidth = 24;
+  const padding = 16;
+  const dynamicLeftMargin = maxLabelWidth + logoWidth + padding;
+
+  // Responsive margins
+  const margin = {
+    top: 20, 
+    right: Math.max(30, containerWidth * 0.05), 
+    bottom: 80, 
+    left: dynamicLeftMargin
+  };
+  
+  const width = containerWidth - margin.left - margin.right;
+  const height = Math.max(data.length * 30, containerHeight - margin.top - margin.bottom);
+
   const svg = d3.select("#chart")
-    .attr("width",width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+    .attr("width", containerWidth)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+    .style("width", "100%")
+    .style("height", "auto");
 
   const defs = svg.append("defs");
   defs.append("marker")
@@ -106,7 +130,9 @@ data.forEach(d => {
     .append("path")
     .attr("d","M 10 0 L 0 5 L 10 10 z")
     .attr("fill", "#e74c3c");
+    
   const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+  
   const xMin = d3.min(data, d => Math.min(d.x, d.y));
   const xMax = d3.max(data, d => Math.max(d.x, d.y));
   const x = d3.scaleLinear()
@@ -117,17 +143,19 @@ data.forEach(d => {
     .range([0, height])
     .padding(0.8);
 
-const step = y.step();
-const padGap = (step - y.bandwidth()) / 2;
-g.selectAll("rect.row-bg").data(data).enter().append("rect")
-  .attr("class","row-bg")
-  .attr("x", -margin.left)
-  .attr("y", d => y(d.id) - padGap)
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", step)
-  .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
-  .attr("pointer-events","none")
-  .lower();
+  const step = y.step();
+  const padGap = (step - y.bandwidth()) / 2;
+  
+  g.selectAll("rect.row-bg").data(data).enter().append("rect")
+    .attr("class","row-bg")
+    .attr("x", -margin.left)
+    .attr("y", d => y(d.id) - padGap)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", step)
+    .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+    .attr("pointer-events","none")
+    .lower();
+    
   const yAxisGroup = g.append("g").attr("class", "axis").call(d3.axisLeft(y));
 
   yAxisGroup.selectAll(".tick")
@@ -142,9 +170,18 @@ g.selectAll("rect.row-bg").data(data).enter().append("rect")
         .attr("height", 24)
         .attr("xlink:href", logoPath);
     });
+    
   g.append("g").attr("class", "axis")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x));
+    
+  g.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + 45})`)
+    .style("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#666")
+    .text("Number of Hugging Face Repositories");
+    
   const rNode = 8;
   const minArrow = 14;
   
@@ -174,6 +211,7 @@ g.selectAll("rect.row-bg").data(data).enter().append("rect")
     showNode(e, this, val);
   };
   const shrink = function(){d3.select(this).transition().duration(150).attr("r", 8); hide();};
+  
   g.selectAll("circle.a").data(data).enter().append("circle")
     .attr("cx", d => x(d.x))
     .attr("cy", d => y(d.id) + y.bandwidth()/2)
@@ -181,6 +219,7 @@ g.selectAll("rect.row-bg").data(data).enter().append("rect")
     .attr("fill", startColor)
     .on("mouseover", function(e,d){enlarge.call(this, e, d.x);})
     .on("mouseout", shrink);
+    
   g.selectAll("circle.b").data(data).enter().append("circle")
     .attr("cx",d => x(d.y))
     .attr("cy",d => y(d.id) + y.bandwidth()/2)
@@ -199,6 +238,7 @@ g.selectAll("rect.row-bg").data(data).enter().append("rect")
     .attr("fill", upColor)
     .attr("font-size","11px")
     .text(d => "+" + diff(d));
+    
   g.selectAll("text.diffDown").data(data.filter(d=>d.dec && !d.same)).enter().append("text")
     .attr("class","diffDown")
     .attr("x", d => x(d.y) - 12)
@@ -207,6 +247,47 @@ g.selectAll("rect.row-bg").data(data).enter().append("rect")
     .attr("fill", downColor)
     .attr("font-size","11px")
     .text(d => "-" + diff(d));
+
+  const logoSize = Math.min(100, width * 0.15);
+  const logo = svg.append("g")
+    .attr("transform", `translate(${margin.left + width - logoSize}, ${height + margin.top + 40})`);
+
+  logo.append("a")
+    .attr("href", "https://aiworld.eu")
+    .attr("target", "_blank")
+    .append("image")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", logoSize)
+    .attr("height", logoSize * 0.3)
+    .attr("xlink:href", `https://aiworld.eu/logo-transparent.svg`);
+
+  const source = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${height + margin.top + 50})`);
+
+  source.append("a")
+    .attr("href", "https://huggingface.co")
+    .attr("target", "_blank")
+    .append("text")
+    .attr("x", 0)
+    .attr("y", 10)
+    .style("text-anchor", "start")
+    .style("font-size", "12px")
+    .style("font-style", "italic")
+    .style("fill", "#999")
+    .style("cursor", "pointer")
+    .text("Source: Hugging Face");
+}
+
+createChart();
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    createChart();
+  }, 250);
+});
 </script>
 </body>
 </html>
