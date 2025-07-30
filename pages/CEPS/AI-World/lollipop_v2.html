@@ -135,7 +135,7 @@ function createChart() {
   const xMin = d3.min(data, d => Math.min(d.x, d.y));
   const xMax = d3.max(data, d => Math.max(d.x, d.y));
   const x = d3.scaleLinear()
-    .domain([Math.min(0, xMin) - (xMax - xMin) * 0.02, xMax]).nice()
+    .domain([Math.min(0, xMin) - (xMax - xMin) * 0.02, xMax + (xMax - xMin) * 0.1]).nice()
     .range([0, width]);
   const y = d3.scaleBand()
     .domain(data.map(d => d.id))
@@ -170,9 +170,10 @@ function createChart() {
         .attr("xlink:href", logoPath);
     });
     
+  const xAxis = d3.axisBottom(x).tickValues(x.ticks().filter(d => d >= 0));
   g.append("g").attr("class", "axis")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x));
+    .call(xAxis);
     
   g.append("text")
     .attr("transform", `translate(${width / 2}, ${height + 45})`)
@@ -182,10 +183,13 @@ function createChart() {
     .text("Number of Hugging Face Repositories");
     
   const rNode = 8;
+  const rNodeLarge = 14;
+  const arrowOffset = rNodeLarge - rNode; // 6 pixels
   const minArrow = 14;
   
   g.selectAll("line.lolli").data(data.filter(d=>!d.same)).enter().append("line")
     .attr("class", "lolli")
+    .attr("data-id", d => d.id)
     .attr("y1", d => y(d.id) + y.bandwidth()/2)
     .attr("y2", d => y(d.id) + y.bandwidth()/2)
     .attr("x1", d => d.inc ? x(d.x) + rNode : x(d.y) + rNode)
@@ -209,32 +213,122 @@ function createChart() {
     tt.style("left", left + "px").style("top", top + "px");
   };
   const hide = () => tooltip.style("opacity", 0);
-  const enlarge = function(e, val){
-    d3.select(this).transition().duration(150).attr("r", 14);
-    showNode(e, this, val);
-  };
-  const shrink = function(){d3.select(this).transition().duration(150).attr("r", 8); hide();};
   
+  // Simple hover for initial node (tooltip, circle growth, and arrow adjustment)
+  const enlargeSimple = function(e, val, d){
+    d3.select(this).transition().duration(150).attr("r", rNodeLarge);
+    showNode(e, this, val);
+    
+    // Adjust arrow start position if this data has an arrow
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x1", x(d.x) + rNodeLarge);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x2", x(d.x) - rNodeLarge);
+      }
+    }
+  };
+  
+  const shrinkSimple = function(d){
+    d3.select(this).transition().duration(150).attr("r", rNode); 
+    hide();
+    
+    // Return arrow to normal position
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x1", x(d.x) + rNode);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x2", x(d.x) - rNode);
+      }
+    }
+  };
+  
+  // Enhanced hover for final node (tooltip, circle growth, delta text effects, and arrow adjustment)
+  const enlargeWithDelta = function(e, val, d){
+    d3.select(this).transition().duration(150).attr("r", rNodeLarge);
+    showNode(e, this, val);
+    
+    // Bold, move and increase font size of delta text
+    if (d.inc && !d.same) {
+      g.select(`text.diffUp[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px")
+        .attr("x", x(d.y) + 20);
+    } else if (d.dec && !d.same) {
+      g.select(`text.diffDown[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px")
+        .attr("x", x(d.y) - 20);
+    }
+    
+    // Adjust arrow end position
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x2", x(d.y) - rNodeLarge);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x1", x(d.y) + rNodeLarge);
+      }
+    }
+  };
+  
+  const shrinkWithDelta = function(d){
+    d3.select(this).transition().duration(150).attr("r", rNode); 
+    hide();
+    
+    // Return delta text to normal
+    if (d.inc && !d.same) {
+      g.select(`text.diffUp[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "normal")
+        .attr("font-size", "11px")
+        .attr("x", x(d.y) + 12);
+    } else if (d.dec && !d.same) {
+      g.select(`text.diffDown[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "normal")
+        .attr("font-size", "11px")
+        .attr("x", x(d.y) - 12);
+    }
+    
+    // Return arrow to normal position
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x2", x(d.y) - rNode);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x1", x(d.y) + rNode);
+      }
+    }
+  };
+  
+  // Initial nodes (gray circles) - simple hover with arrow adjustment
   g.selectAll("circle.a").data(data).enter().append("circle")
     .attr("cx", d => x(d.x))
     .attr("cy", d => y(d.id) + y.bandwidth()/2)
-    .attr("r", 8)
+    .attr("r", rNode)
     .attr("fill", startColor)
-    .on("mouseover", function(e,d){enlarge.call(this, e, d.x);})
-    .on("mouseout", shrink);
+    .on("mouseover", function(e,d){enlargeSimple.call(this, e, d.x, d);})
+    .on("mouseout", function(e,d){shrinkSimple.call(this, d);});
     
+  // Final nodes (colored circles) - enhanced hover with delta effects and arrow adjustment
   g.selectAll("circle.b").data(data).enter().append("circle")
     .attr("cx",d => x(d.y))
     .attr("cy",d => y(d.id) + y.bandwidth()/2)
-    .attr("r", 8)
+    .attr("r", rNode)
     .attr("fill", d => d.same ? startColor : (d.inc ? upColor : downColor))
-    .on("mouseover", function(e,d){enlarge.call(this,e,d.y);})
-    .on("mouseout", shrink);
+    .on("mouseover", function(e,d){enlargeWithDelta.call(this,e,d.y, d);})
+    .on("mouseout", function(e,d){shrinkWithDelta.call(this, d);});
     
   const diff = d => formatNumber(Math.abs(d.delta));
 
   g.selectAll("text.diffUp").data(data.filter(d=>d.inc && !d.same)).enter().append("text")
     .attr("class","diffUp")
+    .attr("data-id", d => d.id)
     .attr("x", d => x(d.y) + 12)
     .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
     .attr("text-anchor","start")
@@ -244,6 +338,7 @@ function createChart() {
     
   g.selectAll("text.diffDown").data(data.filter(d=>d.dec && !d.same)).enter().append("text")
     .attr("class","diffDown")
+    .attr("data-id", d => d.id)
     .attr("x", d => x(d.y) - 12)
     .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
     .attr("text-anchor","end")
@@ -286,7 +381,7 @@ createChart();
 
 let resizeTimeout;
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
+  clearTimeout(resizeTime);
   resizeTimeout = setTimeout(() => {
     createChart();
   }, 250);
