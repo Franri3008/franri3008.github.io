@@ -1,0 +1,994 @@
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+.knitr .inline {
+  background-color: #F7F7F7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+ font-weight: bold;
+ color: #FF0000;
+}
+.warning {
+ font-weight: bold;
+}
+.message {
+ font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+ padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #F5F5F5;
+}
+.rimage .left {
+  text-align: left;
+}
+.rimage .right {
+  text-align: right;
+}
+.rimage .center {
+  text-align: center;
+  
+}
+.hl.num {
+  color: #AF0F91
+  ;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55AA55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+  <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3plus-hierarchy@1"></script>
+      <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #treemap {
+        position: absolute;
+        top: clamp(44px, 6vh, 80px);
+        left: 0;
+        right: 0;
+        bottom: clamp(80px, 12vh, 120px);
+      }
+    .logo {
+        position: absolute;
+        bottom: clamp(6px, 4vh, 20px);
+        right: 20px;
+        width: clamp(80px, 10vw, 200px);
+        pointer-events: auto;
+        z-index: 1000;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+      .logo.overlapped {
+        opacity: 0.15;
+      }
+      .logo.overlapped:hover {
+        opacity: 1;
+      }
+      .source-text {
+        position: absolute;
+        bottom: clamp(10px, 4vh, 30px);
+        left: 20px;
+        pointer-events: auto;
+        font-size: clamp(12px, 1.5vw, 20px);
+        font-weight: bold;
+        color: #555555;
+        z-index: 1000;
+        opacity: 1;
+        font-style: italic;
+        transition: opacity 0.3s ease;
+      }
+      .source-text.overlapped {
+        opacity: 0.15;
+      }
+      .source-text.overlapped:hover {
+        opacity: 1;
+      }
+      .custom-legend {
+        position: absolute;
+        top: calc(100vh - clamp(80px, 12vh, 120px) + 10px);
+        bottom: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: clamp(16px, 3vw, 30px);
+        background: rgba(255, 255, 255, 0.9);
+        padding: clamp(8px, 2vh, 12px) clamp(12px, 2vw, 20px);
+        border-radius: clamp(4px, 1vw, 8px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: clamp(12px, 1.5vw, 16px);
+        font-weight: 500;
+        z-index: 1000;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+      .custom-legend.overlapped {
+        opacity: 0.15;
+      }
+      .custom-legend.overlapped:hover {
+        opacity: 1;
+      }
+
+      .group-filters {
+        position: absolute;
+        top: clamp(12px, 2vh, 20px);
+        bottom: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: clamp(2px, 0.5vw, 6px);
+        background: rgba(255, 255, 255, 0.9);
+        padding: clamp(1px, 0.3vh, 3px) clamp(2px, 0.5vw, 4px);
+        border-radius: clamp(4px, 1vw, 8px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: clamp(6px, 0.6vw, 10px);
+        z-index: 1000;
+        transition: opacity 0.3s ease;
+      }
+      .group-filters.disabled {
+        opacity: 0.3;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .group-filters label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: clamp(8px, 1vw, 12px);
+      }
+      .group-filters input[type="checkbox"] {
+        margin-right: 4px;
+        width: clamp(8px, 1vw, 12px);
+        height: clamp(8px, 1vw, 12px);
+        accent-color: #444444;
+        border: 1px solid #444444;
+        background-color: #ffffff;
+      }
+      .group-filters-title {
+        font-weight: bold;
+        margin-right: clamp(4px, 0.5vw, 8px);
+        font-size: clamp(8px, 1vw, 12px);
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: clamp(4px, 1vw, 8px);
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+      .legend-item.inactive {
+        opacity: 0.3;
+      }
+      .legend-item:hover {
+        opacity: 1;
+      }
+      .legend-square {
+        width: clamp(12px, 1.5vw, 16px);
+        height: clamp(12px, 1.5vw, 16px);
+        border-radius: clamp(2px, 0.5vw, 4px);
+      }
+      .legend-square.low {
+        background-color: #28A745;
+      }
+      .legend-square.high {
+        background-color: #DC3545;
+      }
+
+    </style>
+      </head>
+      <body>
+      <div class="treemap-section">
+        <div id="treemap"></div>
+      </div> <!-- .treemap-section -->
+      <div class="controls-section">
+      <!-- Group filters -->
+      <div class="group-filters" id="group-filters">
+        <span class="group-filters-title">Job Group</span>
+        <label><input type="checkbox" value="Creative & Media" checked>Creative & Media</label>
+        <label><input type="checkbox" value="Education & Research" checked>Education & Research</label>
+        <label><input type="checkbox" value="Service Occupations" checked>Service Occupations</label>
+        <label><input type="checkbox" value="Sales & Marketing" checked>Sales & Marketing</label>
+        <label><input type="checkbox" value="Technical & Analytical" checked>Technical & Analytical</label>
+        <label><input type="checkbox" value="Others" checked>Others</label>
+      </div>
+      <div class="custom-legend">
+        <div class="legend-item" data-filter="low">
+          <div class="legend-square low"></div>
+          <span>Low exposure</span>
+        </div>
+        <div class="legend-item" data-filter="high">
+          <div class="legend-square high"></div>
+          <span>High exposure</span>
+        </div>
+      </div>
+      </div>
+      <script>
+var originalData = [
+        {
+          "name": "Interpreters and Translators",
+          "parent": "Creative & Media",
+          "value": 51560,
+          "exposure": 0.49,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Historians",
+          "parent": "Education & Research",
+          "value": 3040,
+          "exposure": 0.48,
+          "color": "#D62728"
+        },
+        {
+          "name": "Passenger Attendants",
+          "parent": "Service Occupations",
+          "value": 20190,
+          "exposure": 0.47,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Sales Representatives of Services",
+          "parent": "Sales & Marketing",
+          "value": 1142020,
+          "exposure": 0.46,
+          "color": "#FF7F0E"
+        },
+        {
+          "name": "Writers and Authors",
+          "parent": "Creative & Media",
+          "value": 49450,
+          "exposure": 0.45,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Customer Service Representatives",
+          "parent": "Service Occupations",
+          "value": 2858710,
+          "exposure": 0.44,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "CNC Tool Programmers",
+          "parent": "Technical & Analytical",
+          "value": 28030,
+          "exposure": 0.44,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Telephone Operators",
+          "parent": "Service Occupations",
+          "value": 4600,
+          "exposure": 0.42,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Ticket Agents and Travel Clerks",
+          "parent": "Service Occupations",
+          "value": 119270,
+          "exposure": 0.41,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Broadcast Announcers and Radio DJs",
+          "parent": "Creative & Media",
+          "value": 25070,
+          "exposure": 0.41,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Brokerage Clerks",
+          "parent": "Technical & Analytical",
+          "value": 48060,
+          "exposure": 0.41,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Farm and Home Management Educators",
+          "parent": "Education & Research",
+          "value": 8110,
+          "exposure": 0.41,
+          "color": "#D62728"
+        },
+        {
+          "name": "Telemarketers",
+          "parent": "Service Occupations",
+          "value": 81580,
+          "exposure": 0.40,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Concierges",
+          "parent": "Service Occupations",
+          "value": 41020,
+          "exposure": 0.40,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Political Scientists",
+          "parent": "Education & Research",
+          "value": 5580,
+          "exposure": 0.39,
+          "color": "#D62728"
+        },
+        {
+          "name": "News Analysts, Reporters, Journalists",
+          "parent": "Creative & Media",
+          "value": 45020,
+          "exposure": 0.39,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Mathematicians",
+          "parent": "Education & Research",
+          "value": 2220,
+          "exposure": 0.39,
+          "color": "#D62728"
+        },
+        {
+          "name": "Technical Writers",
+          "parent": "Creative & Media",
+          "value": 47970,
+          "exposure": 0.38,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Proofreaders and Copy Markers",
+          "parent": "Creative & Media",
+          "value": 5490,
+          "exposure": 0.38,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Hosts and Hostesses",
+          "parent": "Service Occupations",
+          "value": 425020,
+          "exposure": 0.37,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Editors",
+          "parent": "Creative & Media",
+          "value": 95700,
+          "exposure": 0.37,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Business Teachers, Postsecondary",
+          "parent": "Education & Research",
+          "value": 82980,
+          "exposure": 0.37,
+          "color": "#D62728"
+        },
+        {
+          "name": "Public Relations Specialists",
+          "parent": "Sales & Marketing",
+          "value": 275550,
+          "exposure": 0.36,
+          "color": "#FF7F0E"
+        },
+        {
+          "name": "Demonstrators and Product Promoters",
+          "parent": "Sales & Marketing",
+          "value": 50790,
+          "exposure": 0.36,
+          "color": "#FF7F0E"
+        },
+        {
+          "name": "Advertising Sales Agents",
+          "parent": "Sales & Marketing",
+          "value": 108100,
+          "exposure": 0.36,
+          "color": "#FF7F0E"
+        },
+        {
+          "name": "New Accounts Clerks",
+          "parent": "Technical & Analytical",
+          "value": 41180,
+          "exposure": 0.36,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Statistical Assistants",
+          "parent": "Education & Research",
+          "value": 7200,
+          "exposure": 0.36,
+          "color": "#D62728"
+        },
+        {
+          "name": "Counter and Rental Clerks",
+          "parent": "Service Occupations",
+          "value": 390300,
+          "exposure": 0.36,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Data Scientists",
+          "parent": "Technical & Analytical",
+          "value": 192710,
+          "exposure": 0.36,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Personal Financial Advisors",
+          "parent": "Technical & Analytical",
+          "value": 272190,
+          "exposure": 0.35,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Archivists",
+          "parent": "Education & Research",
+          "value": 7150,
+          "exposure": 0.35,
+          "color": "#D62728"
+        },
+        {
+          "name": "Economics Teachers, Postsecondary",
+          "parent": "Education & Research",
+          "value": 12210,
+          "exposure": 0.35,
+          "color": "#D62728"
+        },
+        {
+          "name": "Web Developers",
+          "parent": "Technical & Analytical",
+          "value": 85350,
+          "exposure": 0.35,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Management Analysts",
+          "parent": "Technical & Analytical",
+          "value": 838140,
+          "exposure": 0.35,
+          "color": "#9467BD"
+        },
+        {
+          "name": "Geographers",
+          "parent": "Education & Research",
+          "value": 1460,
+          "exposure": 0.35,
+          "color": "#D62728"
+        },
+        {
+          "name": "Models",
+          "parent": "Creative & Media",
+          "value": 3090,
+          "exposure": 0.35,
+          "color": "#2CA02C"
+        },
+        {
+          "name": "Market Research Analysts",
+          "parent": "Sales & Marketing",
+          "value": 846370,
+          "exposure": 0.35,
+          "color": "#FF7F0E"
+        },
+        {
+          "name": "Public Safety Telecommunicators",
+          "parent": "Service Occupations",
+          "value": 97820,
+          "exposure": 0.35,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Switchboard Operators",
+          "parent": "Service Occupations",
+          "value": 43830,
+          "exposure": 0.35,
+          "color": "#1F77B4"
+        },
+        {
+          "name": "Library Science Teachers, Postsecondary",
+          "parent": "Education & Research",
+          "value": 4220,
+          "exposure": 0.34,
+          "color": "#D62728"
+        },
+        {
+          "name": "Phlebotomists",
+          "parent": "Service Occupations",
+          "value": 137080,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Nursing Assistants",
+          "parent": "Service Occupations",
+          "value": 1351760,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Hazardous Materials Removal Workers",
+          "parent": "Service Occupations",
+          "value": 49960,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Helpers–Painters, Plasterers, ...",
+          "parent": "Service Occupations",
+          "value": 7700,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Embalmers",
+          "parent": "Service Occupations",
+          "value": 3380,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Plant and System Operators, All Other",
+          "parent": "Technical & Analytical",
+          "value": 15370,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Oral and Maxillofacial Surgeons",
+          "parent": "Others",
+          "value": 4160,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Automotive Glass Installers and Repairers",
+          "parent": "Service Occupations",
+          "value": 16890,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Ship Engineers",
+          "parent": "Technical & Analytical",
+          "value": 8860,
+          "exposure": 0.03,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Tire Repairers and Changers",
+          "parent": "Service Occupations",
+          "value": 101520,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Prosthodontists",
+          "parent": "Others",
+          "value": 570,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Helpers–Production Workers",
+          "parent": "Service Occupations",
+          "value": 181810,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Highway Maintenance Workers",
+          "parent": "Service Occupations",
+          "value": 150860,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Medical Equipment Preparers",
+          "parent": "Technical & Analytical",
+          "value": 66790,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Packaging and Filling Machine Op.",
+          "parent": "Technical & Analytical",
+          "value": 371600,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Machine Feeders and Offbearers",
+          "parent": "Technical & Analytical",
+          "value": 44500,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Dishwashers",
+          "parent": "Service Occupations",
+          "value": 463940,
+          "exposure": 0.02,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Cement Masons and Concrete Finishers",
+          "parent": "Technical & Analytical",
+          "value": 203560,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Supervisors of Firefighters",
+          "parent": "Others",
+          "value": 84120,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Industrial Truck and Tractor Operators",
+          "parent": "Technical & Analytical",
+          "value": 778920,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Ophthalmic Medical Technicians",
+          "parent": "Technical & Analytical",
+          "value": 73390,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Massage Therapists",
+          "parent": "Service Occupations",
+          "value": 92650,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Surgical Assistants",
+          "parent": "Service Occupations",
+          "value": 18780,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Tire Builders",
+          "parent": "Technical & Analytical",
+          "value": 20660,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Helpers–Roofers",
+          "parent": "Service Occupations",
+          "value": 4540,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Gas Compressor and Gas Pumping Station Op.",
+          "parent": "Technical & Analytical",
+          "value": 4400,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Roofers",
+          "parent": "Technical & Analytical",
+          "value": 135140,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Roustabouts, Oil and Gas",
+          "parent": "Technical & Analytical",
+          "value": 43830,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Maids and Housekeeping Cleaners",
+          "parent": "Service Occupations",
+          "value": 836230,
+          "exposure": 0.01,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Paving, Surfacing, and Tamping Equipment Op.",
+          "parent": "Technical & Analytical",
+          "value": 43080,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Logging Equipment Operators",
+          "parent": "Technical & Analytical",
+          "value": 23720,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Motorboat Operators",
+          "parent": "Others",
+          "value": 2710,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Orderlies",
+          "parent": "Service Occupations",
+          "value": 48710,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Floor Sanders and Finishers",
+          "parent": "Technical & Analytical",
+          "value": 5070,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Pile Driver Operators",
+          "parent": "Technical & Analytical",
+          "value": 3010,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Rail-Track Laying and Maintenance Equip. Op.",
+          "parent": "Technical & Analytical",
+          "value": 18770,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Foundry Mold and Coremakers",
+          "parent": "Technical & Analytical",
+          "value": 11780,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Water Treatment Plant and System Op.",
+          "parent": "Technical & Analytical",
+          "value": 120710,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Bridge and Lock Tenders",
+          "parent": "Others",
+          "value": 3460,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        },
+        {
+          "name": "Dredge Operators",
+          "parent": "Others",
+          "value": 940,
+          "exposure": 0.00,
+          "color": "#7f7f7f"
+        }
+      ]
+
+var data = originalData.slice();
+var activeFilters = new Set(['low', 'high']);
+
+var activeGroups = new Set([
+  'Creative & Media',
+  'Education & Research',
+  'Service Occupations',
+  'Sales & Marketing',
+  'Technical & Analytical',
+  'Others'
+]);
+
+var exposures = data.map(function(d){ return d.exposure; });
+var minExp = d3.min(exposures);
+var maxExp = d3.max(exposures);
+
+var highExposureJobs = data.filter(d => d.exposure >= 0.34);
+var lowExposureJobs = data.filter(d => d.exposure <= 0.03);
+
+var highExpMin = d3.min(highExposureJobs, d => d.exposure); // ~0.34
+var highExpMax = d3.max(highExposureJobs, d => d.exposure); // ~0.49
+var lowExpMin = d3.min(lowExposureJobs, d => d.exposure);   // 0.00
+var lowExpMax = d3.max(lowExposureJobs, d => d.exposure);   // ~0.03
+
+var highExposureColorScale = d3.scaleLinear()
+    .domain([highExpMin, highExpMax])
+    .range(["#FFB3B3", "#B71C1C"]);
+
+var lowExposureColorScale = d3.scaleLinear()
+    .domain([lowExpMax, lowExpMin])
+    .range(["#C8E6C9", "#1B5E20"]);
+
+function getColor(exposure) {
+    if (exposure >= 0.34) {
+        return highExposureColorScale(exposure);
+    } else if (exposure <= 0.03) {
+        return lowExposureColorScale(exposure);
+    } else {
+        return "#888888";
+    }
+}
+
+var groupColors = {
+    "Professional & Office Work": "#2196F3",
+    "Customer Service & Hospitality": "#673AB7", 
+    "Technical & Manual Work": "#4CAF50"
+};
+
+function getGroupColor(parent) {
+    return groupColors[parent] || "#666666";
+}
+
+var treemap = new d3plus.Treemap()
+    .select("#treemap")
+    .data(data)
+    .groupBy(["parent", "name"])
+    .tooltipConfig({
+      title: function(d) { return d.name; },
+      body: function(d) {
+        return "<strong>Job Group:</strong> " + d.parent + "<br><strong>Employment:</strong> " + d.value + "<br><strong>Exposure:</strong> " + d.exposure;
+      }
+    })
+    .sum("value")
+    .layoutPadding(2)
+    .legend(false)
+    .color(d => getColor(d.exposure))
+    .shapeConfig({
+      stroke: function(d) {
+
+        if (d.depth === 0) {
+          return getGroupColor(d.id);
+        }
+        return "transparent";
+      },
+      strokeWidth: function(d) {
+        if (d.depth === 0) {
+          return 3;
+        }
+        return 0;
+      }
+    });
+
+function updateVisualization() {
+    var filteredData = originalData.filter(function(d) {
+        if (!activeGroups.has(d.parent)) return false;
+
+        if (d.exposure >= 0.34 && activeFilters.has('high')) return true;
+        if (d.exposure <= 0.03 && activeFilters.has('low')) return true;
+        return false;
+    });
+    
+    data = filteredData;
+    treemap.data(data).render();
+    
+    document.querySelectorAll('.legend-item').forEach(function(item) {
+        var filter = item.getAttribute('data-filter');
+        if (activeFilters.has(filter)) {
+            item.classList.remove('inactive');
+        } else {
+            item.classList.add('inactive');
+        }
+    });
+}
+
+document.querySelectorAll('.legend-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+        var filter = this.getAttribute('data-filter');
+        if (activeFilters.has(filter) && activeFilters.size === 1) {
+            activeFilters.clear();
+            activeFilters.add('low');
+            activeFilters.add('high');
+        } else {
+            activeFilters.clear();
+            activeFilters.add(filter);
+        }
+        updateVisualization();
+    });
+});
+
+var groupFiltersEl = document.getElementById('group-filters');
+document.querySelectorAll('#group-filters input[type="checkbox"]').forEach(function(cb) {
+  cb.addEventListener('change', function() {
+    groupFiltersEl.classList.add('disabled');
+    document.querySelectorAll('#group-filters input[type="checkbox"]').forEach(function(input) {
+      input.disabled = true;
+    });
+
+    var grp = this.value;
+    if (this.checked) activeGroups.add(grp);
+    else activeGroups.delete(grp);
+    updateVisualization();
+
+    setTimeout(function() {
+      groupFiltersEl.classList.remove('disabled');
+      document.querySelectorAll('#group-filters input[type="checkbox"]').forEach(function(input) {
+        input.disabled = false;
+      });
+    }, 500);
+  });
+});
+
+treemap.render();
+
+      function debouncedCheckOverlap() {
+        checkOverlap();
+      }
+
+      function checkOverlap() {
+        const legend = document.querySelector('.custom-legend');
+        const logo = document.querySelector('.logo');
+        const sourceText = document.querySelector('.source-text');
+
+        if (!legend || !logo || !sourceText) return;
+
+        const legendRect = legend.getBoundingClientRect();
+        const logoRect = logo.getBoundingClientRect();
+        const sourceRect = sourceText.getBoundingClientRect();
+
+        const logoOverlap = !(legendRect.right < logoRect.left ||
+                             legendRect.left > logoRect.right ||
+                             legendRect.bottom < logoRect.top ||
+                             legendRect.top > logoRect.bottom);
+
+        const sourceOverlap = !(legendRect.right < sourceRect.left ||
+                               legendRect.left > sourceRect.right ||
+                               legendRect.bottom < sourceRect.top ||
+                               legendRect.top > sourceRect.bottom);
+
+        logo.classList.toggle('overlapped', logoOverlap);
+        sourceText.classList.toggle('overlapped', sourceOverlap);
+      }
+
+      const observer = new MutationObserver(function() {
+        debouncedCheckOverlap();
+      });
+
+      observer.observe(document.body, {childList: true, subtree: true});
+
+      window.addEventListener('resize', debouncedCheckOverlap);
+
+      setTimeout(debouncedCheckOverlap, 200);
+
+      </script>
+      <a href="https://aiworld.eu/" target="_blank" rel="noopener">
+        <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
+      </a>
+      <a href="https://arxiv.org/abs/2507.07935" target="_blank" rel="noopener" > 
+        <div class="source-text">Source: Microsoft Research</div>
+      </a>
+    </body>
+</html>
