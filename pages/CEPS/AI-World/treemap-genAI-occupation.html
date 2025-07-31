@@ -229,11 +229,11 @@
       <div class="custom-legend">
         <div class="legend-item" data-filter="low">
           <div class="legend-square low"></div>
-          <span>Low exposure</span>
+          <span>Low AI Applicability</span>
         </div>
         <div class="legend-item" data-filter="high">
           <div class="legend-square high"></div>
-          <span>High exposure</span>
+          <span>High AI Applicability</span>
         </div>
       </div>
       </div>
@@ -860,7 +860,7 @@ var treemap = new d3plus.Treemap()
     .tooltipConfig({
       title: function(d) { return d.name; },
       body: function(d) {
-        return "<strong>Job Group:</strong> " + d.parent + "<br><strong>Employment:</strong> " + d.value + "<br><strong>Exposure:</strong> " + d.exposure;
+        return "<strong>Job Group:</strong> " + d.parent + "<br><strong>Employment:</strong> " + d.value + "<br><strong>AI Applicability:</strong> " + d.exposure;
       }
     })
     .sum("value")
