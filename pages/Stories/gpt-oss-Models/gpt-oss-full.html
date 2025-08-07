@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hourly Race Chart Animation</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .axis text {
+            font-size: 12px;
+        }
+        .slowmo {
+            pointer-events: none;
+        }
+        .ticker-bottom {
+            font-size: clamp(28px, 7vw, 96px);
+            font-weight: 800;
+            fill: #222;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        }
+        .announcement {
+            font-size: 24px;
+            font-weight: 800;
+            fill: #111;
+            text-anchor: end;
+        }
+        .rank-label {
+            font-size: 14px;
+            font-weight: 800;
+            fill: #111;
+            text-anchor: end;
+        }    
+        .logo {
+            position: absolute;
+            bottom: clamp(6px, 4vh, 20px);
+            right: 20px;
+            width: clamp(80px, 10vw, 200px);
+            pointer-events: auto;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        .logo.overlapped {
+            opacity: 0.15;
+        }
+        .logo.overlapped:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart" style="width: 100%; height: 100vh;"></div>
+    <script>
+        let svg, barGroup, axisGroup, ticker, bottomTicker, separatorLine;
+        let logoGroup, modelGroup, valueGroup, rankLabelGroup, overlayGroup;
+        let xScale, yScale, xAxis;
+        let currentData = [];
+        let currentX = null;
+        let currentYDomain = [];
+
+        // New slowmo flag for breaking into top 98
+        let break98SlowmoShown = false;
+        let initialGoldRanks = new Map();
+        let goldHasImproved = new Map();
+
+        const barSize = 48;
+        const n = 5000;
+        const k = 12;
+        const duration = 120;
+        const logoSize = 18;
+        function dims() {
+            const c = document.getElementById('chart');
+            const r = c.getBoundingClientRect();
+            return { width: Math.max(640, r.width), height: Math.max(560, r.height) };
+        }
+
+        const marginTop = 30;
+        const marginRight = 280;
+        const marginBottom = 30;
+        const marginLeft = 80;
+
+        const companyInfo = {
+            'openai': { logo: 'https://cdn-avatars.huggingface.co/v1/production/uploads/68783facef79a05727260de3/UPX5RQxiPGA-ZbBmArIKq.png' }
+        };
+
+        async function fetchData() {
+            const text = await fetch('hourly_full.csv').then(res => res.text());
+            const raw = d3.csvParse(text);
+            const rawData = raw.map(d => {
+                const [company, model] = d.id.split('/');
+                return { x: +d.hour, id: d.id, company, model, value: +d.likes_total };
+            });
+            createAnimation(rawData);
+        }
+
+        function createAnimation(rawData) {
+            const { width, height } = dims();
+
+            let dataByHour = d3.groups(rawData, d => d.x)
+                .map(([x, values]) => [x, new Map(values.map(d => [d.id, d.value]))])
+                .sort((a, b) => d3.ascending(a[0], b[0]));
+
+            let hourEntries = dataByHour.map(([x, map]) => [x, map]);
+
+            let appearanceHour = 0;
+            for (const [x, map] of hourEntries) {
+                let found = false;
+                for (const [id, val] of map) {
+                    const model = (id.split('/')[1] || id).toLowerCase();
+                    if ((model === 'gpt-oss-120b') && val > 0) { found = true; break; }
+                }
+                if (found) { appearanceHour = x; break; }
+            }
+
+            const startHour = appearanceHour - 3;
+            hourEntries = hourEntries.filter(([x]) => x >= startHour);
+
+            const names = Array.from(new Set(rawData.map(d => d.id)));
+
+            const colorScale = d3.scaleOrdinal(names, d3.schemeTableau10);
+
+            xScale = d3.scaleLinear()
+                .range([marginLeft, width - marginRight]);
+
+            yScale = d3.scaleBand()
+                .range([0, height - marginTop - marginBottom])
+                .padding(0);
+
+            const formatNumber = d3.format('.0f');
+
+            function rank(valueAccessor) {
+                const data = names.map(name => ({ name, value: valueAccessor(name) }));
+                data.sort((a, b) => d3.descending(a.value, b.value));
+                data.forEach((d, i) => { d.rawRank = i + 1; d.rank = Math.min(n, d.rawRank); });
+                return data;
+            }
+
+            function roundedRect(x, y, width, height, r) {
+                return `M${x},${y}` +
+                       ` h${width - r}` +
+                       ` a${r},${r} 0 0 1 ${r},${r}` +
+                       ` v${height - 2*r}` +
+                       ` a${r},${r} 0 0 1 -${r},${r}` +
+                       ` h${-(width - r)}` +
+                       ` Z`;
+            }
+
+            const keyframes = [];
+            for (let i = 0; i < hourEntries.length - 1; i++) {
+                const [xa, a] = hourEntries[i];
+                const [xb, b] = hourEntries[i + 1];
+                for (let j = 0; j < k; j++) {
+                    const t = j / k;
+                    const xVal = t < 0.5 ? xa : xb;
+                    keyframes.push([
+                        xVal,
+                        rank(name => ((a.get(name) || 0) * (1 - t)) + ((b.get(name) || 0) * t))
+                    ]);
+                }
+            }
+            const [lastX, lastMap] = hourEntries[hourEntries.length - 1];
+            keyframes.push([
+                lastX,
+                rank(name => lastMap.get(name) || 0)
+            ]);
+
+            svg = d3.select('#chart').append('svg')
+                .attr('viewBox', `0 0 ${width} ${height}`)
+                .attr('width', '100%')
+                .attr('height', '100%')
+                .attr('preserveAspectRatio', 'xMidYMid meet');
+            svg.append('text')
+                .attr('class', 'axis-label')
+                .attr('transform', `translate(${marginLeft/2}, ${marginTop + (height - marginTop - marginBottom)/2}) rotate(-90)`)
+                .attr('text-anchor', 'middle')
+                .text('Ranking');
+
+            barGroup = svg.append('g')
+                .attr('transform', `translate(0,${marginTop})`);
+
+            valueGroup = svg.append('g').attr('transform', `translate(0,${marginTop})`);
+            rankLabelGroup = svg.append('g').attr('transform', `translate(0,${marginTop})`);
+
+            const defs = svg.append('defs');
+            const drop = defs.append('filter').attr('id', 'drop').attr('height', '130%');
+            drop.append('feGaussianBlur').attr('in', 'SourceAlpha').attr('stdDeviation', 2);
+            drop.append('feOffset').attr('dx', 2).attr('dy', 2).attr('result', 'offsetblur');
+            const feMerge = drop.append('feMerge');
+            feMerge.append('feMergeNode');
+            feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+            const glow = defs.append('filter')
+                .attr('id', 'glow')
+                .attr('filterUnits', 'userSpaceOnUse')
+                .attr('x', '-200%')
+                .attr('y', '-200%')
+                .attr('width', '400%')
+                .attr('height', '400%');
+            glow.append('feGaussianBlur')
+                .attr('in', 'SourceGraphic')
+                .attr('stdDeviation', 4)
+                .attr('result', 'blur');
+            glow.append('feFlood')
+                .attr('flood-color', '#FFD700')
+                .attr('flood-opacity', '1')
+                .attr('result', 'flood');
+            glow.append('feComposite')
+                .attr('in', 'flood')
+                .attr('in2', 'blur')
+                .attr('operator', 'in')
+                .attr('result', 'mask');
+            const glowMerge = glow.append('feMerge');
+            glowMerge.append('feMergeNode').attr('in', 'mask');
+            glowMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+
+            axisGroup = svg.append('g')
+                .attr('transform', `translate(0,${marginTop})`);
+
+            logoGroup = svg.append('g').attr('transform', `translate(0,${marginTop})`);
+            modelGroup = svg.append('g').attr('transform', `translate(0,${marginTop})`);
+            overlayGroup = svg.append('g');
+            const { width: width0, height: height0 } = dims();
+            const flashOverlay = overlayGroup.append('rect')
+                .attr('class', 'slowmo')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', width0)
+                .attr('height', height0)
+                .attr('fill', '#ffffff')
+                .attr('opacity', 0);
+
+            bottomTicker = svg.append('text')
+                .attr('class', 'ticker-bottom')
+                .attr('x', width - 16)
+                .attr('y', height - marginBottom - 80)
+                .attr('text-anchor', 'end')
+                .text(`Hour ${keyframes[0][0] - appearanceHour}`);
+
+            separatorLine = overlayGroup.append('line')
+                .attr('class', 'threshold-line')
+                .attr('stroke', 'red')
+                .attr('stroke-width', 2)
+                .attr('opacity', 1);
+
+            xScale.domain([0, d3.max(keyframes, ([, data]) => d3.max(data, d => d.value))]);
+            yScale.domain(d3.range(1, n + 1));
+
+            xAxis = d3.axisTop(xScale)
+                .ticks(width / 160)
+                .tickSizeOuter(0)
+                .tickSizeInner(-barSize * (n + yScale.padding()));
+
+            const axis = axisGroup.call(xAxis);
+            axis.select('.domain').remove();
+            axis.selectAll('.tick:not(:first-of-type) line').attr('stroke', 'white');
+            axis.select('.tick:first-of-type text').remove();
+
+            function layout() {
+                const { width, height } = dims();
+                svg.attr('viewBox', `0 0 ${width} ${height}`);
+                xScale.range([marginLeft, width - marginRight]);
+                yScale.range([0, height - marginTop - marginBottom]);
+
+                if (currentYDomain && currentYDomain.length) {
+                    yScale.domain(currentYDomain);
+                }
+                if (currentData && currentData.length) {
+                    xScale.domain([0, d3.max(currentData, d => d.value)]);
+                }
+
+                xAxis.ticks(width / 160).tickSizeInner(-barSize * (n + yScale.padding()));
+                axisGroup.call(xAxis);
+                axisGroup.select('.domain').remove();
+                axisGroup.selectAll('.tick:not(:first-of-type) line').attr('stroke', 'white');
+                axisGroup.select('.tick:first-of-type text').remove();
+                bottomTicker.attr('x', width - 16).attr('y', height - marginBottom - 80);
+                separatorLine
+                    .attr('x1', marginLeft)
+                    .attr('x2', width - marginRight)
+                    .attr('y1', () => {
+                        const bart = currentData.find(d => d.name.split('/')[1] === 'bart-large-cnn');
+                        return bart
+                            ? marginTop + yScale(bart.rank) + yScale.bandwidth()
+                            : marginTop + (height - marginTop - marginBottom) + marginTop + yScale.bandwidth();
+                    })
+                    .attr('y2', () => {
+                        const bart = currentData.find(d => d.name.split('/')[1] === 'bart-large-cnn');
+                        return bart
+                            ? marginTop + yScale(bart.rank) + yScale.bandwidth()
+                            : marginTop + (height - marginTop - marginBottom) + marginTop + yScale.bandwidth();
+                    });
+                overlayGroup.selectAll('rect.slowmo')
+                    .attr('width', width)
+                    .attr('height', height);
+
+                if (currentData && currentData.length) {
+                    const t0 = svg.transition().duration(0);
+                    updateBars(currentData, t0);
+                    updateNumbers(currentData, t0);
+                    updateLogos(currentData, t0);
+                    updateModelLabels(currentData, t0);
+                    updateRankLabels(currentData, t0);
+                    updateTicker([currentX], t0);
+                }
+            }
+
+            layout();
+
+            function isGoldDatum(d) {
+                const model = (d.name.split('/')[1] || d.name).toLowerCase();
+                return (model === 'gpt-oss-120b' || model === 'gpt-oss-20b');
+            }
+
+            function updateBars(data, transition) {
+                const total = data.length;
+                const indexMap = new Map(data.map((d, i) => [d.name, i]));
+                const bars = barGroup.selectAll('path.bar').data(data.slice(0, n), d => d.name);
+                bars.join(
+                    enter => enter.append('path')
+                        .attr('class', 'bar')
+                        .attr('fill', d => {
+                            const model = (d.name.split('/')[1] || d.name).toLowerCase();
+                            return (model === 'gpt-oss-120b' || model === 'gpt-oss-20b') ? '#FFD700' : 'rgba(0,120,255,0.8)';
+                        })
+                        .attr('filter', d => {
+                            const model = (d.name.split('/')[1] || d.name).toLowerCase();
+                            return (model === 'gpt-oss-120b' || model === 'gpt-oss-20b') ? 'url(#glow)' : null;
+                        })
+                        .attr('fill-opacity', d => {
+                            if (isGoldDatum(d)) return 1;
+                            const idx = indexMap.get(d.name);
+                            const total = data.length;
+                            const fadeCount = 5;
+                            if (idx < fadeCount) {
+                                return 0.4 + 0.6 * (idx / (fadeCount - 1));
+                            }
+                            if (idx >= total - fadeCount && !(d.rawRank >= 93 && d.rawRank <= 98)) {
+                                const bottomIdx = total - 1 - idx;
+                                return 0.4 + 0.6 * (bottomIdx / (fadeCount - 1));
+                            }
+                            return 1;
+                        })
+                        .attr('d', d => roundedRect(
+                            xScale(0),
+                            yScale(d.rank),
+                            Math.max(0, xScale(d.value) - xScale(0)),
+                            yScale.bandwidth() - 1,
+                            6
+                        )),
+                    update => update,
+                    exit => exit.transition(transition)
+                        .attr('d', d => roundedRect(
+                            xScale(0),
+                            yScale(d.rank),
+                            Math.max(0, xScale(d.value) - xScale(0)),
+                            yScale.bandwidth() - 1,
+                            6
+                        ))
+                        .remove()
+                )
+                .transition(transition)
+                    .attr('fill', d => {
+                        const model = (d.name.split('/')[1] || d.name).toLowerCase();
+                        return (model === 'gpt-oss-120b' || model === 'gpt-oss-20b') ? '#FFD700' : 'rgba(0,120,255,0.8)';
+                    })
+                    .attr('filter', d => {
+                        const model = (d.name.split('/')[1] || d.name).toLowerCase();
+                        return (model === 'gpt-oss-120b' || model === 'gpt-oss-20b') ? 'url(#glow)' : null;
+                    })
+                    .attr('fill-opacity', d => {
+                        if (isGoldDatum(d)) return 1;
+                        const idx = indexMap.get(d.name);
+                        const total = data.length;
+                        const fadeCount = 5;
+                        if (idx < fadeCount) {
+                            return 0.4 + 0.6 * (idx / (fadeCount - 1));
+                        }
+                        if (idx >= total - fadeCount && !(d.rawRank >= 93 && d.rawRank <= 98)) {
+                            const bottomIdx = total - 1 - idx;
+                            return 0.4 + 0.6 * (bottomIdx / (fadeCount - 1));
+                        }
+                        return 1;
+                    })
+                    .attr('d', d => roundedRect(
+                        xScale(0),
+                        yScale(d.rank),
+                        Math.max(0, xScale(d.value) - xScale(0)),
+                        yScale.bandwidth() - 1,
+                        6
+                    ));
+            }
+
+            function updateLogos(data, transition) {
+                const logos = logoGroup.selectAll('image').data(data.slice(0, n), d => d.name);
+                logos.join(
+                    enter => enter.append('image')
+                        .attr('xlink:href', d => {
+                            const company = d.name.split('/')[0];
+                            return companyInfo[company]?.logo || '';
+                        })
+                        .attr('width', logoSize)
+                        .attr('height', logoSize)
+                        .attr('x', d => xScale(d.value) + 8)
+                        .attr('y', d => yScale(d.rank) + ((yScale.bandwidth() - 1) - logoSize) / 2),
+                    update => update,
+                    exit => exit.remove()
+                )
+                .transition(transition)
+                    .attr('x', d => xScale(d.value) + 8)
+                    .attr('y', d => yScale(d.rank) + ((yScale.bandwidth() - 1) - logoSize) / 2);
+            }
+
+            function updateModelLabels(data, transition) {
+                const labels = modelGroup.selectAll('text.model').data(data.slice(0, n), d => d.name);
+                labels.join(
+                    enter => enter.append('text')
+                        .attr('class', 'model')
+                        .attr('fill', '#111')
+                        .attr('text-anchor', 'start')
+                        .attr('dy', '0.35em')
+                        .attr('font-weight', d => {
+                            const model = (d.name.split('/')[1] || d.name).toLowerCase();
+                            return (model === 'gpt-oss-120b' || model === 'gpt-oss-20b') ? '800' : '600';
+                        })
+                        .text(d => d.name.split('/')[1] || d.name),
+                    update => update,
+                    exit => exit.remove()
+                )
+                .transition(transition)
+                    .attr('x', d => xScale(d.value) + logoSize + 8)
+                    .attr('y', d => yScale(d.rank) + (yScale.bandwidth() - 1) / 2)
+                    .attr('opacity', d => isGoldDatum(d) ? 1 : 0.8)
+                    .attr('font-size', d => {
+                        const w = xScale(d.value) - xScale(0);
+                        const barH = yScale.bandwidth() - 1;
+                        const size = Math.min(barH, w / 8);
+                        const final = Math.max(8, size);
+                        return isGoldDatum(d) ? `${final}px` : `${Math.max(6, final * 0.8)}px`;
+                    })
+                    .attr('font-weight', d => isGoldDatum(d) ? '800' : 'normal');
+            }
+
+            function updateNumbers(data, transition) {
+                const nums = valueGroup.selectAll('text.bar-value').data(data.slice(0, n), d => d.name);
+                nums.join(
+                    enter => enter.append('text')
+                        .attr('class', 'bar-value')
+                        .attr('text-anchor', 'end')
+                        .attr('dy', '0.35em')
+                        .attr('fill', d => isGoldDatum(d) ? '#111' : '#ffffff')
+                        .text(d => formatNumber(d.value)),
+                    update => update,
+                    exit => exit.remove()
+                )
+                .transition(transition)
+                    .attr('x', d => Math.max(xScale(0) + 6, xScale(d.value) - 6))
+                    .attr('y', d => yScale(d.rank) + (yScale.bandwidth() - 1) / 2)
+                    .attr('opacity', d => isGoldDatum(d) ? 1 : 0.8)
+                    .attr('font-size', d => {
+                        const base = Math.max(9, Math.min(18, (yScale.bandwidth() - 1) * 0.55));
+                        return isGoldDatum(d) ? `${base}px` : `${Math.max(7, base * 0.8)}px`;
+                    })
+                    .attr('fill', d => isGoldDatum(d) ? '#111' : '#ffffff')
+                    .tween('text', function(d) {
+                        const that = this;
+                        const start = +that.textContent.replace(/,/g, '') || 0;
+                        const i = d3.interpolateNumber(start, d.value);
+                        return t => { that.textContent = formatNumber(i(t)); };
+                    });
+            }
+
+            function updateRankLabels(data, transition) {
+                const labels = rankLabelGroup.selectAll('text.rank-label').data(data, d => d.name);
+                labels.join(
+                    enter => enter.append('text')
+                        .attr('class', 'rank-label')
+                        .attr('text-anchor', 'end')
+                        .attr('dy', '0.35em')
+                        .attr('opacity', 0)
+                        .attr('fill', d => isGoldDatum(d) ? '#111' : [50,100,500,1000].includes(d.rawRank) ? '#FFD700' : '#777')
+                        .attr('font-weight', d => isGoldDatum(d) ? '800' : 'normal')
+                        .attr('font-size', d => isGoldDatum(d) ? '14px' : [50,100,500,1000].includes(d.rawRank) ? '16px' : '10px')
+                        .attr('filter', d => [50,100,500,1000].includes(d.rawRank) ? 'url(#glow)' : null)
+                        .text(d => (isGoldDatum(d) && !goldHasImproved.get(d.name)) ? '?' : d.rawRank),
+                    update => update
+                        .attr('fill', d => isGoldDatum(d) ? '#111' : '#777')
+                        .attr('font-weight', d => isGoldDatum(d) ? '800' : 'normal'),
+                    exit => exit.remove()
+                )
+                .transition(transition)
+                    .attr('x', () => xScale(0) - 8)
+                    .attr('y', d => yScale(d.rank) + (yScale.bandwidth() - 1) / 2)
+                    .attr('opacity', d => (isGoldDatum(d) || [50,100,500,1000].includes(d.rawRank)) ? 1 : 0.6)
+                    .attr('font-size', d => isGoldDatum(d) ? '14px' : [50,100,500,1000].includes(d.rawRank) ? '16px' : '10px')
+                    .attr('filter', d => [50,100,500,1000].includes(d.rawRank) ? 'url(#glow)' : null)
+                    .tween('text', function(d) {
+                        const that = this;
+                        if (isGoldDatum(d) && !goldHasImproved.get(d.name)) {
+                            return t => { that.textContent = '?'; };
+                        } else {
+                            const start = +that.textContent.replace(/[^0-9]/g, '') || d.rawRank;
+                            const i = d3.interpolateNumber(start, d.rawRank);
+                            return t => { that.textContent = Math.round(i(t)); };
+                        }
+                    });
+            }
+
+            function updateTicker([xVal], transition) {
+                const label = `Hour ${xVal - appearanceHour}`;
+                bottomTicker.text(label);
+            }
+
+            // removed releasedShown, breakInShown, and showOverlayText
+
+            // Always show 20 bars focused on the golden models
+            async function animate() {
+                const displayCount = 50;
+                for (const keyframe of keyframes) {
+                    const [xVal, data] = keyframe;
+
+                    // Determine visible window of 20 around golden bars
+                    const goldData = data.filter(isGoldDatum);
+                    for (const g of goldData) {
+                        if (!initialGoldRanks.has(g.name)) initialGoldRanks.set(g.name, g.rawRank);
+                        if (!goldHasImproved.get(g.name) && g.rawRank < initialGoldRanks.get(g.name)) goldHasImproved.set(g.name, true);
+                    }
+                    let windowStart;
+                    if (goldData.length > 0) {
+                        const minRaw = d3.min(goldData, d => d.rawRank);
+                        // leave space for 5 bars above
+                        windowStart = Math.max(1, Math.min(minRaw - 5, n - displayCount + 1));
+                    } else {
+                        windowStart = n - displayCount + 1;
+                    }
+                    // Set yScale domain to current window indices
+                    const windowIndices = d3.range(windowStart, windowStart + displayCount);
+                    currentYDomain = windowIndices;
+                    yScale.domain(windowIndices);
+                    const visible = data.slice(windowStart - 1, windowStart - 1 + displayCount);
+                    currentData = visible;
+                    currentX = xVal;
+
+                    // Update scales and axis
+                    xScale.domain([0, d3.max(visible, d => d.value)]);
+                    // Dramatic slowmo on Hour 0 (now 1.25× slower) and flash overlay
+                    const relativeHour = xVal - appearanceHour;
+                    const frameDuration = relativeHour === 0
+                        ? duration * 1.25
+                        : relativeHour > 26
+                            ? 40
+                            : relativeHour > 18
+                                ? 60
+                                : relativeHour > 7
+                                    ? 80
+                                    : duration;
+                    if (relativeHour === 0) {
+                        // Quick white flash then fade out
+                        flashOverlay.interrupt().attr('opacity', 0)
+                            .transition().duration(180).attr('opacity', 0.7)
+                            .transition().duration(800).attr('opacity', 0);
+                        // Temporarily strengthen the glow on gold bars
+                        d3.select('#glow').select('feGaussianBlur')
+                            .transition().duration(400).attr('stdDeviation', 8)
+                            .transition().duration(frameDuration).attr('stdDeviation', 4);
+                    }
+
+                    // Slow-motion when GPT-OSS models break into top 98
+                    if (!break98SlowmoShown && data.some(d => isGoldDatum(d) && d.rawRank <= 98)) {
+                        break98SlowmoShown = true;
+                        const slowmoDur2 = duration * 3;
+                        const t2 = svg.transition().duration(slowmoDur2).ease(d3.easeLinear);
+                        // redraw everything in slowmo
+                        axis.transition(t2).call(xAxis);
+                        axis.select('.domain').remove();
+                        axis.selectAll('.tick:not(:first-of-type) line').attr('stroke', 'white');
+                        axis.select('.tick:first-of-type text').remove();
+                        updateBars(visible, t2);
+                        updateNumbers(visible, t2);
+                        updateLogos(visible, t2);
+                        updateModelLabels(visible, t2);
+                        updateRankLabels(visible, t2);
+                        updateTicker([xVal], t2);
+                        try { await t2.end(); } catch (e) {}
+                    }
+
+                    const transition = svg.transition()
+                        .duration(frameDuration)
+                        .ease(d3.easeLinear);
+                    axis.transition(transition).call(xAxis);
+                    axis.select('.domain').remove();
+                    axis.selectAll('.tick:not(:first-of-type) line').attr('stroke', 'white');
+                    axis.select('.tick:first-of-type text').remove();
+
+                    // keep red threshold line under bart-large-cnn
+                    const bart = visible.find(d => d.name.split('/')[1] === 'bart-large-cnn');
+                    const yPos = bart
+                        ? marginTop + yScale(bart.rank) + yScale.bandwidth()
+                        : marginTop + (height - marginTop - marginBottom) + marginTop + yScale.bandwidth();
+                    separatorLine.transition(transition)
+                        .attr('opacity', 1)
+                        .attr('y1', yPos)
+                        .attr('y2', yPos);
+
+                    // Draw bars, logos, labels, rank and ticker
+                    updateBars(visible, transition);
+                    updateNumbers(visible, transition);
+                    updateLogos(visible, transition);
+                    updateModelLabels(visible, transition);
+                    updateRankLabels(visible, transition);
+                    updateTicker([xVal], transition);
+
+                    try { await transition.end(); } catch (e) {}
+                }
+            }
+
+            window.addEventListener('resize', layout);
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', layout);
+                window.visualViewport.addEventListener('scroll', layout);
+            }
+            const ro = new ResizeObserver(() => layout());
+            ro.observe(document.getElementById('chart'));
+            animate().catch(() => {});
+        }
+
+        fetchData();
+    </script>
+    <a href="https://aiworld.eu/" target="_blank" rel="noopener">
+        <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
+    </a>
+</body>
+</html>
