@@ -271,8 +271,18 @@
                 separatorLine
                     .attr('x1', marginLeft)
                     .attr('x2', width - marginRight)
-                    .attr('y1', marginTop + yScale(98) + yScale.bandwidth())
-                    .attr('y2', marginTop + yScale(98) + yScale.bandwidth());
+                    .attr('y1', () => {
+                        const bart = currentData.find(d => d.name.split('/')[1] === 'bart-large-cnn');
+                        return bart
+                            ? marginTop + yScale(bart.rank) + yScale.bandwidth()
+                            : marginTop + (height - marginTop - marginBottom) + marginTop + yScale.bandwidth();
+                    })
+                    .attr('y2', () => {
+                        const bart = currentData.find(d => d.name.split('/')[1] === 'bart-large-cnn');
+                        return bart
+                            ? marginTop + yScale(bart.rank) + yScale.bandwidth()
+                            : marginTop + (height - marginTop - marginBottom) + marginTop + yScale.bandwidth();
+                    });
                 overlayGroup.selectAll('rect.slowmo')
                     .attr('width', width)
                     .attr('height', height);
@@ -525,12 +535,6 @@
                     // Dramatic slowmo on Hour 0 (now 1.25× slower) and flash overlay
                     const relativeHour = xVal - appearanceHour;
                     const frameDuration = (relativeHour === 0) ? duration * 1.25 : duration;
-                    // Show or hide threshold line based on golden models breaking into top 98
-                    if (data.some(d => isGoldDatum(d) && d.rawRank <= 98)) {
-                        separatorLine.transition().duration(200).attr('opacity', 0);
-                    } else {
-                        separatorLine.transition().duration(200).attr('opacity', 1);
-                    }
                     if (relativeHour === 0) {
                         // Quick white flash then fade out
                         flashOverlay.interrupt().attr('opacity', 0)
@@ -568,6 +572,16 @@
                     axis.select('.domain').remove();
                     axis.selectAll('.tick:not(:first-of-type) line').attr('stroke', 'white');
                     axis.select('.tick:first-of-type text').remove();
+
+                    // keep red threshold line under bart-large-cnn
+                    const bart = visible.find(d => d.name.split('/')[1] === 'bart-large-cnn');
+                    const yPos = bart
+                        ? marginTop + yScale(bart.rank) + yScale.bandwidth()
+                        : marginTop + (height - marginTop - marginBottom) + marginTop + yScale.bandwidth();
+                    separatorLine.transition(transition)
+                        .attr('opacity', 1)
+                        .attr('y1', yPos)
+                        .attr('y2', yPos);
 
                     // Draw bars, logos, labels, rank and ticker
                     updateBars(visible, transition);
