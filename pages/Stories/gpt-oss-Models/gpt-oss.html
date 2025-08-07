@@ -200,11 +200,29 @@
             const feMerge = drop.append('feMerge');
             feMerge.append('feMergeNode');
             feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
-            const glow = defs.append('filter').attr('id', 'glow').attr('height', '300%');
-            const glowBlur = glow.append('feGaussianBlur').attr('stdDeviation', 4).attr('result', 'coloredBlur');
-            const merge = glow.append('feMerge');
-            merge.append('feMergeNode').attr('in', 'coloredBlur');
-            merge.append('feMergeNode').attr('in', 'SourceGraphic');
+            const glow = defs.append('filter')
+                .attr('id', 'glow')
+                .attr('filterUnits', 'userSpaceOnUse')
+                .attr('x', '-200%')
+                .attr('y', '-200%')
+                .attr('width', '400%')
+                .attr('height', '400%');
+            glow.append('feGaussianBlur')
+                .attr('in', 'SourceGraphic')
+                .attr('stdDeviation', 4)
+                .attr('result', 'blur');
+            glow.append('feFlood')
+                .attr('flood-color', '#FFD700')
+                .attr('flood-opacity', '1')
+                .attr('result', 'flood');
+            glow.append('feComposite')
+                .attr('in', 'flood')
+                .attr('in2', 'blur')
+                .attr('operator', 'in')
+                .attr('result', 'mask');
+            const glowMerge = glow.append('feMerge');
+            glowMerge.append('feMergeNode').attr('in', 'mask');
+            glowMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
 
             axisGroup = svg.append('g')
@@ -471,8 +489,10 @@
                         .attr('text-anchor', 'end')
                         .attr('dy', '0.35em')
                         .attr('opacity', 0)
-                        .attr('fill', d => isGoldDatum(d) ? '#111' : '#777')
+                        .attr('fill', d => isGoldDatum(d) ? '#111' : d.rawRank === 50 ? '#FFD700' : '#777')
                         .attr('font-weight', d => isGoldDatum(d) ? '800' : 'normal')
+                        .attr('font-size', d => isGoldDatum(d) ? '14px' : d.rawRank === 50 ? '16px' : '10px')
+                        .attr('filter', d => d.rawRank === 50 ? 'url(#glow)' : null)
                         .text(d => (isGoldDatum(d) && !goldHasImproved.get(d.name)) ? '?' : d.rawRank),
                     update => update
                         .attr('fill', d => isGoldDatum(d) ? '#111' : '#777')
@@ -482,7 +502,9 @@
                 .transition(transition)
                     .attr('x', () => xScale(0) - 8)
                     .attr('y', d => yScale(d.rank) + (yScale.bandwidth() - 1) / 2)
-                    .attr('opacity', d => isGoldDatum(d) ? 1 : 0.6)
+                    .attr('opacity', d => (isGoldDatum(d) || d.rawRank === 50) ? 1 : 0.6)
+                    .attr('font-size', d => isGoldDatum(d) ? '14px' : d.rawRank === 50 ? '16px' : '10px')
+                    .attr('filter', d => d.rawRank === 50 ? 'url(#glow)' : null)
                     .tween('text', function(d) {
                         const that = this;
                         if (isGoldDatum(d) && !goldHasImproved.get(d.name)) {
