@@ -181,6 +181,11 @@
                 .attr('width', '100%')
                 .attr('height', '100%')
                 .attr('preserveAspectRatio', 'xMidYMid meet');
+            svg.append('text')
+                .attr('class', 'axis-label')
+                .attr('transform', `translate(${marginLeft/2}, ${marginTop + (height - marginTop - marginBottom)/2}) rotate(-90)`)
+                .attr('text-anchor', 'middle')
+                .text('Ranking');
 
             barGroup = svg.append('g')
                 .attr('transform', `translate(0,${marginTop})`);
@@ -308,7 +313,15 @@
                         .attr('fill-opacity', d => {
                             if (isGoldDatum(d)) return 1;
                             const idx = indexMap.get(d.name);
-                            if (idx < 5) return 0.4 + 0.6 * (idx / 4);
+                            const total = data.length;
+                            const fadeCount = 5;
+                            if (idx < fadeCount) {
+                                return 0.4 + 0.6 * (idx / (fadeCount - 1));
+                            }
+                            if (idx >= total - fadeCount && !(d.rawRank >= 93 && d.rawRank <= 98)) {
+                                const bottomIdx = total - 1 - idx;
+                                return 0.4 + 0.6 * (bottomIdx / (fadeCount - 1));
+                            }
                             return 1;
                         })
                         .attr('d', d => roundedRect(
@@ -341,7 +354,15 @@
                     .attr('fill-opacity', d => {
                         if (isGoldDatum(d)) return 1;
                         const idx = indexMap.get(d.name);
-                        if (idx < 5) return 0.4 + 0.6 * (idx / 4);
+                        const total = data.length;
+                        const fadeCount = 5;
+                        if (idx < fadeCount) {
+                            return 0.4 + 0.6 * (idx / (fadeCount - 1));
+                        }
+                        if (idx >= total - fadeCount && !(d.rawRank >= 93 && d.rawRank <= 98)) {
+                            const bottomIdx = total - 1 - idx;
+                            return 0.4 + 0.6 * (bottomIdx / (fadeCount - 1));
+                        }
                         return 1;
                     })
                     .attr('d', d => roundedRect(
