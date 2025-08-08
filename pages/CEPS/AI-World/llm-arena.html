@@ -41,99 +41,110 @@ button:hover{filter:brightness(0.97);}
 const tooltip = d3.select("#tooltip");
 const datasets = {
   Overall: [
-    {id:"gpt-5",x:0,y:1481,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"gemini-2.5-pro",x:0,y:1460,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
-    {id:"o3-2025-04-16",x:0,y:1450,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"chatgpt-4o-latest-20250326",x:0,y:1442,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1438,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"grok-4-0709",x:0,y:1429,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
-    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1428,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1420,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"kimi-k2-0711-preview",x:0,y:1420,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png"},
-    {id:"glm-4.5",x:0,y:1416,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
-    {id:"deepseek-r1-0528",x:0,y:1417,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
-    {id:"claude-opus-4-20250614",x:0,y:1412,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"grok-3-preview-02-24",x:0,y:1409,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
-    {id:"gemini-2.5-flash",x:0,y:1408,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
-    {id:"gpt-4.1-2025-03-14",x:0,y:1407,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1398,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1398,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"qwenv-235b-a22b-no-thinking",x:0,y:1398,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"o1-2024-12-17",x:0,y:1398,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"o4-mini-2025-04-16",x:0,y:1397,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"}
+    {id:"gpt-5",x:0,y:1481,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"gemini-2.5-pro",x:0,y:1460,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
+    {id:"o3-2025-04-16",x:0,y:1450,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"chatgpt-4o-latest-20250326",x:0,y:1442,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1438,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"grok-4-0709",x:0,y:1429,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg", color: "844B9A"},
+    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1428,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1420,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"kimi-k2-0711-preview",x:0,y:1420,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png", color: "#44AC5D"},
+    {id:"glm-4.5",x:0,y:1416,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg", color: "#EDCD19"},
+    {id:"deepseek-r1-0528",x:0,y:1417,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png", color: "#4c6bfe"},
+    {id:"claude-opus-4-20250614",x:0,y:1412,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"grok-3-preview-02-24",x:0,y:1409,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg", color: "844B9A"},
+    {id:"gemini-2.5-flash",x:0,y:1408,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
+    {id:"gpt-4.1-2025-03-14",x:0,y:1407,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1398,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1398,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"qwenv-235b-a22b-no-thinking",x:0,y:1398,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"o1-2024-12-17",x:0,y:1398,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"o4-mini-2025-04-16",x:0,y:1397,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"}
   ],
   Math: [
-    {id:"gpt-5",x:0,y:1519,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"gemini-2.5-pro",x:0,y:1482,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
-    {id:"grok-4-0709",x:0,y:1478,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
-    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1459,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"o3-2025-04-16",x:0,y:1461,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1427,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"o4-mini-2025-04-16",x:0,y:1430,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"gemini-2.5-flash",x:0,y:1429,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"gpt-5",x:0,y:1519,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"gemini-2.5-pro",x:0,y:1482,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
+    {id:"grok-4-0709",x:0,y:1478,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg", color: "844B9A"},
+    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1459,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"o3-2025-04-16",x:0,y:1461,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1427,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"o4-mini-2025-04-16",x:0,y:1430,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"gemini-2.5-flash",x:0,y:1429,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
     {id:"minimax-m1",x:0,y:1427,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/minimax-color.png"},
-    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1422,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"glm-4.5-air",x:0,y:1417,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
-    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1416,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"qwenv-32b",x:0,y:1406,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"glm-4.5",x:0,y:1406,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
-    {id:"qwenv-30b-a3b-instruct-2507",x:0,y:1404,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"nvidia-llama-3.3-nemotron-super-49b-v1.5",x:0,y:1397,logo:"https://images.seeklogo.com/logo-png/44/1/nvidia-logo-png_seeklogo-443363.png"},
-    {id:"deepseek-r1",x:0,y:1413,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
-    {id:"claude-opus-4-20250614",x:0,y:1413,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"qwenv-235b-a22b",x:0,y:1409,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"}
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1422,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"glm-4.5-air",x:0,y:1417,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg", color: "#EDCD19"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1416,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"qwenv-32b",x:0,y:1406,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"glm-4.5",x:0,y:1406,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg", color: "#EDCD19"},
+    {id:"qwenv-30b-a3b-instruct-2507",x:0,y:1404,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"nvidia-llama-3.3-nemotron-super-49b-v1.5",x:0,y:1397,logo:"https://images.seeklogo.com/logo-png/44/1/nvidia-logo-png_seeklogo-443363.png", color: "#76b900"},
+    {id:"deepseek-r1",x:0,y:1413,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png", color: "#4c6bfe"},
+    {id:"claude-opus-4-20250614",x:0,y:1413,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"qwenv-235b-a22b",x:0,y:1409,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"}
   ],
   "Instruction following": [
-    {id:"gpt-5",x:0,y:1474,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"gemini-2.5-pro",x:0,y:1444,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
-    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1430,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1423,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1427,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"grok-4-0709",x:0,y:1416,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
-    {id:"chatgpt-4o-latest-20250326",x:0,y:1415,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"glm-4.5",x:0,y:1408,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
-    {id:"o3-2025-04-16",x:0,y:1411,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"claude-opus-4-20250614",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1395,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"grok-3-preview-02-24",x:0,y:1400,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
-    {id:"gpt-4.1-2025-04-14",x:0,y:1399,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"gemini-2.5-flash",x:0,y:1396,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
-    {id:"claude-3-7-sonnet-20250219-thinking-32k",x:0,y:1396,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"o1-2024-12-17",x:0,y:1396,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"deepseek-r1-0528",x:0,y:1391,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
-    {id:"deepseek-r1",x:0,y:1387,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
-    {id:"kimi-k2-0711-preview",x:0,y:1385,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png"}
+    {id:"gpt-5",x:0,y:1474,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"gemini-2.5-pro",x:0,y:1444,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1430,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1423,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1427,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"grok-4-0709",x:0,y:1416,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg", color: "844B9A"},
+    {id:"chatgpt-4o-latest-20250326",x:0,y:1415,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"glm-4.5",x:0,y:1408,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg", color: "#EDCD19"},
+    {id:"o3-2025-04-16",x:0,y:1411,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"claude-opus-4-20250614",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1395,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"grok-3-preview-02-24",x:0,y:1400,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg", color: "844B9A"},
+    {id:"gpt-4.1-2025-04-14",x:0,y:1399,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"gemini-2.5-flash",x:0,y:1396,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
+    {id:"claude-3-7-sonnet-20250219-thinking-32k",x:0,y:1396,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"o1-2024-12-17",x:0,y:1396,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"deepseek-r1-0528",x:0,y:1391,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png", color: "#4c6bfe"},
+    {id:"deepseek-r1",x:0,y:1387,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png", color: "#4c6bfe"},
+    {id:"kimi-k2-0711-preview",x:0,y:1385,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png", color: "#44AC5D"}
   ]
   ,
   Code: [
-    {id:"gpt-5",x:0,y:1509,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"qwen3-235b-a22b-instruct-2507",x:0,y:1478,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1481,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"gemini-2.5-pro",x:0,y:1473,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
-    {id:"o3-2025-04-16",x:0,y:1472,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"chatgpt-4o-latest-20250326",x:0,y:1469,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1461,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"kimi-k2-0711-preview",x:0,y:1458,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png"},
-    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1457,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"deepseek-r1-0528",x:0,y:1457,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
-    {id:"glm-4.5",x:0,y:1456,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
-    {id:"qwen3-235b-a22b-thinking-2507",x:0,y:1447,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"claude-opus-4-20250614",x:0,y:1454,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
-    {id:"grok-4-0709",x:0,y:1449,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
-    {id:"gpt-4.1-2025-04-14",x:0,y:1443,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
-    {id:"qwen3-235b-a22b-no-thinking",x:0,y:1440,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"qwen3-coder-480b-a3b-instruct",x:0,y:1436,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
-    {id:"glm-4.5-air",x:0,y:1434,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
-    {id:"claude-sonnet-4-20250614",x:0,y:1438,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"}
+    {id:"gpt-5",x:0,y:1509,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"qwen3-235b-a22b-instruct-2507",x:0,y:1478,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1481,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"gemini-2.5-pro",x:0,y:1473,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg", color: "#ea4335"},
+    {id:"o3-2025-04-16",x:0,y:1472,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"chatgpt-4o-latest-20250326",x:0,y:1469,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1461,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"kimi-k2-0711-preview",x:0,y:1458,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png", color: "#44AC5D"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1457,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"deepseek-r1-0528",x:0,y:1457,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png", color: "#4c6bfe"},
+    {id:"glm-4.5",x:0,y:1456,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg", color: "#EDCD19"},
+    {id:"qwen3-235b-a22b-thinking-2507",x:0,y:1447,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"claude-opus-4-20250614",x:0,y:1454,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"},
+    {id:"grok-4-0709",x:0,y:1449,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg", color: "844B9A"},
+    {id:"gpt-4.1-2025-04-14",x:0,y:1443,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg", color: "#2F68E1"},
+    {id:"qwen3-235b-a22b-no-thinking",x:0,y:1440,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"qwen3-coder-480b-a3b-instruct",x:0,y:1436,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png", color: "#8475f6"},
+    {id:"glm-4.5-air",x:0,y:1434,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg", color: "#EDCD19"},
+    {id:"claude-sonnet-4-20250614",x:0,y:1438,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716", color: "#db7b5c"}
   ]
 };
+function normalizeColor(c){
+  if(!c){return null;}
+  const s = String(c).trim();
+  if(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(s)){return s;}
+  if(/^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(s)){return "#" + s;}
+  return null;
+}
 function getYDomain(){
   return datasets[activeType].slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id);
 }
 function getData(){
-  return datasets[activeType].slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>({id:d.id,x:d.x,y:d.y,logo:d.logo}));
+  return datasets[activeType]
+    .slice()
+    .sort((a,b)=>b.y-a.y)
+    .slice(0,20)
+    .map(d=>({id:d.id,x:d.x,y:d.y,logo:d.logo,color:normalizeColor(d.color)}));
 }
 let chartState = { svg:null, g:null, x:null, y:null, yAxisGroup:null, bgLayer:null, rowBG:null, width:0, height:0, margin:null, bars:null, logos:null };
 
@@ -268,7 +279,7 @@ function createChart() {
   chartState.bgLayer = bgLayer;
   
   const x = d3.scaleLinear()
-    .domain([1350, 1600])
+    .domain([1350, 1530])
     .range([0, width]);
   const localYDomain = getYDomain();
   const y = d3.scaleBand()
@@ -317,7 +328,7 @@ function createChart() {
   g.selectAll("path.bar").data(data, d=>d.id).enter().append("path")
     .attr("class","bar")
     .attr("d", d => barPath(x(1350), x(d.y), y(d.id) + y.bandwidth()/2, barH))
-    .attr("fill","url(#gradBlue)");
+    .attr("fill", d => d.color || "url(#gradBlue)");
 
   chartState.bars = g.selectAll("path.bar");
   // Cache initial geometry for each bar element
@@ -447,8 +458,8 @@ function updateChart(){
         this._h  = barHNow;
       })
       .attr("d", d => barPath(x(1350), x(1350), y(d.id) + y.bandwidth()/2, barHNow))
-      .attr("fill","url(#gradBlue)"),
-    update => update,
+      .attr("fill", d => d.color || "url(#gradBlue)"),
+    update => update.attr("fill", d => d.color || "url(#gradBlue)"),
     exit => exit.transition().duration(350)
       .attrTween("d", function(d){
         const xStart = this._x1 ?? x(1350);
