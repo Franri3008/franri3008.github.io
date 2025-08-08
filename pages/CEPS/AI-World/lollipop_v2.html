@@ -184,7 +184,7 @@ function createChart() {
     
   const rNode = 8;
   const rNodeLarge = 14;
-  const arrowOffset = rNodeLarge - rNode; // 6 pixels
+  const arrowOffset = rNodeLarge - rNode;
   const minArrow = 14;
   
   g.selectAll("line.lolli").data(data.filter(d=>!d.same)).enter().append("line")
@@ -214,12 +214,10 @@ function createChart() {
   };
   const hide = () => tooltip.style("opacity", 0);
   
-  // Simple hover for initial node (tooltip, circle growth, and arrow adjustment)
   const enlargeSimple = function(e, val, d){
     d3.select(this).transition().duration(150).attr("r", rNodeLarge);
     showNode(e, this, val);
     
-    // Adjust arrow start position if this data has an arrow
     if (!d.same) {
       const line = g.select(`line.lolli[data-id="${d.id}"]`);
       if (d.inc) {
@@ -233,8 +231,7 @@ function createChart() {
   const shrinkSimple = function(d){
     d3.select(this).transition().duration(150).attr("r", rNode); 
     hide();
-    
-    // Return arrow to normal position
+
     if (!d.same) {
       const line = g.select(`line.lolli[data-id="${d.id}"]`);
       if (d.inc) {
@@ -245,12 +242,10 @@ function createChart() {
     }
   };
   
-  // Enhanced hover for final node (tooltip, circle growth, delta text effects, and arrow adjustment)
   const enlargeWithDelta = function(e, val, d){
     d3.select(this).transition().duration(150).attr("r", rNodeLarge);
     showNode(e, this, val);
     
-    // Bold, move and increase font size of delta text
     if (d.inc && !d.same) {
       g.select(`text.diffUp[data-id="${d.id}"]`)
         .transition().duration(150)
@@ -265,7 +260,6 @@ function createChart() {
         .attr("x", x(d.y) - 20);
     }
     
-    // Adjust arrow end position
     if (!d.same) {
       const line = g.select(`line.lolli[data-id="${d.id}"]`);
       if (d.inc) {
@@ -280,7 +274,6 @@ function createChart() {
     d3.select(this).transition().duration(150).attr("r", rNode); 
     hide();
     
-    // Return delta text to normal
     if (d.inc && !d.same) {
       g.select(`text.diffUp[data-id="${d.id}"]`)
         .transition().duration(150)
@@ -295,7 +288,6 @@ function createChart() {
         .attr("x", x(d.y) - 12);
     }
     
-    // Return arrow to normal position
     if (!d.same) {
       const line = g.select(`line.lolli[data-id="${d.id}"]`);
       if (d.inc) {
@@ -306,7 +298,6 @@ function createChart() {
     }
   };
   
-  // Initial nodes (gray circles) - simple hover with arrow adjustment
   g.selectAll("circle.a").data(data).enter().append("circle")
     .attr("cx", d => x(d.x))
     .attr("cy", d => y(d.id) + y.bandwidth()/2)
@@ -315,7 +306,6 @@ function createChart() {
     .on("mouseover", function(e,d){enlargeSimple.call(this, e, d.x, d);})
     .on("mouseout", function(e,d){shrinkSimple.call(this, d);});
     
-  // Final nodes (colored circles) - enhanced hover with delta effects and arrow adjustment
   g.selectAll("circle.b").data(data).enter().append("circle")
     .attr("cx",d => x(d.y))
     .attr("cy",d => y(d.id) + y.bandwidth()/2)

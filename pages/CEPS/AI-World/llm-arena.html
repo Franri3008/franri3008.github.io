@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI World Lollipop Chart</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+html,body{height:100%;overflow:hidden;}
+body{font-family:sans-serif; margin:0; padding:8px;}
+.axis path,.axis line{stroke:#bbb;}
+.tick text{font-size: 12px;}
+#tooltip{position:absolute;background:#fff; border:1px solid #ccc; padding:4px 8px;font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.2s;}
+#chart{display:block;margin:0 auto; width: 100%; height: auto;}
+#tooltip:after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-width:6px 6px 0 6px;border-style:solid;border-color:#ccc transparent transparent transparent;}
+#tooltip:before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;border-width:7px 7px 0 7px;border-style:solid;border-color:#fff transparent transparent transparent;}
+.axis text {
+  white-space: nowrap;
+}
+button:focus{outline:none;}
+button:hover{filter:brightness(0.97);}
+#controls{display:flex;gap:10px;margin:0 0 8px 0;align-items:center;justify-content:center;flex-wrap:wrap;}
+#controls .btn{appearance:none;border:1px solid #d0d0d7;background:linear-gradient(#ffffff,#f6f7fb);border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600;min-height:40px;line-height:1;transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;box-shadow:0 1px 2px rgba(0,0,0,.04), inset 0 -1px 0 rgba(0,0,0,.03);}
+#controls .btn:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.08), inset 0 -1px 0 rgba(0,0,0,.02);} 
+#controls .btn:active{transform:translateY(0);} 
+#controls .btn:focus-visible{outline:2px solid #1a73e8;outline-offset:2px;} 
+#controls .btn.active{background:#1a73e8;color:#fff;border-color:#1a73e8;box-shadow:0 4px 10px rgba(26,115,232,.35);} 
+@media (max-width:700px){#controls{justify-content:space-between;}#controls .btn{flex:1 1 45%;min-width:140px;}} 
+@media (max-width:420px){#controls .btn{flex:1 1 100%;min-width:0;width:100%;}}
+</style>
+</head>
+<body>
+<div id="controls">
+  <button id="btn-overall" class="btn">Overall</button>
+  <button id="btn-math" class="btn">Math</button>
+  <button id="btn-instruction" class="btn">Instruction following</button>
+  <button id="btn-code" class="btn">Code</button>
+</div>
+<svg id="chart"></svg>
+<div id="tooltip"></div>
+<script>
+const tooltip = d3.select("#tooltip");
+const datasets = {
+  Overall: [
+    {id:"gpt-5",x:0,y:1481,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"gemini-2.5-pro",x:0,y:1460,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"o3-2025-04-16",x:0,y:1450,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"chatgpt-4o-latest-20250326",x:0,y:1442,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1438,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"grok-4-0709",x:0,y:1429,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
+    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1428,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1420,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"kimi-k2-0711-preview",x:0,y:1420,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png"},
+    {id:"glm-4.5",x:0,y:1416,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+    {id:"deepseek-r1-0528",x:0,y:1417,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
+    {id:"claude-opus-4-20250614",x:0,y:1412,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"grok-3-preview-02-24",x:0,y:1409,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
+    {id:"gemini-2.5-flash",x:0,y:1408,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"gpt-4.1-2025-03-14",x:0,y:1407,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1398,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1398,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"qwenv-235b-a22b-no-thinking",x:0,y:1398,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"o1-2024-12-17",x:0,y:1398,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"o4-mini-2025-04-16",x:0,y:1397,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"}
+  ],
+  Math: [
+    {id:"gpt-5",x:0,y:1519,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"gemini-2.5-pro",x:0,y:1482,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"grok-4-0709",x:0,y:1478,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
+    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1459,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"o3-2025-04-16",x:0,y:1461,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1427,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"o4-mini-2025-04-16",x:0,y:1430,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"gemini-2.5-flash",x:0,y:1429,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"minimax-m1",x:0,y:1427,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/minimax-color.png"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1422,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"glm-4.5-air",x:0,y:1417,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1416,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"qwenv-32b",x:0,y:1406,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"glm-4.5",x:0,y:1406,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+    {id:"qwenv-30b-a3b-instruct-2507",x:0,y:1404,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"nvidia-llama-3.3-nemotron-super-49b-v1.5",x:0,y:1397,logo:"https://images.seeklogo.com/logo-png/44/1/nvidia-logo-png_seeklogo-443363.png"},
+    {id:"deepseek-r1",x:0,y:1413,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
+    {id:"claude-opus-4-20250614",x:0,y:1413,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"qwenv-235b-a22b",x:0,y:1409,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"}
+  ],
+  "Instruction following": [
+    {id:"gpt-5",x:0,y:1474,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"gemini-2.5-pro",x:0,y:1444,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1430,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"qwenv-235b-a22b-instruct-2507",x:0,y:1423,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1427,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"grok-4-0709",x:0,y:1416,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
+    {id:"chatgpt-4o-latest-20250326",x:0,y:1415,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"glm-4.5",x:0,y:1408,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+    {id:"o3-2025-04-16",x:0,y:1411,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"claude-opus-4-20250614",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1411,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"qwenv-235b-a22b-thinking-2507",x:0,y:1395,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"grok-3-preview-02-24",x:0,y:1400,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
+    {id:"gpt-4.1-2025-04-14",x:0,y:1399,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"gemini-2.5-flash",x:0,y:1396,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"claude-3-7-sonnet-20250219-thinking-32k",x:0,y:1396,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"o1-2024-12-17",x:0,y:1396,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"deepseek-r1-0528",x:0,y:1391,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
+    {id:"deepseek-r1",x:0,y:1387,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
+    {id:"kimi-k2-0711-preview",x:0,y:1385,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png"}
+  ]
+  ,
+  Code: [
+    {id:"gpt-5",x:0,y:1509,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"qwen3-235b-a22b-instruct-2507",x:0,y:1478,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"claude-opus-4-20250614-thinking-16k",x:0,y:1481,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"gemini-2.5-pro",x:0,y:1473,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"},
+    {id:"o3-2025-04-16",x:0,y:1472,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"chatgpt-4o-latest-20250326",x:0,y:1469,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"claude-sonnet-4-20250614-thinking-32k",x:0,y:1461,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"kimi-k2-0711-preview",x:0,y:1458,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png"},
+    {id:"gpt-4.5-preview-2025-02-27",x:0,y:1457,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"deepseek-r1-0528",x:0,y:1457,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png"},
+    {id:"glm-4.5",x:0,y:1456,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+    {id:"qwen3-235b-a22b-thinking-2507",x:0,y:1447,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"claude-opus-4-20250614",x:0,y:1454,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"},
+    {id:"grok-4-0709",x:0,y:1449,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg"},
+    {id:"gpt-4.1-2025-04-14",x:0,y:1443,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg"},
+    {id:"qwen3-235b-a22b-no-thinking",x:0,y:1440,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"qwen3-coder-480b-a3b-instruct",x:0,y:1436,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png"},
+    {id:"glm-4.5-air",x:0,y:1434,logo:"https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+    {id:"claude-sonnet-4-20250614",x:0,y:1438,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1721803183716"}
+  ]
+};
+function getYDomain(){
+  return datasets[activeType].slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id);
+}
+function getData(){
+  return datasets[activeType].slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>({id:d.id,x:d.x,y:d.y,logo:d.logo}));
+}
+let chartState = { svg:null, g:null, x:null, y:null, yAxisGroup:null, bgLayer:null, rowBG:null, width:0, height:0, margin:null, bars:null, logos:null };
+
+const startColor = "#cccccc";
+const upColor = "#2ecc71";
+const downColor = "#e74c3c";
+let activeType = "Overall";
+
+const addLogo = (id) => {
+  if(!id){return "";}
+  const logoPath = `./orgs-icons/${id.toLowerCase().replace(/\s+/g,'-')}.png`;
+  return logoPath;
+};
+
+// Helper to draw a bar with rounded RIGHT corners only
+function barPath(x0, x1, yCenter, h){
+  const yTop = yCenter - h/2;
+  const yBot = yCenter + h/2;
+  const width = Math.max(0, x1 - x0);
+  const r = Math.min(8, h/2, width/2);
+  if (width <= 0){
+    return `M ${x0} ${yTop} L ${x0} ${yBot} L ${x0} ${yBot} Z`;
+  }
+  return `M ${x0} ${yTop} L ${x1 - r} ${yTop} A ${r} ${r} 0 0 1 ${x1} ${yTop + r} L ${x1} ${yBot - r} A ${r} ${r} 0 0 1 ${x1 - r} ${yBot} L ${x0} ${yBot} Z`;
+}
+
+// Helper to truncate axis labels so they fit in available left margin
+function truncateAxisLabels(maxWidth){
+  if(!chartState.yAxisGroup){return;}
+  chartState.yAxisGroup.selectAll("text").each(function(d){
+    const text = d3.select(this);
+    const full = d;
+    let shown = full;
+    text.text(shown);
+    if (this.getComputedTextLength() <= maxWidth){
+      text.attr("data-full", full);
+      return;
+    }
+    let low = 0;
+    let high = full.length;
+    while (low < high){
+      const mid = Math.floor((low + high) / 2);
+      text.text(full.slice(0, mid) + "…");
+      if (this.getComputedTextLength() <= maxWidth){
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    const cut = Math.max(1, low - 1);
+    text.text(full.slice(0, cut) + "…");
+    let title = text.select("title");
+    if (title.empty()){
+      text.append("title").text(full);
+    } else {
+      title.text(full);
+    }
+  });
+}
+
+// Helper to compute dynamic bar height based on current band and size factor
+function getBarHeight(scaleBand, sizeFactor){
+  const bw = scaleBand.bandwidth();
+  const k = 0.95 + 0.03 * (sizeFactor || 1);
+  return Math.max(10, bw * k);
+}
+
+function createChart() {
+  const data = getData();
+  data.forEach(d=>{d.delta=d.y-d.x;d.inc=d.delta>0;d.dec=d.delta<0;d.same=Math.abs(d.delta)<0.01;});
+  d3.select("#chart").selectAll("*").remove();
+  const controlsEl = document.getElementById('controls');
+  const controlsH = controlsEl ? controlsEl.offsetHeight : 0;
+  const containerWidth = Math.max(window.innerWidth, 320);
+  const containerHeight = Math.max(window.innerHeight - controlsH - 8, 240);
+  const sizeFactor = Math.max(0.6, Math.min(1.15, Math.min(containerWidth/900, containerHeight/650)));
+  const axisFS = Math.max(9, Math.round(12 * sizeFactor));
+  const valueFS = Math.max(9, Math.round(12 * sizeFactor));
+  const sourceFS = Math.max(9, Math.round(12 * sizeFactor));
+  const logoWH = Math.max(10, Math.round(24 * sizeFactor));
+  chartState.sizeFactor = sizeFactor;
+  chartState.axisFS = axisFS;
+  chartState.valueFS = valueFS;
+  chartState.sourceFS = sourceFS;
+  chartState.logoWH = logoWH;
+  const tempSvg = d3.select("body").append("svg").style("visibility","hidden");
+  const tempText = tempSvg.append("text").style("font-size","12px").style("font-family","sans-serif");
+  // Use max label width across all 3 datasets' top-20
+  const allTop20 = [
+    ...datasets.Overall.slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id),
+    ...datasets.Math.slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id),
+    ...datasets["Instruction following"].slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id)
+  ];
+  const uniqLabels = Array.from(new Set(allTop20));
+  let maxLabelWidth = 0;
+  uniqLabels.forEach(id=>{ tempText.text(id); const w=tempText.node().getBoundingClientRect().width; maxLabelWidth=Math.max(maxLabelWidth,w); });
+  tempSvg.remove();
+  const logoWidth = 24;
+  const padding = 16;
+  const dynamicLeftMargin = Math.min(maxLabelWidth + logoWidth + padding, Math.max(100, containerWidth * 0.25));
+  const footerH = 90;
+  const margin = {top:12,right:Math.max(30,containerWidth*0.05),bottom:footerH,left:dynamicLeftMargin};
+  const width = containerWidth - margin.left - margin.right;
+  const maxRowsH = containerHeight - margin.top - margin.bottom;
+  const rowH = Math.max(22, Math.round(34 * sizeFactor));
+  const height = Math.max(140, Math.min(data.length * rowH, maxRowsH));
+  const svg = d3.select("#chart")
+    .attr("width",containerWidth)
+    .attr("height",height+margin.top+margin.bottom)
+    .attr("viewBox",`0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+    .style("width","100vw")
+    .style("height","auto");
+
+  chartState.svg = svg;
+  chartState.width = width;
+  chartState.height = height;
+
+  const defs = svg.append("defs");
+  const grad = defs.append("linearGradient")
+    .attr("id","gradBlue")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%");
+  grad.append("stop").attr("offset","0%").attr("stop-color","#cfe8ff");
+  grad.append("stop").attr("offset","100%").attr("stop-color","#1f78ff");
+    
+  const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+
+  // Dedicated background layer under axes and marks
+  const bgLayer = g.append("g").attr("class","bg-layer");
+  chartState.bgLayer = bgLayer;
+  
+  const x = d3.scaleLinear()
+    .domain([1350, 1600])
+    .range([0, width]);
+  const localYDomain = getYDomain();
+  const y = d3.scaleBand()
+    .domain(localYDomain)
+    .range([0, height])
+    .padding(Math.max(0.2, Math.min(0.45, 0.55 - 0.25 * sizeFactor)));
+
+  chartState.x = x;
+  chartState.y = y;
+  chartState.margin = margin;
+  chartState.logoWidth = logoWidth;
+  chartState.padding = padding;
+
+  const step = y.step();
+  const padGap = (step - y.bandwidth()) / 2;
+  
+  const rowIdx = d3.range(localYDomain.length);
+  chartState.rowBG = bgLayer.selectAll("rect.row-bg").data(rowIdx, d=>d).enter().append("rect")
+    .attr("class","row-bg")
+    .attr("x", -margin.left)
+    .attr("y", i => y(localYDomain[i]) - padGap)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", step)
+    .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+    .attr("pointer-events","none")
+    .lower();
+    
+  chartState.yAxisGroup = g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+  chartState.yAxisGroup.selectAll("text").style("font-size", axisFS + "px");
+  truncateAxisLabels(margin.left - logoWidth - padding - 8);
+
+  const xAxis = d3.axisBottom(x);
+  g.append("g").attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(xAxis);
+  g.selectAll("g.axis:last-of-type text").style("font-size", axisFS + "px");
+    
+  g.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + 45})`)
+    .style("text-anchor", "middle")
+    .style("font-size", axisFS + "px")
+    .style("fill", "#666")
+    .text("Score");
+    
+  const barH = getBarHeight(y, sizeFactor);
+  g.selectAll("path.bar").data(data, d=>d.id).enter().append("path")
+    .attr("class","bar")
+    .attr("d", d => barPath(x(1350), x(d.y), y(d.id) + y.bandwidth()/2, barH))
+    .attr("fill","url(#gradBlue)");
+
+  chartState.bars = g.selectAll("path.bar");
+  // Cache initial geometry for each bar element
+  chartState.bars.each(function(d){
+    const x = chartState.x;
+    const y = chartState.y;
+    const barH = getBarHeight(y, chartState.sizeFactor);
+    this._x1 = x(d.y);
+    this._yc = y(d.id) + y.bandwidth()/2;
+    this._h  = barH;
+  });
+
+  g.selectAll("text.value").data(data, d=>d.id).enter().append("text")
+    .attr("class","value")
+    .attr("x", d => x(d.y) - 8)
+    .attr("y", d => y(d.id) + y.bandwidth()/2 + Math.round(4 * sizeFactor))
+    .attr("text-anchor","end")
+    .attr("font-size", valueFS + "px")
+    .attr("font-weight","600")
+    .attr("fill","#ffffff")
+    .text(d => d.y);
+
+  g.selectAll("image.logo").data(data, d=>d.id).enter().append("image")
+    .attr("class","logo")
+    .attr("x", d => x(d.y) + 6)
+    .attr("y", d => y(d.id) + (y.bandwidth() - logoWH) / 2)
+    .attr("width", logoWH)
+    .attr("height", logoWH)
+    .attr("href", d => d.logo || addLogo(d.id))
+    .attr("xlink:href", d => d.logo || addLogo(d.id));
+
+  chartState.logos = g.selectAll("image.logo");
+  chartState.g = g;
+
+  const logoSize = Math.min(100, width * 0.15);
+  const logo = svg.append("g")
+    .attr("transform", `translate(${margin.left + width - logoSize}, ${height + margin.top + 40})`);
+
+  logo.append("a")
+    .attr("href", "https://aiworld.eu")
+    .attr("target", "_blank")
+    .append("image")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", logoSize)
+    .attr("height", logoSize * 0.3)
+    .attr("xlink:href", "https://aiworld.eu/logo-transparent.svg");
+
+  const source = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${height + margin.top + 50})`);
+
+  const tSource = source.append("text")
+    .attr("x", 0)
+    .attr("y", 10)
+    .style("text-anchor", "start")
+    .style("font-size", sourceFS + "px")
+    .style("font-style", "italic")
+    .style("fill", "#999")
+    .text("Source:");
+
+  const offset = tSource.node().getComputedTextLength() + 4; // small gap after colon
+
+  const link = source.append("a")
+    .attr("href", "https://lmarena.ai/leaderboard/text")
+    .attr("target", "_blank");
+
+  link.append("text")
+    .attr("x", offset)
+    .attr("y", 10)
+    .style("text-anchor", "start")
+    .style("font-size", sourceFS + "px")
+    .style("fill", "#1a73e8")
+    .style("text-decoration", "underline")
+    .style("cursor", "pointer")
+    .text("LLM Arena Leaderboard");
+}
+
+createChart();
+
+function updateChart(){
+  const data = getData();
+  const x = chartState.x;
+  const y = chartState.y;
+  const g = chartState.g;
+  const newDomain = getYDomain();
+  y.domain(newDomain);
+  y.padding(Math.max(0.2, Math.min(0.45, 0.55 - 0.25 * (chartState.sizeFactor || 1))));
+  chartState.yAxisGroup
+    .transition()
+    .duration(700)
+    .call(d3.axisLeft(y))
+    .on("end", function(){
+      truncateAxisLabels(chartState.margin.left - (chartState.logoWidth || 24) - (chartState.padding || 16) - 8);
+    })
+    .selection()
+    .selectAll("text")
+    .style("font-size", chartState.axisFS + "px");
+  const idx = d3.range(newDomain.length);
+  const bg = chartState.bgLayer.selectAll("rect.row-bg").data(idx, d=>d);
+  bg.join(
+    enter => enter.append("rect")
+      .attr("class","row-bg")
+      .attr("x", -chartState.margin.left)
+      .attr("y", i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2))
+      .attr("width", chartState.width + chartState.margin.left + chartState.margin.right)
+      .attr("height", y.step())
+      .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+      .attr("opacity",0)
+      .transition().duration(700).attr("opacity",1),
+    update => update
+      .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+      .transition().duration(700)
+      .attr("y", i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2))
+      .attr("height", y.step()),
+    exit => exit.transition().duration(500).attr("opacity",0).remove()
+  );
+  chartState.bgLayer.lower();
+  const barHNow = getBarHeight(y, chartState.sizeFactor || 1);
+  const bars = g.selectAll("path.bar").data(data, d=>d.id);
+
+  bars.join(
+    enter => enter.append("path")
+      .attr("class","bar")
+      .each(function(d){
+        this._x1 = x(1350);
+        this._yc = y(d.id) + y.bandwidth()/2;
+        this._h  = barHNow;
+      })
+      .attr("d", d => barPath(x(1350), x(1350), y(d.id) + y.bandwidth()/2, barHNow))
+      .attr("fill","url(#gradBlue)"),
+    update => update,
+    exit => exit.transition().duration(350)
+      .attrTween("d", function(d){
+        const xStart = this._x1 ?? x(1350);
+        const yStart = this._yc ?? (y(d.id) + y.bandwidth()/2);
+        const hStart = this._h  ?? barHNow;
+        const xEnd = x(1350);
+        const yEnd = y(d.id) + y.bandwidth()/2;
+        const hEnd = barHNow;
+        return function(t){
+          
+          const xi = xStart + (xEnd - xStart)*t;
+          const yi = yStart + (yEnd - yStart)*t;
+          const hi = hStart + (hEnd - hStart)*t;
+          return barPath(x(1350), xi, yi, hi);
+        };
+      })
+      .on("end", function(){ this.remove(); })
+  )
+  .transition().duration(700)
+  .attrTween("d", function(d){
+    const xStart = this._x1 ?? x(1350);
+    const yStart = this._yc ?? (y(d.id) + y.bandwidth()/2);
+    const hStart = this._h  ?? barHNow;
+    const xEnd = x(d.y);
+    const yEnd = y(d.id) + y.bandwidth()/2;
+    const hEnd = getBarHeight(y, chartState.sizeFactor || 1);
+    return function(t){
+      const xi = xStart + (xEnd - xStart)*t;
+      const yi = yStart + (yEnd - yStart)*t;
+      const hi = hStart + (hEnd - hStart)*t;
+      return barPath(x(1350), xi, yi, hi);
+    };
+  })
+  .on("end", function(d){
+    this._x1 = x(d.y);
+    this._yc = y(d.id) + y.bandwidth()/2;
+    this._h  = getBarHeight(y, chartState.sizeFactor || 1);
+  });
+
+  chartState.bars = g.selectAll("path.bar");
+
+  const values = g.selectAll("text.value").data(data, d=>d.id);
+  values.join(
+    enter => enter.append("text")
+      .attr("class","value")
+      .attr("x", d => x(d.y) - 8)
+      .attr("y", d => y(d.id) + y.bandwidth()/2 + Math.round(4 * (chartState.sizeFactor || 1)))
+      .attr("text-anchor","end")
+      .attr("font-size", (chartState.valueFS || 12) + "px")
+      .attr("font-weight","600")
+      .attr("fill","#ffffff")
+      .attr("opacity",0)
+      .text(d => d.y)
+      .transition().duration(700).attr("opacity",1),
+    update => update.transition().duration(700)
+      .attr("x", d => x(d.y) - 8)
+      .attr("y", d => y(d.id) + y.bandwidth()/2 + Math.round(4 * (chartState.sizeFactor || 1)))
+      .tween("text", function(d){
+        const that = d3.select(this);
+        const i = d3.interpolateNumber(+that.text(), d.y);
+        return function(t){ that.text(Math.round(i(t))); };
+      }),
+    exit => exit.transition().duration(500).attr("opacity",0).remove()
+  );
+  const logos = g.selectAll("image.logo").data(data, d=>d.id);
+  logos.join(
+    enter => enter.append("image")
+      .attr("class","logo")
+      .attr("x", d => x(d.y) + 6)
+      .attr("y", d => y(d.id) + (y.bandwidth() - (chartState.logoWH || 24)) / 2)
+      .attr("width", Math.max(10, chartState.logoWH || 24))
+      .attr("height", Math.max(10, chartState.logoWH || 24))
+      .attr("href", d => d.logo || addLogo(d.id))
+      .attr("xlink:href", d => d.logo || addLogo(d.id))
+      .attr("opacity",0)
+      .transition().duration(700).attr("opacity",1),
+    update => update.transition().duration(700)
+      .attr("x", d => x(d.y) + 6)
+      .attr("y", d => y(d.id) + (y.bandwidth() - (chartState.logoWH || 24)) / 2)
+      .attr("href", d => d.logo || addLogo(d.id))
+      .attr("xlink:href", d => d.logo || addLogo(d.id))
+      .attr("width", Math.max(10, chartState.logoWH || 24))
+      .attr("height", Math.max(10, chartState.logoWH || 24)),
+    exit => exit.transition().duration(500).attr("opacity",0).remove()
+  );
+  chartState.logos = g.selectAll("image.logo");
+}
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => { createChart(); }, 250);
+});
+
+function setActive(btnId){
+  ["btn-overall","btn-math","btn-instruction","btn-code"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el){return;}
+    el.classList.remove("active");
+  });
+  const el = document.getElementById(btnId);
+  if(el){el.classList.add("active");}
+}
+function onSelect(type,btnId){
+  activeType = type;
+  setActive(btnId);
+}
+setActive("btn-overall");
+document.getElementById("btn-overall").addEventListener("click",()=>{ onSelect("Overall","btn-overall"); updateChart(); });
+document.getElementById("btn-math").addEventListener("click",()=>{ onSelect("Math","btn-math"); updateChart(); });
+document.getElementById("btn-instruction").addEventListener("click",()=>{ onSelect("Instruction following","btn-instruction"); updateChart(); });
+document.getElementById("btn-code").addEventListener("click",()=>{ onSelect("Code","btn-code"); updateChart(); });
+</script>
+</body>
+</html>
