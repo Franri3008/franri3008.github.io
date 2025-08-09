@@ -16,6 +16,43 @@ body{font-family:sans-serif; margin:0; padding:8px;}
 .axis text {
   white-space: nowrap;
 }
+.logo {
+    position: absolute;
+    bottom: clamp(6px, 4vh, 20px);
+    right: 20px;
+    width: clamp(80px, 10vw, 200px);
+    pointer-events: auto;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .logo.overlapped {
+    opacity: 0.15;
+  }
+  .logo.overlapped:hover {
+    opacity: 1;
+  }
+  .source-text {
+    position: absolute;
+    bottom: clamp(10px, 4vh, 30px);
+    left: 20px;
+    pointer-events: auto;
+    font-size: clamp(12px, 1.5vw, 20px);
+    font-weight: bold;
+    color: #555555;
+    z-index: 1000;
+    opacity: 1;
+    font-style: italic;
+    transition: opacity 0.3s ease;
+  }
+  .source-text.overlapped {
+    opacity: 0.15;
+  }
+  .source-text.overlapped:hover {
+    opacity: 1;
+  }
+  .source-text a{color:#1a73e8; text-decoration:underline; cursor:pointer;}
+  .source-text a:visited{color:#1a73e8;}
 button:focus{outline:none;}
 button:hover{filter:brightness(0.97);}
 #controls{display:flex;gap:10px;--gap:10px;--btn-count:5;--btn-fs:12px;--btn-pad-y:8px;--btn-pad-x:12px;margin:0 0 8px 0;align-items:center;justify-content:center;flex-wrap:nowrap;}
@@ -415,47 +452,6 @@ function createChart() {
   chartState.logos = g.selectAll("image.logo");
   chartState.g = g;
 
-  const logoSize = Math.min(100, width * 0.15);
-  const logo = svg.append("g")
-    .attr("transform", `translate(${margin.left + width - logoSize}, ${height + margin.top + 40})`);
-
-  logo.append("a")
-    .attr("href", "https://aiworld.eu")
-    .attr("target", "_blank")
-    .append("image")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", logoSize)
-    .attr("height", logoSize * 0.3)
-    .attr("xlink:href", "https://aiworld.eu/logo-transparent.svg");
-
-  const source = svg.append("g")
-    .attr("transform", `translate(${margin.left}, ${height + margin.top + 50})`);
-
-  const tSource = source.append("text")
-    .attr("x", 0)
-    .attr("y", 10)
-    .style("text-anchor", "start")
-    .style("font-size", sourceFS + "px")
-    .style("font-style", "italic")
-    .style("fill", "#999")
-    .text("Source:");
-
-  const offset = tSource.node().getComputedTextLength() + 4;
-
-  const link = source.append("a")
-    .attr("href", "https://epoch.ai/benchmarks")
-    .attr("target", "_blank");
-
-  link.append("text")
-    .attr("x", offset)
-    .attr("y", 10)
-    .style("text-anchor", "start")
-    .style("font-size", sourceFS + "px")
-    .style("fill", "#1a73e8")
-    .style("text-decoration", "underline")
-    .style("cursor", "pointer")
-    .text("Epoch AI Benchmarking Hub");
 }
 
 createChart();
@@ -631,5 +627,9 @@ document.getElementById("btn-gpqa").addEventListener("click",()=>{ onSelect("GPQ
 
 document.getElementById("btn-frontier-private").addEventListener("click",()=>{ onSelect("FrontierMath-2025-02-28-Private","btn-frontier-private"); updateChart(); fitButtonText(); });
 </script>
+      <a href="https://aiworld.eu/" target="_blank" rel="noopener">
+        <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
+      </a>
+      <div class="source-text">Source: <a href="https://epoch.ai/benchmarks" target="_blank" rel="noopener">Epoch AI Benchmarking Hub</a></div>
 </body>
 </html>
