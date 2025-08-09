@@ -30,7 +30,6 @@ button:hover{filter:brightness(0.97);}
 <div id="controls">
   <button id="btn-swe" class="btn">SWE-Bench verified</button>
   <button id="btn-otis" class="btn">OTIS Mock AIME 2024-2025</button>
-  <button id="btn-math5" class="btn">MATH level 5</button>
   <button id="btn-gpqa" class="btn">GPQA diamond</button>
   <button id="btn-frontier-private" class="btn">FrontierMath Private</button>
 </div>
@@ -103,7 +102,7 @@ const datasets = {
     {id:"gpt-5-mini-2025-08-07_medium",x:0,y:0.578,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
     {id:"gpt-4o-2024-11-20",x:0,y:0.254,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"}
   ],
-    "OTIS Mock AIME 2024-2025": [
+  "OTIS Mock AIME 2024-2025": [
     {id:"gpt-5-2025-08-07_medium",x:0,y:0.872222222,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
     {id:"gpt-5-2025-08-07_high",x:0,y:0.866666667,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
     {id:"o3-2025-04-16_high",x:0,y:0.838888889,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
@@ -124,28 +123,6 @@ const datasets = {
     {id:"claude-opus-4-1-20250805_27K",x:0,y:0.688888889,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
     {id:"claude-opus-4-1-20250805_16K",x:0,y:0.644444444,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
     {id:"o1-2024-12-17_medium",x:0,y:0.733333333,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"}
-  ],
-  "MATH level 5": [
-    {id:"o4-mini-2025-04-16_high",x:0,y:0.978285498,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"o3-2025-04-16_high",x:0,y:0.977719033,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"DeepSeek-R1-0528",x:0,y:0.966389728,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
-    {id:"o3-mini-2025-01-31_high",x:0,y:0.964879154,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"gemini-2.5-pro-preview-05-06",x:0,y:0.95902568,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
-    {id:"gemini-2.5-pro-preview-03-25",x:0,y:0.955626888,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
-    {id:"o3-mini-2025-01-31_medium",x:0,y:0.951661631,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"o1-2024-12-17_high",x:0,y:0.947129909,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"o1-2024-12-17_medium",x:0,y:0.944108761,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"DeepSeek-R1",x:0,y:0.930513595,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
-    {id:"claude-3-7-sonnet-20250219_64K",x:0,y:0.91163142,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
-    {id:"grok-3-mini-beta_low",x:0,y:0.909365559,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
-    {id:"claude-3-7-sonnet-20250219_32K",x:0,y:0.900302115,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
-    {id:"DeepSeek-R1-Distill-Llama-70B",x:0,y:0.898980363,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
-    {id:"o1-mini-2024-09-12_high",x:0,y:0.891805136,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"grok-3-beta",x:0,y:0.887462236,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
-    {id:"grok-3-mini-beta_high",x:0,y:0.880664653,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
-    {id:"gpt-4.1-mini-2025-04-14",x:0,y:0.872922961,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
-    {id:"DeepSeek-R1-Distill-Qwen-14B",x:0,y:0.871223565,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
-    {id:"claude-3-7-sonnet-20250219_16K",x:0,y:0.862537764,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"}
   ],
   "GPQA diamond": [
     {id:"grok-4-0709",x:0,y:0.87,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
@@ -218,7 +195,7 @@ let chartState = { svg:null, g:null, x:null, y:null, yAxisGroup:null, bgLayer:nu
 const startColor = "#cccccc";
 const upColor = "#2ecc71";
 const downColor = "#e74c3c";
-let activeType = "MATH level 5";
+let activeType = "OTIS Mock AIME 2024-2025";
 
 const addLogo = (id) => {
   if(!id){return "";}
@@ -632,7 +609,7 @@ window.addEventListener('resize', () => {
 });
 
 function setActive(btnId){
-  ["btn-swe","btn-otis","btn-math5","btn-gpqa","btn-frontier-private"].forEach(id=>{
+  ["btn-swe","btn-otis","btn-gpqa","btn-frontier-private"].forEach(id=>{
     const el = document.getElementById(id);
     if(!el){return;}
     el.classList.remove("active");
@@ -644,13 +621,11 @@ function onSelect(type,btnId){
   activeType = type;
   setActive(btnId);
 }
-setActive("btn-math5");
+setActive("btn-otis");
 
 document.getElementById("btn-swe").addEventListener("click",()=>{ onSelect("SWE-Bench verified","btn-swe"); updateChart(); fitButtonText(); });
 
 document.getElementById("btn-otis").addEventListener("click",()=>{ onSelect("OTIS Mock AIME 2024-2025","btn-otis"); updateChart(); fitButtonText(); });
-
-document.getElementById("btn-math5").addEventListener("click",()=>{ onSelect("MATH level 5","btn-math5"); updateChart(); fitButtonText(); });
 
 document.getElementById("btn-gpqa").addEventListener("click",()=>{ onSelect("GPQA diamond","btn-gpqa"); updateChart(); fitButtonText(); });
 
