@@ -218,7 +218,7 @@ let chartState = { svg:null, g:null, x:null, y:null, yAxisGroup:null, bgLayer:nu
 const startColor = "#cccccc";
 const upColor = "#2ecc71";
 const downColor = "#e74c3c";
-let activeType = "SWE-Bench verified";
+let activeType = "MATH level 5";
 
 const addLogo = (id) => {
   if(!id){return "";}
@@ -644,7 +644,7 @@ function onSelect(type,btnId){
   activeType = type;
   setActive(btnId);
 }
-setActive("btn-swe");
+setActive("btn-math5");
 
 document.getElementById("btn-swe").addEventListener("click",()=>{ onSelect("SWE-Bench verified","btn-swe"); updateChart(); fitButtonText(); });
 
