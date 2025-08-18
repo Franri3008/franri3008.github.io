@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+.knitr .inline { background-color: #F7F7F7; border: solid 1px #B0B0B0; }
+.error { font-weight: bold; color: #FF0000; }
+.warning { font-weight: bold; }
+.message { font-style: italic; }
+.source, .output, .warning, .error, .message { padding: 0 1em; border: solid 1px #F7F7F7; }
+.source { background-color: #F5F5F5; }
+.rimage .left { text-align: left; }
+.rimage .right { text-align: right; }
+.rimage .center { text-align: center; }
+.hl.num { color: #AF0F91; }
+.hl.str { color: #317ECC; }
+.hl.com { color: #AD95AF; font-style: italic; }
+.hl.opt { color: #000000; }
+.hl.std { color: #585858; }
+.hl.kwa { color: #295F94; font-weight: bold; }
+.hl.kwb { color: #B05A65; }
+.hl.kwc { color: #55AA55; }
+.hl.kwd { color: #BC5A65; font-weight: bold; }
+body { margin: 0; overflow: hidden; }
+#treemap { position: absolute; top: 0; left: 0; right: 0; bottom: clamp(80px, 12vh, 120px); }
+.logo { position: absolute; bottom: clamp(6px, 4vh, 20px); right: 20px; width: clamp(80px, 10vw, 200px); pointer-events: auto; z-index: 1000; opacity: 1; transition: opacity 0.3s ease; }
+.logo.overlapped { opacity: 0.15; }
+.logo.overlapped:hover { opacity: 1; }
+.source-text { position: absolute; bottom: clamp(10px, 4vh, 30px); left: 20px; pointer-events: auto; font-size: clamp(12px, 1.5vw, 20px); font-weight: bold; color: #555555; z-index: 1000; opacity: 1; font-style: italic; transition: opacity 0.3s ease; }
+.source-text.overlapped { opacity: 0.15; }
+.source-text.overlapped:hover { opacity: 1; }
+.custom-legend { position: absolute; top: calc(100vh - clamp(80px, 12vh, 120px) + 10px); bottom: auto; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: clamp(12px, 3vw, 24px); background: rgba(255, 255, 255, 0.9); padding: clamp(8px, 2vh, 12px) clamp(12px, 2vw, 20px); border-radius: clamp(4px, 1vw, 8px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif; font-size: clamp(12px, 1.5vw, 16px); font-weight: 500; z-index: 1000; opacity: 1; transition: opacity 0.3s ease; }
+.custom-legend.overlapped { opacity: 0.15; }
+.custom-legend.overlapped:hover { opacity: 1; }
+.legend-item { display: flex; align-items: center; gap: 8px; cursor: pointer; transition: opacity 0.3s ease; }
+.legend-item.inactive { opacity: 0.3; }
+.legend-item:hover { opacity: 1; }
+.legend-square { width: clamp(12px, 1.5vw, 16px); height: clamp(12px, 1.5vw, 16px); border-radius: clamp(2px, 0.5vw, 4px); }
+.legend-item { position: relative; }
+.legend-item:focus-visible { outline: 2px solid rgba(0,0,0,0.6); outline-offset: 2px; }
+.legend-item .legend-square { position: relative; box-shadow: 0 0 0 1px rgba(0,0,0,0.15) inset; }
+.legend-item.active .legend-square::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); font-size: clamp(10px, 1.6vw, 14px); color: #ffffff; text-shadow: 0 0 2px rgba(0,0,0,0.35); }
+.legend-item.inactive .legend-square::before { content: ""; position: absolute; left: 2px; right: 2px; top: 50%; height: 2px; background: rgba(255,255,255,0.9); transform: rotate(-45deg); }
+</style>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3plus-hierarchy@1"></script>
+</head>
+<body>
+<div class="treemap-section">
+  <div id="treemap"></div>
+</div>
+<div class="controls-section">
+  <div class="custom-legend" id="legend">
+    <div class="legend-item" data-group="Training data" role="button" tabindex="0" aria-pressed="true"><div class="legend-square" style="background-color:#1F77B4;"></div><span>Training data</span></div>
+    <div class="legend-item" data-group="Inference" role="button" tabindex="0" aria-pressed="true"><div class="legend-square" style="background-color:#FF7F0E;"></div><span>Inference</span></div>
+    <div class="legend-item" data-group="Output" role="button" tabindex="0" aria-pressed="true"><div class="legend-square" style="background-color:#2CA02C;"></div><span>Output</span></div>
+    <div class="legend-item" data-group="Non-technical" role="button" tabindex="0" aria-pressed="true"><div class="legend-square" style="background-color:#9467BD;"></div><span>Non-technical</span></div>
+    <div class="legend-item" data-group="Agentic" role="button" tabindex="0" aria-pressed="true"><div class="legend-square" style="background-color:#D62728;"></div><span>Agentic</span></div>
+  </div>
+</div>
+<script>
+var originalData = [
+  {"name":"Transparency","parent":"Training data","value":2},
+  {"name":"Data laws","parent":"Training data","value":3},
+  {"name":"Privacy","parent":"Training data","value":3},
+  {"name":"Fairness","parent":"Training data","value":1},
+  {"name":"Intellectual property","parent":"Training data","value":2},
+  {"name":"Accuracy","parent":"Training data","value":2},
+  {"name":"Value alignment","parent":"Training data","value":2},
+  {"name":"Robustness","parent":"Training data","value":1},
+  {"name":"Model-behavior manipulation","parent":"Inference","value":3},
+  {"name":"Prompt attacks","parent":"Inference","value":9},
+  {"name":"Privacy","parent":"Inference","value":3},
+  {"name":"Intellectual property","parent":"Inference","value":2},
+  {"name":"Accuracy","parent":"Inference","value":1},
+  {"name":"Misuse","parent":"Output","value":6},
+  {"name":"Value alignment","parent":"Output","value":5},
+  {"name":"Intellectual property","parent":"Output","value":2},
+  {"name":"Explainability","parent":"Output","value":4},
+  {"name":"Robustness","parent":"Output","value":1},
+  {"name":"Fairness","parent":"Output","value":2},
+  {"name":"Privacy","parent":"Output","value":1},
+  {"name":"Legal compliance","parent":"Non-technical","value":3},
+  {"name":"Governance","parent":"Non-technical","value":7},
+  {"name":"Societal impact","parent":"Non-technical","value":8},
+  {"name":"Computational inefficiency","parent":"Agentic","value":1},
+  {"name":"Explainability","parent":"Agentic","value":1},
+  {"name":"Fairness","parent":"Agentic","value":2},
+  {"name":"Governance","parent":"Agentic","value":6},
+  {"name":"Privacy","parent":"Agentic","value":2},
+  {"name":"Robustness","parent":"Agentic","value":4},
+  {"name":"Societal impact","parent":"Agentic","value":4},
+  {"name":"Value alignment","parent":"Agentic","value":2}
+];
+var descriptions = {
+  "Training data|Transparency":"Opaque sourcing hides bias and blocks auditing.",
+  "Training data|Data laws":"Unlawful collection triggers fines and injunctions.",
+  "Training data|Privacy":"Personal data exposure harms users and violates trust.",
+  "Training data|Fairness":"Skewed samples propagate systemic discrimination.",
+  "Training data|Intellectual property":"Ingesting restricted works creates infringement liability.",
+  "Training data|Accuracy":"Noisy or stale data yields unreliable predictions.",
+  "Training data|Value alignment":"Misaligned datasets nudge behaviors off intended values.",
+  "Training data|Robustness":"Narrow coverage leaves models brittle to shifts and attacks.",
+  "Inference|Model-behavior manipulation":"Adversaries can steer latent goals or bypass safety.",
+  "Inference|Prompt attacks":"Prompt injection and jailbreaks elicit harmful or exfiltrating outputs.",
+  "Inference|Privacy":"Queries can extract sensitive or training-only information.",
+  "Inference|Intellectual property":"Verbatim reproduction exposes copyright claims.",
+  "Inference|Accuracy":"Hallucinations mislead decisions and erode trust.",
+  "Output|Misuse":"Generated content can enable fraud, abuse, or physical harm.",
+  "Output|Value alignment":"Outputs may conflict with ethics, safety, or policy.",
+  "Output|Intellectual property":"Outputs may infringe third-party rights or licenses.",
+  "Output|Explainability":"Opaque answers block oversight and incident response.",
+  "Output|Robustness":"Minor changes can flip to unsafe or wrong outputs.",
+  "Output|Fairness":"Content may stereotype or exclude protected groups.",
+  "Output|Privacy":"Responses can leak personal or confidential data.",
+  "Non-technical|Legal compliance":"Regulatory breaches drive penalties, bans, and litigation.",
+  "Non-technical|Governance":"Weak controls enable drift, shadow changes, and blame gaps.",
+  "Non-technical|Societal impact":"Externalities harm jobs, safety, or information ecosystems.",
+  "Agentic|Computational inefficiency":"Runaway loops waste compute and rack up cost.",
+  "Agentic|Explainability":"Untraceable plans conceal unsafe tool use.",
+  "Agentic|Fairness":"Policies can disadvantage users unevenly across groups.",
+  "Agentic|Governance":"Autonomy without approvals causes audit and accountability failures.",
+  "Agentic|Privacy":"Toolchains may retain or spread sensitive user data.",
+  "Agentic|Robustness":"Ambiguity and tool failures cascade into harmful actions.",
+  "Agentic|Societal impact":"Multi-step actions can amplify real-world harm.",
+  "Agentic|Value alignment":"Misaligned objectives drive agents toward unsafe goals."
+};
+function applyDescriptions(arr){
+  return arr.map(function(d){
+    var key = (d.parent || "") + "|" + d.name;
+    var copy = Object.assign({}, d);
+    copy.desc = descriptions[key] || "";
+    return copy;
+  });
+}
+var data = applyDescriptions(originalData.slice());
+var activeGroups = new Set(["Training data","Inference","Output","Non-technical","Agentic"]);
+var groupColors = {"Training data":"#1F77B4","Inference":"#FF7F0E","Output":"#2CA02C","Non-technical":"#9467BD","Agentic":"#D62728"};
+function getGroupColor(parent){ return groupColors[parent] || "#666666"; }
+var treemap = new d3plus.Treemap()
+  .select("#treemap")
+  .data(data)
+  .groupBy(["parent","name"])
+  .tooltipConfig({
+    title:function(d){ return d.name; },
+    body:function(d){
+      var base = "<strong>Class:</strong> " + (d.parent || d.id) + "<br><strong>Count:</strong> " + (d.value || 0);
+      if(d.desc && d.desc.trim().length>0){ base += "<br><strong>Risk:</strong> " + d.desc; }
+      return base;
+    }
+  })
+  .sum("value")
+  .layoutPadding(2)
+  .legend(false)
+  .color(function(d){ return getGroupColor(d.parent || d.id); })
+  .shapeConfig({
+    stroke:function(d){ if(d.depth===0){ return getGroupColor(d.id); } return "transparent"; },
+    strokeWidth:function(d){ if(d.depth===0){ return 3; } return 0; }
+  });
+function updateVisualization(){
+  var filteredData = originalData.filter(function(d){ return activeGroups.has(d.parent); });
+  data = applyDescriptions(filteredData);
+  treemap.data(data).render();
+  document.querySelectorAll('.legend-item').forEach(function(item){
+    var grp = item.getAttribute('data-group');
+    var isActive = activeGroups.has(grp);
+    item.classList.toggle('inactive', !isActive);
+    item.classList.toggle('active', isActive);
+    item.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+document.querySelectorAll('.legend-item').forEach(function(item){
+  item.addEventListener('click', function(){
+    var grp = this.getAttribute('data-group');
+    if(activeGroups.has(grp)){ activeGroups.delete(grp); } else { activeGroups.add(grp); }
+    updateVisualization();
+  });
+  item.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      var grp = this.getAttribute('data-group');
+      if(activeGroups.has(grp)){ activeGroups.delete(grp); } else { activeGroups.add(grp); }
+      updateVisualization();
+    }
+  });
+});
+treemap.render();
+updateVisualization();
+function debouncedCheckOverlap(){ checkOverlap(); }
+function checkOverlap(){
+  var legend = document.querySelector('.custom-legend');
+  var logo = document.querySelector('.logo');
+  var sourceText = document.querySelector('.source-text');
+  if(!legend || !logo || !sourceText) return;
+  var legendRect = legend.getBoundingClientRect();
+  var logoRect = logo.getBoundingClientRect();
+  var sourceRect = sourceText.getBoundingClientRect();
+  var logoOverlap = !(legendRect.right < logoRect.left || legendRect.left > logoRect.right || legendRect.bottom < logoRect.top || legendRect.top > logoRect.bottom);
+  var sourceOverlap = !(legendRect.right < sourceRect.left || legendRect.left > sourceRect.right || legendRect.bottom < sourceRect.top || legendRect.top > sourceRect.bottom);
+  logo.classList.toggle('overlapped', logoOverlap);
+  sourceText.classList.toggle('overlapped', sourceOverlap);
+}
+var observer = new MutationObserver(function(){ debouncedCheckOverlap(); });
+observer.observe(document.body,{childList:true,subtree:true});
+window.addEventListener('resize', debouncedCheckOverlap);
+setTimeout(debouncedCheckOverlap,200);
+</script>
+<a href="https://aiworld.eu/" target="_blank" rel="noopener">
+  <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
+</a>
+<div class="source-text">Source: <a href="https://arxiv.org/abs/2503.05780" target="_blank" rel="noopener">Bagehorn et al., 2025</a></div>
+</body>
+</html>
