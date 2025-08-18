@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI World Lollipop Chart</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+body{font-family:sans-serif; margin:0; padding:20px;}
+.axis path,.axis line{stroke:#bbb;}
+.tick text{font-size: 12px;}
+#tooltip{position:absolute;background:#fff; border:1px solid #ccc; padding:4px 8px;font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.2s;}
+#chart{display:block;margin:0 auto; width: 100%; height: auto;}
+#tooltip:after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-width:6px 6px 0 6px;border-style:solid;border-color:#ccc transparent transparent transparent;}
+#tooltip:before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;border-width:7px 7px 0 7px;border-style:solid;border-color:#fff transparent transparent transparent;}
+.axis text {
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<svg id = "chart"></svg>
+<div id = "tooltip"></div>
+<script>
+const tooltip = d3.select("#tooltip");
+const data = [
+  {id: "Ai2", x: 455, y: 1057},
+  {id: "NVIDIA", x: 182, y: 547},
+  {id: "Meta Llama", x: 2036, y: 2372},
+  {id: "Hugging Face", x: 471, y: 749},
+  {id: "Qwen", x: 110, y: 348},
+  {id: "Google", x: 900, y: 1110},
+  {id: "Microsoft", x: 357, y: 501},
+  {id: "IBM Granite", x: 34, y: 130},
+  {id: "ByteDance", x: 15, y: 108},
+  {id: "Apple", x: 81, y: 116},
+  {id: "DeepSeek", x: 46, y: 81},
+  {id: "Stability AI", x: 93, y: 122},
+  {id: "Mistral AI", x: 14, y: 39},
+  {id: "Cohere Labs", x: 18, y: 39},
+  {id: "OpenAI", x: 39, y: 44}
+];
+
+const addLogo = (id) => {
+  if (!id) {
+    console.error("Missing id:", id);
+    return '';
+  }
+  console.log("Logo ID:", id);
+  const logoPath = `./orgs-icons/${id.toLowerCase().replace(/\s+/g, '-')}.png`;
+  return logoPath;
+};
+
+data.forEach(d => {
+  d.delta = d.y - d.x;
+  d.inc = d.delta > 0;
+  d.dec = d.delta < 0;
+  d.same = Math.abs(d.delta) < 0.01;
+});
+
+const startColor = "#cccccc"; 
+const upColor = "#2ecc71"; 
+const downColor = "#e74c3c";
+
+data.sort((a,b) => (b.x+b.y) - (a.x+a.y));
+data.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+function createChart() {
+  d3.select("#chart").selectAll("*").remove();
+  
+  const containerWidth = Math.max(window.innerWidth - 40, 400);
+  const containerHeight = Math.max(window.innerHeight - 100, 300);
+  
+  const tempSvg = d3.select("body").append("svg").style("visibility", "hidden");
+  const tempText = tempSvg.append("text").style("font-size", "12px").style("font-family", "sans-serif");
+
+  let maxLabelWidth = 0;
+  data.forEach(d => {
+    tempText.text(d.id);
+    const textWidth = tempText.node().getBoundingClientRect().width;
+    maxLabelWidth = Math.max(maxLabelWidth, textWidth);
+  });
+
+  tempSvg.remove();
+
+  const logoWidth = 24;
+  const padding = 16;
+  const dynamicLeftMargin = maxLabelWidth + logoWidth + padding;
+
+  const margin = {
+    top: 20, 
+    right: Math.max(30, containerWidth * 0.05), 
+    bottom: 80, 
+    left: dynamicLeftMargin
+  };
+  
+  const width = containerWidth - margin.left - margin.right;
+  const height = Math.max(data.length * 30, containerHeight - margin.top - margin.bottom);
+
+  const svg = d3.select("#chart")
+    .attr("width", containerWidth)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+    .style("width", "100%")
+    .style("height", "auto");
+
+  const defs = svg.append("defs");
+  defs.append("marker")
+    .attr("id","arrowGreen")
+    .attr("viewBox","0 0 10 10")
+    .attr("refX",10)
+    .attr("refY",5)
+    .attr("markerWidth",12)
+    .attr("markerHeight",12)
+    .attr("orient","auto")
+    .attr("markerUnits","userSpaceOnUse")
+    .append("path")
+    .attr("d","M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#2ecc71");
+
+  defs.append("marker")
+    .attr("id","arrowRed")
+    .attr("viewBox","0 0 10 10")
+    .attr("refX",0)
+    .attr("refY",5)
+    .attr("markerWidth",12)
+    .attr("markerHeight",12)
+    .attr("orient","auto")
+    .attr("markerUnits","userSpaceOnUse")
+    .append("path")
+    .attr("d","M 10 0 L 0 5 L 10 10 z")
+    .attr("fill", "#e74c3c");
+    
+  const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+  
+  const xMin = d3.min(data, d => Math.min(d.x, d.y));
+  const xMax = d3.max(data, d => Math.max(d.x, d.y));
+  const x = d3.scaleLinear()
+    .domain([Math.min(0, xMin) - (xMax - xMin) * 0.02, xMax + (xMax - xMin) * 0.1]).nice()
+    .range([0, width]);
+  const y = d3.scaleBand()
+    .domain(data.map(d => d.id))
+    .range([0, height])
+    .padding(0.8);
+
+  const step = y.step();
+  const padGap = (step - y.bandwidth()) / 2;
+  
+  g.selectAll("rect.row-bg").data(data).enter().append("rect")
+    .attr("class","row-bg")
+    .attr("x", -margin.left)
+    .attr("y", d => y(d.id) - padGap)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", step)
+    .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+    .attr("pointer-events","none")
+    .lower();
+    
+  const yAxisGroup = g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+
+  yAxisGroup.selectAll(".tick")
+    .each(function(d) {
+      const logoPath = addLogo(d);
+      const text = d3.select(this).select("text");
+      d3.select(this)
+        .append("image")
+        .attr("x", 8)
+        .attr("y", -12)
+        .attr("width", 24)
+        .attr("height", 24)
+        .attr("xlink:href", logoPath);
+    });
+    
+  const xAxis = d3.axisBottom(x).tickValues(x.ticks().filter(d => d >= 0));
+  g.append("g").attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(xAxis);
+    
+  g.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + 45})`)
+    .style("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#666")
+    .text("Number of Hugging Face Repositories");
+    
+  const rNode = 8;
+  const rNodeLarge = 14;
+  const arrowOffset = rNodeLarge - rNode;
+  const minArrow = 14;
+  
+  g.selectAll("line.lolli").data(data.filter(d=>!d.same)).enter().append("line")
+    .attr("class", "lolli")
+    .attr("data-id", d => d.id)
+    .attr("y1", d => y(d.id) + y.bandwidth()/2)
+    .attr("y2", d => y(d.id) + y.bandwidth()/2)
+    .attr("x1", d => d.inc ? x(d.x) + rNode : x(d.y) + rNode)
+    .attr("x2", d => d.inc ? x(d.y) - rNode : x(d.x) - rNode)
+    .attr("stroke", d => d.inc ? upColor : downColor)
+    .attr("stroke-width", 3)
+    .attr("stroke-linecap", "round")
+    .attr("marker-end", d => (d.inc && Math.abs(x(d.y) - x(d.x)) > minArrow) ? "url(#arrowGreen)" : null)
+    .attr("marker-start", d => (d.dec && Math.abs(x(d.x) - x(d.y)) > minArrow) ? "url(#arrowRed)" : null);
+    
+  const formatNumber = (num) => {
+    return num % 1 === 0 ? num.toString() : num.toFixed(2);
+  };
+
+  const showNode = (e, node, val) => {
+    const tt = tooltip.style("opacity",1).html(formatNumber(val));
+    const nb = node.getBoundingClientRect();
+    const tb = tt.node().getBoundingClientRect();
+    const left = nb.left + nb.width/2 - tb.width/2 + window.scrollX;
+    const top  = nb.top  - tb.height - 12 + window.scrollY;
+    tt.style("left", left + "px").style("top", top + "px");
+  };
+  const hide = () => tooltip.style("opacity", 0);
+  
+  const enlargeSimple = function(e, val, d){
+    d3.select(this).transition().duration(150).attr("r", rNodeLarge);
+    showNode(e, this, val);
+    
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x1", x(d.x) + rNodeLarge);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x2", x(d.x) - rNodeLarge);
+      }
+    }
+  };
+  
+  const shrinkSimple = function(d){
+    d3.select(this).transition().duration(150).attr("r", rNode); 
+    hide();
+
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x1", x(d.x) + rNode);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x2", x(d.x) - rNode);
+      }
+    }
+  };
+  
+  const enlargeWithDelta = function(e, val, d){
+    d3.select(this).transition().duration(150).attr("r", rNodeLarge);
+    showNode(e, this, val);
+    
+    if (d.inc && !d.same) {
+      g.select(`text.diffUp[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px")
+        .attr("x", x(d.y) + 20);
+    } else if (d.dec && !d.same) {
+      g.select(`text.diffDown[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px")
+        .attr("x", x(d.y) - 20);
+    }
+    
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x2", x(d.y) - rNodeLarge);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x1", x(d.y) + rNodeLarge);
+      }
+    }
+  };
+  
+  const shrinkWithDelta = function(d){
+    d3.select(this).transition().duration(150).attr("r", rNode); 
+    hide();
+    
+    if (d.inc && !d.same) {
+      g.select(`text.diffUp[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "normal")
+        .attr("font-size", "11px")
+        .attr("x", x(d.y) + 12);
+    } else if (d.dec && !d.same) {
+      g.select(`text.diffDown[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "normal")
+        .attr("font-size", "11px")
+        .attr("x", x(d.y) - 12);
+    }
+    
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x2", x(d.y) - rNode);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x1", x(d.y) + rNode);
+      }
+    }
+  };
+  
+  g.selectAll("circle.a").data(data).enter().append("circle")
+    .attr("cx", d => x(d.x))
+    .attr("cy", d => y(d.id) + y.bandwidth()/2)
+    .attr("r", rNode)
+    .attr("fill", startColor)
+    .on("mouseover", function(e,d){enlargeSimple.call(this, e, d.x, d);})
+    .on("mouseout", function(e,d){shrinkSimple.call(this, d);});
+    
+  g.selectAll("circle.b").data(data).enter().append("circle")
+    .attr("cx",d => x(d.y))
+    .attr("cy",d => y(d.id) + y.bandwidth()/2)
+    .attr("r", rNode)
+    .attr("fill", d => d.same ? startColor : (d.inc ? upColor : downColor))
+    .on("mouseover", function(e,d){enlargeWithDelta.call(this,e,d.y, d);})
+    .on("mouseout", function(e,d){shrinkWithDelta.call(this, d);});
+    
+  const diff = d => formatNumber(Math.abs(d.delta));
+
+  g.selectAll("text.diffUp").data(data.filter(d=>d.inc && !d.same)).enter().append("text")
+    .attr("class","diffUp")
+    .attr("data-id", d => d.id)
+    .attr("x", d => x(d.y) + 12)
+    .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
+    .attr("text-anchor","start")
+    .attr("fill", upColor)
+    .attr("font-size","11px")
+    .text(d => "+" + diff(d));
+    
+  g.selectAll("text.diffDown").data(data.filter(d=>d.dec && !d.same)).enter().append("text")
+    .attr("class","diffDown")
+    .attr("data-id", d => d.id)
+    .attr("x", d => x(d.y) - 12)
+    .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
+    .attr("text-anchor","end")
+    .attr("fill", downColor)
+    .attr("font-size","11px")
+    .text(d => "-" + diff(d));
+
+  const logoSize = Math.min(100, width * 0.15);
+  const logo = svg.append("g")
+    .attr("transform", `translate(${margin.left + width - logoSize}, ${height + margin.top + 40})`);
+
+  logo.append("a")
+    .attr("href", "https://aiworld.eu")
+    .attr("target", "_blank")
+    .append("image")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", logoSize)
+    .attr("height", logoSize * 0.3)
+    .attr("xlink:href", "https://aiworld.eu/logo-transparent.svg");
+
+  const source = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${height + margin.top + 50})`);
+
+  source.append("a")
+    .attr("href", "https://huggingface.co")
+    .attr("target", "_blank")
+    .append("text")
+    .attr("x", 0)
+    .attr("y", 10)
+    .style("text-anchor", "start")
+    .style("font-size", "12px")
+    .style("font-style", "italic")
+    .style("fill", "#999")
+    .style("cursor", "pointer")
+    .text("Source: Hugging Face");
+}
+
+createChart();
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTime);
+  resizeTimeout = setTimeout(() => {
+    createChart();
+  }, 250);
+});
+</script>
+</body>
+</html>

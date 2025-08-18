@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI World AI Models Benchmark</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+html,body{height:100%;overflow:hidden;}
+body{font-family:sans-serif; margin:0; padding:8px;}
+.axis path,.axis line{stroke:#bbb;}
+.tick text{font-size: 12px;}
+#tooltip{position:absolute;background:#fff; border:1px solid #ccc; padding:4px 8px;font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.2s;}
+#chart{display:block;margin:0 auto; width: 100%; height: auto;}
+#tooltip:after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-width:6px 6px 0 6px;border-style:solid;border-color:#ccc transparent transparent transparent;}
+#tooltip:before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;border-width:7px 7px 0 7px;border-style:solid;border-color:#fff transparent transparent transparent;}
+.axis text {
+  white-space: nowrap;
+}
+.logo {
+    position: absolute;
+    bottom: clamp(6px, 4vh, 20px);
+    right: 20px;
+    width: clamp(80px, 10vw, 200px);
+    pointer-events: auto;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .logo.overlapped {
+    opacity: 0.15;
+  }
+  .logo.overlapped:hover {
+    opacity: 1;
+  }
+  .source-text {
+    position: absolute;
+    bottom: clamp(10px, 4vh, 30px);
+    left: 20px;
+    pointer-events: auto;
+    font-size: clamp(12px, 1.5vw, 20px);
+    font-weight: bold;
+    color: #555555;
+    z-index: 1000;
+    opacity: 1;
+    font-style: italic;
+    transition: opacity 0.3s ease;
+  }
+  .source-text.overlapped {
+    opacity: 0.15;
+  }
+  .source-text.overlapped:hover {
+    opacity: 1;
+  }
+  .source-text a{color:#1a73e8; text-decoration:underline; cursor:pointer;}
+  .source-text a:visited{color:#1a73e8;}
+button:focus{outline:none;}
+button:hover{filter:brightness(0.97);}
+#controls{display:flex;gap:10px;--gap:10px;--btn-count:5;--btn-fs:12px;--btn-pad-y:8px;--btn-pad-x:12px;margin:0 0 8px 0;align-items:center;justify-content:center;flex-wrap:nowrap;}
+#controls .btn{appearance:none;border:1px solid #d0d0d7;background:linear-gradient(#ffffff,#f6f7fb);border-radius:10px;padding:var(--btn-pad-y) var(--btn-pad-x);cursor:pointer;font-weight:600;min-height:30px;line-height:1;transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;box-shadow:0 1px 2px rgba(0,0,0,.04), inset 0 -1px 0 rgba(0,0,0,.03);flex:1 1 calc((100% - var(--gap) * (var(--btn-count) - 1))/var(--btn-count));min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:var(--btn-fs);} 
+#controls .btn:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.08), inset 0 -1px 0 rgba(0,0,0,.02);} 
+#controls .btn:active{transform:translateY(0);} 
+#controls .btn:focus-visible{outline:2px solid #1a73e8;outline-offset:2px;} 
+#controls .btn.active{background:#1a73e8;color:#fff;border-color:#1a73e8;box-shadow:0 4px 10px rgba(26,115,232,.35);} 
+</style>
+</head>
+<body>
+<div id="controls">
+  <button id="btn-swe" class="btn">SWE-Bench verified</button>
+  <button id="btn-otis" class="btn">OTIS Mock AIME 2024-2025</button>
+  <button id="btn-gpqa" class="btn">GPQA diamond</button>
+  <button id="btn-frontier-private" class="btn">FrontierMath Private</button>
+</div>
+<svg id="chart"></svg>
+<div id="tooltip"></div>
+<script>
+const tooltip = d3.select("#tooltip");
+function setControlsBtnCount(){
+  const controls = document.getElementById('controls');
+  if(!controls){return;}
+  const n = controls.querySelectorAll('.btn').length;
+  controls.style.setProperty('--btn-count', n);
+  const styles = getComputedStyle(controls);
+  const gap = parseFloat(styles.getPropertyValue('--gap')) || 10;
+  const totalWidth = controls.clientWidth;
+  const per = Math.max(40, (totalWidth - gap * (n - 1)) / n);
+  const fs = Math.max(8, Math.min(18, per * 0.18));
+  const padY = Math.max(4, Math.min(12, per * 0.08));
+  const padX = Math.max(6, Math.min(18, per * 0.12));
+  controls.style.setProperty('--btn-fs', fs + 'px');
+  controls.style.setProperty('--btn-pad-y', padY + 'px');
+  controls.style.setProperty('--btn-pad-x', padX + 'px');
+}
+setControlsBtnCount();
+
+function fitButtonText(){
+  const controls = document.getElementById('controls');
+  if(!controls){return;}
+  const buttons = controls.querySelectorAll('.btn');
+  buttons.forEach(btn => {
+    btn.style.fontSize = ''; // reset
+    const cs = getComputedStyle(btn);
+    const minPx = 6;
+    const maxPx = 18;
+    const targetWidth = btn.clientWidth - (parseFloat(cs.paddingLeft)||0) - (parseFloat(cs.paddingRight)||0) - 4;
+    if(targetWidth <= 0){ btn.style.fontSize = minPx + 'px'; return; }
+    let lo = minPx, hi = maxPx;
+    while(lo < hi){
+      const mid = Math.floor((lo + hi + 1) / 2);
+      btn.style.fontSize = mid + 'px';
+      if(btn.scrollWidth <= btn.clientWidth){
+        lo = mid;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    btn.style.fontSize = lo + 'px';
+  });
+}
+fitButtonText();
+const datasets = {
+  "SWE-Bench verified": [
+    {id:"o4-mini-2025-04-16_medium",x:0,y:0.346,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-3-7-sonnet-20250219",x:0,y:0.522,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"grok-3-mini-beta_low",x:0,y:0.152,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"gemini-2.0-flash-001",x:0,y:0.22,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
+    {id:"grok-3-beta",x:0,y:0.386,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"gpt-4.1-2025-04-14",x:0,y:0.41,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-4.1-mini-2025-04-14",x:0,y:0.328,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-3-5-sonnet-20241022",x:0,y:0.406,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"o3-mini-2025-01-31_medium",x:0,y:0.378,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"qwen-plus-2025-04-28",x:0,y:0.28,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png",color:"#8475f6"},
+    {id:"claude-3-5-sonnet-20240620",x:0,y:0.32,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-sonnet-4-20250514",x:0,y:0.606,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-opus-4-20250514",x:0,y:0.622,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"DeepSeek-R1-0528",x:0,y:0.332665331,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
+    {id:"claude-opus-4-1-20250805",x:0,y:0.632,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"Kimi-K2-Instruct",x:0,y:0.164,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png",color:"#44AC5D"},
+    {id:"gpt-5-2025-08-07_medium",x:0,y:0.588,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-mini-2025-08-07_medium",x:0,y:0.578,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-4o-2024-11-20",x:0,y:0.254,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"}
+  ],
+  "OTIS Mock AIME 2024-2025": [
+    {id:"gpt-5-2025-08-07_medium",x:0,y:0.872222222,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-2025-08-07_high",x:0,y:0.866666667,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"o3-2025-04-16_high",x:0,y:0.838888889,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"grok-4-0709",x:0,y:0.84,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"o4-mini-2025-04-16_high",x:0,y:0.816666667,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-mini-2025-08-07_high",x:0,y:0.777777778,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-nano-2025-08-07_medium",x:0,y:0.741666667,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-mini-2025-08-07_medium",x:0,y:0.783333333,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-nano-2025-08-07_high",x:0,y:0.727777778,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"o3-mini-2025-01-31_high",x:0,y:0.769444444,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"grok-3-mini-beta_high",x:0,y:0.777777778,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"gemini-2.5-flash-preview-04-17",x:0,y:0.730555556,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
+    {id:"gemini-2.5-flash-preview-05-20",x:0,y:0.708333333,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
+    {id:"claude-sonnet-4-20250514_32K",x:0,y:0.711111111,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-sonnet-4-20250514_59K",x:0,y:0.688888889,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-opus-4-20250514_27K",x:0,y:0.644444444,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"DeepSeek-R1-0528",x:0,y:0.663888889,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
+    {id:"claude-opus-4-1-20250805_27K",x:0,y:0.688888889,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-opus-4-1-20250805_16K",x:0,y:0.644444444,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"o1-2024-12-17_medium",x:0,y:0.733333333,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"}
+  ],
+  "GPQA diamond": [
+    {id:"grok-4-0709",x:0,y:0.87,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"gpt-5-2025-08-07_medium",x:0,y:0.853535354,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gemini-2.5-pro-preview-06-05",x:0,y:0.848484848,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
+    {id:"gpt-5-2025-08-07_high",x:0,y:0.845328283,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gemini-2.5-pro-exp-03-25",x:0,y:0.838383838,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
+    {id:"o3-2025-04-16_high",x:0,y:0.818181818,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-3-7-sonnet-20250219_64K",x:0,y:0.797348485,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"o4-mini-2025-04-16_high",x:0,y:0.796085859,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-sonnet-4-20250514_59K",x:0,y:0.791878173,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-sonnet-4-20250514_32K",x:0,y:0.782828283,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-opus-4-1-20250805_16K",x:0,y:0.772727273,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"o3-mini-2025-01-31_high",x:0,y:0.77020202,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"o1-2024-12-17_high",x:0,y:0.767676768,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-3-7-sonnet-20250219_16K",x:0,y:0.767676768,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-3-7-sonnet-20250219_32K",x:0,y:0.767676768,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-opus-4-1-20250805_27K",x:0,y:0.767676768,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"DeepSeek-R1-0528",x:0,y:0.763257576,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4c6bfe"},
+    {id:"grok-3-mini-beta_low",x:0,y:0.762626263,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"claude-opus-4-20250514_16K",x:0,y:0.762626263,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"o1-2024-12-17_medium",x:0,y:0.757575758,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"}
+  ],
+  "FrontierMath-2025-02-28-Private": [
+    {id:"gpt-5-2025-08-07_medium",x:0,y:0.248275862,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-2025-08-07_high",x:0,y:0.248275862,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"o4-mini-2025-04-16_medium",x:0,y:0.193103448,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-mini-2025-08-07_medium",x:0,y:0.193103448,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-mini-2025-08-07_high",x:0,y:0.189655172,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"o4-mini-2025-04-16_high",x:0,y:0.172413793,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"grok-4-0709",x:0,y:0.1211,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"o3-mini-2025-01-31_high",x:0,y:0.110344828,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gemini-2.5-pro",x:0,y:0.110344828,logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#ea4335"},
+    {id:"o1-2024-12-17_high",x:0,y:0.093103448,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"gpt-5-nano-2025-08-07_high",x:0,y:0.082758621,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"o3-mini-2025-01-31_medium",x:0,y:0.080818966,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-opus-4-1-20250805_27K",x:0,y:0.072413793,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"gpt-5-nano-2025-08-07_medium",x:0,y:0.072413793,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"grok-3-mini-beta_high",x:0,y:0.05862069,logo:"https://upload.wikimedia.org/wikipedia/commons/5/57/XAI-Logo.svg",color:"844B9A"},
+    {id:"gpt-4.1-2025-04-14",x:0,y:0.055172414,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-opus-4-20250514",x:0,y:0.044827586,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"gpt-4.1-mini-2025-04-14",x:0,y:0.044827586,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"274653"},
+    {id:"claude-3-7-sonnet-20250219_16K",x:0,y:0.04137931,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"},
+    {id:"claude-opus-4-20250514_27K",x:0,y:0.04137931,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#e76f51"}
+  ]
+};
+function normalizeColor(c){
+  if(!c){return null;}
+  const s = String(c).trim();
+  if(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(s)){return s;}
+  if(/^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(s)){return "#" + s;}
+  return null;
+}
+function getYDomain(){
+  const ds = datasets[activeType];
+  if(!ds){ return []; }
+  return ds.slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id);
+}
+function getData(){
+  const ds = datasets[activeType];
+  if(!ds){ return []; }
+  return ds
+    .slice()
+    .sort((a,b)=>b.y-a.y)
+    .slice(0,20)
+    .map(d=>({id:d.id,x:d.x,y:d.y,logo:d.logo,color:normalizeColor(d.color)}));
+}
+let chartState = { svg:null, g:null, x:null, y:null, yAxisGroup:null, bgLayer:null, rowBG:null, width:0, height:0, margin:null, bars:null, logos:null };
+
+const startColor = "#cccccc";
+const upColor = "#2ecc71";
+const downColor = "#e74c3c";
+let activeType = "OTIS Mock AIME 2024-2025";
+
+const addLogo = (id) => {
+  if(!id){return "";}
+  const logoPath = `./orgs-icons/${id.toLowerCase().replace(/\s+/g,'-')}.png`;
+  return logoPath;
+};
+
+function barPath(x0, x1, yCenter, h){
+  const yTop = yCenter - h/2;
+  const yBot = yCenter + h/2;
+  const width = Math.max(0, x1 - x0);
+  const r = Math.min(8, h/2, width/2);
+  if (width <= 0){
+    return `M ${x0} ${yTop} L ${x0} ${yBot} L ${x0} ${yBot} Z`;
+  }
+  return `M ${x0} ${yTop} L ${x1 - r} ${yTop} A ${r} ${r} 0 0 1 ${x1} ${yTop + r} L ${x1} ${yBot - r} A ${r} ${r} 0 0 1 ${x1 - r} ${yBot} L ${x0} ${yBot} Z`;
+}
+
+function truncateAxisLabels(maxWidth){
+  if(!chartState.yAxisGroup){return;}
+  chartState.yAxisGroup.selectAll("text").each(function(d){
+    const text = d3.select(this);
+    const full = d;
+    let shown = full;
+    text.text(shown);
+    if (this.getComputedTextLength() <= maxWidth){
+      text.attr("data-full", full);
+      return;
+    }
+    let low = 0;
+    let high = full.length;
+    while (low < high){
+      const mid = Math.floor((low + high) / 2);
+      text.text(full.slice(0, mid) + "…");
+      if (this.getComputedTextLength() <= maxWidth){
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    const cut = Math.max(1, low - 1);
+    text.text(full.slice(0, cut) + "…");
+    let title = text.select("title");
+    if (title.empty()){
+      text.append("title").text(full);
+    } else {
+      title.text(full);
+    }
+  });
+}
+
+function getBarHeight(scaleBand, sizeFactor){
+  const bw = scaleBand.bandwidth();
+  const k = 0.95 + 0.03 * (sizeFactor || 1);
+  return Math.max(10, bw * k);
+}
+
+function sizeYAxisEndTicks(group, smallPx){
+  const nodes = group.selectAll(".tick text").nodes();
+  if(!nodes || nodes.length===0){return;}
+  d3.select(nodes[0]).style("font-size", smallPx + "px");
+  d3.select(nodes[nodes.length-1]).style("font-size", smallPx + "px");
+}
+
+function createChart() {
+  const data = getData();
+  data.forEach(d=>{d.delta=d.y-d.x;d.inc=d.delta>0;d.dec=d.delta<0;d.same=Math.abs(d.delta)<0.01;});
+  d3.select("#chart").selectAll("*").remove();
+  const controlsEl = document.getElementById('controls');
+  const controlsH = controlsEl ? controlsEl.offsetHeight : 0;
+  const containerWidth = Math.max(window.innerWidth, 320);
+  const containerHeight = Math.max(window.innerHeight - controlsH - 8, 240);
+  const sizeFactor = Math.max(0.6, Math.min(1.15, Math.min(containerWidth/900, containerHeight/650)));
+  let axisFS = Math.max(9, Math.round(12 * sizeFactor));
+  const valueFS = Math.max(9, Math.round(12 * sizeFactor));
+  const sourceFS = Math.max(9, Math.round(12 * sizeFactor));
+  const logoWH = Math.max(10, Math.round(24 * sizeFactor));
+  chartState.sizeFactor = sizeFactor;
+  chartState.axisFS = axisFS;
+  chartState.valueFS = valueFS;
+  chartState.sourceFS = sourceFS;
+  chartState.logoWH = logoWH;
+  const tempSvg = d3.select("body").append("svg").style("visibility","hidden");
+  const tempText = tempSvg.append("text").style("font-size","12px").style("font-family","sans-serif");
+  // Use max label width across all datasets' top-20
+  const allTop20 = Object.keys(datasets).flatMap(k => {
+    const arr = datasets[k] || [];
+    return arr.slice().sort((a,b)=>b.y-a.y).slice(0,20).map(d=>d.id);
+  });
+  const uniqLabels = Array.from(new Set(allTop20));
+  let maxLabelWidth = 0;
+  uniqLabels.forEach(id=>{ tempText.text(id); const w=tempText.node().getBoundingClientRect().width; maxLabelWidth=Math.max(maxLabelWidth,w); });
+  tempSvg.remove();
+  const logoWidth = 24;
+  const padding = 16;
+  const dynamicLeftMargin = Math.min(maxLabelWidth + logoWidth + padding, Math.max(100, containerWidth * 0.25));
+  // Responsive y-axis font size block
+  const availForText = Math.max(40, dynamicLeftMargin - logoWidth - padding - 8);
+  const fitFS = Math.floor(12 * (availForText / Math.max(1, maxLabelWidth)));
+  axisFS = Math.max(8, Math.min(axisFS, fitFS));
+  chartState.axisFS = axisFS;
+  const footerH = 90;
+  const margin = {top:12,right:Math.max(30,containerWidth*0.05),bottom:footerH,left:dynamicLeftMargin};
+  const width = containerWidth - margin.left - margin.right;
+  const maxRowsH = containerHeight - margin.top - margin.bottom;
+  const rowH = Math.max(22, Math.round(34 * sizeFactor));
+  const height = Math.max(140, Math.min(data.length * rowH, maxRowsH));
+  const svg = d3.select("#chart")
+    .attr("width",containerWidth)
+    .attr("height",height+margin.top+margin.bottom)
+    .attr("viewBox",`0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+    .style("width","100vw")
+    .style("height","auto");
+
+  chartState.svg = svg;
+  chartState.width = width;
+  chartState.height = height;
+
+  const defs = svg.append("defs");
+  const grad = defs.append("linearGradient")
+    .attr("id","gradBlue")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%");
+  grad.append("stop").attr("offset","0%").attr("stop-color","#cfe8ff");
+  grad.append("stop").attr("offset","100%").attr("stop-color","#1f78ff");
+    
+  const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+
+  const bgLayer = g.append("g").attr("class","bg-layer");
+  chartState.bgLayer = bgLayer;
+  
+  const maxY = Math.max(1, d3.max(data, d=>d.y) || 1);
+  const x = d3.scaleLinear()
+    .domain([0, maxY])
+    .range([0, width]);
+  const localYDomain = getYDomain();
+  const y = d3.scaleBand()
+    .domain(localYDomain)
+    .range([0, height])
+    .padding(Math.max(0.2, Math.min(0.45, 0.55 - 0.25 * sizeFactor)));
+
+  chartState.x = x;
+  chartState.y = y;
+  chartState.margin = margin;
+  chartState.logoWidth = logoWidth;
+  chartState.padding = padding;
+
+  const step = y.step();
+  const padGap = (step - y.bandwidth()) / 2;
+  
+  const rowIdx = d3.range(localYDomain.length);
+  chartState.rowBG = bgLayer.selectAll("rect.row-bg").data(rowIdx, d=>d).enter().append("rect")
+    .attr("class","row-bg")
+    .attr("x", -margin.left)
+    .attr("y", i => y(localYDomain[i]) - padGap)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", step)
+    .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+    .attr("pointer-events","none")
+    .lower();
+    
+  chartState.yAxisGroup = g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+  chartState.yAxisGroup.selectAll("text").style("font-size", axisFS + "px");
+  truncateAxisLabels(margin.left - logoWidth - padding - 8);
+
+  const xAxis = d3.axisBottom(x);
+  g.append("g").attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(xAxis);
+  g.selectAll("g.axis:last-of-type text").style("font-size", axisFS + "px");
+    
+  g.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + 45})`)
+    .style("text-anchor", "middle")
+    .style("font-size", axisFS + "px")
+    .style("fill", "#666")
+    .text("Score");
+    
+  const barH = getBarHeight(y, sizeFactor);
+  g.selectAll("path.bar").data(data, d=>d.id).enter().append("path")
+    .attr("class","bar")
+    .attr("d", d => barPath(x(0), x(d.y), y(d.id) + y.bandwidth()/2, barH))
+    .attr("fill", d => d.color || "url(#gradBlue)");
+
+  chartState.bars = g.selectAll("path.bar");
+  chartState.bars.each(function(d){
+    const x = chartState.x;
+    const y = chartState.y;
+    const barH = getBarHeight(y, chartState.sizeFactor);
+    this._x1 = x(d.y);
+    this._yc = y(d.id) + y.bandwidth()/2;
+    this._h  = barH;
+  });
+
+  const fmt = d3.format(".4f");
+  g.selectAll("text.value").data(data, d=>d.id).enter().append("text")
+    .attr("class","value")
+    .attr("x", d => x(d.y) - 8)
+    .attr("y", d => y(d.id) + y.bandwidth()/2 + Math.round(4 * sizeFactor))
+    .attr("text-anchor","end")
+    .attr("font-size", valueFS + "px")
+    .attr("font-weight","600")
+    .attr("fill","#ffffff")
+    .text(d => fmt(d.y));
+
+  g.selectAll("image.logo").data(data, d=>d.id).enter().append("image")
+    .attr("class","logo")
+    .attr("x", d => x(d.y) + 6)
+    .attr("y", d => y(d.id) + (y.bandwidth() - logoWH) / 2)
+    .attr("width", logoWH)
+    .attr("height", logoWH)
+    .attr("href", d => d.logo || addLogo(d.id))
+    .attr("xlink:href", d => d.logo || addLogo(d.id));
+
+  chartState.logos = g.selectAll("image.logo");
+  chartState.g = g;
+
+}
+
+createChart();
+
+function updateChart(){
+  const data = getData();
+  const x = chartState.x;
+  const y = chartState.y;
+  const g = chartState.g;
+  const newDomain = getYDomain();
+  y.domain(newDomain);
+  y.padding(Math.max(0.2, Math.min(0.45, 0.55 - 0.25 * (chartState.sizeFactor || 1))));
+  chartState.yAxisGroup
+    .transition()
+    .duration(700)
+    .call(d3.axisLeft(y))
+    .on("end", function(){
+      truncateAxisLabels(chartState.margin.left - (chartState.logoWidth || 24) - (chartState.padding || 16) - 8);
+    })
+    .selection()
+    .selectAll("text")
+    .style("font-size", chartState.axisFS + "px");
+  const idx = d3.range(newDomain.length);
+  const bg = chartState.bgLayer.selectAll("rect.row-bg").data(idx, d=>d);
+  bg.join(
+    enter => enter.append("rect")
+      .attr("class","row-bg")
+      .attr("x", -chartState.margin.left)
+      .attr("y", i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2))
+      .attr("width", chartState.width + chartState.margin.left + chartState.margin.right)
+      .attr("height", y.step())
+      .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+      .attr("opacity",0)
+      .transition().duration(700).attr("opacity",1),
+    update => update
+      .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+      .transition().duration(700)
+      .attr("y", i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2))
+      .attr("height", y.step()),
+    exit => exit.transition().duration(500).attr("opacity",0).remove()
+  );
+  chartState.bgLayer.lower();
+  const barHNow = getBarHeight(y, chartState.sizeFactor || 1);
+  const bars = g.selectAll("path.bar").data(data, d=>d.id);
+
+  bars.join(
+    enter => enter.append("path")
+      .attr("class","bar")
+      .each(function(d){
+        this._x1 = x(0);
+        this._yc = y(d.id) + y.bandwidth()/2;
+        this._h  = barHNow;
+      })
+      .attr("d", d => barPath(x(0), x(0), y(d.id) + y.bandwidth()/2, barHNow))
+      .attr("fill", d => d.color || "url(#gradBlue)"),
+    update => update.attr("fill", d => d.color || "url(#gradBlue)"),
+    exit => exit.transition().duration(350)
+      .attrTween("d", function(d){
+        const xStart = this._x1 ?? x(0);
+        const yStart = this._yc ?? (y(d.id) + y.bandwidth()/2);
+        const hStart = this._h  ?? barHNow;
+        const xEnd = x(0);
+        const yEnd = y(d.id) + y.bandwidth()/2;
+        const hEnd = barHNow;
+        return function(t){
+          const xi = xStart + (xEnd - xStart)*t;
+          const yi = yStart + (yEnd - yStart)*t;
+          const hi = hStart + (hEnd - hStart)*t;
+          return barPath(x(0), xi, yi, hi);
+        };
+      })
+      .on("end", function(){ this.remove(); })
+  )
+  .transition().duration(700)
+  .attrTween("d", function(d){
+    const xStart = this._x1 ?? x(0);
+    const yStart = this._yc ?? (y(d.id) + y.bandwidth()/2);
+    const hStart = this._h  ?? barHNow;
+    const xEnd = x(d.y);
+    const yEnd = y(d.id) + y.bandwidth()/2;
+    const hEnd = getBarHeight(y, chartState.sizeFactor || 1);
+    return function(t){
+      const xi = xStart + (xEnd - xStart)*t;
+      const yi = yStart + (yEnd - yStart)*t;
+      const hi = hStart + (hEnd - hStart)*t;
+      return barPath(x(0), xi, yi, hi);
+    };
+  })
+  .on("end", function(d){
+    this._x1 = x(d.y);
+    this._yc = y(d.id) + y.bandwidth()/2;
+    this._h  = getBarHeight(y, chartState.sizeFactor || 1);
+  });
+
+  chartState.bars = g.selectAll("path.bar");
+
+  const values = g.selectAll("text.value").data(data, d=>d.id);
+  values.join(
+    enter => enter.append("text")
+      .attr("class","value")
+      .attr("x", d => x(d.y) - 8)
+      .attr("y", d => y(d.id) + y.bandwidth()/2 + Math.round(4 * (chartState.sizeFactor || 1)))
+      .attr("text-anchor","end")
+      .attr("font-size", (chartState.valueFS || 12) + "px")
+      .attr("font-weight","600")
+      .attr("fill","#ffffff")
+      .attr("opacity",0)
+      .text(d => d3.format(".4f")(d.y))
+      .transition().duration(700).attr("opacity",1),
+    update => update.transition().duration(700)
+      .attr("x", d => x(d.y) - 8)
+      .attr("y", d => y(d.id) + y.bandwidth()/2 + Math.round(4 * (chartState.sizeFactor || 1)))
+      .tween("text", function(d){
+        const that = d3.select(this);
+        const parseNum = v => +String(v).replace(/[^0-9eE+\-.]/g, "");
+        const start = parseNum(that.text());
+        const i = d3.interpolateNumber(isNaN(start)? d.y : start, d.y);
+        const fmt = d3.format(".4f");
+        return function(t){ that.text(fmt(i(t))); };
+      }),
+    exit => exit.transition().duration(500).attr("opacity",0).remove()
+  );
+  const logos = g.selectAll("image.logo").data(data, d=>d.id);
+  logos.join(
+    enter => enter.append("image")
+      .attr("class","logo")
+      .attr("x", d => x(d.y) + 6)
+      .attr("y", d => y(d.id) + (y.bandwidth() - (chartState.logoWH || 24)) / 2)
+      .attr("width", Math.max(10, chartState.logoWH || 24))
+      .attr("height", Math.max(10, chartState.logoWH || 24))
+      .attr("href", d => d.logo || addLogo(d.id))
+      .attr("xlink:href", d => d.logo || addLogo(d.id))
+      .attr("opacity",0)
+      .transition().duration(700).attr("opacity",1),
+    update => update.transition().duration(700)
+      .attr("x", d => x(d.y) + 6)
+      .attr("y", d => y(d.id) + (y.bandwidth() - (chartState.logoWH || 24)) / 2)
+      .attr("href", d => d.logo || addLogo(d.id))
+      .attr("xlink:href", d => d.logo || addLogo(d.id))
+      .attr("width", Math.max(10, chartState.logoWH || 24))
+      .attr("height", Math.max(10, chartState.logoWH || 24)),
+    exit => exit.transition().duration(500).attr("opacity",0).remove()
+  );
+  chartState.logos = g.selectAll("image.logo");
+}
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => { setControlsBtnCount(); fitButtonText(); createChart(); }, 250);
+});
+
+function setActive(btnId){
+  ["btn-swe","btn-otis","btn-gpqa","btn-frontier-private"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el){return;}
+    el.classList.remove("active");
+  });
+  const el = document.getElementById(btnId);
+  if(el){el.classList.add("active");}
+}
+function onSelect(type,btnId){
+  activeType = type;
+  setActive(btnId);
+}
+setActive("btn-otis");
+
+document.getElementById("btn-swe").addEventListener("click",()=>{ onSelect("SWE-Bench verified","btn-swe"); updateChart(); fitButtonText(); });
+
+document.getElementById("btn-otis").addEventListener("click",()=>{ onSelect("OTIS Mock AIME 2024-2025","btn-otis"); updateChart(); fitButtonText(); });
+
+document.getElementById("btn-gpqa").addEventListener("click",()=>{ onSelect("GPQA diamond","btn-gpqa"); updateChart(); fitButtonText(); });
+
+document.getElementById("btn-frontier-private").addEventListener("click",()=>{ onSelect("FrontierMath-2025-02-28-Private","btn-frontier-private"); updateChart(); fitButtonText(); });
+</script>
+      <a href="https://aiworld.eu/" target="_blank" rel="noopener">
+        <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
+      </a>
+      <div class="source-text">Source: <a href="https://epoch.ai/benchmarks" target="_blank" rel="noopener">Epoch AI Benchmarking Hub</a></div>
+</body>
+</html>
