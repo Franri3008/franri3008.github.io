@@ -31,30 +31,32 @@ body { margin: 0; overflow: hidden; }
 .source-text.overlapped:hover { opacity: 1; }
 .custom-legend {
     position: absolute;
-    top: calc(100vh - clamp(80px, 12vh, 120px) + 10px);
+    top: calc(100vh - clamp(100px, 10vh, 150px) + 10px);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: clamp(12px, 3vw, 24px); 
+    gap: clamp(16px, 4vw, 30px);
     background: rgba(255, 255, 255, 0.9);
-    padding: clamp(8px, 2vh, 12px) clamp(12px, 2vw, 20px);
-    border-radius: clamp(4px, 1vw, 8px);
+    padding: clamp(10px, 2vh, 16px) clamp(12px, 2.5vw, 20px);
+    border-radius: clamp(6px, 1vw, 10px);
     font-family: Arial, sans-serif;
-    font-size: clamp(12px, 2vw, 18px);
+    font-size: clamp(10px, 2vw, 16px);
     font-weight: 500;
     z-index: 1000;
     opacity: 1;
     transition: opacity 0.3s ease;
+    white-space: nowrap;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     transition: opacity 0.3s ease;
-    font-size: clamp(4px, 2vw, 12px);
+    font-size: clamp(6px, 1.5vw, 14px);
+    white-space: nowrap;
 }
 
 .legend-square {
