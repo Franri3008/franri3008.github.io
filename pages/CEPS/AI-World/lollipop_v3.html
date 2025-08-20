@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI World Lollipop Chart</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+body{font-family:sans-serif; margin:0; padding:20px;}
+.axis path,.axis line{stroke:#bbb;}
+.tick text{font-size: 12px;}
+#tooltip{position:absolute;background:#fff; border:1px solid #ccc; padding:4px 8px;font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.2s;}
+#chart{display:block;margin:0 auto; width: 100%; height: auto;}
+#tooltip:after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-width:6px 6px 0 6px;border-style:solid;border-color:#ccc transparent transparent transparent;}
+#tooltip:before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;border-width:7px 7px 0 7px;border-style:solid;border-color:#fff transparent transparent transparent;}
+.logo {
+    position: absolute;
+    bottom: clamp(6px, 4vh, 20px);
+    right: 20px;
+    width: clamp(80px, 10vw, 200px);
+    pointer-events: auto;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  .logo.overlapped {
+    opacity: 0.15;
+  }
+  .logo.overlapped:hover {
+    opacity: 1;
+  }
+  .source-text {
+    position: absolute;
+    bottom: clamp(10px, 4vh, 30px);
+    left: 20px;
+    pointer-events: auto;
+    font-size: clamp(12px, 1.5vw, 20px);
+    font-weight: bold;
+    color: #555555;
+    z-index: 1000;
+    opacity: 1;
+    font-style: italic;
+    transition: opacity 0.3s ease;
+  }
+  .source-text.overlapped {
+    opacity: 0.15;
+  }
+  .source-text.overlapped:hover {
+    opacity: 1;
+  }
+  .source-text a{color:#1a73e8; text-decoration:underline; cursor:pointer;}
+  .source-text a:visited{color:#1a73e8;}
+.axis text {
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<svg id = "chart"></svg>
+<div id = "tooltip"></div>
+<script>
+const tooltip = d3.select("#tooltip");
+const data = [
+ { id: "Google", model: "Gemini-2.5-Pro", arena_elo: 1469, x1: 284.1e6, x2: 699.6e6, logo:"https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg",color:"#EA4335"},
+ { id: "OpenAI", model: "GPT-5", arena_elo: 1437, x1: 3.905e9, x2: 5.720e9,logo:"https://upload.wikimedia.org/wikipedia/commons/6/66/OpenAI_logo_2025_%28symbol%29.svg",color:"#274653"},
+ { id: "xAI", model: "Grok-4", arena_elo: 1437, x1: 51.46e6, x2: 201.5e6,logo:"https://upload.wikimedia.org/wikipedia/commons/9/93/XAI_Logo.svg",color:"#844B9A"},
+ { id: "Z.ai", model: "GLM-4.5", arena_elo: 1433, x1: 3.065e6, x2: 2.134e6, logo: "https://raw.githubusercontent.com/zai-org/GLM-4.5/refs/heads/main/resources/logo.svg"},
+ { id: "Alibaba", model: "Qwen3", arena_elo: 1426, x1: 1.363e6, x2: 25.6e6,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/dark/qwen-color.png",color:"#8475F6"},
+ { id: "DeepSeek", model: "DeepSeek-R1", arena_elo: 1426, x1: 546.6e6, x2: 330.3e6,logo:"https://logoeps.com/wp-content/uploads/2025/02/DeepSeek_logo_icon.png",color:"#4C6BFE"},
+ { id: "Anthropic", model: "Claude Opus", arena_elo: 1419, x1: 73e6, x2: 125.1e6,logo:"https://cdn.brandfetch.io/idmJWF3N06/theme/dark/symbol.svg",color:"#E76F51"},
+ { id: "Moonshot", model: "Kimi K2", arena_elo: 1381, x1: 42.79e6, x2: 28.88e6,logo:"https://registry.npmmirror.com/@lobehub/icons-static-png/1.60.0/files/light/moonshot.png",color:"#44AC5D"},
+ { id: "Tencent", model: "Hunyuan Turbos", arena_elo: 1377, x1: 1.314e6, x2: 2.268e6, logo: "https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/Lp3m-XLpjQGwBItlvn69q.png" },
+ { id: "Mistral AI", model: "Mistral Medium", arena_elo: 1370, x1: 10.14e6, x2: 5.257e6, logo: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Mistral_AI_logo_%282025%E2%80%93%29.svg"},
+];
+
+
+data.forEach(d => {
+  d.delta = d.x2 - d.x1;
+  d.inc = d.delta > 0;
+  d.dec = d.delta < 0;
+  d.same = Math.abs(d.delta) < 0.01;
+});
+
+const startColor = "#cccccc"; 
+const upColor = "#2ecc71"; 
+const downColor = "#e74c3c";
+
+data.sort((a,b) => (b.x1 + b.x2) - (a.x1 + a.x2));
+data.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+function createChart() {
+  d3.select("#chart").selectAll("*").remove();
+  
+  const containerWidth = Math.max(window.innerWidth - 40, 400);
+  const containerHeight = Math.max(window.innerHeight - 100, 300);
+  
+  const tempSvg = d3.select("body").append("svg").style("visibility", "hidden");
+  const tempText = tempSvg.append("text").style("font-size", "12px").style("font-family", "sans-serif");
+
+  let maxLabelWidth = 0;
+  data.forEach(d => {
+    tempText.text(d.id);
+    const textWidth = tempText.node().getBoundingClientRect().width;
+    maxLabelWidth = Math.max(maxLabelWidth, textWidth);
+  });
+
+  tempSvg.remove();
+
+  const logoWidth = 24;
+  const padding = 16;
+  const dynamicLeftMargin = maxLabelWidth + logoWidth + padding;
+
+  const margin = {
+    top: 20, 
+    right: Math.max(30, containerWidth * 0.05), 
+    bottom: 80, 
+    left: dynamicLeftMargin
+  };
+  
+  const width = containerWidth - margin.left - margin.right;
+  const height = Math.max(data.length * 30, containerHeight - margin.top - margin.bottom);
+
+  const svg = d3.select("#chart")
+    .attr("width", containerWidth)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+    .style("width", "100%")
+    .style("height", "auto");
+
+  const defs = svg.append("defs");
+  defs.append("marker")
+    .attr("id","arrowGreen")
+    .attr("viewBox","0 0 10 10")
+    .attr("refX",10)
+    .attr("refY",5)
+    .attr("markerWidth",12)
+    .attr("markerHeight",12)
+    .attr("orient","auto")
+    .attr("markerUnits","userSpaceOnUse")
+    .append("path")
+    .attr("d","M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#2ecc71");
+
+  defs.append("marker")
+    .attr("id","arrowRed")
+    .attr("viewBox","0 0 10 10")
+    .attr("refX",0)
+    .attr("refY",5)
+    .attr("markerWidth",12)
+    .attr("markerHeight",12)
+    .attr("orient","auto")
+    .attr("markerUnits","userSpaceOnUse")
+    .append("path")
+    .attr("d","M 10 0 L 0 5 L 10 10 z")
+    .attr("fill", "#e74c3c");
+    
+  const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+  
+  const xMin = d3.min(data, d => Math.min(d.x1, d.x2));
+  const xMax = d3.max(data, d => Math.max(d.x1, d.x2));
+  const values = [];
+  data.forEach(d => { values.push(d.x1, d.x2); });
+  values.sort(d3.ascending);
+  const linearThreshold = d3.quantileSorted(values, 0.25);
+  const x = d3.scaleSymlog()
+    .domain([xMin, xMax])
+    .constant(linearThreshold)
+    .nice()
+    .range([0, width]);
+  const y = d3.scaleBand()
+    .domain(data.map(d => d.id))
+    .range([0, height])
+    .padding(0.8);
+
+  const step = y.step();
+  const padGap = (step - y.bandwidth()) / 2;
+  
+  g.selectAll("rect.row-bg").data(data).enter().append("rect")
+    .attr("class","row-bg")
+    .attr("x", -margin.left)
+    .attr("y", d => y(d.id) - padGap)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", step)
+    .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
+    .attr("pointer-events","none")
+    .lower();
+    
+  const yAxisGroup = g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+
+  yAxisGroup.selectAll(".tick")
+    .each(function(d) {
+      const datum = data.find(item => item.id === d);
+      if (datum && datum.logo) {
+        d3.select(this)
+          .append("image")
+          .attr("x", 8)
+          .attr("y", -12)
+          .attr("width", 24)
+          .attr("height", 24)
+          .attr("xlink:href", datum.logo);
+      }
+    });
+    
+  let tickValues = [];
+  for (let v = 0; v <= 1e9; v += 0.25e9) {
+    tickValues.push(v);
+  }
+  for (let v = 2e9; v <= xMax; v += 1e9) {
+    tickValues.push(v);
+  }
+
+  const xAxis = d3.axisBottom(x)
+    .tickValues(tickValues)
+    .tickFormat(d => (d / 1e9) + "B");
+  g.append("g").attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(xAxis);
+    
+  g.append("text")
+    .attr("transform", `translate(${width / 2}, ${height + 45})`)
+    .style("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#666")
+    .text("Log-Variation in visits between February and July 2025 (in billions)");
+    
+  const rNode = 8;
+  const rNodeLarge = 14;
+  const arrowOffset = rNodeLarge - rNode;
+  const minArrow = 14;
+  
+  g.selectAll("line.lolli").data(data.filter(d=>!d.same)).enter().append("line")
+    .attr("class", "lolli")
+    .attr("data-id", d => d.id)
+    .attr("y1", d => y(d.id) + y.bandwidth()/2)
+    .attr("y2", d => y(d.id) + y.bandwidth()/2)
+    .attr("x1", d => d.inc ? x(d.x1) + rNode : x(d.x2) + rNode)
+    .attr("x2", d => d.inc ? x(d.x2) - rNode : x(d.x1) - rNode)
+    .attr("stroke", d => d.inc ? upColor : downColor)
+    .attr("stroke-width", 3)
+    .attr("stroke-linecap", "round")
+    .attr("marker-end", d => (d.inc && Math.abs(x(d.x2) - x(d.x1)) > minArrow) ? "url(#arrowGreen)" : null)
+    .attr("marker-start", d => (d.dec && Math.abs(x(d.x1) - x(d.x2)) > minArrow) ? "url(#arrowRed)" : null);
+    
+  const formatNumber = (num) => {
+    return (num / 1e6).toFixed(1) + "M";
+  };
+
+  const showNode = (e, node, val) => {
+    const tt = tooltip.style("opacity",1).html(formatNumber(val));
+    const nb = node.getBoundingClientRect();
+    const tb = tt.node().getBoundingClientRect();
+    const left = nb.left + nb.width/2 - tb.width/2 + window.scrollX;
+    const top  = nb.top  - tb.height - 12 + window.scrollY;
+    tt.style("left", left + "px").style("top", top + "px");
+  };
+  const hide = () => tooltip.style("opacity", 0);
+  
+  const enlargeSimple = function(e, val, d){
+    d3.select(this).transition().duration(150).attr("r", rNodeLarge);
+    showNode(e, this, val);
+    
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x1", x(d.x1) + rNodeLarge);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x2", x(d.x1) - rNodeLarge);
+      }
+    }
+  };
+  
+  const shrinkSimple = function(d){
+    d3.select(this).transition().duration(150).attr("r", rNode); 
+    hide();
+
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x1", x(d.x1) + rNode);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x2", x(d.x1) - rNode);
+      }
+    }
+  };
+  
+  const enlargeWithDelta = function(e, val, d){
+    d3.select(this).transition().duration(150).attr("r", rNodeLarge);
+    showNode(e, this, val);
+    
+    if (d.inc && !d.same) {
+      g.select(`text.diffUp[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px")
+        .attr("x", x(d.x2) + 20);
+    } else if (d.dec && !d.same) {
+      g.select(`text.diffDown[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "bold")
+        .attr("font-size", "14px")
+        .attr("x", x(d.x2) - 20);
+    }
+    
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x2", x(d.x2) - rNodeLarge);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x1", x(d.x2) + rNodeLarge);
+      }
+    }
+  };
+  
+  const shrinkWithDelta = function(d){
+    d3.select(this).transition().duration(150).attr("r", rNode); 
+    hide();
+    
+    if (d.inc && !d.same) {
+      g.select(`text.diffUp[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "normal")
+        .attr("font-size", "11px")
+        .attr("x", x(d.x2) + 12);
+    } else if (d.dec && !d.same) {
+      g.select(`text.diffDown[data-id="${d.id}"]`)
+        .transition().duration(150)
+        .attr("font-weight", "normal")
+        .attr("font-size", "11px")
+        .attr("x", x(d.x2) - 12);
+    }
+    
+    if (!d.same) {
+      const line = g.select(`line.lolli[data-id="${d.id}"]`);
+      if (d.inc) {
+        line.transition().duration(150).attr("x2", x(d.x2) - rNode);
+      } else if (d.dec) {
+        line.transition().duration(150).attr("x1", x(d.x2) + rNode);
+      }
+    }
+  };
+  
+  g.selectAll("circle.a").data(data).enter().append("circle")
+    .attr("cx", d => x(d.x1))
+    .attr("cy", d => y(d.id) + y.bandwidth()/2)
+    .attr("r", rNode)
+    .attr("fill", startColor)
+    .on("mouseover", function(e,d){enlargeSimple.call(this, e, d.x1, d);})
+    .on("mouseout", function(e,d){shrinkSimple.call(this, d);});
+    
+  g.selectAll("circle.b").data(data).enter().append("circle")
+    .attr("cx",d => x(d.x2))
+    .attr("cy",d => y(d.id) + y.bandwidth()/2)
+    .attr("r", rNode)
+    .attr("fill", d => d.same ? startColor : (d.inc ? upColor : downColor))
+    .on("mouseover", function(e,d){enlargeWithDelta.call(this,e,d.x2, d);})
+    .on("mouseout", function(e,d){shrinkWithDelta.call(this, d);});
+    
+  const diff = d => formatNumber(Math.abs(d.delta));
+
+  g.selectAll("text.diffUp").data(data.filter(d=>d.inc && !d.same)).enter().append("text")
+    .attr("class","diffUp")
+    .attr("data-id", d => d.id)
+    .attr("x", d => x(d.x2) + 12)
+    .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
+    .attr("text-anchor","start")
+    .attr("fill", upColor)
+    .attr("font-size","11px")
+    .text(d => "+" + diff(d));
+    
+  g.selectAll("text.diffDown").data(data.filter(d=>d.dec && !d.same)).enter().append("text")
+    .attr("class","diffDown")
+    .attr("data-id", d => d.id)
+    .attr("x", d => x(d.x2) - 12)
+    .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
+    .attr("text-anchor","end")
+    .attr("fill", downColor)
+    .attr("font-size","11px")
+    .text(d => "-" + diff(d));
+}
+
+createChart();
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTime);
+  resizeTimeout = setTimeout(() => {
+    createChart();
+  }, 250);
+});
+</script>
+<a href="https://aiworld.eu/" target="_blank" rel="noopener">
+  <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo"/>
+</a>
+<div class="source-text">Source: <a href="https://similarweb.com" target="_blank" rel="noopener">Similarweb</a></div>
+</body>
+</html>
