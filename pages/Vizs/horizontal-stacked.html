@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Horizontal Stacked Chart</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+html,body{height:100%;}
+body{margin:0;overflow:hidden;background:#f7f6f3;color:#111;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;}
+.logo{position:absolute;bottom:clamp(6px,4vh,20px);right:20px;width:clamp(80px,10vw,200px);pointer-events:auto;z-index:1000;opacity:1;transition:opacity .3s ease;}
+.logo.overlapped{opacity:.15;}
+.logo.overlapped:hover{opacity:1;}
+.source-text{position:absolute;bottom:clamp(10px,4vh,30px);left:20px;pointer-events:auto;font-size:clamp(12px,1.5vw,20px);font-weight:bold;color:#555;z-index:1000;opacity:1;font-style:italic;transition:opacity .3s ease;}
+.source-text.overlapped{opacity:.15;}
+.source-text.overlapped:hover{opacity:1;}
+.source-text a{color:#1a73e8;text-decoration:underline;cursor:pointer;}
+.source-text a:visited{color:#1a73e8;}
+#viz{position:absolute;top:0;left:0;right:0;bottom:clamp(80px,12vh,120px);}
+#chart{display:block;width:100%;height:100%;}
+#tooltip{position:absolute;background:#fff;border:1px solid #d9d9df;border-radius:6px;padding:6px 8px;font-size:12px;pointer-events:none;opacity:0;box-shadow:0 4px 14px rgba(0,0,0,.08);transition:opacity .12s ease;}
+.custom-legend{position:absolute;top:calc(100vh - clamp(80px, 12vh, 120px) + 10px);bottom:auto;left:50%;transform:translateX(-50%);display:flex;justify-content:center;align-items:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;column-gap:clamp(8px, 2vw, 16px);row-gap:clamp(6px, 1.2vh, 10px);background:rgba(255,255,255,0.88);padding:clamp(6px, 1.4vh, 10px) clamp(10px, 1.6vw, 16px);border-radius:clamp(4px, 1vw, 8px);box-shadow:0 6px 24px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.5) inset;border:1px solid rgba(0,0,0,0.06);font-family:Arial, sans-serif;font-size:clamp(9px, 1vw, 13px);z-index:1000;max-width:96vw;}
+.legend-item{display:flex;align-items:center;gap:clamp(4px, 1vw, 10px);cursor:pointer;white-space:nowrap;}
+.legend-section{display:inline-flex;flex-direction:column;align-items:center;gap:6px;background:rgba(255,255,255,0.95);padding:6px 8px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.12), 0 1px 0 rgba(0,0,0,0.05) inset;border:1px solid rgba(0,0,0,0.08);flex:0 0 auto;min-width:auto;max-width:46vw;}
+.legend-items{display:flex;align-items:center;gap:clamp(8px,1.4vw,14px);}
+.legend-title{font-weight:700;letter-spacing:.02em;color:#555;text-transform:uppercase;font-size:clamp(9px, 1vw, 12px);}
+.legend-square{width:clamp(8px, 1vw, 12px);height:clamp(8px, 1vw, 12px);border-radius:clamp(2px, .5vw, 4px);box-shadow:0 0 0 1px rgba(0,0,0,.15) inset;}
+.axis path,.axis line{stroke:#cfd2d7;}
+.bar-seg{transition:filter .2s ease, opacity .2s ease;}
+.tick text{font-size:clamp(8px, 0.9vw, 11px);}
+</style>
+</head>
+<body>
+<div id="viz">
+  <svg id="chart"></svg>
+  <div id="tooltip"></div>
+</div>
+<div class="custom-legend" id="legend"></div>
+<script>
+const data=[
+{category:"University teaching and classroom instruction across academic disciplines",Validation:4.2,TaskIteration:19.7,Learning:53.5,FeedbackLoop:1.8,Directive:20.8},
+{category:"Write grant proposals to secure external research funding",Validation:5.0,TaskIteration:2.0,Learning:58.7,FeedbackLoop:6.3,Directive:28.0},
+{category:"Academic advising and student organization mentorship",Validation:12.0,TaskIteration:42.4,Learning:13.1,FeedbackLoop:3.0,Directive:29.5},
+{category:"Supervise student academic work and maintain laboratory resources",Validation:17.7,TaskIteration:38.5,Learning:10.6,FeedbackLoop:5.2,Directive:27.9},
+{category:"Serve on academic committees and develop institutional policies",Validation:4.5,TaskIteration:49.4,Learning:11.9,FeedbackLoop:1.9,Directive:32.3},
+{category:"Conduct academic research and maintain scholarly field knowledge",Validation:7.0,TaskIteration:33.6,Learning:22.6,FeedbackLoop:5.5,Directive:31.3},
+{category:"Academic community engagement and professional consulting services",Validation:6.2,TaskIteration:43.6,Learning:10.4,FeedbackLoop:7.1,Directive:32.7},
+{category:"Managing academic departments and institutional administration duties",Validation:6.4,TaskIteration:45.7,Learning:8.0,FeedbackLoop:4.0,Directive:36.0},
+{category:"Develop educational curricula and prepare course materials",Validation:3.2,TaskIteration:42.4,Learning:10.3,FeedbackLoop:5.1,Directive:39.0},
+{category:"Manage academic admissions and student enrollment processes",Validation:0,TaskIteration:51.3,Learning:4.0,FeedbackLoop:3.6,Directive:41.1},
+{category:"Maintaining student records and evaluating academic performance",Validation:13.5,TaskIteration:29.6,Learning:8.1,FeedbackLoop:8.5,Directive:40.4},
+{category:"Manage educational institution finances and fundraising activities",Validation:3.9,TaskIteration:25.8,Learning:5.3,FeedbackLoop:0,Directive:65.0}
+];
+const keys=["Validation","TaskIteration","Learning","FeedbackLoop","Directive"];
+const labels={Validation:"Validation",TaskIteration:"Task iteration",Learning:"Learning",FeedbackLoop:"Feedback loop",Directive:"Directive"};
+const colors={Validation:"#0a4da3",TaskIteration:"#5da0ff",Learning:"#bcd9ff",FeedbackLoop:"#6b5bd1",Directive:"#bca7ff"};
+const svg=d3.select("#chart");
+const tooltip=d3.select("#tooltip");
+
+let activeKey=null;
+function updateHighlight(){
+  const bars=d3.selectAll('.bar-seg');
+  bars.transition().duration(150).style('opacity', d=> activeKey && d.key!==activeKey ? 0.25 : 1);
+  const lbls=d3.selectAll('g.segment-labels text');
+  lbls.transition().duration(150).style('opacity', d=> activeKey && d.key!==activeKey ? 0.25 : 1);
+}
+function updateLegendStyles(){
+  d3.select('#legend').selectAll('.legend-item').classed('dim', d=> activeKey && d!==activeKey);
+}
+
+function wrapTicks(selection, width, lineHeight=1.2, maxLines=3){
+  selection.each(function(){
+    const text=d3.select(this);
+    const words=text.text().split(/\s+/);
+    const y=text.attr("y");
+    const baseDy=parseFloat(text.attr("dy"))||0;
+    text.text(null);
+    let line=[]; let lineNumber=0;
+    let tspan=text.append("tspan").attr("x",0).attr("y",y).attr("dy",baseDy+"em");
+    for(let i=0;i<words.length;i++){
+      line.push(words[i]);
+      tspan.text(line.join(" "));
+      if(tspan.node().getComputedTextLength()>width){
+        line.pop();
+        tspan.text(line.join(" "));
+        line=[words[i]];
+        lineNumber++;
+        if(lineNumber>=maxLines){
+          let prev=tspan;
+          let txt=prev.text();
+          while(prev.node().getComputedTextLength()>width && txt.length>0){ txt=txt.slice(0,-1); prev.text(txt); }
+          prev.text(txt.replace(/\s+$/,'')+"…");
+          return;
+        }
+        tspan=text.append("tspan").attr("x",0).attr("y",y).attr("dy",(baseDy+lineNumber*lineHeight)+"em").text(words[i]);
+      }
+    }
+  });
+}
+function render(){
+  const viz=document.getElementById("viz");
+  const rect=viz.getBoundingClientRect();
+  const fullW=rect.width;
+  const fullH=rect.height;
+  const margin={top:12,right:48,bottom:24,left:(fullW<520?Math.max(110,Math.min(200,fullW*0.28)):Math.max(140,Math.min(300,fullW*0.20)))};
+  const labelGap=Math.max(16, Math.min(36, Math.round(fullW*0.03)));
+  svg.attr("width",fullW).attr("height",fullH);
+  const width=fullW-margin.left-margin.right;
+  const height=fullH-margin.top-margin.bottom;
+
+  const defs=svg.selectAll('defs').data([null]).join('defs');
+  defs.select('#rowWhiteFade').remove();
+  defs.select('#rowGrayFade').remove();
+  const gW=defs.append('linearGradient').attr('id','rowWhiteFade').attr('gradientUnits','userSpaceOnUse').attr('x1',0).attr('x2',fullW).attr('y1',0).attr('y2',0);
+  gW.append('stop').attr('offset','0%').attr('stop-color','#ffffff').attr('stop-opacity',0);
+  gW.append('stop').attr('offset','6%').attr('stop-color','#ffffff').attr('stop-opacity',1);
+  gW.append('stop').attr('offset','100%').attr('stop-color','#ffffff').attr('stop-opacity',1);
+  const gG=defs.append('linearGradient').attr('id','rowGrayFade').attr('gradientUnits','userSpaceOnUse').attr('x1',0).attr('x2',fullW).attr('y1',0).attr('y2',0);
+  gG.append('stop').attr('offset','0%').attr('stop-color','#f0efe9').attr('stop-opacity',0);
+  gG.append('stop').attr('offset','6%').attr('stop-color','#f0efe9').attr('stop-opacity',1);
+  gG.append('stop').attr('offset','100%').attr('stop-color','#f0efe9').attr('stop-opacity',1);
+
+  const gRoot=svg.selectAll("g.root").data([null]).join("g").attr("class","root").attr("transform",`translate(${margin.left},${margin.top})`);
+  const x=d3.scaleLinear().domain([0,100]).range([labelGap,width]);
+  const y=d3.scaleBand().domain(data.map(d=>d.category)).range([0,height]).paddingInner(0.28);
+  const stack=d3.stack().keys(keys).value((d,k)=>d[k]);
+  const series=stack(data);
+  const rowBG=gRoot.selectAll("rect.row").data(data.map(d=>d.category));
+  const step=y.step();
+  const pad=(step-y.bandwidth())/2;
+  rowBG.join(
+    enter=>enter.append("rect").attr("class","row").attr("x",0).attr("y",d=>y(d)-pad).attr("width",fullW).attr("height",step).attr("fill",(d,i)=>i%2?"url(#rowGrayFade)":"url(#rowWhiteFade)"),
+    update=>update.attr("x",0).attr("y",d=>y(d)-pad).attr("width",fullW).attr("height",step)
+  );
+  const layers=gRoot.selectAll("g.layer").data(series,d=>d.key).join(enter=>enter.append("g").attr("class","layer").attr("fill",d=>colors[d.key]));
+  const barH=Math.max(2,y.bandwidth()*0.6);
+  layers.selectAll("rect").data(d=>d.map(v=>({key:d.key,cat:v.data.category,v:v}))).join("rect").attr("class","bar-seg")
+    .attr("x",d=>x(d.v[0]))
+    .attr("y",d=>y(d.cat)+(y.bandwidth()-barH)/2)
+    .attr("width",d=>Math.max(0.5,x(d.v[1])-x(d.v[0])))
+    .attr("height",barH)
+    .on("mouseenter",(event,d)=>{ d3.select(event.currentTarget).style("filter",`drop-shadow(0 0 8px ${colors[d.key]})`); })
+    .on("mousemove",(event,d)=>{const val=(d.v[1]-d.v[0]).toFixed(1);tooltip.style("opacity",1).style("left",event.pageX+10+"px").style("top",event.pageY-12+"px").html(`${labels[d.key]}: ${val}%`);})
+    .on("mouseleave",function(){ tooltip.style("opacity",0); d3.select(this).style("filter",null); });
+  const segData=series.flatMap(s=>s.map(v=>({key:s.key,cat:v.data.category,v:v})));
+  const labelsG=gRoot.selectAll("g.segment-labels").data([null]).join("g").attr("class","segment-labels");
+  const labelFont=Math.max(7, Math.min(11, fullW/140));
+  const labelsSel=labelsG.selectAll("text").data(segData, d=>d.key+"::"+d.cat);
+  labelsSel.join(
+    enter=>enter.append("text")
+      .attr("text-anchor","middle")
+      .attr("dy","0.35em")
+      .style("fill","#ffffff")
+      .style("font-weight","600")
+      .style("pointer-events","none"),
+    update=>update
+  )
+  .style("font-size",labelFont+"px")
+  .attr("x",d=>x(d.v[0])+(x(d.v[1])-x(d.v[0]))/2)
+  .attr("y",d=>y(d.cat)+y.bandwidth()/2)
+  .text(d=> (d.v[1]-d.v[0]).toFixed(1)+"%")
+  .each(function(d){
+    const segPx=x(d.v[1])-x(d.v[0]);
+    const pad=4;
+    const minH=labelFont*0.9;
+    const textWidth=this.getComputedTextLength();
+    const enoughWidth=(segPx >= textWidth + pad*2);
+    const enoughHeight=(barH >= minH);
+    d3.select(this).attr("visibility", (enoughWidth && enoughHeight) ? "visible" : "hidden");
+  });
+  const xAxis=gRoot.selectAll("g.x").data([null]).join("g").attr("class","axis x").attr("transform",`translate(0,${y.range()[1]})`);
+  const tickCount=Math.max(4, Math.round(width/100));
+  xAxis.call(d3.axisBottom(x).ticks(tickCount).tickFormat(d=>Number(d).toFixed(1)+"%"));
+  const yAxis=gRoot.selectAll("g.y").data([null]).join("g").attr("class","axis y");
+  const padTicks=Math.max(10, Math.min(28, labelGap+6));
+  yAxis.call(d3.axisLeft(y).tickSize(0).tickPadding(padTicks));
+  yAxis.selectAll("path").remove();
+  const tickFont=Math.max(8, Math.min(13, fullW/110));
+  const wrapWidth=Math.max(60, margin.left-14);
+  const maxLines=Math.max(1, Math.min(3, Math.floor((y.bandwidth()*0.95)/(tickFont*1.25))));
+  yAxis.selectAll("text").style("font-size", tickFont+"px").call(wrapTicks, wrapWidth, 1.12, maxLines);
+  yAxis.selectAll("g.tick").each(function(d){
+    const g=d3.select(this);
+    const t=g.select("text");
+    const bb=t.node().getBBox();
+    const desired=y(d)+y.bandwidth()/2;
+    const current=bb.y+bb.height/2;
+    const dy=desired-current;
+    g.attr("transform",`translate(0,${dy})`);
+  });
+  if(fullW<520){
+    gRoot.selectAll("text.y-title").remove();
+  }else{
+    gRoot.selectAll("text.y-title").data([null]).join("text")
+      .attr("class","y-title")
+      .attr("transform",`translate(${-margin.left+14},${height/2}) rotate(-90)`) 
+      .attr("text-anchor","middle")
+      .style("fill","#333")
+      .style("font-weight","600")
+      .style("font-size",Math.max(10, Math.min(14, fullW/85))+"px")
+      .text("Task Category");
+  }
+  updateHighlight();
+}
+function buildLegend(){
+  const augKeys=["Validation","TaskIteration","Learning"]; 
+  const autoKeys=["FeedbackLoop","Directive"]; 
+  const el=d3.select("#legend");
+  el.selectAll("*").remove();
+  const secAug=el.append("div").attr("class","legend-section");
+  secAug.append("span").attr("class","legend-title").text("AUGMENTATION");
+  const augRow=secAug.append("div").attr("class","legend-items");
+  const augItems=augRow.selectAll("div.legend-item").data(augKeys).enter().append("div").attr("class","legend-item");
+  augItems.append("div").attr("class","legend-square").style("background",d=>colors[d]);
+  augItems.append("span").style("color",d=>colors[d]).text(d=>labels[d]);
+  const secAuto=el.append("div").attr("class","legend-section");
+  secAuto.append("span").attr("class","legend-title").text("AUTOMATION");
+  const autoRow=secAuto.append("div").attr("class","legend-items");
+  const autoItems=autoRow.selectAll("div.legend-item").data(autoKeys).enter().append("div").attr("class","legend-item");
+  autoItems.append("div").attr("class","legend-square").style("background",d=>colors[d]);
+  autoItems.append("span").style("color",d=>colors[d]).text(d=>labels[d]);
+  el.selectAll(".legend-item").on('click',(event,d)=>{ activeKey = (activeKey===d ? null : d); updateLegendStyles(); updateHighlight(); });
+  updateLegendStyles();
+}
+render();
+buildLegend();
+window.addEventListener("resize",render);
+</script>
+<a href="https://aiworld.eu/" target="_blank" rel="noopener">
+  <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo">
+</a>
+<div class="source-text">Source: <a href="https://www.anthropic.com/news/anthropic-education-report-how-educators-use-claude" target="_blank" rel="noopener">Anthropic Education Report</a></div>
+</body>
+</html>
