@@ -6,7 +6,7 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
 html,body{height:100%;}
-body{margin:0;overflow:hidden;background:#f7f6f3;color:#111;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;}
+body{margin:0;overflow:hidden;background:#ffffff;color:#111;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;}
 .logo{position:absolute;bottom:clamp(6px,4vh,20px);right:20px;width:clamp(80px,10vw,200px);pointer-events:auto;z-index:1000;opacity:1;transition:opacity .3s ease;}
 .logo.overlapped{opacity:.15;}
 .logo.overlapped:hover{opacity:1;}
@@ -15,10 +15,10 @@ body{margin:0;overflow:hidden;background:#f7f6f3;color:#111;font-family:system-u
 .source-text.overlapped:hover{opacity:1;}
 .source-text a{color:#1a73e8;text-decoration:underline;cursor:pointer;}
 .source-text a:visited{color:#1a73e8;}
-#viz{position:absolute;top:0;left:0;right:0;bottom:clamp(80px,12vh,120px);}
+#viz{position:absolute;top:0;left:0;right:0;bottom:clamp(110px,14vh,160px);}
 #chart{display:block;width:100%;height:100%;}
 #tooltip{position:absolute;background:#fff;border:1px solid #d9d9df;border-radius:6px;padding:6px 8px;font-size:12px;pointer-events:none;opacity:0;box-shadow:0 4px 14px rgba(0,0,0,.08);transition:opacity .12s ease;}
-.custom-legend{position:absolute;top:calc(100vh - clamp(80px, 12vh, 120px) + 10px);bottom:auto;left:50%;transform:translateX(-50%);display:flex;justify-content:center;align-items:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;column-gap:clamp(8px, 2vw, 16px);row-gap:clamp(6px, 1.2vh, 10px);background:rgba(255,255,255,0.88);padding:clamp(6px, 1.4vh, 10px) clamp(10px, 1.6vw, 16px);border-radius:clamp(4px, 1vw, 8px);box-shadow:0 6px 24px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.5) inset;border:1px solid rgba(0,0,0,0.06);font-family:Arial, sans-serif;font-size:clamp(9px, 1vw, 13px);z-index:1000;max-width:96vw;}
+.custom-legend{position:absolute;top:calc(100vh - clamp(110px, 14vh, 160px) - 4px);bottom:auto;left:50%;transform:translateX(-50%);display:flex;justify-content:center;align-items:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;column-gap:clamp(8px, 2vw, 16px);row-gap:clamp(6px, 1.2vh, 10px);background:rgba(255,255,255,0.88);padding:clamp(6px, 1.4vh, 10px) clamp(10px, 1.6vw, 16px);border-radius:clamp(4px, 1vw, 8px);box-shadow:0 6px 24px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.5) inset;border:1px solid rgba(0,0,0,0.06);font-family:Arial, sans-serif;font-size:clamp(9px, 1vw, 13px);z-index:1000;max-width:96vw;}
 .legend-item{display:flex;align-items:center;gap:clamp(4px, 1vw, 10px);cursor:pointer;white-space:nowrap;}
 .legend-section{display:inline-flex;flex-direction:column;align-items:center;gap:6px;background:rgba(255,255,255,0.95);padding:6px 8px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.12), 0 1px 0 rgba(0,0,0,0.05) inset;border:1px solid rgba(0,0,0,0.08);flex:0 0 auto;min-width:auto;max-width:46vw;}
 .legend-items{display:flex;align-items:center;gap:clamp(8px,1.4vw,14px);}
@@ -96,6 +96,18 @@ function wrapTicks(selection, width, lineHeight=1.2, maxLines=3){
     }
   });
 }
+
+function rectsOverlap(a,b){ if(!a||!b){ return false; } return !(a.right<b.left||a.left>b.right||a.bottom<b.top||a.top>b.bottom); }
+function checkLegendOverlap(){
+  var legend=document.querySelector('.custom-legend');
+  var logo=document.querySelector('.logo');
+  var source=document.querySelector('.source-text');
+  if(!legend){ return; }
+  var lr=legend.getBoundingClientRect();
+  if(logo){ logo.classList.toggle('overlapped', rectsOverlap(lr, logo.getBoundingClientRect())); }
+  if(source){ source.classList.toggle('overlapped', rectsOverlap(lr, source.getBoundingClientRect())); }
+}
+
 function render(){
   const viz=document.getElementById("viz");
   const rect=viz.getBoundingClientRect();
@@ -223,7 +235,9 @@ function buildLegend(){
 }
 render();
 buildLegend();
-window.addEventListener("resize",render);
+checkLegendOverlap();
+window.addEventListener("resize",function(){ render(); checkLegendOverlap(); });
+setTimeout(checkLegendOverlap, 250);
 </script>
 <a href="https://aiworld.eu/" target="_blank" rel="noopener">
   <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo">
