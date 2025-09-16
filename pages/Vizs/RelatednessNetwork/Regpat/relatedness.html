@@ -29,7 +29,7 @@ var points=[];
 var labels=[];
 var colors=[];
 var defaultColor='#4a90e2';
-function isHex(s){return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(s);}
+var colorMap={A:'#448AFF',B:'#1565C0',C:'#009688',D:'#8BC34A',E:'#FFC107',F:'#FF9800',G:'#F44336',H:'#AD1457'};
 for (var i=0;i<parsed.data.length;i++){
 var row=parsed.data[i];
 var nx=row.node!==undefined?String(row.node):'';
@@ -39,8 +39,9 @@ var z=parseFloat(row.z);
 if (isFinite(x)&&isFinite(y)&&isFinite(z)){
 points.push([x,y,z]);
 labels.push(nx);
-var col=(row.color!==undefined&&row.color!==null?String(row.color).trim():'');
-colors.push(isHex(col)?col:defaultColor);
+var first=nx?nx.charAt(0).toUpperCase():'';
+var assigned=colorMap[first]||defaultColor;
+colors.push(assigned);
 }
 }
 var dataset=new ScatterGL.Dataset(points);
