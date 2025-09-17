@@ -30,7 +30,7 @@ var labels=[];
 var colors=[];
 var defaultColor='#4a90e2';
 var colorMap={A:'#448AFF',B:'#1565C0',C:'#009688',D:'#8BC34A',E:'#FFC107',F:'#FF9800',G:'#F44336',H:'#AD1457'};
-for (var i=0;i<parsed.data.length;i++){
+for (var i=0; i<parsed.data.length; i++){
 var row=parsed.data[i];
 var nx=row.node!==undefined?String(row.node):'';
 var x=parseFloat(row.x);
@@ -45,15 +45,55 @@ colors.push(assigned);
 }
 }
 var dataset=new ScatterGL.Dataset(points);
-var scatterGL=new ScatterGL(scatterDiv,{selectEnabled:true,rotateOnStart:true,orbitControls:{autoRotateSpeed:1.2,zoomSpeed:1.0,mouseRotateSpeed:1.0},pointColorer:function(index){return colors[index]||defaultColor;},onHover:function(ix){
-if (ix===null||ix===undefined){tooltip.style.opacity=0;return;}
-var name=labels[ix]!==undefined?labels[ix]:'';
-if (!name){tooltip.style.opacity=0;return;}
-tooltip.textContent=name;
-tooltip.style.left=(mouseX+12)+'px';
-tooltip.style.top=(mouseY+12)+'px';
-tooltip.style.opacity=1;
-}});
+var scatterGL=new ScatterGL(scatterDiv,{
+    selectEnabled:true,
+    rotateOnStart:true,
+    orbitControls:{
+        autoRotateSpeed:1.2,
+        zoomSpeed:1.0,
+        mouseRotateSpeed:1.0
+    },
+    pointColorer:function(index){return colors[index]||defaultColor;},
+    onHover:function(ix){
+        if (ix===null||ix===undefined){tooltip.style.opacity=0;return;}
+        var name=labels[ix]!==undefined?labels[ix]:'';
+        if (!name){tooltip.style.opacity=0;return;}
+
+        tooltip.textContent=name;
+        tooltip.style.opacity=1;
+
+        tooltip.style.whiteSpace='nowrap';
+        tooltip.style.wordBreak='normal';
+        tooltip.style.maxWidth='none';
+
+        var margin=8;
+        var left=mouseX+12;
+        var top=mouseY+12;
+        tooltip.style.left=left+'px';
+        tooltip.style.top=top+'px';
+
+        var rect=tooltip.getBoundingClientRect();
+
+        if (rect.right>window.innerWidth-margin){
+            var available=window.innerWidth-margin-left;
+            if (available<120){
+                available=Math.max(120,window.innerWidth-margin*2);
+                left=Math.min(left,window.innerWidth-margin-available);
+                tooltip.style.left=left+'px';
+            }
+            tooltip.style.maxWidth=available+'px';
+            tooltip.style.whiteSpace='normal';
+            tooltip.style.wordBreak='break-word';
+            rect=tooltip.getBoundingClientRect();
+        }
+
+        if (rect.bottom>window.innerHeight-margin){
+            var newTop=window.innerHeight-margin-rect.height;
+            if (newTop<margin){newTop=margin;}
+            tooltip.style.top=newTop+'px';
+        }
+    }
+});
 scatterGL.render(dataset);
 scatterGL.startOrbitAnimation();
 var idleTimer=null;
