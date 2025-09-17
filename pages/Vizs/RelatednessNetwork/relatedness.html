@@ -7,7 +7,10 @@
 <style>
 html,body{margin:0; height:100%;}
 #scatter-container{width:100vw; height:100vh; overflow:hidden; position:relative;}
-#tooltip{position:fixed; padding:6px 8px; background:rgba(0,0,0,0.75); color:#fff; font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; font-size:12px; border-radius:4px; pointer-events:none; opacity:0; transform:translate(8px,8px); transition:opacity 0.08s linear; white-space:nowrap;}
+#tooltip{position:fixed; padding:8px 10px; background:rgba(0,0,0,0.82); color:#fff; font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; font-size:12px; border-radius:6px; pointer-events:none; opacity:0; transition:opacity 0.08s linear; white-space:normal; max-width:360px; box-shadow:0 6px 18px rgba(0,0,0,0.25);}
+#tooltip .tt-title{font-weight:600; font-size:13px; line-height:1.2;}
+#tooltip .tt-divider{height:1px; background:rgba(255,255,255,0.25); margin:6px 0;}
+#tooltip .tt-desc{font-size:11px; line-height:1.35; opacity:0.95;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/three@0.106.2/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/scatter-gl@0.0.1/lib/scatter-gl.min.js"></script>
@@ -35,7 +38,7 @@ var nx=row.node!==undefined?String(row.node):'';
 var x=parseFloat(row.x);
 var y=parseFloat(row.y);
 var z=parseFloat(row.z);
-if(isFinite(x)&&isFinite(y)&&isFinite(z)){
+if(isFinite(x)&&isFinite(y) && isFinite(z)){
 points.push([x,y,z]);
 labels.push(nx);
 var col=(row.color!==undefined&&row.color!==null?String(row.color).trim():'');
@@ -43,15 +46,49 @@ colors.push(isHex(col)?col:defaultColor);
 }
 }
 var dataset=new ScatterGL.Dataset(points);
-var scatterGL=new ScatterGL(scatterDiv,{selectEnabled:true,rotateOnStart:true,orbitControls:{autoRotateSpeed:1.2,zoomSpeed:1.0,mouseRotateSpeed:1.0},pointColorer:function(index){return colors[index]||defaultColor},onHover:function(ix){
-if(ix===null||ix===undefined){tooltip.style.opacity=0;return}
-var name=labels[ix]!==undefined?labels[ix]:'';
-if(!name){tooltip.style.opacity=0;return}
-tooltip.textContent=name;
-tooltip.style.left=(mouseX+12)+'px';
-tooltip.style.top=(mouseY+12)+'px';
-tooltip.style.opacity=1;
-}});
+var scatterGL=new ScatterGL(scatterDiv,{
+    selectEnabled:true,
+    rotateOnStart:true,
+    orbitControls:{autoRotateSpeed:1.2,zoomSpeed:1.0,mouseRotateSpeed:1.0},
+    pointColorer:function(index){return colors[index]||defaultColor;},
+    onHover:function(ix){
+        if(ix===null||ix===undefined){tooltip.style.opacity=0;return}
+        var raw=labels[ix]!==undefined?labels[ix]:'';
+        if(!raw){tooltip.style.opacity=0;return}
+        function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;');}
+        var p=raw.indexOf('(');
+        var title=(p>0?raw.slice(0,p):raw).trim();
+        var desc=(p>=0?raw.slice(p+1):'').replace(/\)?\s*$/,'').trim();
+        var html='<div class="tt-title">'+esc(title)+'</div>';
+        if(desc){html+='<div class="tt-divider"></div><div class="tt-desc">'+esc(desc)+'</div>';}
+        tooltip.innerHTML=html;
+        tooltip.style.opacity=1;
+        tooltip.style.maxWidth='360px';
+        tooltip.style.whiteSpace='normal';
+        tooltip.style.wordBreak='break-word';
+        var left=mouseX+12;
+        var top=mouseY+12;
+        tooltip.style.left=left+'px';
+        tooltip.style.top=top+'px';
+        var rect=tooltip.getBoundingClientRect();
+        var margin=8;
+        if(rect.right>window.innerWidth-margin){
+            var avail=window.innerWidth-margin-left;
+            if(avail<120){
+                avail=Math.max(120,window.innerWidth-margin*2);
+                left=Math.min(left,window.innerWidth-margin-avail);
+                tooltip.style.left=left+'px';
+            }
+            tooltip.style.maxWidth=avail+'px';
+            rect=tooltip.getBoundingClientRect();
+        }
+        if(rect.bottom>window.innerHeight-margin){
+            var newTop=window.innerHeight-margin-rect.height;
+            if(newTop<margin){newTop=margin;}
+            tooltip.style.top=newTop+'px';
+        }
+    }
+});
 scatterGL.render(dataset);
 scatterGL.startOrbitAnimation();
 var idleTimer=null;
