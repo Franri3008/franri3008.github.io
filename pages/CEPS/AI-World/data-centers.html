@@ -1,0 +1,587 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Supercomputers Hexbin Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        select, button {
+            margin: 0 10px;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        select:hover, button:hover {
+            background-color: #e9ecef;
+        }
+
+        .map-container {
+            width: 100%;
+            flex: 1;
+            background-color: #e3f2fd;
+            overflow: hidden;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            background: #e3f2fd;
+            display: block;
+        }
+
+        .land {
+            fill: #f5f5f5;
+            stroke: #ddd;
+            stroke-width: 0.5;
+        }
+
+        .hexagon {
+            stroke: #666;
+            stroke-width: 1;
+            cursor: pointer;
+        }
+
+        .hexagon:hover {
+            stroke: #333;
+            stroke-width: 2;
+        }
+
+        .legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.98);
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 300px;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .stat-item {
+            text-align: center;
+            margin: 5px;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .controls {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            select, button {
+                margin: 5px 0;
+                width: 200px;
+                max-width: 100%;
+            }
+            
+            .map-container {
+                height: 50vh;
+                min-height: 300px;
+            }
+            
+            .legend {
+                position: relative;
+                width: 100%;
+                margin-top: 10px;
+                top: auto;
+                right: auto;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            .stat-item {
+                margin: 10px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .map-container {
+                height: 40vh;
+                min-height: 250px;
+            }
+            
+            .tooltip {
+                max-width: 250px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <select id="colorBy">
+                <option value="count">Color by: Density</option>
+                <option value="power">Color by: Power Capacity</option>
+                <option value="status">Color by: Status</option>
+            </select>
+            <select id="radiusBy">
+                <option value="count">Size by: Count</option>
+                <option value="power">Size by: Total Power</option>
+            </select>
+        </div>
+
+        <div class="map-container">
+            <svg id="map"></svg>
+            <div class="legend" id="legend"></div>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+    </div>
+
+    <script>
+        let data = [];
+        let filteredData = [];
+        let hexbin, svg, projection, zoom, g, mapGroup, hexGroup;
+        
+        let width, height;
+        const hexRadius = 8;
+
+        // Color scales
+        const statusColors = {
+            'Existing': '#28a745',
+            'Planned': '#ffc107',
+            'Operational': '#28a745',
+            'Unknown': '#6c757d'
+        };
+
+        const powerColorScale = d3.scaleSequential(d3.interpolateViridis)
+            .domain([0, 5000]);
+
+        // Responsive resize handler
+        function handleResize() {
+            const container = document.querySelector('.map-container');
+            const containerRect = container.getBoundingClientRect();
+            width = containerRect.width;
+            height = containerRect.height;
+            
+            if (svg) {
+                svg.attr("width", width).attr("height", height);
+                
+                if (projection && data.length > 0) {
+                    setupProjection();
+                    setupHexbin();
+                    updateVisualization();
+                }
+            }
+        }
+
+        // Initialize visualization
+        function init() {
+            handleResize();
+            setupSVG();
+            setupProjection();
+            setupHexbin();
+            loadWorldMapAndData();
+            
+            // Add resize listener
+            window.addEventListener('resize', debounce(handleResize, 250));
+        }
+
+        // Debounce function to limit resize calls
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function loadWorldMapAndData() {
+            Promise.all([
+                d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"),
+                d3.csv("Data/ai_supercomputers.csv")
+            ]).then(([world, csvData]) => {
+                const land = topojson.feature(world, world.objects.countries);
+                projection.fitSize([width, height], land);
+
+                const path = d3.geoPath().projection(projection);
+
+                mapGroup.append("path")
+                    .datum(land)
+                    .attr("class", "land")
+                    .attr("d", path);
+
+                mapGroup.append("path")
+                    .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
+                    .attr("fill", "none")
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 0.5)
+                    .attr("d", path);
+                
+                const initialTransform = d3.zoomIdentity.translate(0, 0).scale(1);
+                svg.call(zoom.transform, initialTransform);
+                zoom.scaleExtent([0.1, 8]);
+
+                parseCSVData(csvData);
+                
+            }).catch(err => {
+                console.error("Error loading data:", err);
+                d3.csv("Data/ai_supercomputers.csv").then(function(csvData) {
+                    console.warn("Using fallback - loading CSV without world map");
+                    parseCSVData(csvData);
+                }).catch(function(csvError) {
+                    console.error("Error loading CSV file:", csvError);
+                    alert("Could not load the data files. Please check the file paths.");
+                });
+            });
+        }
+
+        function setupSVG() {
+            svg = d3.select("#map")
+                .attr("width", width)
+                .attr("height", height);
+
+            g = svg.append("g");
+            mapGroup = g.append("g").attr("class", "map-group");
+            hexGroup = g.append("g").attr("class", "hex-group");
+
+            zoom = d3.zoom()
+                .scaleExtent([0.1, 8])
+                .on("zoom", zoomed);
+
+            svg.call(zoom);
+        }
+
+        function setupProjection() {
+            projection = d3.geoNaturalEarth1()
+                .fitSize([width, height], {type: "Sphere"});
+        }
+
+        function setupHexbin() {
+            hexbin = d3.hexbin()
+                .extent([[0, 0], [width, height]])
+                .radius(hexRadius);
+        }
+
+        function parseCSVData(csvData) {
+            data = csvData
+                .filter(d => d.latitude && d.longitude && !isNaN(+d.latitude) && !isNaN(+d.longitude))
+                .map(d => ({
+                    name: d.Name || d.name || "Unknown",
+                    status: d.Status || d.status || "Unknown", 
+                    power: +d["Power Capacity (MW)"] || +d.power || 0,
+                    latitude: +d.latitude,
+                    longitude: +d.longitude,
+                    country: d.Country || d.country || "Unknown",
+                    owner: d.Owner || d.owner || "Unknown",
+                    chipType: d["Chip type (primary)"] || d.chipType || "Unknown"
+                }));
+            
+            filteredData = data;
+            updateVisualization();
+            updateStats();
+        }
+
+        function updateVisualization() {
+            const colorBy = document.getElementById("colorBy").value;
+            const radiusBy = document.getElementById("radiusBy").value;
+
+            // Clear previous hexagons
+            g.selectAll(".hexagon").remove();
+
+            if (!projection || filteredData.length === 0) return;
+
+            // Project coordinates
+            const points = filteredData.map(d => {
+                const projected = projection([d.longitude, d.latitude]);
+                if (projected) {
+                    return {
+                        ...d,
+                        x: projected[0],
+                        y: projected[1]
+                    };
+                }
+                return null;
+            }).filter(d => d !== null);
+
+            // Create hexbins
+            const bins = hexbin(points.map(d => [d.x, d.y]));
+
+            // Enhance bins with data
+            bins.forEach(bin => {
+                const pointsInBin = points.filter(point => {
+                    return bin.some(hexPoint => 
+                        Math.abs(hexPoint[0] - point.x) < 1 && 
+                        Math.abs(hexPoint[1] - point.y) < 1
+                    );
+                });
+                
+                bin.data = pointsInBin;
+                bin.totalPower = d3.sum(pointsInBin, d => d.power || 0);
+                bin.avgPower = bin.totalPower / (pointsInBin.length || 1);
+                bin.statuses = [...new Set(pointsInBin.map(d => d.status))];
+                bin.names = pointsInBin.map(d => d.name);
+            });
+
+            // Sort bins to draw larger hexagons first
+            bins.sort((a, b) => b.length - a.length);
+
+            // Update hexagons
+            const hexagons = g.selectAll(".hexagon")
+                .data(bins);
+
+            hexagons.exit().remove();
+
+            const hexagonsEnter = hexagons.enter()
+                .append("path")
+                .attr("class", "hexagon");
+
+            hexagons.merge(hexagonsEnter)
+                .attr("d", d => hexbin.hexagon(getHexRadius(d, radiusBy)))
+                .attr("transform", d => `translate(${d.x},${d.y})`)
+                .attr("fill", d => getHexColor(d, colorBy))
+                .attr("fill-opacity", 0.8)
+                .on("mouseover", function(event, d) {
+                    showTooltip(event, d);
+                })
+                .on("mouseout", hideTooltip);
+
+            updateLegend(colorBy);
+        }
+
+        function getHexRadius(bin, radiusBy) {
+            if (radiusBy === "count") {
+                return hexRadius * (0.5 + Math.sqrt(bin.length) / 5);
+            } else if (radiusBy === "power") {
+                return hexRadius * (0.5 + Math.sqrt(bin.totalPower) / 100);
+            }
+            return hexRadius;
+        }
+
+        function getHexColor(bin, colorBy) {
+            if (colorBy === "count") {
+                return d3.interpolateViridis(Math.min(bin.length / 5, 1));
+            } else if (colorBy === "power") {
+                return powerColorScale(bin.avgPower);
+            } else if (colorBy === "status") {
+                const mainStatus = bin.statuses[0];
+                return statusColors[mainStatus] || statusColors['Unknown'];
+            }
+            return "#666666";
+        }
+
+        function updateLegend(colorBy) {
+            const legend = document.getElementById("legend");
+            legend.innerHTML = "";
+
+            if (colorBy === "status") {
+                const title = document.createElement("div");
+                title.style.fontWeight = "bold";
+                title.style.marginBottom = "10px";
+                title.style.color = "#333";
+                title.textContent = "Status";
+                legend.appendChild(title);
+
+                Object.entries(statusColors).forEach(([status, color]) => {
+                    const item = document.createElement("div");
+                    item.className = "legend-item";
+                    item.style.color = "#333";
+                    
+                    const colorDiv = document.createElement("div");
+                    colorDiv.className = "legend-color";
+                    colorDiv.style.backgroundColor = color;
+                    
+                    const label = document.createElement("span");
+                    label.textContent = status;
+                    
+                    item.appendChild(colorDiv);
+                    item.appendChild(label);
+                    legend.appendChild(item);
+                });
+            } else {
+                const title = document.createElement("div");
+                title.style.fontWeight = "bold";
+                title.style.marginBottom = "10px";
+                title.style.color = "#333";
+                title.textContent = colorBy === "count" ? "Density" : "Power (MW)";
+                legend.appendChild(title);
+
+                const gradient = document.createElement("div");
+                gradient.style.width = "20px";
+                gradient.style.height = "100px";
+                gradient.style.background = "linear-gradient(to top, #440154, #21908c, #fde725)";
+                gradient.style.border = "1px solid #ccc";
+                legend.appendChild(gradient);
+
+                const legendContainer = document.createElement("div");
+                legendContainer.style.display = "flex";
+                
+                const labels = document.createElement("div");
+                labels.style.display = "flex";
+                labels.style.flexDirection = "column";
+                labels.style.justifyContent = "space-between";
+                labels.style.marginLeft = "5px";
+                labels.style.fontSize = "10px";
+                labels.style.color = "#333";
+                labels.innerHTML = "<div>High</div><div>Low</div>";
+                
+                legendContainer.appendChild(gradient);
+                legendContainer.appendChild(labels);
+                legend.appendChild(legendContainer);
+            }
+        }
+
+        function showTooltip(event, bin) {
+            const tooltip = document.getElementById("tooltip");
+            tooltip.style.opacity = 1;
+            tooltip.style.left = (event.pageX + 10) + "px";
+            tooltip.style.top = (event.pageY - 10) + "px";
+            
+            let content = `<strong>Systems in this area: ${bin.length}</strong><br/>`;
+            content += `<strong>Total Power: ${bin.totalPower.toFixed(1)} MW</strong><br/><br/>`;
+            
+            bin.data.forEach(d => {
+                content += `<div style="margin-bottom: 8px;">`;
+                content += `<strong>${d.name}</strong><br/>`;
+                content += `Status: ${d.status}<br/>`;
+                content += `Power: ${d.power || 'N/A'} MW<br/>`;
+                content += `Country: ${d.country}<br/>`;
+                if (d.owner && d.owner !== 'Unknown') content += `Owner: ${d.owner}<br/>`;
+                if (d.chipType && d.chipType !== 'Unknown') content += `Chip: ${d.chipType}<br/>`;
+                content += `</div>`;
+            });
+            
+            tooltip.innerHTML = content;
+        }
+
+        function hideTooltip() {
+            document.getElementById("tooltip").style.opacity = 0;
+        }
+
+        function updateStats() {
+            document.getElementById("totalSystems").textContent = data.length;
+            document.getElementById("totalPower").textContent = 
+                d3.sum(data, d => d.power || 0).toFixed(0);
+            document.getElementById("operationalSystems").textContent = 
+                data.filter(d => d.status === "Existing" || d.status === "Operational").length;
+            document.getElementById("plannedSystems").textContent = 
+                data.filter(d => d.status === "Planned").length;
+        }
+
+        function zoomed(event) {
+            const { transform } = event;
+            g.attr("transform", transform);
+        }
+
+        // Event listeners
+        document.getElementById("colorBy").addEventListener("change", updateVisualization);
+        document.getElementById("radiusBy").addEventListener("change", updateVisualization);
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

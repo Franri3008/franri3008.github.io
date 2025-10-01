@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI-gruculture</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#fff;}
+        body{display:flex;align-items:center;justify-content:center;font-family:Arial, sans-serif;}
+        svg{width:min(88vw,88vh);height:auto;max-height:88vh;display:block;aspect-ratio:1/1;overflow:visible;}
+        .small-circle{transition:r .2s ease;}
+        .central-circle{transition:fill .5s ease;}
+        .circle-icon{pointer-events:none;}
+        .full-group{transition:transform .2s ease;transform-origin:center center;}
+        .interactive-circle{cursor:pointer;}
+        .line{transition:stroke-width .2s ease,stroke .2s ease,stroke-dasharray .2s ease;}
+        .main-text,.sub-text{transition:opacity .3s ease;}
+        .main-text{transition:opacity .3s ease,transform .3s ease;}
+        .sub-text{opacity:0;}
+    </style>
+</head>
+<body>
+    <svg id="wheelSVG" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+
+    <script>
+        const svg=document.getElementById('wheelSVG');const NS='http://www.w3.org/2000/svg';
+        let centerX,centerY,circleRadius,smallRadius;
+        const numSmallCircles=15;
+        const colors=['#eb6c11','#fa986c','#fbac1d','#f9d20b','#d3c744','#a9c728','#68c64a','#24897b','#33bbc3','#4bc2dc','#78b4d5','#3590cd','#205bca','#261cb1','#5122c0','#784acf','#8531c5','#b03ed0','#d462d7','#c72887','#f868c1','#f14684','#fa9a99','#f86463','#e85254']
+        const circleTexts=[
+        'Crop disease diagnosis',
+        'Weed detection',
+        'Yield prediction',
+        'Precision irrigation',
+        'Robotic harvesting',
+        'Seed placement optimization',
+        'Soil nutrient analysis',
+        'Canopy health monitoring',
+        'Scenario simulation',
+        'Virtual agronomy advisor',
+        'Supply chain optimization',
+        'Carbon accounting',
+        'Trait discovery',
+        'Livestock health monitoring',
+        'Crop quality grading'
+        ];
+
+        const circleSubtexts=[
+        ['Leaf image analysis','Early disease detection','Pest identification'],
+        ['Automated weeding robots','Targeted herbicide spraying','Image-based weed recognition'],
+        ['Forecasting crop output','Weather-driven yield models','Historical yield analysis'],
+        ['Smart irrigation scheduling','Soil moisture prediction','Water use efficiency'],
+        ['Automated fruit picking','Ripeness detection','Labor cost reduction'],
+        ['Optimized seed spacing','Depth calibration','Variable rate planting'],
+        ['Soil nutrient mapping','Fertilizer recommendation','Deficiency detection'],
+        ['Drone-based monitoring','Satellite imagery analysis','Chlorophyll stress detection'],
+        ['Climate impact modeling','Yield outcome scenarios','Risk assessment planning'],
+        ['AI crop advisory','Fertilization scheduling','Sowing recommendations'],
+        ['Harvest timing optimization','Route planning','Cold chain monitoring'],
+        ['Soil carbon estimation','Emission tracking','Carbon credit validation'],
+        ['Genomic data analysis','Trait prediction','Selective breeding'],
+        ['Livestock motion tracking','Health anomaly detection','Stress monitoring'],
+        ['Automated grading','Size classification','Defect detection']
+        ];
+        const circleIcons=[
+        'magnifying-glass.svg',
+        'grass.svg',
+        'corn.svg',
+        'irrigation.svg',
+        'robot.svg',
+        'seed-placement.svg',
+        'test-tube.svg',
+        'health.svg',
+        'scenario.svg',
+        'chatbot.svg',
+        'supply-chain.svg',
+        'co2.svg',
+        'dna.svg',
+        'cow.svg',
+        'quality.svg'
+        ];
+        const finalTextPositions=[
+            {xFactor:-.08,yFactor:-.02},
+            {xFactor:-.05,yFactor:-.10},
+            {xFactor:-.01,yFactor:-.12},
+            {xFactor:0.02,yFactor:-.06},
+            {xFactor:-.15,yFactor:-.15},
+            {xFactor:-0.05,yFactor:-.21}, //Seed placement optimization
+            {xFactor:0.02,yFactor:-.2}, //Soil nutrient analysis
+            {xFactor:0.1,yFactor:-.12}, //Canopy Health Monitoring
+            {xFactor:.1,yFactor:-0.05}, //Scenario Simulation
+            {xFactor:0.05,yFactor:0.05},
+            {xFactor:-0.05,yFactor:0.05}, //Supply Chain Optimization
+            {xFactor:-.03,yFactor:-.04}, //Carbon Accounting
+            {xFactor:.07,yFactor:0.03}, //Trait Discovery
+            {xFactor:.01,yFactor:0.03},
+            {xFactor:-0.05,yFactor:.03}
+        ];
+        const initialTextPositions=[
+            {xFactor:.05,yFactor:.01},
+            {xFactor:.04,yFactor:-.01},
+            {xFactor:.05,yFactor:-.04},
+            {xFactor:.08,yFactor:0.04},
+            {xFactor:-0.15,yFactor:-.01},
+            {xFactor:-.12,yFactor:-0.05}, //Seed placement optimization
+            {xFactor:-0.07,yFactor:-0.05}, //Soil nutrient analysis
+            {xFactor:-0.05,yFactor:-0.01}, //Canopy Health Monitoring
+            {xFactor:-0.04,yFactor:.05}, //Scenario Simulation
+            {xFactor:-.05,yFactor:0.07}, //Virtual Agoronomy Advisor
+            {xFactor:-.10,yFactor:0.05}, //Supply Chain Optimization
+            {xFactor:0.0,yFactor:-0.04}, //Carbon Accounting
+            {xFactor:0.04,yFactor:-0.02}, //Trait Discovery
+            {xFactor:0.08,yFactor:.05}, //Livestock Health Monitoring
+            {xFactor:0.04,yFactor:.05}
+        ];
+        const allMainTexts=[];const allSubtexts=[];
+
+        function createWheel(){
+            svg.innerHTML='';
+            allMainTexts.length=0;
+            allSubtexts.length=0;
+
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const padding = Math.max(40, Math.min(viewportWidth, viewportHeight) * 0.08);
+            const svgSize = Math.max(320, Math.min(viewportWidth, viewportHeight) - padding);
+            svg.setAttribute('viewBox',`0 0 ${svgSize} ${svgSize}`);
+
+            const svgWidth = svgSize;
+            const svgHeight = svgSize;
+            centerX = svgWidth/2;
+            centerY = svgHeight/2;
+            circleRadius = svgHeight * 0.35;
+            smallRadius = circleRadius * 0.14;
+            const linesGroup=document.createElementNS(NS,'g');svg.appendChild(linesGroup);
+
+            const centralRadius=circleRadius*.3;
+            const centralCircle=document.createElementNS(NS,'circle');
+            centralCircle.setAttribute('cx',centerX);centralCircle.setAttribute('cy',centerY);centralCircle.setAttribute('r',centralRadius);centralCircle.setAttribute('fill','#808080');centralCircle.setAttribute('class','central-circle');svg.appendChild(centralCircle);
+
+            const centralLogo=document.createElementNS(NS,'image');
+            centralLogo.setAttribute('href','agriculture-icon.svg');
+            const logoSize=centralRadius*1.3;
+            centralLogo.setAttribute('x',centerX-logoSize/2);centralLogo.setAttribute('y',centerY-logoSize/2);centralLogo.setAttribute('width',logoSize);
+            centralLogo.setAttribute('height',logoSize);
+            centralLogo.setAttribute('pointer-events','none');
+            svg.appendChild(centralLogo);
+
+            const initialOffset=svgSize*0.01;const finalOffset=svgSize*0.048;
+            const baseStrokeWidth=Math.max(0.6,svgSize*0.0012);
+            const dashLength=Math.max(4,baseStrokeWidth*4);
+            for(let i=0;i<numSmallCircles;i++){
+                const angle=2*Math.PI/numSmallCircles*i;
+                const x=centerX+circleRadius*Math.cos(angle);const y=centerY+circleRadius*Math.sin(angle);
+
+                const line=document.createElementNS(NS,'line');
+                line.setAttribute('x1',centerX);
+                line.setAttribute('y1',centerY);
+                line.setAttribute('x2',x);
+                line.setAttribute('y2',y);
+                line.setAttribute('stroke','#000');
+                const lineDash=`${dashLength},${dashLength}`;
+                line.setAttribute('stroke-dasharray',lineDash);
+                line.setAttribute('vector-effect','non-scaling-stroke');
+                line.setAttribute('class','line');
+                line.setAttribute('stroke-width',baseStrokeWidth.toString());
+                linesGroup.appendChild(line);
+                const originalStrokeWidth=baseStrokeWidth;
+
+                const fullGroup=document.createElementNS(NS,'g');
+                fullGroup.setAttribute('class','full-group interactive-circle');
+                fullGroup.setAttribute('data-index',i);
+                svg.appendChild(fullGroup);
+                const circleGroup=document.createElementNS(NS,'g');
+                circleGroup.setAttribute('class','circle-group');
+                fullGroup.appendChild(circleGroup);
+                circleGroup.lineElement=line;
+                circleGroup.lineDash=lineDash;
+
+                const smallCircle = document.createElementNS(NS,'circle');
+                smallCircle.setAttribute('cx',x);
+                smallCircle.setAttribute('cy',y);
+                smallCircle.setAttribute('r',smallRadius);
+                smallCircle.setAttribute('fill',colors[i%colors.length]);
+                smallCircle.setAttribute('class','small-circle');
+                circleGroup.appendChild(smallCircle);
+
+                const iconPath=circleIcons[i];
+                if(iconPath){
+                    const iconSize = smallRadius*1.2;
+                    const icon=document.createElementNS(NS,'image');
+                    icon.setAttribute('href',iconPath);
+                    icon.setAttribute('x',x-iconSize/2);
+                    icon.setAttribute('y',y-iconSize/2);
+                    icon.setAttribute('width',iconSize);
+                    icon.setAttribute('height',iconSize);
+                    icon.setAttribute('class','circle-icon');
+                    circleGroup.appendChild(icon);
+                }
+
+                const finalDistance=circleRadius+smallRadius+finalOffset;
+                const initDistance=circleRadius+smallRadius+initialOffset;
+                const fPos=finalTextPositions[i]||{xFactor:0,yFactor:0};
+                const iPos=initialTextPositions[i]||{xFactor:0,yFactor:0};
+                const finalX = centerX+finalDistance*Math.cos(angle)+fPos.xFactor*circleRadius;
+                const finalY = centerY+finalDistance*Math.sin(angle)+fPos.yFactor*circleRadius;
+                const initX = centerX+initDistance*Math.cos(angle)+iPos.xFactor*circleRadius;
+                const initY = centerY+initDistance*Math.sin(angle)+iPos.yFactor*circleRadius;
+                const textAnchor=Math.cos(angle)>0?'start':'end';
+
+                const mainTextFontSize = smallRadius * 0.6;
+                const mainText = document.createElementNS(NS,'text');
+                const dx = initX - finalX;
+                const dy = initY - finalY;
+                mainText.setAttribute('class', 'main-text');
+                mainText.setAttribute('x',finalX);
+                mainText.setAttribute('y',finalY);
+                mainText.setAttribute('text-anchor',textAnchor);
+                mainText.setAttribute('fill', colors[i%colors.length]);
+                mainText.setAttribute('font-size', mainTextFontSize);
+                mainText.setAttribute('font-weight','bold');
+                mainText.textContent=circleTexts[i];
+                const initialTransform = `translate(${dx}px,${dy}px)`;
+                mainText.style.transform = initialTransform;
+                fullGroup.appendChild(mainText);
+                allMainTexts.push(mainText);
+                circleGroup.initialTransform = initialTransform;
+
+                const subtextFontSize = smallRadius * 0.35;
+                const subtextGroup=document.createElementNS(NS,'text');
+                subtextGroup.setAttribute('class','sub-text');
+                subtextGroup.setAttribute('x',finalX);
+                subtextGroup.setAttribute('y',finalY+subtextFontSize*1.2);
+                subtextGroup.setAttribute('text-anchor',textAnchor);
+                subtextGroup.setAttribute('fill','#000');
+                subtextGroup.setAttribute('font-size',subtextFontSize);
+                subtextGroup.setAttribute('alignment-baseline','hanging');
+                circleSubtexts[i].forEach((sub,idx)=>{const t=document.createElementNS(NS,'tspan');t.setAttribute('x',finalX);t.setAttribute('dy',idx===0?'0':`${subtextFontSize*1.2}`);t.textContent=sub;subtextGroup.appendChild(t);});
+                fullGroup.appendChild(subtextGroup);allSubtexts.push(subtextGroup);
+
+                circleGroup.mainText=mainText;circleGroup.subtextGroup=subtextGroup;
+
+                circleGroup.addEventListener('mouseenter',()=>{
+                    fullGroup.setAttribute('transform',`translate(${-(x-centerX)*.4},${-(y-centerY)*.4}) scale(1.4)`);
+                    centralCircle.setAttribute('fill',colors[i%colors.length]);
+                    const hoverStrokeWidth = Math.max(originalStrokeWidth*7, svgSize*0.0045);
+                    circleGroup.lineElement.setAttribute('stroke-width',hoverStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke',colors[i%colors.length]);
+                    circleGroup.lineElement.setAttribute('stroke-dasharray','');
+                    mainText.style.transform = 'translate(0,0)';
+                    allMainTexts.forEach(t=>{if(t!==mainText)t.style.opacity='0.4';});
+                    allSubtexts.forEach(t=>{t.style.opacity=t===circleGroup.subtextGroup?'1':'0';});
+                });
+                circleGroup.addEventListener('mouseleave',()=>{
+                    fullGroup.setAttribute('transform','');centralCircle.setAttribute('fill','#808080');
+                    circleGroup.lineElement.setAttribute('stroke-width',originalStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke','#000');
+                    circleGroup.lineElement.setAttribute('stroke-dasharray',circleGroup.lineDash);
+                    mainText.style.transform=circleGroup.initialTransform;
+                    allMainTexts.forEach(t=>{t.style.opacity='1';});
+                    allSubtexts.forEach(t=>{t.style.opacity='0';});
+                });
+            }
+        }
+        window.addEventListener('resize',createWheel);createWheel();
+    </script>
+</body>
+</html>

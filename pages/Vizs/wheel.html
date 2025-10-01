@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI World Wheel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body,html{margin:0;padding:0;}
+        svg{width:100%; height:auto; max-width:1410px; display:block;margin:0 auto;overflow:visible;}
+        .small-circle{transition:r .2s ease;}
+        .central-circle{transition:fill .5s ease;}
+        .circle-icon{pointer-events:none;}
+        .full-group{transition:transform .2s ease;transform-origin:center center;}
+        .interactive-circle{cursor:pointer;}
+        .line{transition:stroke-width .2s ease,stroke .2s ease,stroke-dasharray .2s ease;}
+        .main-text,.sub-text{transition:opacity .3s ease;}
+        .main-text{transition:opacity .3s ease,transform .3s ease;}
+        .sub-text{opacity:0;}
+    </style>
+</head>
+<body>
+    <svg id="wheelSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2100 1800" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="linkPreview" style="position:fixed;bottom:0;left:0;padding:5px;background:rgba(0,0,0,.7);color:#fff;font-size:14px;visibility:hidden;z-index:1000;"></div>
+
+    <script>
+        const svg=document.getElementById('wheelSVG');const NS='http://www.w3.org/2000/svg';
+        let centerX,centerY,circleRadius,smallRadius;
+        const numSmallCircles=25;
+        const colors=['#eb6c11','#fa986c','#fbac1d','#f9d20b','#d3c744','#a9c728','#68c64a','#24897b','#33bbc3','#4bc2dc','#78b4d5','#3590cd','#205bca','#261cb1','#5122c0','#784acf','#8531c5','#b03ed0','#d462d7','#c72887','#f868c1','#f14684','#fa9a99','#f86463','#e85254']
+        const circleTexts=['Technology','Software','Semiconductors','Real Estate','Pharmaceuticals','Media','Materials','Insurance','Household Products','Health Care','Food and Beverage','Financial Services','Equity REIT','Energy','Consumer Services','Consumer Staples','Consumer Durables','Consumer Discretionary','Professional Services','Banks','Capital Goods','Automobiles','Utilities','Transportation','Telecommunication'];
+        const circleSubtexts=[['Edge computing solutions','Advanced robotics','Automated prototyping'],['Automated code generation','Automated testing','Deployment automation'],['Defect detection and classification','Automated chip design','Predictive maintenance'],['Virtual tours and staging','Due diligence automation','Automated property valuation'],['Drug discovery','Predict patent outcomes','Pharmacovigilance'],['Virtual Reality and Augmented Reality','Content creation and moderation','Deepfake detection'],['Discovery of sustainable materials','Predictive modeling for material properties','Advanced experimental analysis'],['Fraud detection','Automated claim processing','Parametric insurance products'],['Smart home devices','Voice-activated assistants','Smart security systems'],['Remote patient monitoring','Drug discovery and development','Personalized medicine'],['Real-time market analysis','Product development and innovation','Waste reduction initiatives'],['Fraud prevention','Credit risk assessment','Investment decision support'],['Automated property valuation','Tenant analytics','Smart contracts'],['Smart grid management','Smart buildings','Renewable energy forecasting'],['Virtual assistants','Automated support ticket routing','Sentiment analysis on feedback'],['Inventory management optimization','Sales forecasting','Dynamic pricing'],['Virtual fitting rooms','Defect detection','Generative design'],['Product recommendations','Automated inventory management','Virtual search technologies'],['Supply chain optimization','Predictive analytics','Risk assessment'],['Automated customer service','Fraud detection','Credit scoring'],['Predictive maintenance','Market analysis and forecasting','Energy management of buildings'],['Autonomous driving','Connected vehicles','Smart navigation systems'],['Predictive Maintenance','Demand forecasting','Battery management'],['Autonomous vehicles','Traffic management','Route optimization'],['Network operations monitoring','Traffic flow optimization','Network planning and optimization']];
+        const circleLinks=Array(numSmallCircles).fill('https://aiworld.eu/');
+        const finalTextPositions=[
+            {xFactor:-.12,yFactor:-.05}, //technology
+            {xFactor:-.13,yFactor:-.10}, //software
+            {xFactor:-.09,yFactor:-.16}, //semiconductors
+            {xFactor:-.06,yFactor:-.11}, //real state
+            {xFactor:-.01,yFactor:-.15}, //pharma
+            {xFactor:.01,yFactor:-.15}, //media
+            {xFactor:-.15,yFactor:-0.12},//materials
+            {xFactor:.0,yFactor:-.12}, //insurance
+            {xFactor:.01,yFactor:-.15}, //household
+            {xFactor:.02,yFactor:-.16}, //healthcare
+            {xFactor:.08,yFactor:-.17}, //food
+            {xFactor:.11,yFactor:-.12}, //financial
+            {xFactor:.13,yFactor:-.05}, //equity reit
+            {xFactor:.13,yFactor:0}, //energy
+            {xFactor:.13,yFactor:.05}, //consumer services
+            {xFactor:.07,yFactor:.11}, //consumer staples
+            {xFactor:.03,yFactor:.12}, //consumer durables
+            {xFactor:.01,yFactor:.08}, //consuemr discretionary
+            {xFactor:.15,yFactor:.03}, //profesional servcies
+            {xFactor:-.09,yFactor:.03}, //banks
+            {xFactor:-.05,yFactor:.03}, //capital goods
+            {xFactor:-.02,yFactor:.07}, //automobiles
+            {xFactor:-.05,yFactor:.09}, //utilities
+            {xFactor:-.09,yFactor:.05}, //transportation
+            {xFactor:-.13,yFactor:.01}]; //telecomm
+        const initialTextPositions=[
+            {xFactor:.03,yFactor:0.01},
+            {xFactor:.04,yFactor:-.01},
+            {xFactor:.05,yFactor:-.04},
+            {xFactor:.06,yFactor:-.04}, //real state
+            {xFactor:.06,yFactor:-.02},
+            {xFactor:.08,yFactor:.02},
+            {xFactor:-.14,yFactor:.04}, //materials
+            {xFactor:.02,yFactor:.035}, //insurance
+            {xFactor:.02,yFactor:.01}, //household
+            {xFactor:-.045,yFactor:-.04}, //healthcare
+            {xFactor:-.03,yFactor:-.04}, //food
+            {xFactor:-.01,yFactor:-.05}, //financial
+            {xFactor:-.01,yFactor:.01}, //equity reit
+            {xFactor:-.03,yFactor:.03}, //energy
+            {xFactor:-.04,yFactor:.05}, //cnsumer services
+            {xFactor:-.06,yFactor:.05}, //consumer staples
+            {xFactor:-.08,yFactor:.04}, //consumer durables
+            {xFactor:-.04,yFactor:.01}, //consumer discretionary
+            {xFactor:.1,yFactor:-.03}, //profesional services
+            {xFactor:-.04,yFactor:-.014}, //banks
+            {xFactor:.0,yFactor:-.01}, //capital goods
+            {xFactor:.07,yFactor:.045}, //automobiles
+            {xFactor:.06,yFactor:.06}, //utilities
+            {xFactor:.03,yFactor:.05}, //transportation
+            {xFactor:.02,yFactor:.04}]; //telecommunication
+
+        const allMainTexts=[];const allSubtexts=[];
+
+        function createWheel(){
+            svg.innerHTML='';
+            const svgWidth = 2100;
+            const svgHeight = 1800;
+            centerX = svgWidth/2;
+            centerY = svgHeight/2;
+            circleRadius = svgHeight * 0.3;
+            smallRadius = circleRadius * 0.05 * 2;
+            const linesGroup=document.createElementNS(NS,'g');svg.appendChild(linesGroup);
+
+            const centralRadius=circleRadius*.3;
+            const centralCircle=document.createElementNS(NS,'circle');
+            centralCircle.setAttribute('cx',centerX);centralCircle.setAttribute('cy',centerY);centralCircle.setAttribute('r',centralRadius);centralCircle.setAttribute('fill','#808080');centralCircle.setAttribute('class','central-circle');svg.appendChild(centralCircle);
+            
+            const logoSize=centralRadius*1.8;
+
+            const centralLogo=document.createElementNS(NS,'image');
+            centralLogo.setAttribute('href','https://www.paballand.com/ai-world/images/icon/logo-aiworld-white-cropped.svg');
+            centralLogo.setAttribute('x',centerX-logoSize/2);centralLogo.setAttribute('y',centerY-logoSize/2);centralLogo.setAttribute('width',logoSize);
+            centralLogo.setAttribute('height',logoSize);
+            centralLogo.setAttribute('pointer-events','none');
+            svg.appendChild(centralLogo);
+
+            const initialOffset=20;const finalOffset=100;
+            for(let i=0;i<numSmallCircles;i++){
+                const angle=2*Math.PI/numSmallCircles*i;
+                const x=centerX+circleRadius*Math.cos(angle);const y=centerY+circleRadius*Math.sin(angle);
+
+                const line=document.createElementNS(NS,'line');
+                line.setAttribute('x1',centerX);
+                line.setAttribute('y1',centerY);
+                line.setAttribute('x2',x);
+                line.setAttribute('y2',y);
+                line.setAttribute('stroke','#000');
+                line.setAttribute('stroke-dasharray','5,5');
+                line.setAttribute('class','line');
+                line.setAttribute('stroke-width','1');
+                linesGroup.appendChild(line);
+                const originalStrokeWidth=1;
+
+                const fullGroup=document.createElementNS(NS,'g');
+                fullGroup.setAttribute('class','full-group interactive-circle');
+                fullGroup.setAttribute('data-index',i);
+                svg.appendChild(fullGroup);
+                const circleGroup=document.createElementNS(NS,'g');
+                circleGroup.setAttribute('class','circle-group');
+                fullGroup.appendChild(circleGroup);
+                circleGroup.lineElement=line;
+
+                const smallCircle = document.createElementNS(NS,'circle');
+                smallCircle.setAttribute('cx',x);
+                smallCircle.setAttribute('cy',y);
+                smallCircle.setAttribute('r',smallRadius);
+                smallCircle.setAttribute('fill',colors[i%colors.length]);
+                smallCircle.setAttribute('class','small-circle');
+                circleGroup.appendChild(smallCircle);
+
+                const iconSize = smallRadius*1.4;
+                const icon=document.createElementNS(NS,'image');
+                icon.setAttribute('href',`https://www.paballand.com/ai-world/images/icon/icon${(i%25)+1}.svg`);
+                icon.setAttribute('x',x-iconSize/2);
+                icon.setAttribute('y',y-iconSize/2);
+                icon.setAttribute('width',iconSize);
+                icon.setAttribute('height',iconSize);
+                icon.setAttribute('class','circle-icon');
+                circleGroup.appendChild(icon);
+
+                const finalDistance=circleRadius+smallRadius+finalOffset;
+                const initDistance=circleRadius+smallRadius+initialOffset;
+                const fPos=finalTextPositions[i]||{xFactor:0,yFactor:0};
+                const iPos=initialTextPositions[i]||{xFactor:0,yFactor:0};
+                const finalX = centerX+finalDistance*Math.cos(angle)+fPos.xFactor*circleRadius;
+                const finalY = centerY+finalDistance*Math.sin(angle)+fPos.yFactor*circleRadius;
+                const initX = centerX+initDistance*Math.cos(angle)+iPos.xFactor*circleRadius;
+                const initY = centerY+initDistance*Math.sin(angle)+iPos.yFactor*circleRadius;
+                const textAnchor=Math.cos(angle)>0?'start':'end';
+
+                const mainTextFontSize = smallRadius * 0.7;
+                const mainText = document.createElementNS(NS,'text');
+                const dx = initX - finalX;
+                const dy = initY - finalY;
+                mainText.setAttribute('class', 'main-text');
+                mainText.setAttribute('x',finalX);
+                mainText.setAttribute('y',finalY);
+                mainText.setAttribute('text-anchor',textAnchor);
+                mainText.setAttribute('fill', colors[i%colors.length]);
+                mainText.setAttribute('font-size', mainTextFontSize);
+                mainText.setAttribute('font-weight','bold');
+                mainText.textContent=circleTexts[i];
+                mainText.style.transform = `translate(${dx}px,${dy}px)`;
+                fullGroup.appendChild(mainText);
+                allMainTexts.push(mainText);
+                circleGroup.initialTransform = `translate(${dx}px,${dy}px)`;
+
+                const subtextFontSize = smallRadius * 0.35;
+                const subtextGroup=document.createElementNS(NS,'text');
+                subtextGroup.setAttribute('class','sub-text');
+                subtextGroup.setAttribute('x',finalX);
+                subtextGroup.setAttribute('y',finalY+subtextFontSize*1.2);
+                subtextGroup.setAttribute('text-anchor',textAnchor);
+                subtextGroup.setAttribute('fill','#000');
+                subtextGroup.setAttribute('font-size',subtextFontSize);
+                subtextGroup.setAttribute('alignment-baseline','hanging');
+                circleSubtexts[i].forEach((sub,idx)=>{const t=document.createElementNS(NS,'tspan');t.setAttribute('x',finalX);t.setAttribute('dy',idx===0?'0':`${subtextFontSize*1.2}`);t.textContent=sub;subtextGroup.appendChild(t);});
+                fullGroup.appendChild(subtextGroup);allSubtexts.push(subtextGroup);
+
+                circleGroup.mainText=mainText;circleGroup.subtextGroup=subtextGroup;
+
+                circleGroup.addEventListener('mouseenter',()=>{
+                    fullGroup.setAttribute('transform',`translate(${-(x-centerX)*.4},${-(y-centerY)*.4}) scale(1.4)`);
+                    centralCircle.setAttribute('fill',colors[i%colors.length]);
+                    const hoverStrokeWidth = originalStrokeWidth * 17;
+                    circleGroup.lineElement.setAttribute('stroke-width',hoverStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke',colors[i%colors.length]);
+                    circleGroup.lineElement.setAttribute('stroke-dasharray','');
+                    const lp = document.getElementById('linkPreview');
+                    lp.textContent=circleLinks[i];
+                    lp.style.visibility = 'visible';
+                    mainText.style.transform = 'translate(0,0)';
+                    allMainTexts.forEach(t=>{if(t!==mainText)t.style.opacity='0.4';});
+                    allSubtexts.forEach(t=>{t.style.opacity=t===circleGroup.subtextGroup?'1':'0';});
+                });
+                circleGroup.addEventListener('mouseleave',()=>{
+                    fullGroup.setAttribute('transform','');centralCircle.setAttribute('fill','#808080');
+                    circleGroup.lineElement.setAttribute('stroke-width',originalStrokeWidth.toString());
+                    circleGroup.lineElement.setAttribute('stroke','#000');
+                    circleGroup.lineElement.setAttribute('stroke-dasharray','5,5');
+                    document.getElementById('linkPreview').style.visibility='hidden';
+                    mainText.style.transform=circleGroup.initialTransform;
+                    allMainTexts.forEach(t=>{t.style.opacity='1';});
+                    allSubtexts.forEach(t=>{t.style.opacity='0';});
+                });
+                circleGroup.addEventListener('click',()=>{window.open(circleLinks[i],'_blank');});
+            }
+        }
+        window.addEventListener('resize',createWheel);createWheel();
+    </script>
+</body>
+</html>
