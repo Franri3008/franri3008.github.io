@@ -133,6 +133,9 @@ let sliderPanelEl=null;
 let sliderInitialized=false;
 let sliderVisible=true;
 let titleVisible=true;
+let legendFullIds=[];
+let legendCurrentIds=[];
+let currentTopFilter="all";
 let suppressAnimationNextRender=false;
 
 function capitalizeFirst(text){
@@ -269,6 +272,42 @@ function ensureLogoPattern(id,logoUrl){
   );
   pattern.select("image").attr("href",logoUrl).attr("xlink:href",logoUrl);
   return patternId;
+}
+
+function arraysEqual(a,b){
+  if(a===b){ return true; }
+  if(!Array.isArray(a)||!Array.isArray(b)||a.length!==b.length){ return false; }
+  for(let i=0;i<a.length;i++){
+    if(a[i]!==b[i]){ return false; }
+  }
+  return true;
+}
+
+function getTopFilterLimitValue(filter){
+  if(!filter||filter==="all"){ return null; }
+  if(filter==="top5"){ return 5; }
+  if(filter==="top10"){ return 10; }
+  const num=Number(filter);
+  return Number.isFinite(num)&&num>0?num:null;
+}
+
+function computeTopLegendIds(limit, filteredSeries){
+  if(!Number.isFinite(limit)||limit<=0){
+    return legendFullIds.slice();
+  }
+  const scored=filteredSeries.map(s=>{
+    const values=s.values;
+    const last=values&&values.length?values[values.length-1]:null;
+    const val=last&&Number.isFinite(last.value)?last.value:-Infinity;
+    return { id:s.id, value:val };
+  });
+  scored.sort((a,b)=>{
+    if(b.value===a.value){
+      return a.id.localeCompare(b.id);
+    }
+    return (b.value??-Infinity)-(a.value??-Infinity);
+  });
+  return scored.slice(0,Math.min(limit,scored.length)).map(d=>d.id);
 }
 
 function parseDateYYYYMMDD(s){
@@ -421,6 +460,10 @@ function updateAxisLabel(){
 }
 
 function buildLegend(ids){
+  if(Array.isArray(ids)){
+    ids.forEach(id=>{ if(!active.has(id)){ active.set(id,true); } });
+  }
+  legendCurrentIds=Array.isArray(ids)?ids.slice():[];
   legendEl.selectAll("*").remove();
   const items=legendEl.selectAll(".legend-item").data(ids,d=>d).enter().append("div").attr("class","legend-item").attr("role","button").attr("tabindex",0).attr("aria-pressed","true");
   items.append("div").attr("class","legend-square").style("background",d=>getSeriesColor(d));
@@ -432,6 +475,11 @@ function buildLegend(ids){
     render();
   }
   items.on("click",toggle).on("keydown",function(e,id){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle.call(this,e,id); } });
+  refreshLegendState();
+}
+
+function refreshLegendState(){
+  legendEl.selectAll(".legend-item").attr("aria-pressed",d=>active.get(d)?"true":"false").classed("dim",d=>!active.get(d));
 }
 
 function onConfigModeChange(mode){
@@ -480,6 +528,18 @@ function onConfigScaleChange(scale){
   if(window.ConfigTab&&typeof window.ConfigTab.setScale==="function"){ window.ConfigTab.setScale(currentScale); }
   updateAxisLabel();
   buildSeriesFromRaw();
+  render();
+}
+
+function onConfigTopFilterChange(filter){
+  if(!filter){ return; }
+  currentTopFilter=filter;
+  if(currentTopFilter==="all"){
+    legendFullIds.forEach(id=>active.set(id,true));
+  }
+  if(window.ConfigTab&&typeof window.ConfigTab.setTopFilter==="function"){
+    window.ConfigTab.setTopFilter(currentTopFilter);
+  }
   render();
 }
 
@@ -598,6 +658,8 @@ function setTitleVisibility(visible,options={}){
     window.ConfigTab.setTitleVisible(titleVisible);
   }
 }
+
+setTitleVisibility(titleVisible,{skipConfig:true});
 
 async function loadSlider(){
   const container=document.getElementById("container2");
@@ -744,6 +806,7 @@ async function loadConfigTab(){
         initialMetric: currentMetric,
         initialSliderVisible: sliderVisible,
         initialTitleVisible: titleVisible,
+        initialTopFilter: currentTopFilter,
         metrics: METRICS,
         onModeChange:onConfigModeChange,
         onPeriodChange:onConfigPeriodChange,
@@ -751,6 +814,8 @@ async function loadConfigTab(){
         onNormModeChange:onConfigNormModeChange,
         onMetricChange:onConfigMetricChange,
         onSliderVisibilityChange:setSliderVisibility,
+        onTitleVisibilityChange:setTitleVisibility,
+        onTopFilterChange:onConfigTopFilterChange,
         onTitleVisibilityChange:setTitleVisibility
       });
     }
@@ -787,12 +852,16 @@ function load(){
     const ids=rawById.map(s=>s.id);
     ids.forEach(id=>active.set(id,true));
     colorScale.domain(ids);
+    legendFullIds=ids.slice();
     updateAxisLabel();
     if(window.ConfigTab&&typeof window.ConfigTab.setMetrics==="function"){ window.ConfigTab.setMetrics(METRICS,currentMetric); }
     if(window.ConfigTab&&typeof window.ConfigTab.setScale==="function"){ window.ConfigTab.setScale(currentScale); }
     if(window.ConfigTab&&typeof window.ConfigTab.setModeDisabled==="function"){ window.ConfigTab.setModeDisabled(currentScale==="normalized"); }
     if(window.ConfigTab&&typeof window.ConfigTab.setNormModeVisible==="function"){ window.ConfigTab.setNormModeVisible(currentScale==="normalized"); }
     if(window.ConfigTab&&typeof window.ConfigTab.setNormMode==="function"){ window.ConfigTab.setNormMode(currentNormMode); }
+    if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"){ window.ConfigTab.setSliderVisible(sliderVisible); }
+    if(window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){ window.ConfigTab.setTitleVisible(titleVisible); }
+    if(window.ConfigTab&&typeof window.ConfigTab.setTopFilter==="function"){ window.ConfigTab.setTopFilter(currentTopFilter); }
     if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"){ window.ConfigTab.setSliderVisible(sliderVisible); }
     if(window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){ window.ConfigTab.setTitleVisible(titleVisible); }
     buildLegend(ids);
@@ -803,6 +872,8 @@ function load(){
     rawById=[];
     series=[];
     currentTimeline=[];
+    legendFullIds=[];
+    legendCurrentIds=[];
     syncRangeWithTimeline();
     render();
   });
@@ -1049,6 +1120,17 @@ function render(){
     }
     return {id:s.id, values:slice};
   });
+
+  const topLimit=getTopFilterLimitValue(currentTopFilter);
+  if(Number.isFinite(topLimit)){
+    const topIds=computeTopLegendIds(topLimit,filteredSeries);
+    const uniqueTopIds=Array.from(new Set(topIds));
+    legendFullIds.forEach(id=>{ active.set(id,uniqueTopIds.includes(id)); });
+    if(!arraysEqual(legendCurrentIds,uniqueTopIds)){ buildLegend(uniqueTopIds); }
+  }else{
+    if(!arraysEqual(legendCurrentIds,legendFullIds)){ buildLegend(legendFullIds); }
+  }
+  refreshLegendState();
 
   const activeSeries=filteredSeries.filter(s=>active.get(s.id));
   const visibleSeries=activeSeries.filter(s=>s.values.length);

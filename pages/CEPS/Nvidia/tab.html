@@ -88,6 +88,14 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
       </div>
     </div>
     <div class="config-section">
+      <p class="config-section-title">Organizations</p>
+      <div class="config-buttons interruptor" id="configTopFilterButtons">
+        <button type="button" class="config-toggle config-top-btn" data-top="top5">Top 5</button>
+        <button type="button" class="config-toggle config-top-btn" data-top="top10">Top 10</button>
+        <button type="button" class="config-toggle config-top-btn active" data-top="all">All</button>
+      </div>
+    </div>
+    <div class="config-section">
       <p class="config-section-title">Metric</p>
       <div class="config-buttons metric-chain" id="configMetricButtons" role="group" aria-label="Metric selection"></div>
     </div>
@@ -107,6 +115,8 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     sliderButtons:[],
     titleContainer:null,
     titleButtons:[],
+    topFilterContainer:null,
+    topFilterButtons:[],
     metricContainer:null,
     metricButtons:[],
     metrics:[],
@@ -117,6 +127,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     onMetricChange:null,
     onSliderVisibilityChange:null,
     onTitleVisibilityChange:null,
+    onTopFilterChange:null,
     escHandler:null,
     currentMode:"cumulative",
     currentPeriod:"weekly",
@@ -125,6 +136,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     currentMetric:null,
     sliderVisible:true,
     titleVisible:true,
+    currentTopFilter:"all",
     modeDisabled:false,
     isHidden:false,
     mediaQuery:null,
@@ -133,6 +145,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     metricHandler:null,
     sliderHandler:null,
     titleHandler:null,
+    topFilterHandler:null,
     normHandler:null
   };
   const HIDE_MEDIA="(max-width: 900px), (max-height: 520px)";
@@ -260,6 +273,16 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     });
   }
 
+  function updateTopFilterActive(){
+    if(!STATE.topFilterButtons.length){ return; }
+    STATE.topFilterButtons.forEach(btn=>{
+      const value=btn.dataset.top||"all";
+      const isActive=STATE.currentTopFilter===value;
+      btn.classList.toggle("active",isActive);
+      btn.setAttribute("aria-pressed",isActive?"true":"false");
+    });
+  }
+
   function updateMetricActive(){
     if(!STATE.metricButtons.length){ return; }
     STATE.metricButtons.forEach(btn=>{
@@ -378,13 +401,25 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     }
   }
 
+  function handleTopFilterClick(event){
+    const btn=event.target.closest(".config-top-btn");
+    if(!btn){ return; }
+    const nextFilter=btn.dataset.top||"all";
+    if(nextFilter===STATE.currentTopFilter){ return; }
+    STATE.currentTopFilter=nextFilter;
+    updateTopFilterActive();
+    if(typeof STATE.onTopFilterChange==="function"){
+      STATE.onTopFilterChange(nextFilter);
+    }
+  }
+
   function handleEsc(event){
     if(event.key==="Escape"&&STATE.panel&&STATE.panel.classList.contains("open")){
       setOpen(false);
     }
   }
 
-  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true }={}){
+  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, onTopFilterChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true, initialTopFilter="all" }={}){
     STATE.panel=panelEl||document.getElementById("configPanel");
     if(!STATE.panel){ return; }
     STATE.onModeChange=onModeChange;
@@ -393,6 +428,8 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.onNormModeChange=onNormModeChange;
     STATE.onMetricChange=onMetricChange;
     STATE.onSliderVisibilityChange=onSliderVisibilityChange;
+    STATE.onTitleVisibilityChange=onTitleVisibilityChange;
+    STATE.onTopFilterChange=onTopFilterChange;
     STATE.onTitleVisibilityChange=onTitleVisibilityChange;
     STATE.toggle=STATE.panel.querySelector("#configToggle");
     const buttonsContainer=STATE.panel.querySelector("#configModeButtons");
@@ -427,6 +464,17 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     }else{
       STATE.titleButtons=[];
     }
+    if(STATE.topFilterContainer&&STATE.topFilterHandler){
+      STATE.topFilterContainer.removeEventListener("click",STATE.topFilterHandler);
+    }
+    STATE.topFilterContainer=STATE.panel.querySelector("#configTopFilterButtons");
+    STATE.topFilterHandler=handleTopFilterClick;
+    if(STATE.topFilterContainer){
+      STATE.topFilterContainer.addEventListener("click",STATE.topFilterHandler);
+      STATE.topFilterButtons=Array.from(STATE.topFilterContainer.querySelectorAll(".config-top-btn"));
+    }else{
+      STATE.topFilterButtons=[];
+    }
     if(STATE.normContainer&&STATE.normHandler){
       STATE.normContainer.removeEventListener("click",STATE.normHandler);
     }
@@ -447,6 +495,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.currentMetric=initialMetric||(STATE.metrics.length?STATE.metrics[0].key:null);
     STATE.sliderVisible=!!initialSliderVisible;
     STATE.titleVisible=!!initialTitleVisible;
+    STATE.currentTopFilter=initialTopFilter||"all";
     if(STATE.toggle){
       STATE.toggle.addEventListener("click",handleToggle);
     }
@@ -482,6 +531,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateNormActive();
     updateSliderActive();
     updateTitleActive();
+    updateTopFilterActive();
     buildMetricButtons();
     setOpen(false);
   }
@@ -539,6 +589,11 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateTitleActive();
   }
 
+  function setTopFilter(filter){
+    STATE.currentTopFilter=filter||"all";
+    updateTopFilterActive();
+  }
+
   function setMetric(metric){
     if(!metric){ return; }
     STATE.currentMetric=metric;
@@ -559,7 +614,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     setOpen(!!open);
   }
 
-  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
+  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setTopFilter, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
 })();
 </script>
 </body>
