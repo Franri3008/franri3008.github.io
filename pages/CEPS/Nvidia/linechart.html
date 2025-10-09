@@ -118,6 +118,7 @@ let rangeDirty=false;
 let sliderPanelEl=null;
 let sliderInitialized=false;
 let sliderVisible=true;
+let suppressAnimationNextRender=false;
 
 function getOrgInfo(id){
   return orgMeta.get(id)||null;
@@ -421,6 +422,7 @@ function handleRangeChange(range){
   const clampedEnd=Math.max(clampedStart,Math.min(end,maxIndex));
   if(clampedStart===currentRange.startIndex&&clampedEnd===currentRange.endIndex){ return; }
   rangeDirty=true;
+  suppressAnimationNextRender=true;
   currentRange.startIndex=clampedStart;
   currentRange.endIndex=clampedEnd;
   if(tooltip){ tooltip.style("opacity",0); }
@@ -843,12 +845,14 @@ function render(){
   const tickFont=Math.max(9,Math.min(13,fullW/110));
   if(!currentTimeline.length){
     svg.selectAll("*").remove();
+    suppressAnimationNextRender=false;
     return;
   }
   const {startIndex,endIndex}=getClampedRangeIndices();
   const timelineSlice=currentTimeline.filter(info=>info.relativeIndex>=startIndex&&info.relativeIndex<=endIndex);
   if(!timelineSlice.length){
     svg.selectAll("*").remove();
+    suppressAnimationNextRender=false;
     return;
   }
   const rangeMinCoord=timelineSlice[0].coord;
@@ -902,7 +906,10 @@ function render(){
   const width=Math.max(0,fullW-margin.left-margin.right);
   const height=Math.max(0,fullH-margin.top-margin.bottom);
   const gRoot=svg.selectAll("g.root").data([null]).join("g").attr("class","root").attr("transform",`translate(${margin.left},${margin.top})`);
-  if(width<=0||height<=0){ return; }
+  if(width<=0||height<=0){
+    suppressAnimationNextRender=false;
+    return;
+  }
 
   const x=d3.scaleLinear().domain([domainMin,domainMax]).range([0,width]);
   const y=d3.scaleLinear().domain([yMin,yMax]).range([height,0]);
@@ -930,20 +937,42 @@ function render(){
 
   const lineW=2*Math.max(1.25,Math.min(2.25,width/600));
   const lineGen=d3.line().x(d=>x(d.w)).y(d=>y(d.value));
+  const shouldAnimate=!suppressAnimationNextRender;
+  const transitionDuration=shouldAnimate?360:0;
+  const exitDuration=shouldAnimate?Math.round(transitionDuration*0.6):0;
+  const easeFn=d3.easeCubicOut;
 
-  gRoot.selectAll("path.series").data(visibleSeries,d=>d.id).join(
-    enter=>enter.append("path").attr("class","series").attr("fill","none").attr("stroke",d=>getSeriesColor(d.id)).attr("stroke-width",lineW).attr("d",d=>lineGen(d.values)),
-    update=>update.attr("stroke-width",lineW).attr("stroke",d=>getSeriesColor(d.id)).attr("d",d=>lineGen(d.values)),
-    exit=>exit.remove()
-  );
+  const seriesSel=gRoot.selectAll("path.series").data(visibleSeries,d=>d.id);
+  const seriesExit=seriesSel.exit().interrupt();
+  if(shouldAnimate){
+    seriesExit.transition().duration(exitDuration).attr("opacity",0).remove();
+  }else{
+    seriesExit.remove();
+  }
+  const seriesEnter=seriesSel.enter().append("path").attr("class","series").attr("fill","none").attr("stroke",d=>getSeriesColor(d.id)).attr("stroke-width",lineW).attr("d",d=>lineGen(d.values)).attr("opacity",shouldAnimate?0:1);
+  const seriesMerged=seriesEnter.merge(seriesSel);
+  if(shouldAnimate){
+    seriesMerged.interrupt().transition().duration(transitionDuration).ease(easeFn).attr("stroke-width",lineW).attr("stroke",d=>getSeriesColor(d.id)).attr("d",d=>lineGen(d.values)).attr("opacity",1);
+  }else{
+    seriesMerged.interrupt().attr("stroke-width",lineW).attr("stroke",d=>getSeriesColor(d.id)).attr("d",d=>lineGen(d.values)).attr("opacity",1);
+  }
 
-  const groups=gRoot.selectAll("g.dots").data(visibleSeries,d=>d.id).join(
-    enter=>enter.append("g").attr("class","dots"),
-    update=>update,
-    exit=>exit.remove()
-  );
+  const groupsSel=gRoot.selectAll("g.dots").data(visibleSeries,d=>d.id);
+  const groupsExit=groupsSel.exit().interrupt();
+  if(shouldAnimate){
+    groupsExit.transition().duration(exitDuration).style("opacity",0).remove();
+  }else{
+    groupsExit.remove();
+  }
+  const groupsEnter=groupsSel.enter().append("g").attr("class","dots").style("opacity",shouldAnimate?0:1);
+  const groupsMerged=groupsEnter.merge(groupsSel);
+  if(shouldAnimate){
+    groupsMerged.interrupt().transition().duration(transitionDuration).ease(easeFn).style("opacity",1);
+  }else{
+    groupsMerged.interrupt().style("opacity",1);
+  }
 
-  groups.each(function(s){
+  groupsMerged.each(function(s){
     const baseR=Math.max(2,Math.min(2,width/500));
     const minWindowSize=480;
     const maxWindowSize=1400;
@@ -961,11 +990,20 @@ function render(){
     const finalFillValue=patternId?`url(#${patternId})`:"#ffffff";
     const data=s.values.map((v,i)=>({ id:s.id, w:v.w, value:v.value, rawValue:v.rawValue, label:v.label, actualLabel:v.actualLabel, relativeLabel:v.relativeLabel, relativeIndex:v.relativeIndex, order:v.order, date:v.date, isFinal:i===s.values.length-1 }));
     const sel=d3.select(this).selectAll("circle.dot").data(data,d=>`${d.id}-${d.w}`);
-    sel.join(
-      enter=>enter.append("circle").attr("class","dot").attr("r",d=>d.isFinal?finalRadius:baseR).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor).attr("stroke-width",1).style("pointer-events","all"),
-      update=>update.attr("r",d=>d.isFinal?finalRadius:baseR).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor),
-      exit=>exit.remove()
-    ).on("pointerenter",function(event,d){
+    const exitSel=sel.exit().interrupt();
+    if(shouldAnimate){
+      exitSel.transition().duration(exitDuration).attr("opacity",0).remove();
+    }else{
+      exitSel.remove();
+    }
+    const enterSel=sel.enter().append("circle").attr("class","dot").attr("opacity",shouldAnimate?0:1).attr("stroke-width",1).style("pointer-events","all").attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
+    const mergedSel=enterSel.merge(sel);
+    if(shouldAnimate){
+      mergedSel.interrupt().transition().duration(transitionDuration).ease(easeFn).attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
+    }else{
+      mergedSel.interrupt().attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
+    }
+    mergedSel.on("pointerenter",function(event,d){
       const cx=+this.getAttribute("cx")+margin.left;
       const cy=+this.getAttribute("cy")+margin.top;
       const targetRadius=d.isFinal?finalHoverRadius:hoverRadius;
@@ -986,6 +1024,7 @@ function render(){
   });
 
   svg.selectAll("rect.pointer-capture").remove();
+  suppressAnimationNextRender=false;
 }
 
 loadSlider();
