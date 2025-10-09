@@ -30,8 +30,8 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
 .config-metric-btn:hover:not(.active) { background: rgba(39,86,211,0.1); }
 .config-metric-btn.active { background: #2756d3; color: #fff; border-color: #2756d3; box-shadow: 0 6px 16px rgba(39,86,211,0.18); }
 .config-metric-btn:focus-visible { outline: 2px solid rgba(39,86,211,0.5); outline-offset: 2px; }
-
 .config-panel[data-hidden="true"] { display: none !important; }
+.hidden { display: none !important; }
 
 @media (max-width: 900px), (max-height: 520px) {
   body.config-open .viz-grid { width: 100%; }
@@ -66,6 +66,20 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
         <button type="button" class="config-toggle config-scale-btn" data-scale="normalized">Normalized Growth</button>
       </div>
     </div>
+    <div class="config-section hidden" id="configNormSection" aria-hidden="true">
+      <p class="config-section-title">Normalized Mode</p>
+      <div class="config-buttons interruptor" id="configNormButtons">
+        <button type="button" class="config-toggle config-norm-btn active" data-norm="againstStart">Against start</button>
+        <button type="button" class="config-toggle config-norm-btn" data-norm="againstPrevious">Against previous period</button>
+      </div>
+    </div>
+    <div class="config-section">
+      <p class="config-section-title">Time Slider</p>
+      <div class="config-buttons interruptor" id="configSliderButtons">
+        <button type="button" class="config-toggle config-slider-btn active" data-slider="show">Show</button>
+        <button type="button" class="config-toggle config-slider-btn" data-slider="hide">Hide</button>
+      </div>
+    </div>
     <div class="config-section">
       <p class="config-section-title">Metric</p>
       <div class="config-buttons metric-chain" id="configMetricButtons" role="group" aria-label="Metric selection"></div>
@@ -74,7 +88,41 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
 </aside>
 <script>
 (function(){
-  const STATE={ panel:null, toggle:null, modeButtons:[], periodButtons:[], scaleButtons:[], metricContainer:null, metricButtons:[], metrics:[], onModeChange:null, onPeriodChange:null, onScaleChange:null, onMetricChange:null, escHandler:null, currentMode:"cumulative", currentPeriod:"weekly", currentScale:"absolute", currentMetric:null, modeDisabled:false, isHidden:false, mediaQuery:null, mediaHandler:null, resizeHandler:null, metricHandler:null };
+  const STATE={
+    panel:null,
+    toggle:null,
+    modeButtons:[],
+    periodButtons:[],
+    scaleButtons:[],
+    normContainer:null,
+    normButtons:[],
+    sliderContainer:null,
+    sliderButtons:[],
+    metricContainer:null,
+    metricButtons:[],
+    metrics:[],
+    onModeChange:null,
+    onPeriodChange:null,
+    onScaleChange:null,
+    onNormModeChange:null,
+    onMetricChange:null,
+    onSliderVisibilityChange:null,
+    escHandler:null,
+    currentMode:"cumulative",
+    currentPeriod:"weekly",
+    currentScale:"absolute",
+    currentNormMode:"againstStart",
+    currentMetric:null,
+    sliderVisible:true,
+    modeDisabled:false,
+    isHidden:false,
+    mediaQuery:null,
+    mediaHandler:null,
+    resizeHandler:null,
+    metricHandler:null,
+    sliderHandler:null,
+    normHandler:null
+  };
   const HIDE_MEDIA="(max-width: 900px), (max-height: 520px)";
 
   function updateActiveWidth(){
@@ -171,6 +219,25 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     });
   }
 
+  function updateNormActive(){
+    if(!STATE.normButtons.length){ return; }
+    STATE.normButtons.forEach(btn=>{
+      const isActive=btn.dataset.norm===STATE.currentNormMode;
+      btn.classList.toggle("active",isActive);
+      btn.setAttribute("aria-pressed",isActive?"true":"false");
+    });
+  }
+
+  function updateSliderActive(){
+    if(!STATE.sliderButtons.length){ return; }
+    STATE.sliderButtons.forEach(btn=>{
+      const wantsVisible=btn.dataset.slider!=="hide";
+      const isActive=STATE.sliderVisible===wantsVisible;
+      btn.classList.toggle("active",isActive);
+      btn.setAttribute("aria-pressed",isActive?"true":"false");
+    });
+  }
+
   function updateMetricActive(){
     if(!STATE.metricButtons.length){ return; }
     STATE.metricButtons.forEach(btn=>{
@@ -253,23 +320,60 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     }
   }
 
+  function handleNormClick(event){
+    const btn=event.target.closest(".config-norm-btn");
+    if(!btn){ return; }
+    const next=btn.dataset.norm;
+    if(!next||next===STATE.currentNormMode){ return; }
+    STATE.currentNormMode=next;
+    updateNormActive();
+    if(typeof STATE.onNormModeChange==="function"){
+      STATE.onNormModeChange(next);
+    }
+  }
+
+  function handleSliderClick(event){
+    const btn=event.target.closest(".config-slider-btn");
+    if(!btn){ return; }
+    const wantsVisible=btn.dataset.slider!=="hide";
+    if(wantsVisible===STATE.sliderVisible){ return; }
+    STATE.sliderVisible=wantsVisible;
+    updateSliderActive();
+    if(typeof STATE.onSliderVisibilityChange==="function"){
+      STATE.onSliderVisibilityChange(wantsVisible);
+    }
+  }
+
   function handleEsc(event){
     if(event.key==="Escape"&&STATE.panel&&STATE.panel.classList.contains("open")){
       setOpen(false);
     }
   }
 
-  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onMetricChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialMetric=null }={}){
+  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true }={}){
     STATE.panel=panelEl||document.getElementById("configPanel");
     if(!STATE.panel){ return; }
     STATE.onModeChange=onModeChange;
     STATE.onPeriodChange=onPeriodChange;
     STATE.onScaleChange=onScaleChange;
+    STATE.onNormModeChange=onNormModeChange;
     STATE.onMetricChange=onMetricChange;
+    STATE.onSliderVisibilityChange=onSliderVisibilityChange;
     STATE.toggle=STATE.panel.querySelector("#configToggle");
     const buttonsContainer=STATE.panel.querySelector("#configModeButtons");
     const periodContainer=STATE.panel.querySelector("#configPeriodButtons");
     const scaleContainer=STATE.panel.querySelector("#configScaleButtons");
+    if(STATE.sliderContainer&&STATE.sliderHandler){
+      STATE.sliderContainer.removeEventListener("click",STATE.sliderHandler);
+    }
+    STATE.sliderContainer=STATE.panel.querySelector("#configSliderButtons");
+    STATE.sliderHandler=handleSliderClick;
+    if(STATE.sliderContainer){
+      STATE.sliderContainer.addEventListener("click",STATE.sliderHandler);
+      STATE.sliderButtons=Array.from(STATE.sliderContainer.querySelectorAll(".config-slider-btn"));
+    }else{
+      STATE.sliderButtons=[];
+    }
     if(STATE.metricContainer&&STATE.metricHandler){
       STATE.metricContainer.removeEventListener("click",STATE.metricHandler);
     }
@@ -277,12 +381,25 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.modeButtons=Array.from(STATE.panel.querySelectorAll(".config-mode-btn"));
     STATE.periodButtons=Array.from(STATE.panel.querySelectorAll(".config-period-btn"));
     STATE.scaleButtons=Array.from(STATE.panel.querySelectorAll(".config-scale-btn"));
+    if(STATE.normContainer&&STATE.normHandler){
+      STATE.normContainer.removeEventListener("click",STATE.normHandler);
+    }
+    STATE.normContainer=STATE.panel.querySelector("#configNormButtons");
+    STATE.normHandler=handleNormClick;
+    if(STATE.normContainer){
+      STATE.normContainer.addEventListener("click",STATE.normHandler);
+      STATE.normButtons=Array.from(STATE.normContainer.querySelectorAll(".config-norm-btn"));
+    }else{
+      STATE.normButtons=[];
+    }
     STATE.currentMode=initialMode;
     STATE.currentPeriod=initialPeriod;
     STATE.currentScale=initialScale;
+    STATE.currentNormMode=initialNormMode;
     STATE.modeDisabled=false;
     STATE.metrics=Array.isArray(metrics)?metrics.slice():[];
     STATE.currentMetric=initialMetric||(STATE.metrics.length?STATE.metrics[0].key:null);
+    STATE.sliderVisible=!!initialSliderVisible;
     if(STATE.toggle){
       STATE.toggle.addEventListener("click",handleToggle);
     }
@@ -311,9 +428,12 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     window.addEventListener("resize",STATE.resizeHandler);
     setupResponsiveGuard();
     setModeDisabled(initialScale==="normalized");
+    setNormModeVisible(initialScale==="normalized");
     updateModeActive();
     updatePeriodActive();
     updateScaleActive();
+    updateNormActive();
+    updateSliderActive();
     buildMetricButtons();
     setOpen(false);
   }
@@ -348,6 +468,24 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateScaleActive();
   }
 
+  function setNormModeVisible(visible){
+    const section=document.getElementById("configNormSection");
+    if(!section){ return; }
+    section.classList.toggle("hidden",!visible);
+    section.setAttribute("aria-hidden",visible?"false":"true");
+  }
+
+  function setNormMode(mode){
+    if(!mode){ return; }
+    STATE.currentNormMode=mode;
+    updateNormActive();
+  }
+
+  function setSliderVisible(visible){
+    STATE.sliderVisible=!!visible;
+    updateSliderActive();
+  }
+
   function setMetric(metric){
     if(!metric){ return; }
     STATE.currentMetric=metric;
@@ -368,7 +506,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     setOpen(!!open);
   }
 
-  window.ConfigTab={ init, setMode, setPeriod, setScale, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
+  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
 })();
 </script>
 </body>

@@ -1,0 +1,57 @@
+[
+    {
+        "id":"Ai2",
+        "logo":"icons/ai2.png",
+        "color":"#f03633"
+    },
+    {
+        "id":"Apple",
+        "logo":"icons/apple.jpeg",
+        "color":"#acaaaa"
+    },
+    {
+        "id":"ByteDance",
+        "logo":"icons/bytedance.jpeg",
+        "color":"#61EBE3"
+    },
+    {
+        "id":"Google",
+        "logo":"icons/google.jpeg",
+        "color":"#0077B6"
+    },
+    {
+        "id":"DeepSeek",
+        "logo":"icons/deepseek.jpeg",
+        "color":"#8F78DB"
+    },
+    {
+        "id":"Hugging Face",
+        "logo":"icons/huggingface.jpeg",
+        "color":"#FFD35B"
+    },
+    {
+        "id":"NVIDIA",
+        "logo":"icons/nvidia.jpeg",
+        "color":"#279E7B"
+    },
+    {
+        "id":"Meta Llama",
+        "logo":"icons/meta.png",
+        "color":"#264677"
+    },
+    {
+        "id":"Qwen",
+        "logo":"icons/qwen.png",
+        "color":"#6356e9"
+    },
+    {
+        "id":"Microsoft",
+        "logo":"icons/microsoft.jpeg",
+        "color":"#C7544F"
+    },
+    {
+        "id":"OpenAI",
+        "logo":"icons/openai.jpeg",
+        "color":"#F49929"
+    }
+]
