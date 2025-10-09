@@ -53,5 +53,20 @@
         "id":"OpenAI",
         "logo":"icons/openai.jpeg",
         "color":"#F49929"
+    },
+    {
+        "id":"Mistral AI_",
+        "logo":"icons/mistral.jpeg",
+        "color":"#fa500e"
+    },
+    {
+        "id":"Stability AI",
+        "logo":"icons/stabilityai.png",
+        "color":"#b09ede"
+    },
+    {
+        "id":"IBM Granite",
+        "logo":"icons/ibm.png",
+        "color":"#D091D6"
     }
 ]
