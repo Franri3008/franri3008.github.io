@@ -81,6 +81,13 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
       </div>
     </div>
     <div class="config-section">
+      <p class="config-section-title">Title</p>
+      <div class="config-buttons interruptor" id="configTitleButtons">
+        <button type="button" class="config-toggle config-title-btn active" data-title="show">Show</button>
+        <button type="button" class="config-toggle config-title-btn" data-title="hide">Hide</button>
+      </div>
+    </div>
+    <div class="config-section">
       <p class="config-section-title">Metric</p>
       <div class="config-buttons metric-chain" id="configMetricButtons" role="group" aria-label="Metric selection"></div>
     </div>
@@ -98,6 +105,8 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     normButtons:[],
     sliderContainer:null,
     sliderButtons:[],
+    titleContainer:null,
+    titleButtons:[],
     metricContainer:null,
     metricButtons:[],
     metrics:[],
@@ -107,6 +116,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     onNormModeChange:null,
     onMetricChange:null,
     onSliderVisibilityChange:null,
+    onTitleVisibilityChange:null,
     escHandler:null,
     currentMode:"cumulative",
     currentPeriod:"weekly",
@@ -114,6 +124,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     currentNormMode:"againstStart",
     currentMetric:null,
     sliderVisible:true,
+    titleVisible:true,
     modeDisabled:false,
     isHidden:false,
     mediaQuery:null,
@@ -121,6 +132,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     resizeHandler:null,
     metricHandler:null,
     sliderHandler:null,
+    titleHandler:null,
     normHandler:null
   };
   const HIDE_MEDIA="(max-width: 900px), (max-height: 520px)";
@@ -238,6 +250,16 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     });
   }
 
+  function updateTitleActive(){
+    if(!STATE.titleButtons.length){ return; }
+    STATE.titleButtons.forEach(btn=>{
+      const wantsVisible=btn.dataset.title!=="hide";
+      const isActive=STATE.titleVisible===wantsVisible;
+      btn.classList.toggle("active",isActive);
+      btn.setAttribute("aria-pressed",isActive?"true":"false");
+    });
+  }
+
   function updateMetricActive(){
     if(!STATE.metricButtons.length){ return; }
     STATE.metricButtons.forEach(btn=>{
@@ -344,13 +366,25 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     }
   }
 
+  function handleTitleClick(event){
+    const btn=event.target.closest(".config-title-btn");
+    if(!btn){ return; }
+    const wantsVisible=btn.dataset.title!=="hide";
+    if(wantsVisible===STATE.titleVisible){ return; }
+    STATE.titleVisible=wantsVisible;
+    updateTitleActive();
+    if(typeof STATE.onTitleVisibilityChange==="function"){
+      STATE.onTitleVisibilityChange(wantsVisible);
+    }
+  }
+
   function handleEsc(event){
     if(event.key==="Escape"&&STATE.panel&&STATE.panel.classList.contains("open")){
       setOpen(false);
     }
   }
 
-  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true }={}){
+  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true }={}){
     STATE.panel=panelEl||document.getElementById("configPanel");
     if(!STATE.panel){ return; }
     STATE.onModeChange=onModeChange;
@@ -359,6 +393,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.onNormModeChange=onNormModeChange;
     STATE.onMetricChange=onMetricChange;
     STATE.onSliderVisibilityChange=onSliderVisibilityChange;
+    STATE.onTitleVisibilityChange=onTitleVisibilityChange;
     STATE.toggle=STATE.panel.querySelector("#configToggle");
     const buttonsContainer=STATE.panel.querySelector("#configModeButtons");
     const periodContainer=STATE.panel.querySelector("#configPeriodButtons");
@@ -381,6 +416,17 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.modeButtons=Array.from(STATE.panel.querySelectorAll(".config-mode-btn"));
     STATE.periodButtons=Array.from(STATE.panel.querySelectorAll(".config-period-btn"));
     STATE.scaleButtons=Array.from(STATE.panel.querySelectorAll(".config-scale-btn"));
+    if(STATE.titleContainer&&STATE.titleHandler){
+      STATE.titleContainer.removeEventListener("click",STATE.titleHandler);
+    }
+    STATE.titleContainer=STATE.panel.querySelector("#configTitleButtons");
+    STATE.titleHandler=handleTitleClick;
+    if(STATE.titleContainer){
+      STATE.titleContainer.addEventListener("click",STATE.titleHandler);
+      STATE.titleButtons=Array.from(STATE.titleContainer.querySelectorAll(".config-title-btn"));
+    }else{
+      STATE.titleButtons=[];
+    }
     if(STATE.normContainer&&STATE.normHandler){
       STATE.normContainer.removeEventListener("click",STATE.normHandler);
     }
@@ -400,6 +446,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.metrics=Array.isArray(metrics)?metrics.slice():[];
     STATE.currentMetric=initialMetric||(STATE.metrics.length?STATE.metrics[0].key:null);
     STATE.sliderVisible=!!initialSliderVisible;
+    STATE.titleVisible=!!initialTitleVisible;
     if(STATE.toggle){
       STATE.toggle.addEventListener("click",handleToggle);
     }
@@ -434,6 +481,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateScaleActive();
     updateNormActive();
     updateSliderActive();
+    updateTitleActive();
     buildMetricButtons();
     setOpen(false);
   }
@@ -486,6 +534,11 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateSliderActive();
   }
 
+  function setTitleVisible(visible){
+    STATE.titleVisible=!!visible;
+    updateTitleActive();
+  }
+
   function setMetric(metric){
     if(!metric){ return; }
     STATE.currentMetric=metric;
@@ -506,7 +559,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     setOpen(!!open);
   }
 
-  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
+  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
 })();
 </script>
 </body>

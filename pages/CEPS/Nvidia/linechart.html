@@ -6,15 +6,24 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
 html, body { height: 100%; }
-body { margin: 0; overflow: hidden; background: #ffffff; color: #111; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif; height: 100vh; }
-.viz-grid { display: grid; grid-template-rows: 17fr 3fr 1fr; grid-template-columns: 1fr 1fr; height: 100vh; width: 100%; box-sizing: border-box; padding-bottom: clamp(4px, 2vh, 10px); }
-#container1 { grid-row: 1; grid-column: 1 / span 2; display: flex; overflow: hidden; min-height: 0; column-gap: 0; }
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    background: #ffffff; 
+    color: #111; 
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif; 
+    height: 100vh; 
+}
+.viz-grid { display: grid; grid-template-rows: auto 17fr 3fr 1fr; grid-template-columns: 1fr 1fr; height: 100vh; width: 100%; box-sizing: border-box; padding-bottom: clamp(4px, 2vh, 10px); }
+#containerTitle { grid-row: 1; grid-column: 1 / span 2; display: flex; align-items: flex-end; justify-content: flex-start; padding: clamp(8px, 2vh, 16px) clamp(16px, 3vw, 32px); }
+.viz-title { font-size: clamp(14px, 2vw, 22px); font-weight: 700; color: #1f2a44; text-align: left; max-width: 90%; line-height: 1.3; }
+#container1 { grid-row: 2; grid-column: 1 / span 2; display: flex; overflow: hidden; min-height: 0; column-gap: 0; }
 #container1 .y-axis-container { flex: 0 0 clamp(22px, 2.4vw, 32px); display: flex; align-items: center; justify-content: center; min-width: 0; border-right: 1px solid rgba(0,0,0,0.1); box-sizing: border-box; padding: 0 2px; }
 #container1 .y-axis-label { writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-weight: 600; font-size: clamp(11px, 1.2vw, 16px); color: #333; }
 #container1 .chart-wrapper { flex: 1 1 auto; display: flex; min-width: 0; height: 100%; margin-left: -6px; }
 #container1 .chart-wrapper-inner { flex: 1 1 auto; display: flex; min-width: 0; height: 100%; }
 
-#container2 { grid-row: 2; grid-column: 1 / span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; overflow: hidden; font-size: clamp(10px, 1.6vw, 16px); padding: 6px 10px; }
+#container2 { grid-row: 3; grid-column: 1 / span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; overflow: hidden; font-size: clamp(10px, 1.6vw, 16px); padding: 6px 10px; }
 .metric-buttons { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 10px; }
 .metric-btn { padding: 6px 10px; border-radius: 8px; border: 1px solid #cfd2d7; background: #fff; font-weight: 600; cursor: pointer; user-select: none; transition: transform .08s ease, background .12s ease; }
 .metric-btn:hover { transform: translateY(-1px); }
@@ -26,8 +35,8 @@ body { margin: 0; overflow: hidden; background: #ffffff; color: #111; font-famil
 .legend-item:focus-visible { outline: 2px solid rgba(0,0,0,0.5); outline-offset: 2px; }
 .legend-square { width: clamp(6px, 1.2vw, 10px); height: clamp(6px, 1.2vw, 10px); border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,0.15) inset; }
 
-#container3 { grid-row: 3; grid-column: 1; display: flex; align-items: center; justify-content: flex-start; padding: 0 20px; overflow: hidden; min-width: 0; }
-#container4 { grid-row: 3; grid-column: 2; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; overflow: hidden; min-width: 0; }
+#container3 { grid-row: 4; grid-column: 1; display: flex; align-items: center; justify-content: flex-start; padding: 0 20px; overflow: hidden; min-width: 0; }
+#container4 { grid-row: 4; grid-column: 2; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; overflow: hidden; min-width: 0; }
 #container4 a { height: 100%; display: flex; align-items: center; }
 
 .source-text { font-size: clamp(10px, 1.6vw, 16px); font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-style: normal; }
@@ -37,8 +46,8 @@ body { margin: 0; overflow: hidden; background: #ffffff; color: #111; font-famil
 
 @media (max-height: 500px) {
   .viz-grid { grid-template-rows: 1fr; grid-template-columns: 1fr; padding-bottom: 0; }
+  #containerTitle, #container2, #container3, #container4 { display: none !important; }
   #container1 { grid-row: 1; grid-column: 1; }
-  #container2, #container3, #container4 { display: none !important; }
 }
 
 #viz { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
@@ -54,6 +63,9 @@ body { margin: 0; overflow: hidden; background: #ffffff; color: #111; font-famil
 <body>
 <div class="viz-layout" id="vizLayout">
   <div class="viz-grid">
+    <div id="containerTitle" class="container title-container">
+      <div id="vizTitle" class="viz-title">Loading data…</div>
+    </div>
     <div id="container1" class="container chart-container">
       <div class="y-axis-container">
         <div class="y-axis-label" id="yLabel">Cumulative value</div>
@@ -86,6 +98,8 @@ const svg=d3.select("#chart");
 const tooltip=d3.select("#tooltip");
 const legendEl=d3.select("#legend");
 const yLabelEl=document.getElementById("yLabel");
+const titleContainer=document.getElementById("containerTitle");
+const titleEl=document.getElementById("vizTitle");
 const vizLayout=document.getElementById("vizLayout");
 const colorScale=d3.scaleOrdinal(d3.schemeTableau10);
 const orgMeta=new Map();
@@ -118,7 +132,113 @@ let rangeDirty=false;
 let sliderPanelEl=null;
 let sliderInitialized=false;
 let sliderVisible=true;
+let titleVisible=true;
 let suppressAnimationNextRender=false;
+
+function capitalizeFirst(text){
+  if(typeof text!=="string"||!text.length){ return text||""; }
+  return text.charAt(0).toUpperCase()+text.slice(1);
+}
+
+function getPeriodDisplayLabel(){
+  switch(currentPeriod){
+    case "monthly": return "Monthly data";
+    case "yearly": return "Yearly data";
+    default: return "Weekly data";
+  }
+}
+
+function getScaleDescriptor(){
+  if(currentScale==="normalized"){
+    return currentNormMode==="againstPrevious"?"Indexed to previous period":"Indexed to start period";
+  }
+  return "Absolute values";
+}
+
+function getModeDescriptor(){
+  if(currentScale==="normalized"){ return null; }
+  if(currentMode==="perWeek"){ return `Per ${getPeriodLabel()}`; }
+  return "Cumulative totals";
+}
+
+function getActiveIds(){
+  const ids=rawById.map(s=>s.id);
+  return ids.filter(id=>active.get(id)!==false);
+}
+
+function formatOrgSummary(){
+  const allIds=rawById.map(s=>s.id);
+  if(!allIds.length){ return ""; }
+  const activeIds=getActiveIds();
+  if(!activeIds.length){ return "No organizations selected"; }
+  if(activeIds.length===allIds.length){
+    return `All ${allIds.length} organizations`;
+  }
+  const shown=activeIds.slice(0,3);
+  const remaining=activeIds.length-shown.length;
+  return remaining>0?`${shown.join(", ")} (+${remaining} more)`:shown.join(", ");
+}
+
+function formatTitleDate(info){
+  if(!info){ return ""; }
+  const label=info.label||`Period ${info.coord??""}`;
+  return stripTimePrefix(label);
+}
+
+function formatRangeText(timelineSlice){
+  if(!currentTimeline.length){ return { text:"No data", coversAll:false, startLabel:"", endLabel:"" }; }
+  const {startIndex,endIndex}=getClampedRangeIndices();
+  const fallback=currentTimeline.slice(startIndex,Math.min(endIndex+1,currentTimeline.length));
+  const slice=(timelineSlice&&timelineSlice.length)?timelineSlice:fallback;
+  if(!slice.length){ return { text:"No data", coversAll:false, startLabel:"", endLabel:"" }; }
+  const startInfo=slice[0];
+  const endInfo=slice[slice.length-1];
+  const startLabel=formatTitleDate(startInfo);
+  const endLabel=formatTitleDate(endInfo);
+  const coversAll=startIndex===0&&endIndex===currentTimeline.length-1;
+  let text="";
+  if(startLabel===endLabel){
+    text=startLabel;
+  }else{
+    text=`${startLabel} – ${endLabel}`;
+  }
+  return { text, coversAll, startLabel, endLabel };
+}
+
+function updateTitle(timelineSlice){
+  if(!titleEl){ return; }
+  if(!rawById.length||!currentTimeline.length){
+    titleEl.textContent="No data available";
+    return;
+  }
+  const metricDef=getMetricDefinition();
+  const metricLabel=metricDef?metricDef.label:"Metric";
+  const periodWord=getPeriodAdjective();
+  let subjectText=metricLabel;
+  if(currentScale!=="normalized"){
+    if(currentMode==="perWeek"){
+      subjectText=`${metricLabel} per ${getPeriodLabel()}`;
+    }else if(currentMode==="cumulative"){
+      const prefix=periodWord?`${capitalizeFirst(periodWord)} `:"";
+      subjectText=`${prefix}cumulative ${metricLabel}`;
+    }else if(periodWord){
+      subjectText=`${capitalizeFirst(periodWord)} ${metricLabel}`;
+    }
+  }else if(periodWord){
+    subjectText=`${capitalizeFirst(periodWord)} ${metricLabel}`;
+  }
+  if(!subjectText){ subjectText=metricLabel; }
+  let sentence=`${subjectText}`;
+  if(currentScale==="normalized"){
+    sentence+=currentNormMode==="againstPrevious"?" indexed to the previous period":" indexed to the starting period";
+  }else{
+    sentence+=" in absolute values";
+  }
+  const rangeSummary=formatRangeText(timelineSlice);
+  if(rangeSummary&&rangeSummary.text){ sentence+=` from ${rangeSummary.text}`; }
+  if(rangeSummary&&rangeSummary.coversAll){ sentence+=" (full timeline)"; }
+  titleEl.textContent=sentence;
+}
 
 function getOrgInfo(id){
   return orgMeta.get(id)||null;
@@ -177,6 +297,14 @@ function getPeriodLabel(){
     case "monthly": return "month";
     case "yearly": return "year";
     default: return "week";
+  }
+}
+
+function getPeriodAdjective(){
+  switch(currentPeriod){
+    case "monthly": return "monthly";
+    case "yearly": return "yearly";
+    default: return "weekly";
   }
 }
 
@@ -382,7 +510,6 @@ function formatRangeLabelByIndex(idx){
 function getClampedRangeIndices(){
   if(!currentTimeline.length){ return {startIndex:0,endIndex:0,maxIndex:-1}; }
   const maxIndex=currentTimeline.length-1;
-  if(!sliderVisible){ return {startIndex:0,endIndex:maxIndex,maxIndex}; }
   const rawStart=Number.isFinite(currentRange.startIndex)?currentRange.startIndex:0;
   const rawEnd=Number.isFinite(currentRange.endIndex)?currentRange.endIndex:maxIndex;
   const startIndex=Math.max(0,Math.min(rawStart,maxIndex));
@@ -461,6 +588,17 @@ function setSliderVisibility(visible,options={}){
   }
 }
 
+function setTitleVisibility(visible,options={}){
+  const next=!!visible;
+  titleVisible=next;
+  if(titleContainer){
+    titleContainer.style.display=titleVisible?"":"none";
+  }
+  if(!options.skipConfig&&window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){
+    window.ConfigTab.setTitleVisible(titleVisible);
+  }
+}
+
 async function loadSlider(){
   const container=document.getElementById("container2");
   if(!container){ return; }
@@ -511,35 +649,57 @@ async function loadSlider(){
   }
 }
 
+function readToggleState(group, attr){
+  try{
+    if(!group){ return null; }
+    const buttons=Array.from(group.querySelectorAll("button"));
+    if(!buttons.length){ return null; }
+    const showBtn=buttons.find(b=>b.dataset?.[attr]==="show");
+    const hideBtn=buttons.find(b=>b.dataset?.[attr]==="hide");
+    const showActive=showBtn&&(showBtn.getAttribute("aria-pressed")==="true"||showBtn.classList.contains("active"));
+    const hideActive=hideBtn&&(hideBtn.getAttribute("aria-pressed")==="true"||hideBtn.classList.contains("active"));
+    if(showActive&&!hideActive){ return true; }
+    if(hideActive&&!showActive){ return false; }
+  }catch(e){}
+  return null;
+}
+
 function readTimeSliderStateFromPanel(panel){
   try{
-    const candidates=Array.from(panel.querySelectorAll("button"));
-    const inGroup=candidates.filter(b=>/^\s*show\s*$/i.test(b.textContent)||/^\s*hide\s*$/i.test(b.textContent));
-    if(inGroup.length){
-      const showBtn=inGroup.find(b=>/^\s*show\s*$/i.test(b.textContent));
-      const hideBtn=inGroup.find(b=>/^\s*hide\s*$/i.test(b.textContent));
-      const isOn=(showBtn&&((showBtn.getAttribute("aria-pressed")==="true")||showBtn.classList.contains("active")))||false;
-      const isOff=(hideBtn&&((hideBtn.getAttribute("aria-pressed")==="true")||hideBtn.classList.contains("active")))||false;
-      if(isOn&&!isOff){ return true; }
-      if(isOff&&!isOn){ return false; }
-    }
+    const group=panel.querySelector("#configSliderButtons");
+    const state=readToggleState(group,"slider");
+    if(state!==null){ return state; }
   }catch(e){}
   return sliderVisible;
 }
 
 function wireConfigSliderBridge(panel){
   try{
-    const initial=readTimeSliderStateFromPanel(panel);
-    setSliderVisibility(initial,{skipConfig:true});
-    panel.addEventListener("click",function(e){
-      const btn=e.target&&e.target.closest("button");
-      if(!btn){ return; }
-      const label=(btn.textContent||"").trim().toLowerCase();
-      if(label==="show"){ setSliderVisibility(true); }
-      if(label==="hide"){ setSliderVisibility(false); }
-    });
-    if(typeof window.ConfigTab?.onSliderVisibleChange==="function"){
+    const sliderGroup=panel.querySelector("#configSliderButtons");
+    const titleGroup=panel.querySelector("#configTitleButtons");
+    const initialSlider=readToggleState(sliderGroup,"slider");
+    setSliderVisibility(initialSlider===null?sliderVisible:initialSlider,{skipConfig:true});
+    if(sliderGroup){
+      sliderGroup.addEventListener("click",function(e){
+        const btn=e.target&&e.target.closest(".config-slider-btn");
+        if(!btn){ return; }
+        const wantsVisible=btn.dataset.slider!=="hide";
+        setSliderVisibility(wantsVisible);
+      });
+    }
+    const initialTitle=readToggleState(titleGroup,"title");
+    setTitleVisibility(initialTitle===null?titleVisible:initialTitle,{skipConfig:true});
+    if(titleGroup){
+      titleGroup.addEventListener("click",function(e){
+        const btn=e.target&&e.target.closest(".config-title-btn");
+        if(!btn){ return; }
+        const wantsVisible=btn.dataset.title!=="hide";
+        setTitleVisibility(wantsVisible);
+      });
+    }
+    if(window.ConfigTab){
       window.ConfigTab.onSliderVisibleChange=function(visible){ setSliderVisibility(!!visible); };
+      window.ConfigTab.onTitleVisibleChange=function(visible){ setTitleVisibility(!!visible); };
     }
     window.setTimelineVisible=function(visible){ setSliderVisibility(!!visible); };
     window.addEventListener("timelineVisibilityChange",function(e){ setSliderVisibility(!!(e&&e.detail)); });
@@ -582,12 +742,16 @@ async function loadConfigTab(){
         initialScale: currentScale,
         initialNormMode: currentNormMode,
         initialMetric: currentMetric,
+        initialSliderVisible: sliderVisible,
+        initialTitleVisible: titleVisible,
         metrics: METRICS,
         onModeChange:onConfigModeChange,
         onPeriodChange:onConfigPeriodChange,
         onScaleChange:onConfigScaleChange,
         onNormModeChange:onConfigNormModeChange,
-        onMetricChange:onConfigMetricChange
+        onMetricChange:onConfigMetricChange,
+        onSliderVisibilityChange:setSliderVisibility,
+        onTitleVisibilityChange:setTitleVisibility
       });
     }
     const panelEl=document.getElementById("configPanel");
@@ -629,6 +793,8 @@ function load(){
     if(window.ConfigTab&&typeof window.ConfigTab.setModeDisabled==="function"){ window.ConfigTab.setModeDisabled(currentScale==="normalized"); }
     if(window.ConfigTab&&typeof window.ConfigTab.setNormModeVisible==="function"){ window.ConfigTab.setNormModeVisible(currentScale==="normalized"); }
     if(window.ConfigTab&&typeof window.ConfigTab.setNormMode==="function"){ window.ConfigTab.setNormMode(currentNormMode); }
+    if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"){ window.ConfigTab.setSliderVisible(sliderVisible); }
+    if(window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){ window.ConfigTab.setTitleVisible(titleVisible); }
     buildLegend(ids);
     buildSeriesFromRaw();
     render();
@@ -845,6 +1011,7 @@ function render(){
   const tickFont=Math.max(9,Math.min(13,fullW/110));
   if(!currentTimeline.length){
     svg.selectAll("*").remove();
+    updateTitle([]);
     suppressAnimationNextRender=false;
     return;
   }
@@ -852,9 +1019,11 @@ function render(){
   const timelineSlice=currentTimeline.filter(info=>info.relativeIndex>=startIndex&&info.relativeIndex<=endIndex);
   if(!timelineSlice.length){
     svg.selectAll("*").remove();
+    updateTitle([]);
     suppressAnimationNextRender=false;
     return;
   }
+  updateTitle(timelineSlice);
   const rangeMinCoord=timelineSlice[0].coord;
   const rangeMaxCoord=timelineSlice[timelineSlice.length-1].coord;
   const singlePoint=rangeMinCoord===rangeMaxCoord;
@@ -883,6 +1052,8 @@ function render(){
 
   const activeSeries=filteredSeries.filter(s=>active.get(s.id));
   const visibleSeries=activeSeries.filter(s=>s.values.length);
+  const visiblePointCount=visibleSeries.reduce((sum,s)=>sum+s.values.length,0);
+  const densePointMode=visiblePointCount>100;
   const seriesForScale=visibleSeries.length?visibleSeries:activeSeries.length?activeSeries:filteredSeries;
   let yMax=d3.max(seriesForScale,s=>d3.max(s.values,v=>v.value));
   let yMin=d3.min(seriesForScale,s=>d3.min(s.values,v=>v.value));
@@ -934,8 +1105,19 @@ function render(){
   xAxis.call(d3.axisBottom(x).tickValues(axisXTicks).tickFormat(formatTimelineTick));
   yAxis.call(d3.axisLeft(y).tickValues(yTickValues).tickFormat(formatValue).tickPadding(2));
   svg.selectAll(".axis text").style("font-size",tickFont+"px");
-
-  const lineW=2*Math.max(1.25,Math.min(2.25,width/600));
+  const minWindowSize=480;
+  const maxWindowSize=1400;
+  const windowMeasure=Math.max(width,height);
+  const windowSpan=Math.max(1,maxWindowSize-minWindowSize);
+  const windowRatio=Math.max(0,Math.min(1,(windowMeasure-minWindowSize)/windowSpan));
+  const smallRadiusBase=2.4;
+  let smallRadius=smallRadiusBase*(0.8+windowRatio*(2-0.8));
+  if(densePointMode){ smallRadius*=0.6; }
+  const finalRadiusBase=6;
+  const finalRadius=finalRadiusBase*(1+windowRatio);
+  const finalHoverRadius=finalRadius*1.18;
+  const hoverRadius=smallRadius*1.6;
+  const lineW=0.9+windowRatio*1.6;
   const lineGen=d3.line().x(d=>x(d.w)).y(d=>y(d.value));
   const shouldAnimate=!suppressAnimationNextRender;
   const transitionDuration=shouldAnimate?360:0;
@@ -973,17 +1155,7 @@ function render(){
   }
 
   groupsMerged.each(function(s){
-    const baseR=Math.max(2,Math.min(2,width/500));
-    const minWindowSize=480;
-    const maxWindowSize=1400;
-    const windowMeasure=Math.max(width,height);
-    const clampedWindow=Math.max(minWindowSize,Math.min(maxWindowSize,windowMeasure));
-    const windowSpan=Math.max(1,maxWindowSize-minWindowSize);
-    const windowRatio=(clampedWindow-minWindowSize)/windowSpan;
-    const finalScale=1+windowRatio;
-    const finalRadius=baseR*5*finalScale;
-    const finalHoverRadius=finalRadius*1.2;
-    const hoverRadius=baseR*3;
+    const baseR=smallRadius;
     const seriesColor=getSeriesColor(s.id);
     const orgInfo=getOrgInfo(s.id);
     const patternId=orgInfo&&orgInfo.logo?ensureLogoPattern(s.id,orgInfo.logo):null;

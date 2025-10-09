@@ -1,45 +1,58 @@
 <div id="sliderPanel" class="range-slider-panel">
-  <div class="range-slider-head">
-    <span data-role="title-start" class="range-slider-title">Starting Week</span>
-    <span data-role="title-end" class="range-slider-title">Ending Week</span>
-  </div>
-  <div class="range-slider-values">
-    <span data-label="start" class="range-slider-value">Week 0</span>
-    <span data-label="end" class="range-slider-value">Week 0</span>
-  </div>
-  <div class="range-slider-control">
-    <div class="range-slider-track">
-      <div class="range-slider-selection" data-role="selection"></div>
+  <div class="range-slider-row">
+    <div class="range-slider-info range-slider-info-start">
+      <span data-role="title-start" class="range-slider-title">Starting Week</span>
+      <span data-label="start" class="range-slider-value">Week 0</span>
     </div>
-    <input type="range" min="0" max="0" step="1" value="0" data-role="start" aria-label="Starting period">
-    <input type="range" min="0" max="0" step="1" value="0" data-role="end" aria-label="Ending period">
+    <div class="range-slider-track-wrapper">
+      <div class="range-slider-track">
+        <div class="range-slider-selection" data-role="selection"></div>
+      </div>
+      <input type="range" min="0" max="0" step="1" value="0" data-role="start" aria-label="Starting period">
+      <input type="range" min="0" max="0" step="1" value="0" data-role="end" aria-label="Ending period">
+    </div>
+    <div class="range-slider-info range-slider-info-end">
+      <span data-role="title-end" class="range-slider-title">Ending Week</span>
+      <span data-label="end" class="range-slider-value">Week 0</span>
+    </div>
   </div>
 </div>
 <style>
 .range-slider-panel {
-  width: 100%;
+  width: 80%;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 4px 24px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  font-size: clamp(8px, 1.5vw, 12px);
+  font-size: clamp(6px, 1.5vw, 12px);
 }
 
 .range-slider-panel.is-disabled {
   opacity: 0.6;
 }
 
-.range-slider-head,
-.range-slider-values {
+.range-slider-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: clamp(10px, 2vw, 24px);
+  width: 100%;
 }
+
+.range-slider-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: clamp(80px, 14vw, 140px);
+}
+
+.range-slider-info-start { align-items: flex-start; }
+.range-slider-info-end { align-items: flex-end; text-align: right; }
 
 .range-slider-title {
   font-weight: 600;
@@ -51,17 +64,21 @@
   color: #a9a9a9;
 }
 
-.range-slider-control {
+.range-slider-track-wrapper {
   position: relative;
-  height: 24px;
+  flex: 1 1 auto;
+  min-width: clamp(120px, 100%, 600px);
+  height: 32px;
+  display: flex;
+  align-items: center;
 }
 
 .range-slider-track {
   position: absolute;
   left: 0;
   right: 0;
-  top: 75%;
-  height: clamp(2px, 1.5vw, 6px);
+  top: 68%;
+  height: clamp(4px, 1.2vw, 8px);
   background: #e2e5f1;
   border-radius: 999px;
   transform: translateY(-50%);
@@ -78,13 +95,14 @@
   border-radius: 999px;
 }
 
-.range-slider-control input[type="range"] {
+.range-slider-track-wrapper input[type="range"] {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
   width: 100%;
+  height: 100%;
   margin: 0;
   background: none;
   pointer-events: none;
@@ -92,20 +110,20 @@
   -webkit-appearance: none;
 }
 
-.range-slider-control input[data-role="start"] {
+.range-slider-track-wrapper input[data-role="start"] {
   z-index: 2;
 }
 
-.range-slider-control input[data-role="end"] {
+.range-slider-track-wrapper input[data-role="end"] {
   z-index: 3;
 }
 
-.range-slider-control input[type="range"]::-webkit-slider-runnable-track {
+.range-slider-track-wrapper input[type="range"]::-webkit-slider-runnable-track {
   height: 6px;
   background: transparent;
 }
 
-.range-slider-control input[type="range"]::-webkit-slider-thumb {
+.range-slider-track-wrapper input[type="range"]::-webkit-slider-thumb {
   pointer-events: all;
   width: 16px;
   height: 16px;
@@ -117,12 +135,12 @@
   appearance: none;
 }
 
-.range-slider-control input[type="range"]::-moz-range-track {
+.range-slider-track-wrapper input[type="range"]::-moz-range-track {
   height: 6px;
   background: transparent;
 }
 
-.range-slider-control input[type="range"]::-moz-range-thumb {
+.range-slider-track-wrapper input[type="range"]::-moz-range-thumb {
   pointer-events: all;
   width: 16px;
   height: 16px;
@@ -132,8 +150,8 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-.range-slider-control input[type="range"]:disabled::-webkit-slider-thumb,
-.range-slider-control input[type="range"]:disabled::-moz-range-thumb {
+.range-slider-track-wrapper input[type="range"]:disabled::-webkit-slider-thumb,
+.range-slider-track-wrapper input[type="range"]:disabled::-moz-range-thumb {
   border-color: #aeb4c4;
   background: #f0f1f5;
 }
