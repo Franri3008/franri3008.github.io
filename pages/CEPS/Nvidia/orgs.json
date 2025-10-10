@@ -93,5 +93,10 @@
         "id":"xAI",
         "logo":"icons/xai.jpeg",
         "color":"#2932e1"
+    },
+    {
+        "id":"Cohere",
+        "logo":"icons/cohere.jpeg",
+        "color":"#355146"
     }
 ]
