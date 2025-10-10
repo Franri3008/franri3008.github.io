@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -8,16 +8,16 @@
 :root{--bg:#ffffff;--axis:#cfcfcf;--grid:#e9e9e9;--text:#6b6b6b;--text-strong:#333333;--muted:#9aa0a6;}
 html,body{height:100%;}
 body{margin:0;overflow:hidden;background:var(--bg);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--text);}
-.container{position:relative;display:flex;flex-direction:column;height:100vh;background:var(--bg);}
-#chart{flex:1 1 auto;}
-.legend{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;gap:8px;padding:10px 12px;background:rgba(255,255,255,.95);border:1px solid #e5e5e5;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.06);}
-.legend-item{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text);}
-.box{width:12px;height:12px;border-radius:50%;border:1px solid #ffffff;box-shadow:0 0 0 1px rgba(0,0,0,.05) inset;}
-.tooltip-table{width:100%;border-collapse:collapse;}
-.tooltip-table .title{color:var(--muted);}
-.tooltip-table .data{text-align:right;color:var(--text-strong);}
-.tooltip-footer{opacity:.6;}
+.viz-grid{display:grid;grid-template-rows:1fr auto;grid-template-columns:1fr;height:100vh;width:100vw;gap:0;padding:0;}
+#container1{grid-row:1;grid-column:1;display:flex;min-height:0;min-width:0;}
+#container2{grid-row:2;grid-column:1;display:flex;align-items:center;justify-content:center;padding:10px 14px;border-top:1px solid rgba(0,0,0,0.08);background:#fff;}
+#chart{flex:1 1 auto;min-width:0;min-height:0;}
 #chart svg{background:var(--bg);}
+.custom-legend{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(6px,1.5vw,14px);background:rgba(255,255,255,0.9);padding:clamp(6px,1.2vh,10px) clamp(10px,2vw,16px);border-radius:clamp(6px,1.2vw,12px);box-shadow:0 2px 8px rgba(0,0,0,0.1);max-width:100%;}
+.legend-item{display:flex;align-items:center;gap:6px;cursor:pointer;transition:opacity .2s ease;font-weight:600;color:#333;font-size:clamp(11px,1.4vw,14px);}
+.legend-item.dim{opacity:.35;}
+.legend-item:focus-visible{outline:2px solid rgba(0,0,0,0.45);outline-offset:2px;}
+.legend-square{width:clamp(10px,1.2vw,14px);height:clamp(10px,1.2vw,14px);border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,0.15) inset;}
 .d3plus-Axis path.domain{stroke:var(--axis)!important;}
 .d3plus-Axis .tick line{stroke:var(--grid)!important;}
 .d3plus-Axis .tick text{fill:var(--text)!important;font-size:12px!important;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;}
@@ -34,28 +34,34 @@ tspan{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;fon
 </style>
 </head>
 <body>
-<div class="container">
-  <div id="chart"></div>
-  <div class="legend"></div>
+<div class="viz-grid">
+  <div id="container1"><div id="chart"></div></div>
+  <div id="container2"><div id="legend" class="custom-legend"></div></div>
 </div>
 <script>
 const OVERLAP_CLUSTER_REMOVE_COUNT=3;
 const LABEL_BBOX_PAD=2;
-
+let customLabels=[];
+let isUpdating=false;
+let hoveringElements=new Set();
+let activeLegendKey=null;
+let colorKeyDetected=null;
+let colorScale=null;
+let legendValues=[];
 function median(v){
   if(!v.length)throw new Error("empty");
   v=[...v].sort((a,b)=>a-b);
   const h=Math.floor(v.length/2);
-  return v.length%2?v[h]:(v[h-1]+v[h])/2
+  return v.length%2?v[h]:(v[h-1]+v[h])/2;
 }
 function truncateText(text,maxLength=18){
   if(text.length<=maxLength){
-    return text
+    return text;
   }
-  return text.substring(0,maxLength)+"..."
+  return text.substring(0,maxLength)+"...";
 }
 function rectanglesOverlap(rect1,rect2){
-  return !(rect1.x+rect1.width<rect2.x||rect2.x+rect2.width<rect1.x||rect2.y+rect2.height<rect1.y)
+  return !(rect1.x+rect1.width<rect2.x||rect2.x+rect2.width<rect1.x||rect1.y+rect1.height<rect2.y||rect2.y+rect2.height<rect1.y);
 }
 function rectIntersectionArea(a,b){
   const x=Math.max(a.x,b.x);
@@ -63,12 +69,12 @@ function rectIntersectionArea(a,b){
   const w=Math.min(a.x+a.width,b.x+b.width)-x;
   const h=Math.min(a.y+a.height,b.y+b.height)-y;
   if(w<=0||h<=0){
-    return 0
+    return 0;
   }
-  return w*h
+  return w*h;
 }
 function expandRect(rect,pad=LABEL_BBOX_PAD){
-  return {x:rect.x-pad,y:rect.y-pad,width:rect.width+pad*2,height:rect.height+pad*2}
+  return {x:rect.x-pad,y:rect.y-pad,width:rect.width+pad*2,height:rect.height+pad*2};
 }
 function getPositionOptions(centerX,centerY,radius,padding=5){
   const d=radius+padding;
@@ -82,7 +88,7 @@ function getPositionOptions(centerX,centerY,radius,padding=5){
     {name:"right-bottom",x:centerX+d,y:centerY+d*0.6,anchor:"start"},
     {name:"left-top",x:centerX-d,y:centerY-d*0.6,anchor:"end"},
     {name:"left-bottom",x:centerX-d,y:centerY+d*0.6,anchor:"end"}
-  ]
+  ];
 }
 function hasCollisionWithCircles(textElement,allCircles){
   try{
@@ -91,12 +97,12 @@ function hasCollisionWithCircles(textElement,allCircles){
       const r=parseFloat(circleData.circle.getAttribute('r'))||7.5;
       const circleBBox={x:circleData.coords.x-r,y:circleData.coords.y-r,width:r*2,height:r*2};
       if(rectanglesOverlap(textBBox,circleBBox)){
-        return true
+        return true;
       }
     }
-    return false
+    return false;
   }catch(e){
-    return false
+    return false;
   }
 }
 function bestPositionSmart(textElement,centerX,centerY,radius,allCircles,fullText,placedBoxes){
@@ -136,56 +142,42 @@ function bestPositionSmart(textElement,centerX,centerY,radius,allCircles,fullTex
   }
   const full=scoreFor(fullText);
   if(!full.circleHit&&full.score===0){
-    return {...full,hasCollision:false}
+    return {...full,hasCollision:false};
   }
   const truncated=scoreFor(truncateText(fullText,18));
   if(!truncated.circleHit&&truncated.score===0){
-    return {...truncated,hasCollision:true}
+    return {...truncated,hasCollision:true};
   }
   if(truncated.score<=full.score){
-    return {...truncated,hasCollision:true}
+    return {...truncated,hasCollision:true};
   }
-  return {...full,hasCollision:full.circleHit||full.score>0}
+  return {...full,hasCollision:full.circleHit||full.score>0};
 }
 function findMatchingDataPoint(circle){
   const bound=circle.__data__||d3.select(circle).datum();
   if(bound)return bound;
-  return null
+  return null;
 }
-let customLabels=[];
-let isUpdating=false;
-let hoveringElements=new Set();
 function loadCSV(path){
   return d3.csv(path).then(raw=>{
     const cols=raw.columns||Object.keys(raw[0]||{});
-    const regionKey=cols.find(c=>c.toLowerCase().includes('region'))||'Region';
-    const aiKey=cols.find(c=>c.toLowerCase().startsWith('ai index'))||cols[1];
-    const computeKey=cols.find(c=>c.toLowerCase().startsWith('compute index'))||cols[2];
-    const groupKey=cols.find(c=>c.toLowerCase().includes('aif'))||'aif_group_label';
-    const annKey=cols.find(c=>c.toLowerCase().includes('annotate'))||'annotate_geo';
+    const regionKey=cols.find(c=>String(c).toLowerCase().includes('region'))||'Region';
+    const aiKey=cols.find(c=>String(c).toLowerCase().startsWith('ai index'))||cols[1];
+    const computeKey=cols.find(c=>String(c).toLowerCase().startsWith('compute index'))||cols[2];
+    const blankKey=cols.find(c=>String(c).trim()==='');
+    const guessKey=cols.find(c=>/group|cluster|class|category|segment/i.test(String(c)))||blankKey||'group';
+    colorKeyDetected=guessKey;
     const data=raw.map(r=>{
       const ai=+r[aiKey];
       const comp=+r[computeKey];
-      return {id:r[regionKey],ai:ai,compute:comp,x:ai,y:comp,group:r[groupKey]||'Unknown',annotate:r[annKey]==='True'||r[annKey]===true||r[annKey]==='true',value:1}
+      const groupVal=(r[guessKey]===''||r[guessKey]==null)?'Unspecified':r[guessKey];
+      return {id:r[regionKey],ai:ai,compute:comp,x:ai,y:comp,group:groupVal,annotate:r['annotate_geo']==='True'||r['annotate_geo']===true||r['annotate_geo']==='true',value:1};
     }).filter(d=>d.id);
-    return {data,aiKey,computeKey}
-  })
-}
-function buildLegend(groups,colorMap){
-  const el=document.querySelector('.legend');
-  if(!el)return;
-  el.innerHTML='';
-  groups.forEach(g=>{
-    const item=document.createElement('div');
-    item.className='legend-item';
-    const box=document.createElement('span');
-    box.className='box';
-    box.style.background=colorMap[g]||'#7f7f7f';
-    const label=document.createElement('span');
-    label.textContent=g;
-    item.appendChild(box);
-    item.appendChild(label);
-    el.appendChild(item);
+    legendValues=Array.from(new Set(data.map(d=>d.group))).sort((a,b)=>String(a).localeCompare(String(b)));
+    const palette=[...(d3.schemeTableau10||[]),...((d3.schemeSet3||[]))].flat();
+    colorScale=d3.scaleOrdinal().domain(legendValues).range(palette.slice(0,legendValues.length));
+    data.forEach(d=>{d.color=colorScale(d.group);});
+    return {data,aiKey,computeKey};
   });
 }
 function drawPlot(loaded){
@@ -194,12 +186,6 @@ function drawPlot(loaded){
   const computeKey=loaded.computeKey;
   const xVals=data.map(d=>d.x).filter(Number.isFinite);
   const yVals=data.map(d=>d.y).filter(Number.isFinite);
-  const aiMedian=median(xVals);
-  const groups=Array.from(new Set(data.map(d=>d.group||'Unknown')));
-  const palette=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf','#393b79','#637939','#8c6d31','#843c39','#7b4173','#3182bd','#e6550d','#31a354','#756bb1','#636363'];
-  const colorMap={};
-  groups.forEach((g,i)=>{colorMap[g]=palette[i%palette.length];});
-  data.forEach(d=>{d.color=colorMap[d.group]||'#7f7f7f';});
   const xMin=Math.min(...xVals);
   const xMax=Math.max(...xVals);
   const yMin=Math.min(...yVals);
@@ -212,15 +198,10 @@ function drawPlot(loaded){
   new d3plus.Plot()
     .select('#chart')
     .data(data)
-    .annotations([{data:[{id:'Trend',x:aiMedian,y:minY},{id:'Trend',x:aiMedian,y:maxY},{id:'Baseline',x:xDomain[0],y:median(yVals)},{id:'Baseline',x:xDomain[1],y:median(yVals)}],shape:'Line',stroke:'#d9d9d9',strokeDasharray:'4 3',strokeWidth:1}])
+    .annotations([{data:[{id:'Trend',x:median(xVals),y:minY},{id:'Trend',x:median(xVals),y:maxY},{id:'Baseline',x:xDomain[0],y:median(yVals)},{id:'Baseline',x:xDomain[1],y:median(yVals)}],shape:'Line',stroke:'#d9d9d9',strokeDasharray:'4 3',strokeWidth:1}])
     .groupBy('id')
     .tooltipConfig({
-      body:d=>`<table class='tooltip-table'>
-        <tr><td class='title'>AI Index:</td><td class='data'>${d.ai}</td></tr>
-        <tr><td class='title'>Compute Index:</td><td class='data'>${d.compute}</td></tr>
-        <tr><td class='title'>Group:</td><td class='data'>${d.group}</td></tr>
-        <tr><td class='title'>Region:</td><td class='data'>${d.id}</td></tr>
-      </table>`,
+      body:d=>`<table class='tooltip-table'>\n        <tr><td class='title'>AI Index:</td><td class='data'>${d.ai}</td></tr>\n        <tr><td class='title'>Compute Index:</td><td class='data'>${d.compute}</td></tr>\n        <tr><td class='title'>Region:</td><td class='data'>${d.id}</td></tr>\n        <tr><td class='title'>Group:</td><td class='data'>${d.group}</td></tr>\n      </table>`,
       title:d=>d.id
     })
     .size('value')
@@ -229,7 +210,7 @@ function drawPlot(loaded){
     .color('color')
     .label('')
     .shapeConfig({
-      fillOpacity:.75,
+      fillOpacity:.85,
       stroke:'#ffffff',
       strokeWidth:1.5,
       Circle:{labelConfig:{fontSize:0}}
@@ -250,14 +231,13 @@ function drawPlot(loaded){
     .legend(false)
     .downloadButton(false)
     .render();
-  buildLegend(groups,colorMap);
-  setTimeout(()=>{initializeCustomLabels();startPositionUpdater();},500);
+  setTimeout(()=>{initializeCustomLabels();startPositionUpdater();buildLegend();applyLegendFilter();},500);
 }
 function initializeCustomLabels(){
   const svg=document.querySelector('#chart svg');
   if(!svg){
     setTimeout(initializeCustomLabels,100);
-    return
+    return;
   }
   const circles=svg.querySelectorAll('circle');
   customLabels=[];
@@ -276,14 +256,15 @@ function initializeCustomLabels(){
       text.setAttribute('font-weight','normal');
       text.textContent=fullText;
       svg.appendChild(text);
-      customLabels.push({circle:circle,text:text,data:matchingData,fullText:fullText,defaultText:fullText,savedPosition:null,hiddenByCluster:false,wasHiddenBeforeHover:false});
+      customLabels.push({circle:circle,text:text,data:matchingData,fullText:fullText,defaultText:fullText,savedPosition:null,hiddenByCluster:false,wasHiddenBeforeHover:false,dimByLegend:false});
       circle.addEventListener('mouseenter',()=>{
         hoveringElements.add(text);
         const labelData=customLabels.find(l=>l.circle===circle);
         if(labelData){
           labelData.savedPosition={x:text.getAttribute('x'),y:text.getAttribute('y'),anchor:text.getAttribute('text-anchor'),content:text.textContent};
-          labelData.wasHiddenBeforeHover=labelData.hiddenByCluster;
+          labelData.wasHiddenBeforeHover=labelData.hiddenByCluster||labelData.dimByLegend;
           labelData.hiddenByCluster=false;
+          labelData.dimByLegend=false;
         }
         text.classList.add('hover');
         text.textContent=fullText;
@@ -300,16 +281,11 @@ function initializeCustomLabels(){
           text.setAttribute('y',labelData.savedPosition.y);
           text.setAttribute('text-anchor',labelData.savedPosition.anchor);
           text.textContent=labelData.savedPosition.content;
-          labelData.hiddenByCluster=labelData.wasHiddenBeforeHover;
+          labelData.dimByLegend=labelData.wasHiddenBeforeHover;
+          labelData.hiddenByCluster=false;
           labelData.wasHiddenBeforeHover=false;
         }
-        if(customLabels.find(l=>l.text===text)?.hiddenByCluster){
-          text.style.display='none';
-          text.style.pointerEvents='none';
-        }else{
-          text.style.display='';
-          text.style.pointerEvents='auto';
-        }
+        applyLegendFilter();
       });
     }
   });
@@ -321,7 +297,7 @@ function updateLabelPositions(){
   const svg=document.querySelector('#chart svg');
   if(!svg){
     isUpdating=false;
-    return
+    return;
   }
   const circlePositions=[];
   customLabels.forEach(({circle,text})=>{
@@ -345,23 +321,23 @@ function updateLabelPositions(){
     if(ha!==hb)return ha-hb;
     const ax=circlePositions.find(cp=>cp.circle===a.circle)?.coords.x||0;
     const bx=circlePositions.find(cp=>cp.circle===b.circle)?.coords.x||0;
-    return ax-bx
+    return ax-bx;
   });
   const placedBoxes=[];
   labels.forEach(labelData=>{
     const {circle,text,fullText}=labelData;
     if(!circle||!text){
-      return
+      return;
     }
     if(hoveringElements.has(text)){
       try{
         placedBoxes.push(expandRect(text.getBBox(),LABEL_BBOX_PAD));
       }catch(e){}
-      return
+      return;
     }
     const circleData=circlePositions.find(cp=>cp.circle===circle);
     if(!circleData){
-      return
+      return;
     }
     const r=parseFloat(circle.getAttribute('r'))||7.5;
     const best=bestPositionSmart(text,circleData.coords.x,circleData.coords.y,r,circlePositions,fullText,placedBoxes);
@@ -372,15 +348,15 @@ function updateLabelPositions(){
     labelData.defaultText=best.text;
     if(best.hasCollision){
       text.classList.add('collision');
-      if(!labelData.hiddenByCluster)text.setAttribute('opacity','0.35');
+      if(!labelData.hiddenByCluster&&!labelData.dimByLegend)text.setAttribute('opacity','0.35');
     }else{
       text.classList.remove('collision');
-      if(!labelData.hiddenByCluster)text.setAttribute('opacity','1');
+      if(!labelData.hiddenByCluster&&!labelData.dimByLegend)text.setAttribute('opacity','1');
     }
     try{
       placedBoxes.push(expandRect(text.getBBox(),LABEL_BBOX_PAD));
     }catch(e){}
-    if(labelData.hiddenByCluster){
+    if(labelData.hiddenByCluster||labelData.dimByLegend){
       text.style.display='none';
       text.style.pointerEvents='none';
     }else{
@@ -392,7 +368,7 @@ function updateLabelPositions(){
   isUpdating=false;
 }
 function hideClustersOfThreeOrMore(){
-  const labels=customLabels.filter(ld=>ld.text&&ld.circle);
+  const labels=customLabels.filter(ld=>ld.text&&ld.circle&&!ld.dimByLegend);
   const n=labels.length;
   const boxes=new Array(n);
   for(let i=0;i<n;i++){
@@ -465,8 +441,59 @@ function startPositionUpdater(){
     chartElement.addEventListener('mouseup',updateLabelPositions);
   }
 }
+function buildLegend(){
+  const legend=document.getElementById('legend');
+  legend.innerHTML='';
+  legendValues.forEach(val=>{
+    const item=document.createElement('div');
+    item.className='legend-item';
+    item.setAttribute('role','button');
+    item.setAttribute('tabindex','0');
+    item.setAttribute('aria-pressed','false');
+    const square=document.createElement('div');
+    square.className='legend-square';
+    square.style.background=colorScale(val);
+    const label=document.createElement('span');
+    label.textContent=String(val);
+    item.appendChild(square);
+    item.appendChild(label);
+    item.addEventListener('click',()=>toggleLegend(val,item));
+    item.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleLegend(val,item);}});
+    legend.appendChild(item);
+  });
+  updateLegendStyles();
+}
+function toggleLegend(value,el){
+  activeLegendKey=activeLegendKey===value?null:value;
+  updateLegendStyles();
+  applyLegendFilter();
+}
+function updateLegendStyles(){
+  const items=document.querySelectorAll('#legend .legend-item');
+  items.forEach((it,idx)=>{
+    const v=legendValues[idx];
+    const dim=activeLegendKey&&v!==activeLegendKey;
+    it.classList.toggle('dim',dim);
+    it.setAttribute('aria-pressed',activeLegendKey===v?'true':'false');
+  });
+}
+function applyLegendFilter(){
+  const svg=document.querySelector('#chart svg');
+  if(!svg)return;
+  const circles=svg.querySelectorAll('circle');
+  circles.forEach(c=>{
+    const d=findMatchingDataPoint(c);
+    if(!d)return;
+    const dim=activeLegendKey&&d.group!==activeLegendKey;
+    c.style.opacity=dim?0.25:1;
+  });
+  customLabels.forEach(ld=>{
+    const dim=activeLegendKey&&ld.data.group!==activeLegendKey;
+    ld.dimByLegend=dim&&!hoveringElements.has(ld.text);
+  });
+  updateLabelPositions();
+}
 loadCSV('fig2.csv').then(drawPlot);
 </script>
-<div class="footer-note">Color indicates AIF group.</div>
 </body>
 </html>
