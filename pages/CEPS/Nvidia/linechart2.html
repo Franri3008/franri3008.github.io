@@ -31,9 +31,23 @@ body {
     justify-content: flex-start; 
     padding: clamp(8px, 2vh, 16px) clamp(16px, 3vw, 32px); 
 }
-.viz-title { 
-    font-size: clamp(14px, 2vw, 22px); 
+.viz-title-block { 
+    display: flex; 
+    flex-direction: column; 
+    gap: clamp(4px, 0.8vh, 10px); 
+}
+.viz-main-title { 
+    font-size: clamp(20px, 3vw, 34px); 
     font-weight: 700; 
+    color: #101a35; 
+    text-align: left; 
+    line-height: 1.2; 
+    margin: 0; 
+    max-width: 90%;
+}
+.viz-subtitle { 
+    font-size: clamp(13px, 2vw, 22px); 
+    font-weight: 600; 
     color: #1f2a44; 
     text-align: left; 
     max-width: 90%; 
@@ -211,7 +225,7 @@ body {
 
 .axis path, .axis line { stroke: #cfd2d7; }
 .tick text { font-size: clamp(8px, 0.9vw, 11px); }
-.grid line { stroke: #e6e8ef; }
+.grid line { stroke: rgba(230,232,239,0.45); }
 .grid .domain { display: none; }
 .final-label { font-weight: 600; pointer-events: none; }
 </style>
@@ -221,7 +235,10 @@ body {
 <div class="viz-layout" id="vizLayout">
   <div class="viz-grid">
     <div id="containerTitle" class="container title-container">
-      <div id="vizTitle" class="viz-title">Loading data…</div>
+      <div class="viz-title-block">
+        <h1 id="vizMainTitle" class="viz-main-title">Race for Open-Source AI Dominance</h1>
+        <div id="vizSubtitle" class="viz-subtitle">Loading data…</div>
+      </div>
     </div>
     <div id="container1" class="container chart-container">
       <div class="y-axis-container">
@@ -254,7 +271,7 @@ const tooltip=d3.select("#tooltip");
 const legendEl=d3.select("#legend");
 const yLabelEl=document.getElementById("yLabel");
 const titleContainer=document.getElementById("containerTitle");
-const titleEl=document.getElementById("vizTitle");
+const subtitleEl=document.getElementById("vizSubtitle");
 const vizLayout=document.getElementById("vizLayout");
 const colorScale=d3.scaleOrdinal(d3.schemeTableau10);
 const orgMeta=new Map();
@@ -310,6 +327,9 @@ function getScaleDescriptor(){
   if(currentScale==="normalized"){
     return currentNormMode==="againstPrevious"?"Indexed to previous period":"Indexed to start period";
   }
+  if(currentScale==="log"){
+    return "Log scale";
+  }
   return "Absolute values";
 }
 
@@ -364,9 +384,9 @@ function formatRangeText(timelineSlice){
 }
 
 function updateTitle(timelineSlice){
-  if(!titleEl){ return; }
+  if(!subtitleEl){ return; }
   if(!rawById.length||!currentTimeline.length){
-    titleEl.textContent="No data available";
+    subtitleEl.textContent="No data available";
     return;
   }
   const metricDef=getMetricDefinition();
@@ -389,13 +409,15 @@ function updateTitle(timelineSlice){
   let sentence=`${subjectText}`;
   if(currentScale==="normalized"){
     sentence+=currentNormMode==="againstPrevious"?" indexed to the previous period":" indexed to the starting period";
+  }else if(currentScale==="log"){
+    sentence+=" on a log scale";
   }else{
     sentence+=" in absolute values";
   }
   const rangeSummary=formatRangeText(timelineSlice);
   if(rangeSummary&&rangeSummary.text){ sentence+=` from ${rangeSummary.text}`; }
   if(rangeSummary&&rangeSummary.coversAll){ sentence+=" (full timeline)"; }
-  titleEl.textContent=sentence;
+  subtitleEl.textContent=sentence;
 }
 
 function getOrgInfo(id){
@@ -631,9 +653,12 @@ function getModeSuffix(){
 }
 
 function getScaleSuffix(){
-  if(currentScale!=="normalized"){ return ""; }
-  if(currentNormMode==="againstPrevious"){ return " (indexed to previous=1)"; }
-  return " (indexed to start=1)";
+  if(currentScale==="normalized"){
+    if(currentNormMode==="againstPrevious"){ return " (indexed to previous=1)"; }
+    return " (indexed to start=1)";
+  }
+  if(currentScale==="log"){ return " (log scale)"; }
+  return "";
 }
 
 function addDays(date,days){
@@ -783,6 +808,7 @@ function onConfigPeriodChange(period){
 
 function onConfigScaleChange(scale){
   if(!scale||scale===currentScale){ return; }
+  const previousScale=currentScale;
   currentScale=scale;
   if(currentScale==="normalized"){
     lastAbsoluteMode=currentMode;
@@ -792,8 +818,10 @@ function onConfigScaleChange(scale){
     if(window.ConfigTab&&typeof window.ConfigTab.setNormModeVisible==="function"){ window.ConfigTab.setNormModeVisible(true); }
   }else{
     if(window.ConfigTab&&typeof window.ConfigTab.setModeDisabled==="function"){ window.ConfigTab.setModeDisabled(false); }
-    currentMode=lastAbsoluteMode||"cumulative";
-    if(window.ConfigTab&&typeof window.ConfigTab.setMode==="function"){ window.ConfigTab.setMode(currentMode); }
+    if(previousScale==="normalized"){
+      currentMode=lastAbsoluteMode||currentMode||"cumulative";
+      if(window.ConfigTab&&typeof window.ConfigTab.setMode==="function"){ window.ConfigTab.setMode(currentMode); }
+    }
     if(window.ConfigTab&&typeof window.ConfigTab.setNormModeVisible==="function"){ window.ConfigTab.setNormModeVisible(false); }
   }
   if(window.ConfigTab&&typeof window.ConfigTab.setScale==="function"){ window.ConfigTab.setScale(currentScale); }
@@ -1422,20 +1450,57 @@ function render(){
   const visiblePointCount=visibleSeries.reduce((sum,s)=>sum+s.values.length,0);
   const densePointMode=visiblePointCount>100;
   const seriesForScale=visibleSeries.length?visibleSeries:activeSeries.length?activeSeries:filteredSeries;
+  const useLogScale=currentScale==="log";
   let yMax=d3.max(seriesForScale,s=>d3.max(s.values,v=>v.value));
   let yMin=d3.min(seriesForScale,s=>d3.min(s.values,v=>v.value));
   if(!Number.isFinite(yMax)){ yMax=1; }
-  if(!Number.isFinite(yMin)){ yMin=0; }
+  if(!Number.isFinite(yMin)){ yMin=useLogScale?1:0; }
   if(yMax<yMin){ const swap=yMax; yMax=yMin; yMin=swap; }
-  if(yMax===yMin){
-    const pad=Math.abs(yMax)||1;
-    yMax=yMax+pad*0.05;
+
+  let minPositive=Infinity;
+  let maxPositive=-Infinity;
+  if(useLogScale){
+    seriesForScale.forEach(s=>{
+      s.values.forEach(v=>{
+        if(Number.isFinite(v.value)&&v.value>0){
+          if(v.value<minPositive){ minPositive=v.value; }
+          if(v.value>maxPositive){ maxPositive=v.value; }
+        }
+      });
+    });
   }
-  const tmpY=d3.scaleLinear().domain([yMin,yMax]).range([100,0]);
-  let yTickValues=tmpY.ticks(Math.max(3,Math.round(fullH*0.6/60)));
-  if(!yTickValues.includes(yMin)){ yTickValues=[yMin,...yTickValues]; }
-  if(!yTickValues.includes(yMax)){ yTickValues=[...yTickValues,yMax]; }
-  yTickValues=Array.from(new Set(yTickValues)).sort((a,b)=>a-b);
+
+  const tickTarget=Math.max(3,Math.round(fullH*0.6/60));
+  let yTickValues=[];
+  let safeMinPositive=null;
+
+  if(useLogScale){
+    if(!Number.isFinite(minPositive)||minPositive<=0){ minPositive=1; }
+    if(!Number.isFinite(maxPositive)||maxPositive<=0){ maxPositive=minPositive; }
+    yMin=minPositive;
+    if(Number.isFinite(maxPositive)&&maxPositive>yMin){
+      yMax=maxPositive;
+    }else{
+      yMax=yMin*10;
+    }
+    if(yMax<=yMin){ yMax=yMin*10; }
+    const tmpY=d3.scaleLog().base(10).domain([yMin,yMax]);
+    yTickValues=tmpY.ticks(tickTarget);
+    yTickValues=[yMin,...yTickValues,yMax];
+    yTickValues=yTickValues.filter(v=>Number.isFinite(v)&&v>=yMin&&v<=yMax);
+    yTickValues=Array.from(new Set(yTickValues)).sort((a,b)=>a-b);
+    safeMinPositive=yMin;
+  }else{
+    if(yMax===yMin){
+      const pad=Math.abs(yMax)||1;
+      yMax=yMax+pad*0.05;
+    }
+    const tmpY=d3.scaleLinear().domain([yMin,yMax]).range([100,0]);
+    yTickValues=tmpY.ticks(tickTarget);
+    if(!yTickValues.includes(yMin)){ yTickValues=[yMin,...yTickValues]; }
+    if(!yTickValues.includes(yMax)){ yTickValues=[...yTickValues,yMax]; }
+    yTickValues=Array.from(new Set(yTickValues)).sort((a,b)=>a-b);
+  }
   const yTicks=yTickValues.map(formatValue);
   const yLabelW=measureLabelWidth(yTicks,tickFont);
 
@@ -1450,7 +1515,17 @@ function render(){
   }
 
   const x=d3.scaleLinear().domain([domainMin,domainMax]).range([0,width]);
-  const y=d3.scaleLinear().domain([yMin,yMax]).range([height,0]);
+  const y=useLogScale?d3.scaleLog().base(10).domain([yMin,yMax]).range([height,0]).clamp(true):d3.scaleLinear().domain([yMin,yMax]).range([height,0]);
+  const valueForPlot=d=>{
+    const val=d.value;
+    if(!Number.isFinite(val)){
+      return useLogScale?(safeMinPositive||1):0;
+    }
+    if(useLogScale){
+      return Math.max(val,safeMinPositive||1);
+    }
+    return val;
+  };
   const xTickCount=Math.max(3,Math.round(width/90));
   const allowedCoords=new Set(timelineSlice.map(info=>info.coord));
   let fullXTicks=[];
@@ -1558,7 +1633,7 @@ function render(){
   const finalHoverRadius=finalRadius*1.18;
   const hoverRadius=smallRadius*1.6;
   const lineW=0.9+windowRatio*1.6;
-  const lineGen=d3.line().x(d=>x(d.w)).y(d=>y(d.value));
+  const lineGen=d3.line().x(d=>x(d.w)).y(d=>y(valueForPlot(d)));
   const shouldAnimate=!suppressAnimationNextRender;
   const transitionDuration=shouldAnimate?360:0;
   const exitDuration=shouldAnimate?Math.round(transitionDuration*0.6):0;
@@ -1600,7 +1675,7 @@ function render(){
     const orgInfo=getOrgInfo(s.id);
     const patternId=orgInfo&&orgInfo.logo?ensureLogoPattern(s.id,orgInfo.logo):null;
     const finalFillValue=patternId?`url(#${patternId})`:"#ffffff";
-    const data=s.values.map((v,i)=>({ id:s.id, w:v.w, value:v.value, rawValue:v.rawValue, label:v.label, actualLabel:v.actualLabel, relativeLabel:v.relativeLabel, relativeIndex:v.relativeIndex, order:v.order, date:v.date, isFinal:i===s.values.length-1 }));
+    const data=s.values.map((v,i)=>({ id:s.id, w:v.w, value:v.value, rawValue:v.rawValue, plotValue:valueForPlot(v), label:v.label, actualLabel:v.actualLabel, relativeLabel:v.relativeLabel, relativeIndex:v.relativeIndex, order:v.order, date:v.date, isFinal:i===s.values.length-1 }));
     const sel=d3.select(this).selectAll("circle.dot").data(data,d=>`${d.id}-${d.w}`);
     const exitSel=sel.exit().interrupt();
     if(shouldAnimate){
@@ -1608,12 +1683,12 @@ function render(){
     }else{
       exitSel.remove();
     }
-    const enterSel=sel.enter().append("circle").attr("class","dot").attr("opacity",shouldAnimate?0:1).attr("stroke-width",1).style("pointer-events","all").attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
+    const enterSel=sel.enter().append("circle").attr("class","dot").attr("opacity",shouldAnimate?0:1).attr("stroke-width",1).style("pointer-events","all").attr("cx",d=>x(d.w)).attr("cy",d=>y(d.plotValue)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
     const mergedSel=enterSel.merge(sel);
     if(shouldAnimate){
-      mergedSel.interrupt().transition().duration(transitionDuration).ease(easeFn).attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
+      mergedSel.interrupt().transition().duration(transitionDuration).ease(easeFn).attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.plotValue)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
     }else{
-      mergedSel.interrupt().attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.value)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
+      mergedSel.interrupt().attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.plotValue)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
     }
     mergedSel.on("pointerenter",function(event,d){
       const cx=+this.getAttribute("cx")+margin.left;
@@ -1652,7 +1727,7 @@ function render(){
       return {
         id:s.id,
         x:baseX,
-        y:y(last.value),
+        y:y(valueForPlot(last)),
         text,
         displayX:baseX+labelOffset,
         width:estimateWidth(text)
