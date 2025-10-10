@@ -25,12 +25,11 @@ body{margin:0;overflow:hidden;background:var(--bg);font-family:"Helvetica Neue",
 .d3plus-tooltip{background:#ffffff!important;border:1px solid #e5e5e5!important;border-radius:8px!important;box-shadow:0 10px 24px rgba(0,0,0,.1)!important;color:var(--text-strong)!important;}
 .d3plus-tooltip-title{font-weight:700!important;font-size:13px!important;color:var(--text-strong)!important;}
 .d3plus-tooltip-body{font-size:12px!important;color:var(--text)!important;}
-.custom-label{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:10px;fill:#000;opacity:1;font-weight:400;transition:opacity .2s ease,font-size .2s ease,font-weight .2s ease;pointer-events:none;transform-origin:center;}
+.custom-label{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:10px;opacity:1;font-weight:400;pointer-events:none;transform-origin:center;color:#000;}
 .custom-label.collision{opacity:.35;}
 .custom-label.hover{opacity:1!important;font-size:16px!important;font-weight:700!important;}
-.custom-label, text.custom-label{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-size:10px!important;fill:#000!important;stroke:none!important;font-weight:400!important;}
+.custom-label, text.custom-label{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;font-size:10px!important;fill:currentColor!important;stroke:none!important;font-weight:400!important;}
 tspan{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;font-style:normal;}
-.footer-note{position:fixed;right:12px;bottom:10px;font-size:11px;color:#8a8a8a;z-index:10;}
 </style>
 </head>
 <body>
@@ -41,11 +40,13 @@ tspan{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;fon
 <script>
 const OVERLAP_CLUSTER_REMOVE_COUNT=3;
 const LABEL_BBOX_PAD=2;
+const NO_MATCH_LABEL="No match";
+const NO_MATCH_COLOR="#9aa0a6";
+const GROUP_COLOR_MAP={"Country match":"#207164","NUTS-2 match":"#702528","Partner country":"#F3C64C","No match":NO_MATCH_COLOR};
 let customLabels=[];
 let isUpdating=false;
 let hoveringElements=new Set();
 let activeLegendKey=null;
-let colorKeyDetected=null;
 let colorScale=null;
 let legendValues=[];
 function median(v){
@@ -158,6 +159,15 @@ function findMatchingDataPoint(circle){
   if(bound)return bound;
   return null;
 }
+function normalizeGroup(v){
+  const t=String(v||"").trim();
+  const l=t.toLowerCase();
+  if(!t||l==="no match"||l==="nomatch"||l==="none")return NO_MATCH_LABEL;
+  if(l==="partner country"||l==="partner-country"||l==="partner")return "Partner country";
+  if(l==="country match"||l==="country-match"||l==="country")return "Country match";
+  if(l==="nuts-2 match"||l==="nuts2 match"||l==="nuts2-match"||l==="nuts2"||l==="nuts-2")return "NUTS-2 match";
+  return t;
+}
 function loadCSV(path){
   return d3.csv(path).then(raw=>{
     const cols=raw.columns||Object.keys(raw[0]||{});
@@ -166,17 +176,20 @@ function loadCSV(path){
     const computeKey=cols.find(c=>String(c).toLowerCase().startsWith('compute index'))||cols[2];
     const blankKey=cols.find(c=>String(c).trim()==='');
     const guessKey=cols.find(c=>/group|cluster|class|category|segment/i.test(String(c)))||blankKey||'group';
-    colorKeyDetected=guessKey;
     const data=raw.map(r=>{
       const ai=+r[aiKey];
       const comp=+r[computeKey];
-      const groupVal=(r[guessKey]===''||r[guessKey]==null)?'Unspecified':r[guessKey];
+      const groupVal=normalizeGroup(r[guessKey]);
       return {id:r[regionKey],ai:ai,compute:comp,x:ai,y:comp,group:groupVal,annotate:r['annotate_geo']==='True'||r['annotate_geo']===true||r['annotate_geo']==='true',value:1};
-    }).filter(d=>d.id);
-    legendValues=Array.from(new Set(data.map(d=>d.group))).sort((a,b)=>String(a).localeCompare(String(b)));
-    const palette=[...(d3.schemeTableau10||[]),...((d3.schemeSet3||[]))].flat();
-    colorScale=d3.scaleOrdinal().domain(legendValues).range(palette.slice(0,legendValues.length));
-    data.forEach(d=>{d.color=colorScale(d.group);});
+    })
+    .filter(d=>d.id&&Number.isFinite(d.x)&&Number.isFinite(d.y)&&!(d.x===0&&d.y===0)&&!(d.x<3&&d.y<1));
+    const setOrder=["Country match","NUTS-2 match","Partner country",NO_MATCH_LABEL];
+    const present=Array.from(new Set(data.map(d=>d.group)));
+    legendValues=setOrder.filter(v=>present.includes(v)).concat(present.filter(v=>!setOrder.includes(v)));
+    const domain=legendValues.filter(v=>v!==NO_MATCH_LABEL);
+    const range=domain.map(v=>GROUP_COLOR_MAP[v]||"#207164");
+    colorScale=d3.scaleOrdinal().domain(domain).range(range);
+    data.forEach(d=>{d.color=d.group===NO_MATCH_LABEL?NO_MATCH_COLOR:(GROUP_COLOR_MAP[d.group]||colorScale(d.group));});
     return {data,aiKey,computeKey};
   });
 }
@@ -201,16 +214,21 @@ function drawPlot(loaded){
     .annotations([{data:[{id:'Trend',x:median(xVals),y:minY},{id:'Trend',x:median(xVals),y:maxY},{id:'Baseline',x:xDomain[0],y:median(yVals)},{id:'Baseline',x:xDomain[1],y:median(yVals)}],shape:'Line',stroke:'#d9d9d9',strokeDasharray:'4 3',strokeWidth:1}])
     .groupBy('id')
     .tooltipConfig({
-      body:d=>`<table class='tooltip-table'>\n        <tr><td class='title'>AI Index:</td><td class='data'>${d.ai}</td></tr>\n        <tr><td class='title'>Compute Index:</td><td class='data'>${d.compute}</td></tr>\n        <tr><td class='title'>Region:</td><td class='data'>${d.id}</td></tr>\n        <tr><td class='title'>Group:</td><td class='data'>${d.group}</td></tr>\n      </table>`,
+      body:d=>`<table class='tooltip-table'>
+        <tr><td class='title'>AI Index:</td><td class='data'>${d.ai}</td></tr>
+        <tr><td class='title'>Compute Index:</td><td class='data'>${d.compute}</td></tr>
+        <tr><td class='title'>Region:</td><td class='data'>${d.id}</td></tr>
+        <tr><td class='title'>Group:</td><td class='data'>${d.group}</td></tr>
+      </table>`,
       title:d=>d.id
     })
     .size('value')
-    .sizeMin(15)
-    .sizeMax(15)
+    .sizeMin(12)
+    .sizeMax(12)
     .color('color')
     .label('')
     .shapeConfig({
-      fillOpacity:.85,
+      fillOpacity:.65,
       stroke:'#ffffff',
       strokeWidth:1.5,
       Circle:{labelConfig:{fontSize:0}}
@@ -252,8 +270,7 @@ function initializeCustomLabels(){
       text.setAttribute('text-anchor','start');
       text.setAttribute('font-family','Helvetica Neue, Arial, sans-serif');
       text.setAttribute('font-size','10');
-      text.setAttribute('fill','#000');
-      text.setAttribute('font-weight','normal');
+      text.style.color=matchingData.color;
       text.textContent=fullText;
       svg.appendChild(text);
       customLabels.push({circle:circle,text:text,data:matchingData,fullText:fullText,defaultText:fullText,savedPosition:null,hiddenByCluster:false,wasHiddenBeforeHover:false,dimByLegend:false});
@@ -452,7 +469,7 @@ function buildLegend(){
     item.setAttribute('aria-pressed','false');
     const square=document.createElement('div');
     square.className='legend-square';
-    square.style.background=colorScale(val);
+    square.style.background=(val===NO_MATCH_LABEL)?NO_MATCH_COLOR:(GROUP_COLOR_MAP[val]||colorScale(val));
     const label=document.createElement('span');
     label.textContent=String(val);
     item.appendChild(square);

@@ -137,22 +137,77 @@ body {
     overflow: hidden; 
     min-width: 0; 
 }
-#container4 a { height: 100%; display: flex; align-items: center; }
-
-.source-text { font-size: clamp(10px, 1.6vw, 16px); font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-style: normal; }
-.source-text a { color: #2756d3; text-decoration: underline; cursor: pointer; font-style: normal; }
-.source-text a:visited { color: #2756d3; }
-.logo { height: 100%; width: auto; max-height: 100%; max-width: 100%; pointer-events: auto; object-fit: contain; }
-
-@media (max-height: 500px) {
-  .viz-grid { grid-template-rows: 1fr; grid-template-columns: 1fr; padding-bottom: 0; }
-  #containerTitle, #container2, #container3, #container4 { display: none !important; }
-  #container1 { grid-row: 1; grid-column: 1; }
+#container4 a { 
+    height: 100%; 
+    display: flex; 
+    align-items: center; 
 }
 
-#viz { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; }
-#chart { display: block; width: 100%; height: 95%; }
-#tooltip { position: absolute; background: #fff; border: 1px solid #d9d9df; border-radius: 6px; padding: 6px 8px; font-size: 12px; pointer-events: none; opacity: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.08); transition: opacity .12s ease; }
+.source-text { 
+    font-size: clamp(10px, 1.6vw, 16px); 
+    font-weight: 600; 
+    color: #333; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 100%; 
+    font-style: normal; 
+}
+.source-text a { 
+    color: #2756d3; 
+    text-decoration: underline; 
+    cursor: pointer; 
+    font-style: normal; 
+}
+.source-text a:visited { 
+    color: #2756d3; 
+}
+.logo { 
+    height: 100%; 
+    width: auto; 
+    max-height: 100%; 
+    max-width: 100%; 
+    pointer-events: auto; 
+    object-fit: contain; 
+}
+
+@media (max-height: 500px) {
+  .viz-grid { 
+    grid-template-rows: 1fr; 
+    grid-template-columns: 1fr; 
+    padding-bottom: 0; }
+  #containerTitle, #container2, #container3, #container4 { display: none !important; }
+  #container1 { grid-row: 1; 
+    grid-column: 1; }
+}
+
+#viz { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    min-width: 0; 
+    min-height: 0; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+#chart { 
+    display: block; 
+    width: 100%; 
+    height: 95%; 
+}
+#tooltip { 
+    position: absolute; 
+    background: #fff; 
+    border: 1px solid #d9d9df; 
+    border-radius: 6px; 
+    padding: 6px 8px; 
+    font-size: 12px; 
+    pointer-events: none; 
+    opacity: 0; 
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08); 
+    transition: opacity .12s ease; 
+}
 
 .axis path, .axis line { stroke: #cfd2d7; }
 .tick text { font-size: clamp(8px, 0.9vw, 11px); }
@@ -160,6 +215,7 @@ body {
 .grid .domain { display: none; }
 .final-label { font-weight: 600; pointer-events: none; }
 </style>
+
 </head>
 <body>
 <div class="viz-layout" id="vizLayout">
@@ -234,7 +290,7 @@ let sliderVisible=true;
 let titleVisible=true;
 let legendFullIds=[];
 let legendCurrentIds=[];
-let currentTopFilter="all";
+let currentFilter={ percent:100, metric:METRICS.length?METRICS[0].key:null };
 let suppressAnimationNextRender=false;
 
 function capitalizeFirst(text){
@@ -382,31 +438,146 @@ function arraysEqual(a,b){
   return true;
 }
 
-function getTopFilterLimitValue(filter){
-  if(!filter||filter==="all"){ return null; }
-  if(filter==="top5"){ return 5; }
-  if(filter==="top10"){ return 10; }
-  const num=Number(filter);
-  return Number.isFinite(num)&&num>0?num:null;
+function clampFilterPercent(value){
+  const num=Number(value);
+  if(!Number.isFinite(num)){ return 100; }
+  if(num<0){ return 0; }
+  if(num>100){ return 100; }
+  return num;
 }
 
-function computeTopLegendIds(limit, filteredSeries){
-  if(!Number.isFinite(limit)||limit<=0){
-    return legendFullIds.slice();
-  }
-  const scored=filteredSeries.map(s=>{
-    const values=s.values;
-    const last=values&&values.length?values[values.length-1]:null;
-    const val=last&&Number.isFinite(last.value)?last.value:-Infinity;
-    return { id:s.id, value:val };
-  });
-  scored.sort((a,b)=>{
-    if(b.value===a.value){
+function getFilterLimitCount(percent,totalCount){
+  const total=Math.max(0,totalCount|0);
+  const normalized=clampFilterPercent(percent);
+  if(!total){ return 0; }
+  if(normalized>=100){ return null; }
+  const count=Math.ceil(total*normalized/100);
+  return Math.max(0,Math.min(count,total));
+}
+
+function computeTopIdsFromScores(limitCount,scoresMap){
+  if(limitCount===null){ return legendFullIds.slice(); }
+  if(!Number.isFinite(limitCount)||limitCount<=0){ return []; }
+  const entries=Array.from(scoresMap.entries()).map(([id,score])=>({ id, score:Number.isFinite(score)?score:-Infinity }));
+  entries.sort((a,b)=>{
+    if(b.score===a.score){
       return a.id.localeCompare(b.id);
     }
-    return (b.value??-Infinity)-(a.value??-Infinity);
+    return (b.score??-Infinity)-(a.score??-Infinity);
   });
-  return scored.slice(0,Math.min(limit,scored.length)).map(d=>d.id);
+  return entries.slice(0,Math.min(limitCount,entries.length)).map(entry=>entry.id);
+}
+
+function buildSeriesForMetric(metricKey){
+  if(!metricKey||!currentTimeline.length){ return []; }
+  const period=currentPeriod;
+  const isPerPeriod=currentMode==="perWeek";
+  return rawById.map(({id, values})=>{
+    const aggregated=new Map();
+    values.forEach(entry=>{
+      const info=getPeriodInfo(entry,period);
+      if(!info){ return; }
+      const target=aggregated.get(info.order)||{sum:0,last:null};
+      const metricValue=+entry[metricKey]||0;
+      if(isPerPeriod){
+        target.sum+=metricValue;
+      }else{
+        target.last=metricValue;
+      }
+      aggregated.set(info.order,target);
+    });
+    const result=[];
+    let running=0;
+    currentTimeline.forEach(info=>{
+      const dataPoint=aggregated.get(info.order);
+      let rawValue=0;
+      if(isPerPeriod){
+        rawValue=dataPoint?dataPoint.sum:0;
+      }else{
+        if(dataPoint&&typeof dataPoint.last==="number"){
+          running=dataPoint.last;
+        }
+        rawValue=running;
+      }
+      result.push({
+        w:info.coord,
+        rawValue,
+        value:rawValue,
+        label:info.label,
+        actualLabel:info.label,
+        relativeLabel:null,
+        order:info.order,
+        date:info.date,
+        relativeIndex:info.relativeIndex,
+        absoluteIndex:info.absoluteIndex
+      });
+    });
+    return { id, values:result };
+  });
+}
+
+function transformSeriesForRange(seriesData,startIndex,endIndex){
+  return seriesData.map(s=>{
+    const slice=s.values.filter(v=>v.relativeIndex>=startIndex&&v.relativeIndex<=endIndex);
+    if(!slice.length){ return { id:s.id, values:[] }; }
+    if(currentScale==="normalized"){
+      if(currentNormMode==="againstPrevious"){
+        const values=normalizeAgainstPrevious(slice);
+        return { id:s.id, values };
+      }
+      const values=normalizeAgainstStart(slice);
+      return { id:s.id, values };
+    }
+    if(currentMode==="cumulative"){
+      const baseRaw=slice[0]?.rawValue||0;
+      const values=slice.map(v=>({...v, value:v.rawValue-baseRaw}));
+      return { id:s.id, values };
+    }
+    return { id:s.id, values:slice };
+  });
+}
+
+function computeScoresFromSeries(seriesData){
+  const scores=new Map();
+  seriesData.forEach(s=>{
+    const values=s.values;
+    const last=values&&values.length?values[values.length-1]:null;
+    const score=last&&Number.isFinite(last.value)?last.value:-Infinity;
+    scores.set(s.id,score);
+  });
+  return scores;
+}
+
+function computeDownloadsPerRepoScores(startIndex,endIndex){
+  const downloadsSeries=transformSeriesForRange(buildSeriesForMetric("downloads_total"),startIndex,endIndex);
+  const reposSeries=transformSeriesForRange(buildSeriesForMetric("repos_total"),startIndex,endIndex);
+  const repoScores=new Map();
+  reposSeries.forEach(s=>{
+    const values=s.values;
+    const last=values&&values.length?values[values.length-1]:null;
+    const value=last&&Number.isFinite(last.value)?last.value:0;
+    repoScores.set(s.id,value);
+  });
+  const scores=new Map();
+  downloadsSeries.forEach(s=>{
+    const values=s.values;
+    const last=values&&values.length?values[values.length-1]:null;
+    const downloads=last&&Number.isFinite(last.value)?last.value:0;
+    const repos=repoScores.has(s.id)?repoScores.get(s.id):0;
+    const safeRepos=Math.abs(repos)>1e-9?repos:1;
+    const ratio=downloads/safeRepos;
+    scores.set(s.id,Number.isFinite(ratio)?ratio:0);
+  });
+  reposSeries.forEach(s=>{
+    if(scores.has(s.id)){ return; }
+    const repos=repoScores.get(s.id)||0;
+    const safeRepos=Math.abs(repos)>1e-9?repos:1;
+    scores.set(s.id,0/safeRepos);
+  });
+  legendFullIds.forEach(id=>{
+    if(!scores.has(id)){ scores.set(id,0); }
+  });
+  return scores;
 }
 
 function parseDateYYYYMMDD(s){
@@ -632,13 +803,13 @@ function onConfigScaleChange(scale){
 }
 
 function onConfigTopFilterChange(filter){
-  if(!filter){ return; }
-  currentTopFilter=filter;
-  if(currentTopFilter==="all"){
-    legendFullIds.forEach(id=>active.set(id,true));
-  }
+  if(!filter||typeof filter!=="object"){ return; }
+  const percent=clampFilterPercent(filter.percent);
+  const metricKey=typeof filter.metric==="string"&&filter.metric.trim().length?filter.metric.trim():null;
+  const fallbackMetric=currentFilter.metric|| (METRICS.length?METRICS[0].key:null);
+  currentFilter={ percent, metric:metricKey||fallbackMetric };
   if(window.ConfigTab&&typeof window.ConfigTab.setTopFilter==="function"){
-    window.ConfigTab.setTopFilter(currentTopFilter);
+    window.ConfigTab.setTopFilter(currentFilter);
   }
   render();
 }
@@ -906,7 +1077,7 @@ async function loadConfigTab(){
         initialMetric: currentMetric,
         initialSliderVisible: sliderVisible,
         initialTitleVisible: titleVisible,
-        initialTopFilter: currentTopFilter,
+        initialTopFilter: currentFilter,
         metrics: METRICS,
         onModeChange:onConfigModeChange,
         onPeriodChange:onConfigPeriodChange,
@@ -953,6 +1124,12 @@ function load(){
     ids.forEach(id=>active.set(id,true));
     colorScale.domain(ids);
     legendFullIds=ids.slice();
+    const defaultMetric=METRICS.length?METRICS[0].key:null;
+    let filterMetric=currentFilter.metric;
+    if(!filterMetric|| (filterMetric!=="downloads_per_repo"&&!METRICS.some(m=>m.key===filterMetric))){
+      filterMetric=defaultMetric;
+    }
+    currentFilter={ percent:clampFilterPercent(currentFilter.percent), metric:filterMetric };
     updateAxisLabel();
     if(window.ConfigTab&&typeof window.ConfigTab.setMetrics==="function"){ window.ConfigTab.setMetrics(METRICS,currentMetric); }
     if(window.ConfigTab&&typeof window.ConfigTab.setScale==="function"){ window.ConfigTab.setScale(currentScale); }
@@ -961,7 +1138,7 @@ function load(){
     if(window.ConfigTab&&typeof window.ConfigTab.setNormMode==="function"){ window.ConfigTab.setNormMode(currentNormMode); }
     if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"){ window.ConfigTab.setSliderVisible(sliderVisible); }
     if(window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){ window.ConfigTab.setTitleVisible(titleVisible); }
-    if(window.ConfigTab&&typeof window.ConfigTab.setTopFilter==="function"){ window.ConfigTab.setTopFilter(currentTopFilter); }
+    if(window.ConfigTab&&typeof window.ConfigTab.setTopFilter==="function"){ window.ConfigTab.setTopFilter(currentFilter); }
     if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"){ window.ConfigTab.setSliderVisible(sliderVisible); }
     if(window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){ window.ConfigTab.setTitleVisible(titleVisible); }
     buildLegend(ids);
@@ -1211,34 +1388,32 @@ function render(){
   const domainMin=singlePoint?rangeMinCoord-0.5:rangeMinCoord;
   const domainMax=singlePoint?rangeMaxCoord+0.5:rangeMaxCoord;
 
-  const filteredSeries=series.map(s=>{
-    const slice=s.values.filter(v=>v.relativeIndex>=startIndex&&v.relativeIndex<=endIndex);
-    if(!slice.length){ return {id:s.id, values:[]}; }
-    if(currentScale==="normalized"){
-      if(currentNormMode==="againstPrevious"){
-        const values=normalizeAgainstPrevious(slice);
-        return {id:s.id, values};
-      }else{
-        const values=normalizeAgainstStart(slice);
-        return {id:s.id, values};
-      }
-    }
-    if(currentMode==="cumulative"){
-      const baseRaw=slice[0]?.rawValue||0;
-      const values=slice.map(v=>({...v, value:(v.rawValue-baseRaw)}));
-      return {id:s.id, values};
-    }
-    return {id:s.id, values:slice};
-  });
+  const filteredSeries=transformSeriesForRange(series,startIndex,endIndex);
+  const filterMetricKey=currentFilter.metric||currentMetric;
+  const filterPercent=Number.isFinite(currentFilter.percent)?currentFilter.percent:100;
+  const limitCount=getFilterLimitCount(filterPercent,legendFullIds.length);
+  let filterScores;
+  if(filterMetricKey==="downloads_per_repo"){
+    filterScores=computeDownloadsPerRepoScores(startIndex,endIndex);
+  }else if(filterMetricKey===currentMetric){
+    filterScores=computeScoresFromSeries(filteredSeries);
+  }else{
+    const baseSeries=buildSeriesForMetric(filterMetricKey);
+    const transformed=transformSeriesForRange(baseSeries,startIndex,endIndex);
+    filterScores=computeScoresFromSeries(transformed);
+  }
 
-  const topLimit=getTopFilterLimitValue(currentTopFilter);
-  if(Number.isFinite(topLimit)){
-    const topIds=computeTopLegendIds(topLimit,filteredSeries);
+  if(limitCount===null){
+    legendFullIds.forEach(id=>active.set(id,true));
+    if(!arraysEqual(legendCurrentIds,legendFullIds)){ buildLegend(legendFullIds); }
+  }else if(limitCount<=0){
+    legendFullIds.forEach(id=>active.set(id,false));
+    if(!arraysEqual(legendCurrentIds,[])){ buildLegend([]); }
+  }else{
+    const topIds=computeTopIdsFromScores(limitCount,filterScores);
     const uniqueTopIds=Array.from(new Set(topIds));
     legendFullIds.forEach(id=>{ active.set(id,uniqueTopIds.includes(id)); });
     if(!arraysEqual(legendCurrentIds,uniqueTopIds)){ buildLegend(uniqueTopIds); }
-  }else{
-    if(!arraysEqual(legendCurrentIds,legendFullIds)){ buildLegend(legendFullIds); }
   }
   refreshLegendState();
 
