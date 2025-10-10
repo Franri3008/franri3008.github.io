@@ -17,6 +17,9 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
 .config-content { display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px); height: 100%; overflow-y: auto; padding-top: clamp(6px, 1vh, 10px); }
 .config-section { display: flex; flex-direction: column; gap: clamp(8px, 1.8vh, 12px); }
 .config-section-title { font-size: clamp(12px, 1.8vw, 16px); font-weight: 700; color: #1f2a44; margin: 0; }
+.config-subsection { display: flex; flex-direction: column; gap: clamp(6px, 1.2vh, 10px); }
+.config-subsection + .config-subsection { margin-top: clamp(8px, 1.6vh, 12px); }
+.config-subsection-title { font-size: clamp(11px, 1.6vw, 15px); font-weight: 600; color: #26344f; margin: 0; }
 .config-buttons { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: stretch; }
 .config-buttons.interruptor { flex-wrap: nowrap; gap: 0; border: 1px solid #d5d9e6; border-radius: 12px; overflow: hidden; background: rgba(243,245,250,0.92); }
 .config-toggle { flex: 1 1 auto; min-width: 0; border: none; background: transparent; padding: 9px 14px; font-size: clamp(11px, 1.6vw, 15px); font-weight: 600; color: #26344f; cursor: pointer; transition: background .18s ease, color .18s ease; }
@@ -83,31 +86,44 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
       </div>
     </div>
     <div class="config-section">
-      <p class="config-section-title">Time Slider</p>
-      <div class="config-buttons interruptor" id="configSliderButtons">
-        <button type="button" class="config-toggle config-slider-btn active" data-slider="show">Show</button>
-        <button type="button" class="config-toggle config-slider-btn" data-slider="hide">Hide</button>
+      <p class="config-section-title">Display Elements</p>
+      <div class="config-subsection">
+        <p class="config-subsection-title">Time Slider</p>
+        <div class="config-buttons interruptor" id="configSliderButtons">
+          <button type="button" class="config-toggle config-slider-btn active" data-slider="show">Show</button>
+          <button type="button" class="config-toggle config-slider-btn" data-slider="hide">Hide</button>
+        </div>
       </div>
-    </div>
-    <div class="config-section">
-      <p class="config-section-title">Title</p>
-      <div class="config-buttons interruptor" id="configTitleButtons">
-        <button type="button" class="config-toggle config-title-btn active" data-title="show">Show</button>
-        <button type="button" class="config-toggle config-title-btn" data-title="hide">Hide</button>
+      <div class="config-subsection">
+        <p class="config-subsection-title">Title</p>
+        <div class="config-buttons interruptor" id="configTitleButtons">
+          <button type="button" class="config-toggle config-title-btn active" data-title="show">Show</button>
+          <button type="button" class="config-toggle config-title-btn" data-title="hide">Hide</button>
+        </div>
       </div>
     </div>
     <div class="config-section">
       <p class="config-section-title">Filtering</p>
-      <div class="config-field">
-        <label for="configFilterPercent" class="config-field-label">Show top</label>
-        <div class="config-input-wrapper">
-          <input type="number" id="configFilterPercent" class="config-input" min="0" max="100" step="1" value="100" inputmode="decimal" aria-describedby="configFilterPercentSuffix">
-          <span id="configFilterPercentSuffix" class="config-input-suffix">%</span>
+      <div class="config-subsection">
+        <div class="config-field">
+          <label for="configFilterPercent" class="config-field-label">Show top</label>
+          <div class="config-input-wrapper">
+            <input type="number" id="configFilterPercent" class="config-input" min="0" max="100" step="1" value="100" inputmode="decimal" aria-describedby="configFilterPercentSuffix">
+            <span id="configFilterPercentSuffix" class="config-input-suffix">%</span>
+          </div>
+        </div>
+        <div class="config-field">
+          <label for="configFilterMetric" class="config-field-label">Based on</label>
+          <select id="configFilterMetric" class="config-select" aria-label="Filtering metric"></select>
         </div>
       </div>
-      <div class="config-field">
-        <label for="configFilterMetric" class="config-field-label">Based on</label>
-        <select id="configFilterMetric" class="config-select" aria-label="Filtering metric"></select>
+      <div class="config-subsection">
+        <p class="config-subsection-title">Organizations</p>
+        <div class="config-buttons interruptor" id="configOrgButtons">
+          <button type="button" class="config-toggle config-org-btn" data-org="companies">Companies</button>
+          <button type="button" class="config-toggle config-org-btn" data-org="noncompanies">Not Companies</button>
+          <button type="button" class="config-toggle config-org-btn active" data-org="all">All</button>
+        </div>
       </div>
     </div>
     <div class="config-section">
@@ -165,7 +181,12 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     filterPercentHandler:null,
     filterPercentBlurHandler:null,
     filterMetricHandler:null,
-    normHandler:null
+    normHandler:null,
+    orgContainer:null,
+    orgButtons:[],
+    currentOrgFilter:"all",
+    onOrgFilterChange:null,
+    orgHandler:null
   };
   const HIDE_MEDIA="(max-width: 900px), (max-height: 520px)";
 
@@ -368,6 +389,14 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     return { percent:STATE.currentFilterPercent??100, metric:STATE.currentFilterMetric };
   }
 
+  function normalizeOrgFilter(value){
+    if(value==null){ return "all"; }
+    const text=String(value).trim().toLowerCase();
+    if(text==="companies"||text==="company"){ return "companies"; }
+    if(text==="noncompanies"||text==="non-companies"||text==="noncompany"){ return "noncompanies"; }
+    return "all";
+  }
+
   function buildFilterOptions(){
     if(!STATE.filterMetricSelect){ return; }
     const select=STATE.filterMetricSelect;
@@ -537,7 +566,26 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     }
   }
 
-  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, onTopFilterChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true, initialTopFilter="all" }={}){
+  function updateOrgActive(){
+    if(!STATE.orgButtons.length){ return; }
+    STATE.orgButtons.forEach(btn=>{
+      const isActive=btn.dataset.org===STATE.currentOrgFilter;
+      btn.classList.toggle("active",isActive);
+      btn.setAttribute("aria-pressed",isActive?"true":"false");
+    });
+  }
+
+  function handleOrgClick(event){
+    const btn=event.target.closest(".config-org-btn");
+    if(!btn){ return; }
+    const next=normalizeOrgFilter(btn.dataset.org);
+    if(next===STATE.currentOrgFilter){ return; }
+    STATE.currentOrgFilter=next;
+    updateOrgActive();
+    if(typeof STATE.onOrgFilterChange==="function"){ STATE.onOrgFilterChange(next); }
+  }
+
+  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, onTopFilterChange, onOrgFilterChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true, initialTopFilter="all", initialOrgFilter="all" }={}){
     STATE.panel=panelEl||document.getElementById("configPanel");
     if(!STATE.panel){ return; }
     STATE.onModeChange=onModeChange;
@@ -548,7 +596,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     STATE.onSliderVisibilityChange=onSliderVisibilityChange;
     STATE.onTitleVisibilityChange=onTitleVisibilityChange;
     STATE.onTopFilterChange=onTopFilterChange;
-    STATE.onTitleVisibilityChange=onTitleVisibilityChange;
+    STATE.onOrgFilterChange=onOrgFilterChange;
     STATE.toggle=STATE.panel.querySelector("#configToggle");
     const buttonsContainer=STATE.panel.querySelector("#configModeButtons");
     const periodContainer=STATE.panel.querySelector("#configPeriodButtons");
@@ -581,6 +629,17 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
       STATE.titleButtons=Array.from(STATE.titleContainer.querySelectorAll(".config-title-btn"));
     }else{
       STATE.titleButtons=[];
+    }
+    if(STATE.orgContainer&&STATE.orgHandler){
+      STATE.orgContainer.removeEventListener("click",STATE.orgHandler);
+    }
+    STATE.orgContainer=STATE.panel.querySelector("#configOrgButtons");
+    STATE.orgHandler=handleOrgClick;
+    if(STATE.orgContainer){
+      STATE.orgContainer.addEventListener("click",STATE.orgHandler);
+      STATE.orgButtons=Array.from(STATE.orgContainer.querySelectorAll(".config-org-btn"));
+    }else{
+      STATE.orgButtons=[];
     }
     if(STATE.filterPercentInput){
       if(STATE.filterPercentHandler){
@@ -634,6 +693,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     }
     STATE.sliderVisible=!!initialSliderVisible;
     STATE.titleVisible=!!initialTitleVisible;
+    STATE.currentOrgFilter=normalizeOrgFilter(initialOrgFilter);
     if(STATE.toggle){
       STATE.toggle.addEventListener("click",handleToggle);
     }
@@ -669,6 +729,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateNormActive();
     updateSliderActive();
     updateTitleActive();
+    updateOrgActive();
     buildMetricButtons();
     buildFilterOptions();
     updateFilterPercentInput();
@@ -747,6 +808,11 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     updateMetricActive();
   }
 
+  function setOrgFilter(filter){
+    STATE.currentOrgFilter=normalizeOrgFilter(filter);
+    updateOrgActive();
+  }
+
   function setMetrics(metrics=[], currentMetric){
     STATE.metrics=Array.isArray(metrics)?metrics.slice():[];
     if(currentMetric){
@@ -767,7 +833,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     setOpen(!!open);
   }
 
-  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setTopFilter, setMetric, setMetrics, setModeDisabled, setOpen:setPanelOpen };
+  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setTopFilter, setMetric, setMetrics, setModeDisabled, setOrgFilter, setOpen:setPanelOpen };
 })();
 </script>
 </body>

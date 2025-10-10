@@ -321,6 +321,7 @@ let titleVisible=true;
 let legendFullIds=[];
 let legendCurrentIds=[];
 let currentFilter={ percent:100, metric:METRICS.length?METRICS[0].key:null };
+let currentOrgFilter="all";
 let suppressAnimationNextRender=false;
 
 function capitalizeFirst(text){
@@ -490,6 +491,56 @@ function getFilterLimitCount(percent,totalCount){
   return Math.max(0,Math.min(count,total));
 }
 
+function normalizeOrgFilter(value){
+  const text=String(value??"").trim().toLowerCase();
+  if(text==="companies"||text==="company"){ return "companies"; }
+  if(text==="noncompanies"||text==="non-companies"||text==="noncompany"){ return "noncompanies"; }
+  return "all";
+}
+
+function matchesOrgFilter(id){
+  if(!id){ return false; }
+  if(currentOrgFilter==="all"){ return true; }
+  const info=getOrgInfo(id);
+  const isCompany=info?info.company===true:false;
+  if(currentOrgFilter==="companies"){ return isCompany; }
+  if(currentOrgFilter==="noncompanies"){ return !isCompany; }
+  return true;
+}
+
+function filterSeriesByOrg(seriesData){
+  if(!Array.isArray(seriesData)){ return []; }
+  return seriesData.filter(entry=>matchesOrgFilter(entry&&entry.id));
+}
+
+function updateLegendIds(){
+  const filteredIds=rawById.map(({id})=>id).filter(matchesOrgFilter);
+  legendFullIds=filteredIds;
+  rawById.forEach(({id})=>{
+    if(!matchesOrgFilter(id)){
+      active.set(id,false);
+    }
+  });
+  if(!arraysEqual(legendCurrentIds,filteredIds)){
+    buildLegend(filteredIds);
+  }else{
+    refreshLegendState();
+  }
+}
+
+function setOrgFilter(filter,options={}){
+  const next=normalizeOrgFilter(filter);
+  if(next===currentOrgFilter&&!options.force){ return; }
+  currentOrgFilter=next;
+  updateLegendIds();
+  if(!options.skipConfig&&window.ConfigTab&&typeof window.ConfigTab.setOrgFilter==="function"){
+    window.ConfigTab.setOrgFilter(currentOrgFilter);
+  }
+  if(!options.skipRender){
+    render();
+  }
+}
+
 function computeTopIdsFromScores(limitCount,scoresMap){
   if(limitCount===null){ return legendFullIds.slice(); }
   if(!Number.isFinite(limitCount)||limitCount<=0){ return []; }
@@ -507,7 +558,7 @@ function buildSeriesForMetric(metricKey){
   if(!metricKey||!currentTimeline.length){ return []; }
   const period=currentPeriod;
   const isPerPeriod=currentMode==="perWeek";
-  return rawById.map(({id, values})=>{
+  return rawById.filter(({id})=>matchesOrgFilter(id)).map(({id, values})=>{
     const aggregated=new Map();
     values.forEach(entry=>{
       const info=getPeriodInfo(entry,period);
@@ -584,8 +635,8 @@ function computeScoresFromSeries(seriesData){
 }
 
 function computeDownloadsPerRepoScores(startIndex,endIndex){
-  const downloadsSeries=transformSeriesForRange(buildSeriesForMetric("downloads_total"),startIndex,endIndex);
-  const reposSeries=transformSeriesForRange(buildSeriesForMetric("repos_total"),startIndex,endIndex);
+  const downloadsSeries=filterSeriesByOrg(transformSeriesForRange(buildSeriesForMetric("downloads_total"),startIndex,endIndex));
+  const reposSeries=filterSeriesByOrg(transformSeriesForRange(buildSeriesForMetric("repos_total"),startIndex,endIndex));
   const repoScores=new Map();
   reposSeries.forEach(s=>{
     const values=s.values;
@@ -855,6 +906,10 @@ function onConfigTopFilterChange(filter){
   render();
 }
 
+function onConfigOrgFilterChange(filter){
+  setOrgFilter(filter);
+}
+
 function onConfigNormModeChange(mode){
   if(!mode||mode===currentNormMode){ return; }
   currentNormMode=mode;
@@ -1121,6 +1176,7 @@ async function loadConfigTab(){
         initialSliderVisible: sliderVisible,
         initialTitleVisible: titleVisible,
         initialTopFilter: currentFilter,
+        initialOrgFilter: currentOrgFilter,
         metrics: METRICS,
         onModeChange:onConfigModeChange,
         onPeriodChange:onConfigPeriodChange,
@@ -1128,9 +1184,9 @@ async function loadConfigTab(){
         onNormModeChange:onConfigNormModeChange,
         onMetricChange:onConfigMetricChange,
         onSliderVisibilityChange:setSliderVisibility,
-        onTitleVisibilityChange:setTitleVisibility,
         onTopFilterChange:onConfigTopFilterChange,
-        onTitleVisibilityChange:setTitleVisibility
+        onTitleVisibilityChange:setTitleVisibility,
+        onOrgFilterChange:onConfigOrgFilterChange
       });
     }
     const panelEl=document.getElementById("configPanel");
@@ -1149,7 +1205,11 @@ function load(){
     if(Array.isArray(orgList)){
       orgList.forEach(entry=>{
         if(entry&&entry.id){
-          orgMeta.set(entry.id,{ color:entry.color||null, logo:entry.logo||null });
+          orgMeta.set(entry.id,{
+            color:entry.color||null,
+            logo:entry.logo||null,
+            company:entry.company===true
+          });
         }
       });
     }
@@ -1166,13 +1226,13 @@ function load(){
     const ids=rawById.map(s=>s.id);
     ids.forEach(id=>active.set(id,true));
     colorScale.domain(ids);
-    legendFullIds=ids.slice();
     const defaultMetric=METRICS.length?METRICS[0].key:null;
     let filterMetric=currentFilter.metric;
     if(!filterMetric|| (filterMetric!=="downloads_per_repo"&&!METRICS.some(m=>m.key===filterMetric))){
       filterMetric=defaultMetric;
     }
     currentFilter={ percent:clampFilterPercent(currentFilter.percent), metric:filterMetric };
+    updateLegendIds();
     updateAxisLabel();
     if(window.ConfigTab&&typeof window.ConfigTab.setMetrics==="function"){ window.ConfigTab.setMetrics(METRICS,currentMetric); }
     if(window.ConfigTab&&typeof window.ConfigTab.setScale==="function"){ window.ConfigTab.setScale(currentScale); }
@@ -1184,7 +1244,7 @@ function load(){
     if(window.ConfigTab&&typeof window.ConfigTab.setTopFilter==="function"){ window.ConfigTab.setTopFilter(currentFilter); }
     if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"){ window.ConfigTab.setSliderVisible(sliderVisible); }
     if(window.ConfigTab&&typeof window.ConfigTab.setTitleVisible==="function"){ window.ConfigTab.setTitleVisible(titleVisible); }
-    buildLegend(ids);
+    if(window.ConfigTab&&typeof window.ConfigTab.setOrgFilter==="function"){ window.ConfigTab.setOrgFilter(currentOrgFilter); }
     buildSeriesFromRaw();
     render();
   }).catch(()=>{
@@ -1439,7 +1499,8 @@ function render(){
   const domainMin=singlePoint?rangeMinCoord-0.5:rangeMinCoord;
   const domainMax=singlePoint?rangeMaxCoord+0.5:rangeMaxCoord;
 
-  const filteredSeries=transformSeriesForRange(series,startIndex,endIndex);
+  const orgFilteredSeries=filterSeriesByOrg(series);
+  const filteredSeries=transformSeriesForRange(orgFilteredSeries,startIndex,endIndex);
   const filterMetricKey=currentFilter.metric||currentMetric;
   const filterPercent=Number.isFinite(currentFilter.percent)?currentFilter.percent:100;
   const limitCount=getFilterLimitCount(filterPercent,legendFullIds.length);
@@ -1449,7 +1510,7 @@ function render(){
   }else if(filterMetricKey===currentMetric){
     filterScores=computeScoresFromSeries(filteredSeries);
   }else{
-    const baseSeries=buildSeriesForMetric(filterMetricKey);
+    const baseSeries=filterSeriesByOrg(buildSeriesForMetric(filterMetricKey));
     const transformed=transformSeriesForRange(baseSeries,startIndex,endIndex);
     filterScores=computeScoresFromSeries(transformed);
   }
