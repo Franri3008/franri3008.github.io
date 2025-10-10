@@ -35,6 +35,8 @@ body {
     display: flex; 
     flex-direction: column; 
     gap: clamp(4px, 0.8vh, 10px); 
+    width: 100%;
+    max-width: 100%;
 }
 .viz-main-title { 
     font-size: clamp(20px, 3vw, 34px); 
@@ -43,14 +45,14 @@ body {
     text-align: left; 
     line-height: 1.2; 
     margin: 0; 
-    max-width: 90%;
+    max-width: 100%;
 }
 .viz-subtitle { 
     font-size: clamp(13px, 2vw, 22px); 
     font-weight: 600; 
     color: #1f2a44; 
     text-align: left; 
-    max-width: 90%; 
+    max-width: 100%; 
     line-height: 1.3; 
 }
 #container1 { 
@@ -198,7 +200,7 @@ body {
 #viz { 
     position: relative; 
     width: 100%; 
-    height: 100%; 
+    height: 105%; 
     min-width: 0; 
     min-height: 0; 
     display: flex; 
@@ -228,6 +230,8 @@ body {
 .grid line { stroke: rgba(230,232,239,0.45); }
 .grid .domain { display: none; }
 .final-label { font-weight: 600; pointer-events: none; }
+.year-dividers line { stroke: #cfd2d7; stroke-width: 1; }
+.year-dividers text { fill: #6e7485; font-weight: 600; pointer-events: none; letter-spacing: 0.01em; }
 </style>
 
 </head>
@@ -1287,14 +1291,18 @@ function formatTimelineTick(value){
   const info=getTimelineInfoByCoord(value);
   if(!info){ return ""; }
   if(currentPeriod==="yearly"){ return `${info.year||info.order}`; }
+  if(currentPeriod==="monthly"){
+    if(Number.isInteger(info.month)){ return getMonthLabel(info.month); }
+    const label=info.label||"";
+    return stripTimePrefix(label);
+  }
   if(currentPeriod==="weekly"){
     const prev=getTimelineInfoByCoord(value-1);
     const isMonthStart=!prev||prev.month!==info.month||prev.year!==info.year;
     if(isMonthStart&&Number.isInteger(info.month)){
-      const monthName=getMonthLabel(info.month);
-      const yearLabel=Number.isInteger(info.year)?` ${info.year}`:"";
-      return `${monthName}${yearLabel}`;
+      return getMonthLabel(info.month);
     }
+    return "";
   }
   const label=info.label||"";
   return stripTimePrefix(label);
@@ -1395,6 +1403,9 @@ function render(){
   svg.attr("width",fullW).attr("height",fullH);
   const tickFont=Math.max(9,Math.min(13,fullW/110));
   const finalLabelFontSize=6;
+  const yearAxisLabelPadding=tickFont+16;
+  const yearLabelTextOffset=yearAxisLabelPadding+tickFont+8;
+  const yearDecorationAllowance=yearLabelTextOffset+tickFont+18;
   if(!currentTimeline.length){
     svg.selectAll("*").remove();
     updateTitle([]);
@@ -1409,6 +1420,7 @@ function render(){
     suppressAnimationNextRender=false;
     return;
   }
+  const shouldShowYearDividers=(currentPeriod==="weekly"||currentPeriod==="monthly")&&timelineSlice.some(info=>Number.isInteger(info.year));
   updateTitle(timelineSlice);
   const rangeMinCoord=timelineSlice[0].coord;
   const rangeMaxCoord=timelineSlice[timelineSlice.length-1].coord;
@@ -1504,7 +1516,8 @@ function render(){
   const yTicks=yTickValues.map(formatValue);
   const yLabelW=measureLabelWidth(yTicks,tickFont);
 
-  const margin={ top:Math.max(10,fullH*0.04), right:Math.max(16,fullW*0.05), bottom:Math.max(22,fullH*0.12), left:Math.max(8,axisContainerWidth+yLabelW+6) };
+  let bottomMargin=Math.max(36,fullH*0.16,yearDecorationAllowance);
+  const margin={ top:Math.max(10,fullH*0.04), right:Math.max(16,fullW*0.05), bottom:bottomMargin, left:Math.max(8,axisContainerWidth+yLabelW+6) };
 
   const width=Math.max(0,fullW-margin.left-margin.right);
   const height=Math.max(0,fullH-margin.top-margin.bottom);
@@ -1545,9 +1558,7 @@ function render(){
     const monthLabels=monthTicks.map(coord=>{
       const info=getTimelineInfoByCoord(coord);
       if(!info||!Number.isInteger(info.month)){ return ""; }
-      const monthName=getMonthLabel(info.month);
-      const yearLabel=Number.isInteger(info.year)?` ${info.year}`:"";
-      return `${monthName}${yearLabel}`;
+      return getMonthLabel(info.month);
     });
     const approxMonthLabelWidth=monthLabels.length?measureLabelWidth(monthLabels,tickFont):0;
     const minTickSpacing=Math.max(approxMonthLabelWidth?approxMonthLabelWidth+12:60,40);
@@ -1620,6 +1631,84 @@ function render(){
   xAxis.call(d3.axisBottom(x).tickValues(axisXTicks).tickFormat(formatTimelineTick));
   yAxis.call(d3.axisLeft(y).tickValues(yTickValues).tickFormat(formatValue).tickPadding(2));
   svg.selectAll(".axis text").style("font-size",tickFont+"px");
+
+  if(shouldShowYearDividers){
+    const yearRanges=[];
+    let currentYear=null;
+    let startCoord=null;
+    let lastCoord=null;
+    timelineSlice.forEach(info=>{
+        const infoYear=Number.isInteger(info.year)?info.year:(info.date instanceof Date?info.date.getUTCFullYear():null);
+        if(infoYear===null){ return; }
+        if(currentYear===null){
+        currentYear=infoYear;
+        startCoord=info.coord;
+        lastCoord=info.coord;
+        return;
+        }
+        if(infoYear!==currentYear){
+        yearRanges.push({ year:currentYear, startCoord, endCoord:lastCoord??startCoord });
+        currentYear=infoYear;
+        startCoord=info.coord;
+        }
+        lastCoord=info.coord;
+    });
+    if(currentYear!==null){
+        yearRanges.push({ year:currentYear, startCoord:startCoord??timelineSlice[0].coord, endCoord:lastCoord??timelineSlice[timelineSlice.length-1].coord });
+    }
+    const rangesAvailable=yearRanges.filter(range=>Number.isFinite(range.startCoord)&&Number.isFinite(range.endCoord));
+    const baseCoord=timelineSlice[0]?.coord;
+    let halfStep=null;
+    if(timelineSlice.length>1){
+        const next=timelineSlice.find(info=>info.coord!==baseCoord);
+        if(next){ halfStep=Math.abs(x(next.coord)-x(baseCoord))/2; }
+    }
+    if(!Number.isFinite(halfStep)||halfStep<=0){
+        halfStep=timelineSlice.length>1?(width/(timelineSlice.length-1))/2:width/2;
+    }
+    const rangesForRender=rangesAvailable.map(range=>{
+        const startX=Math.max(0,x(range.startCoord)-halfStep);
+        const endX=Math.min(width,x(range.endCoord)+halfStep);
+        return { ...range, startX, endX, labelX:(startX+endX)/2 };
+    }).filter(range=>Number.isFinite(range.startX)&&Number.isFinite(range.endX)&&range.endX>range.startX+0.5);
+    const yearLabelFontSize=Math.max(9,Math.min(13,tickFont+1));
+    const group=gRoot.selectAll("g.year-dividers")
+    .data([null])
+    .join("g")
+    .attr("class","year-dividers")
+    .attr("transform",`translate(0,${height})`);
+
+    const items=group.selectAll("g.year-divider").data(rangesForRender,d=>`${d.year}-${d.startCoord}-${d.endCoord}`);
+    items.exit().remove();
+    const enter=items.enter().append("g").attr("class","year-divider");
+    enter.append("line").attr("class","year-line");
+    enter.append("line").attr("class","year-cap-start");
+    enter.append("line").attr("class","year-cap-end");
+    enter.append("text").attr("class","year-label").attr("text-anchor","middle").attr("dominant-baseline","alphabetic");
+    const merged=enter.merge(items);
+    const lineY=yearAxisLabelPadding;
+    const labelY=yearLabelTextOffset;
+    merged.select(".year-line")
+        .attr("x1",d=>d.startX).attr("x2",d=>d.endX)
+        .attr("y1",lineY).attr("y2",lineY)
+        .attr("stroke-width",1).attr("stroke","#cfd2d7");
+    merged.select(".year-cap-start")
+        .attr("x1",d=>d.startX).attr("x2",d=>d.startX)
+        .attr("y1",lineY-4).attr("y2",lineY+4)
+        .attr("stroke-width",1).attr("stroke","#cfd2d7");
+    merged.select(".year-cap-end")
+        .attr("x1",d=>d.endX).attr("x2",d=>d.endX)
+        .attr("y1",lineY-4).attr("y2",lineY+4)
+        .attr("stroke-width",1).attr("stroke","#cfd2d7");
+    merged.select(".year-label")
+        .attr("x",d=>d.labelX).attr("y",labelY)
+        .text(d=>d.year)
+        .style("font-size",yearLabelFontSize+"px")
+        .style("fill","#6e7485");
+    }else{
+    gRoot.selectAll("g.year-dividers").remove();
+    }
+
   const minWindowSize=480;
   const maxWindowSize=1400;
   const windowMeasure=Math.max(width,height);
