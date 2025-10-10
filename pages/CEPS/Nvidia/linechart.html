@@ -15,13 +15,22 @@ body {
     height: 100vh; 
 }
 .viz-grid { 
-    display: grid; 
-    grid-template-rows: auto 17fr 3fr 1fr; 
-    grid-template-columns: 1fr 1fr; 
-    height: 100vh; 
-    width: 100%; 
-    box-sizing: border-box; 
-    padding-bottom: clamp(4px, 2vh, 10px); 
+  display: grid; 
+  grid-template-rows: auto var(--row-chart,17fr) var(--row-slider,3fr) 1fr; 
+  grid-template-columns: 1fr 1fr; 
+  height: 100vh; 
+  width: 100%; 
+  box-sizing: border-box; 
+  padding-bottom: clamp(4px, 2vh, 10px); 
+}
+
+body.slider-hidden .viz-grid { 
+  --row-chart: 20fr; 
+  --row-slider: 0fr; 
+}
+
+body.slider-hidden #container2 { 
+  display: none; 
 }
 #containerTitle { 
     grid-row: 1; 
@@ -944,6 +953,7 @@ function setSliderVisibility(visible,options={}){
   }else{
     if(existing){ existing.style.display="none"; }
   }
+  document.body.classList.toggle("slider-hidden",!sliderVisible);
   if(previous!==sliderVisible){
     if(window.ConfigTab&&typeof window.ConfigTab.setSliderVisible==="function"&&!options.skipConfig){ window.ConfigTab.setSliderVisible(sliderVisible); }
     syncRangeWithTimeline();
@@ -963,6 +973,7 @@ function setTitleVisibility(visible,options={}){
 }
 
 setTitleVisibility(titleVisible,{skipConfig:true});
+setSliderVisibility(sliderVisible,{skipConfig:true});
 
 async function loadSlider(){
   const container=document.getElementById("container2");
