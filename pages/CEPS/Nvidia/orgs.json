@@ -2,7 +2,7 @@
     {
         "id":"Ai2",
         "logo":"icons/ai2.png",
-        "color":"#f03633"
+        "color":"#F5006F"
     },
     {
         "id":"Apple",
@@ -17,7 +17,7 @@
     {
         "id":"Google",
         "logo":"icons/google.jpeg",
-        "color":"#0077B6"
+        "color":"#34A853"
     },
     {
         "id":"DeepSeek",
@@ -47,7 +47,7 @@
     {
         "id":"Microsoft",
         "logo":"icons/microsoft.jpeg",
-        "color":"#C7544F"
+        "color":"#D96F00"
     },
     {
         "id":"OpenAI",
@@ -57,7 +57,7 @@
     {
         "id":"Mistral AI_",
         "logo":"icons/mistral.jpeg",
-        "color":"#fa500e"
+        "color":"#DB0500"
     },
     {
         "id":"Stability AI",
@@ -67,7 +67,7 @@
     {
         "id":"IBM",
         "logo":"icons/ibm.png",
-        "color":"#D091D6"
+        "color":"#006699"
     },
     {
         "id":"AMD",
@@ -98,5 +98,15 @@
         "id":"Cohere",
         "logo":"icons/cohere.jpeg",
         "color":"#355146"
+    },
+    {
+        "id":"Anthropic",
+        "logo":"icons/anthropic.jpeg",
+        "color":"#cc785c"
+    },
+    {
+        "id":"MiniMax",
+        "logo":"icons/minimax.jpeg",
+        "color":"#b4393d"
     }
 ]
