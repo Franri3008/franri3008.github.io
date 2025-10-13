@@ -321,7 +321,7 @@ let titleVisible=true;
 let legendFullIds=[];
 let legendCurrentIds=[];
 let currentFilter={ percent:100, metric:METRICS.length?METRICS[0].key:null };
-let currentOrgFilter="all";
+let currentOrgFilter="companies";
 let suppressAnimationNextRender=false;
 
 function capitalizeFirst(text){
@@ -615,7 +615,9 @@ function transformSeriesForRange(seriesData,startIndex,endIndex){
       return { id:s.id, values };
     }
     if(currentMode==="cumulative"){
-      const baseRaw=slice[0]?.rawValue||0;
+      const prevIndex=slice[0].relativeIndex-1;
+      const prevEntry=Number.isFinite(prevIndex)?s.values.find(v=>v.relativeIndex===prevIndex):null;
+      const baseRaw=(prevEntry&&Number.isFinite(prevEntry.rawValue))?prevEntry.rawValue:0;
       const values=slice.map(v=>({...v, value:v.rawValue-baseRaw}));
       return { id:s.id, values };
     }
@@ -955,7 +957,7 @@ function syncRangeWithTimeline(){
     return;
   }
   const maxIndex=length-1;
-  let start=rangeDirty?currentRange.startIndex:0;
+  let start=rangeDirty?currentRange.startIndex:148;
   let end=rangeDirty?currentRange.endIndex:maxIndex;
   start=Math.max(0,Math.min(Number.isFinite(start)?start:0,maxIndex));
   end=Math.max(start,Math.min(Number.isFinite(end)?end:maxIndex,maxIndex));
@@ -1386,6 +1388,19 @@ function getPointLabel(point){
   return info.label||`Period ${point.w}`;
 }
 
+function getHoveredPeriodCount(point){
+  if(currentMode==="perWeek"){
+    return Number.isFinite(point.value)?point.value:0;
+  }
+  const s=series.find(s=>s.id===point.id);
+  if(!s||!Array.isArray(s.values)){ return 0; }
+  const idx=Number.isInteger(point.relativeIndex)?point.relativeIndex:0;
+  const prevRaw=(idx>0&&s.values[idx-1]&&Number.isFinite(s.values[idx-1].rawValue))?s.values[idx-1].rawValue:0;
+  const currRaw=Number.isFinite(point.rawValue)?point.rawValue:0;
+  const delta=currRaw-prevRaw;
+  return Number.isFinite(delta)?delta:0;
+};
+
 function createTooltipHtml(point,labelText,metricDef){
   const metricName=metricDef?metricDef.label:"";
   const modeLabel=currentScale==="normalized"?"":getModeSuffix();
@@ -1405,8 +1420,11 @@ function createTooltipHtml(point,labelText,metricDef){
     const valueText=`${formatValue(point.value)}${descriptor}`.trim();
     lines.push(valueText);
   }
+  const periodLabel=currentPeriod==="weekly"?"This week":currentPeriod==="monthly"?"This month":currentPeriod==="yearly"?"This year":"This period";
+  const perCount=getHoveredPeriodCount(point);
+  lines.push(`${periodLabel}: ${formatRawValue(perCount)}${metricName?` ${metricName}`:""}`);
   return lines.join("<br>");
-}
+};
 
 function findNormalizationBaseEntry(slice){
   if(!Array.isArray(slice)){ return { index:-1, value:null }; }
@@ -1851,21 +1869,32 @@ function render(){
     }else{
       mergedSel.interrupt().attr("opacity",1).attr("cx",d=>x(d.w)).attr("cy",d=>y(d.plotValue)).attr("r",d=>d.isFinal?finalRadius:baseR).attr("fill",d=>d.isFinal?finalFillValue:seriesColor).attr("stroke",seriesColor);
     }
-    mergedSel.on("pointerenter",function(event,d){
-      const cx=+this.getAttribute("cx")+margin.left;
-      const cy=+this.getAttribute("cy")+margin.top;
+  mergedSel
+    .on("pointerenter",function(event,d){
       const targetRadius=d.isFinal?finalHoverRadius:hoverRadius;
       d3.select(this).raise().transition().duration(160).attr("r",targetRadius);
       const metricDef=getMetricDefinition();
       const labelText=getPointLabel(d);
       const tooltipHtml=createTooltipHtml(d,labelText,metricDef);
-      tooltip.style("opacity",1).style("left",cx+10+"px").style("top",cy-10+"px").html(tooltipHtml);
-    }).on("pointermove",function(){
-      const cx=+this.getAttribute("cx")+margin.left;
-      const cy=+this.getAttribute("cy")+margin.top;
-      tooltip.style("left",cx+10+"px").style("top",cy-10+"px");
-    }).on("pointerleave",function(event,d){
-      const resetRadius=d.isFinal?finalRadius:baseR;
+      const vizBox=document.getElementById("viz").getBoundingClientRect();
+      const tipW=(tooltip.node()&&tooltip.node().offsetWidth)||0;
+      const mouseX=event.clientX-vizBox.left;
+      const mouseY=event.clientY-vizBox.top;
+      const tx=mouseX-tipW-10;
+      const ty=mouseY-10;
+      tooltip.style("opacity",1).style("left",tx+"px").style("top",ty+"px").html(tooltipHtml);
+    })
+    .on("pointermove",function(event){
+      const vizBox=document.getElementById("viz").getBoundingClientRect();
+      const tipW=(tooltip.node()&&tooltip.node().offsetWidth)||0;
+      const mouseX=event.clientX-vizBox.left;
+      const mouseY=event.clientY-vizBox.top;
+      const tx=mouseX-tipW-10;
+      const ty=mouseY-10;
+      tooltip.style("left",tx+"px").style("top",ty+"px");
+    })
+    .on("pointerleave",function(event,d){
+      const resetRadius=d.isFinal?finalRadius:smallRadius;
       d3.select(this).transition().duration(160).attr("r",resetRadius);
       tooltip.style("opacity",0);
     });

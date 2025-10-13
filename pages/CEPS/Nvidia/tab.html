@@ -120,9 +120,9 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
       <div class="config-subsection">
         <p class="config-subsection-title">Organizations</p>
         <div class="config-buttons interruptor" id="configOrgButtons">
-          <button type="button" class="config-toggle config-org-btn" data-org="companies">Companies</button>
+          <button type="button" class="config-toggle config-org-btn active" data-org="companies">Companies</button>
           <button type="button" class="config-toggle config-org-btn" data-org="noncompanies">Not Companies</button>
-          <button type="button" class="config-toggle config-org-btn active" data-org="all">All</button>
+          <button type="button" class="config-toggle config-org-btn" data-org="all">All</button>
         </div>
       </div>
     </div>
@@ -184,7 +184,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     normHandler:null,
     orgContainer:null,
     orgButtons:[],
-    currentOrgFilter:"all",
+    currentOrgFilter:"companies",
     onOrgFilterChange:null,
     orgHandler:null
   };
@@ -585,7 +585,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     if(typeof STATE.onOrgFilterChange==="function"){ STATE.onOrgFilterChange(next); }
   }
 
-  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, onTopFilterChange, onOrgFilterChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true, initialTopFilter="all", initialOrgFilter="all" }={}){
+  function init({ panelEl, onModeChange, onPeriodChange, onScaleChange, onNormModeChange, onMetricChange, onSliderVisibilityChange, onTitleVisibilityChange, onTopFilterChange, onOrgFilterChange, metrics=[], initialMode="cumulative", initialPeriod="weekly", initialScale="absolute", initialNormMode="againstStart", initialMetric=null, initialSliderVisible=true, initialTitleVisible=true, initialTopFilter="all", initialOrgFilter="companies" }={}){
     STATE.panel=panelEl||document.getElementById("configPanel");
     if(!STATE.panel){ return; }
     STATE.onModeChange=onModeChange;
