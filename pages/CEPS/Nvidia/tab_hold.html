@@ -8,13 +8,16 @@
 .viz-layout { position: relative; width: 100%; height: 100vh; display: flex; align-items: stretch; justify-content: flex-start; overflow: hidden; min-width: 0; }
 .viz-grid { flex: 1 1 auto; min-width: 0; width: 100%; transition: width .28s ease; }
 body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-width))); }
-.config-panel { position: absolute; top: 0; right: calc(-1 * (var(--config-panel-width) + var(--config-tab-width) + var(--config-hidden-gap))); height: 100vh; width: var(--config-panel-width); max-width: 90vw; display: flex; flex-direction: column; background: rgba(255,255,255,0.95); border-radius: 18px 0 0 18px; box-shadow: -8px 0 18px rgba(0,0,0,0.12); padding: clamp(18px, 3vh, 26px) clamp(16px, 3vw, 28px); transition: right .28s ease; z-index: 10; }
+.config-panel { position: absolute; top: 0; right: calc(-1 * (var(--config-panel-width) + var(--config-tab-width) + var(--config-hidden-gap))); height: 100vh; width: var(--config-panel-width); max-width: 90vw; display: flex; flex-direction: column; background: rgba(255,255,255,0.95); border-radius: 18px 0 0 18px; box-shadow: -8px 0 18px rgba(0,0,0,0.12); padding: clamp(18px, 3vh, 26px) clamp(16px, 3vw, 28px); transition: right .28s ease; z-index: 10; overflow-y: auto; overflow-x: visible; overscroll-behavior: contain; scrollbar-width: thin; }
+.config-panel::-webkit-scrollbar { width: 8px; }
+.config-panel::-webkit-scrollbar-thumb { background: rgba(104,112,132,0.35); border-radius: 999px; }
+.config-panel::-webkit-scrollbar-track { background: transparent; }
 .config-panel.open { right: 0; }
 .config-tab { position: absolute; top: 50%; left: calc(-1 * var(--config-tab-width)); transform: translateY(-50%); width: var(--config-tab-width); height: var(--config-tab-width); border: none; border-radius: 14px 0 0 14px; background: rgba(171, 171, 171, 0.65); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 10px; opacity: 0.7; transition: background .2s ease, opacity .2s ease, box-shadow .2s ease; }
 .config-tab img { width: 70%; height: 70%; pointer-events: none; }
 .config-panel:not(.open) .config-tab:hover { opacity: 1; background: rgba(255, 255, 255, 0.92); }
 .config-panel.open .config-tab { opacity: 1; background: #2756d3; box-shadow: -4px 0 12px rgba(0,0,0,0.18); }
-.config-content { display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px); flex: 1 1 auto; padding-right: clamp(8px, 1vw, 16px); padding-top: clamp(6px, 1vh, 10px); }
+.config-content { display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px); flex: 1 1 auto; padding-top: clamp(6px, 1vh, 10px); padding-right: clamp(8px, 1vw, 16px); }
 .config-section { display: flex; flex-direction: column; gap: clamp(8px, 1.8vh, 12px); }
 .config-section-title { font-size: clamp(12px, 1.8vw, 16px); font-weight: 700; color: #1f2a44; margin: 0; }
 .config-subsection { display: flex; flex-direction: column; gap: clamp(6px, 1.2vh, 10px); }
@@ -196,12 +199,12 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     currentOrgFilter:"companies",
     onOrgFilterChange:null,
     orgHandler:null,
-    regionContainer: null,
-    regionButtons: [],
-    currentRegionFilter: "all",
-    onRegionFilterChange: null,
-    regionHandler: null,
-    outsideClickHandler: null
+    regionContainer:null,
+    regionButtons:[],
+    currentRegionFilter:"all",
+    onRegionFilterChange:null,
+    regionHandler:null,
+    outsideClickHandler:null
   };
   const HIDE_MEDIA="(max-width: 900px), (max-height: 520px)";
 
@@ -912,7 +915,7 @@ body.config-open .viz-grid { width: max(0px, calc(100% - var(--config-active-wid
     setOpen(!!open);
   }
 
-  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setTopFilter, setMetric, setMetrics, setModeDisabled, setOrgFilter, setOpen:setPanelOpen };
+  window.ConfigTab={ init, setMode, setPeriod, setScale, setNormModeVisible, setNormMode, setSliderVisible, setTitleVisible, setTopFilter, setMetric, setMetrics, setModeDisabled, setOrgFilter, setRegionFilter, setOpen:setPanelOpen };
 })();
 </script>
 </body>
