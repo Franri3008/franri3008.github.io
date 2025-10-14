@@ -258,7 +258,7 @@ const vizEl = document.getElementById("viz");
 
 const TARGET_YEAR = 2025;
 const INCLUDED_PERCENT = 50;
-const METRIC = { key: "repos_total", label: "Repos (total)" };
+const METRIC = { key: "repos_total", label: "Repos" };
 
 const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 const formatComma = d3.format(",.0f");
@@ -323,69 +323,79 @@ function buildSeries(rawData){
   if(!Array.isArray(rawData)){
     return { series: [], timeline: [], totalCompanies: 0, includedCount: 0 };
   }
+  const yearStart = new Date(Date.UTC(TARGET_YEAR, 0, 1));
+  const yearEnd = new Date(Date.UTC(TARGET_YEAR, 11, 31));
   const companyIds = new Set();
-  orgMeta.forEach(meta=>{
-    if(meta && meta.company){
-      companyIds.add(meta.id);
-    }
-  });
+  orgMeta.forEach(meta=>{ if(meta && meta.company){ companyIds.add(meta.id); } });
   const groups = d3.group(rawData, d => d.id);
-  const series = [];
+  const perOrgAll = [];
   groups.forEach((entries, id)=>{
     if(!companyIds.has(id)){ return; }
-    const filtered = entries
-      .filter(entry => Number(entry.year) === TARGET_YEAR)
-      .map(entry=>{
-        const date = parseDate(entry.week_date || entry.month_date || null);
-        const rawValue = Number(entry[METRIC.key]);
-        return {
-          id,
-          date,
-          value: Number.isFinite(rawValue) ? rawValue : 0,
-          week: Number(entry.week_count) || null
-        };
-      })
-      .filter(point => point.date instanceof Date && !Number.isNaN(point.date.valueOf()));
-    filtered.sort((a, b) => a.date - b.date);
-    // Normalize so all start at 0
-    const base = filtered.length ? filtered[0].value : 0;
-    filtered.forEach(p => { p.value = Math.max(0, p.value - base); });
-    if(filtered.length){
-      const finalValue = filtered[filtered.length - 1].value;
-      series.push({ id, values: filtered, finalValue });
+    const all = entries.map(entry=>{
+      const date = parseDate(entry.week_date || entry.month_date || null);
+      const total = Number(entry[METRIC.key]);
+      const week = Number(entry.week_count) || null;
+      return { id, date, total: Number.isFinite(total) ? total : 0, week };
+    }).filter(p => p.date instanceof Date && !Number.isNaN(p.date.valueOf()));
+    all.sort((a, b) => a.date - b.date);
+    if(!all.length){ return; }
+    perOrgAll.push({ id, all });
+  });
+  if(!perOrgAll.length){
+    return { series: [], timeline: [], totalCompanies: 0, includedCount: 0 };
+  }
+  // Find the latest date for any org in 2025 for timeline
+  let globalFinalDate = null;
+  perOrgAll.forEach(({ all })=>{
+    const within = all.filter(p => p.date >= yearStart && p.date <= yearEnd);
+    if(within.length){
+      const last = within[within.length - 1].date;
+      if(!globalFinalDate || last > globalFinalDate){ globalFinalDate = last; }
     }
+  });
+  if(!globalFinalDate){ globalFinalDate = yearStart; }
+  // Build week timeline from Jan 1 to globalFinalDate, step 7 days
+  const addDaysUTC = (date, days)=>{ const d = new Date(date.getTime()); d.setUTCDate(d.getUTCDate() + days); return d; };
+  const weekStepDates = [];
+  for(let d = new Date(yearStart.getTime()); d <= globalFinalDate; d = addDaysUTC(d, 7)){
+    weekStepDates.push(new Date(d.getTime()));
+  }
+  const series = [];
+  perOrgAll.forEach(({ id, all })=>{
+    // Find base cumulative value before the year
+    let baseTotal = 0;
+    for(let i = 0; i < all.length; i++){
+      if(all[i].date < yearStart){ baseTotal = all[i].total; } else { break; }
+    }
+    // Only keep points within yearStart..globalFinalDate
+    const within = all.filter(p => p.date >= yearStart && p.date <= globalFinalDate);
+    if(!within.length){ return; }
+    // Map date.getTime() -> cumulative (relative to baseTotal)
+    const byDate = new Map(within.map(p => [p.date.getTime(), Math.max(0, p.total - baseTotal)]));
+    // For each week in weekStepDates, fill missing with previous value, delta 0 if no new data
+    const pts = [];
+    let prevEnd = 0;
+    for(let i = 0; i < weekStepDates.length; i++){
+      const d = weekStepDates[i];
+      const key = d.getTime();
+      const end = byDate.has(key) ? byDate.get(key) : prevEnd;
+      const startValue = prevEnd;
+      const delta = end - prevEnd;
+      pts.push({ id, date: d, value: startValue, end, delta, week: null });
+      prevEnd = end;
+    }
+    // If first point is not at yearStart, add a zero point at yearStart
+    if(pts.length && pts[0].date.getTime() !== yearStart.getTime()){
+      pts.unshift({ id, date: yearStart, value: 0, end: 0, delta: 0, week: null });
+    }
+    const finalValue = pts.length ? pts[pts.length - 1].value : 0;
+    series.push({ id, values: pts, finalValue });
   });
   series.sort((a, b) => (b.finalValue || 0) - (a.finalValue || 0));
   const totalCompanies = series.length;
   const keepCount = totalCompanies ? Math.max(1, Math.round(totalCompanies * INCLUDED_PERCENT / 100)) : 0;
   const kept = keepCount ? series.slice(0, keepCount) : [];
-
-  let minDate = null;
-  let maxDate = null;
-  kept.forEach(s=>{
-    if(s.values.length){
-      const first = s.values[0].date;
-      const last = s.values[s.values.length - 1].date;
-      if(first && (!minDate || first < minDate)) minDate = first;
-      if(last && (!maxDate || last > maxDate)) maxDate = last;
-    }
-  });
-
-  kept.forEach(s=>{
-    if(!s.values.length){ return; }
-    const first = s.values[0];
-    if(minDate && first.date.getTime() > minDate.getTime()){
-      s.values.unshift({ id: s.id, date: minDate, value: 0, week: first.week || null });
-    }
-    const last = s.values[s.values.length - 1];
-    if(maxDate && last.date.getTime() < maxDate.getTime()){
-      s.values.push({ id: s.id, date: maxDate, value: last.value, week: last.week || null });
-    }
-  });
-
-  const timelineSet = new Set();
-  kept.forEach(s => s.values.forEach(point => timelineSet.add(point.date.getTime())));
-  const timeline = Array.from(timelineSet).sort().map(ts => new Date(ts));
+  const timeline = weekStepDates.slice();
   return { series: kept, timeline, totalCompanies, includedCount: kept.length };
 }
 
@@ -653,8 +663,9 @@ function showTooltip(event, point){
 function moveTooltip(event, point){
   const [x, y] = d3.pointer(event, vizEl);
   const dateText = point.date ? dateFormatter(point.date) : (point.week ? `Week ${point.week}` : "Week");
+  const deltaText = Number.isFinite(point.delta) ? formatValue(point.delta) : "0";
   tooltip.html(
-    `<strong>${point.id}</strong><br>${dateText}<br>${METRIC.label}: ${formatValue(point.value)}`
+    `<strong>${point.id}</strong><br>${dateText}<br>${METRIC.label} so far: ${formatValue(point.value)}<br>This week: ${deltaText}`
   );
   const ttNode = tooltip.node();
   const ttWidth = ttNode ? ttNode.offsetWidth : 0;
