@@ -1683,11 +1683,7 @@ function createTooltipHtml(point,labelText,metricDef){
     lines.push(`Actual: ${actualValue}${actualSuffix?` ${actualSuffix}`:""}`);
   }else if(currentMode==="cumulative"){
     const unitSuffix=metricName?` ${metricName}`:"";
-    lines.push(`Start of week: ${formatValue(point.value)}${unitSuffix}`);
-    const endVal=Number.isFinite(point.endValue)?point.endValue:null;
-    if(endVal!==null){
-      lines.push(`End of week: ${formatValue(endVal)}${unitSuffix}`);
-    }
+    lines.push(`So far: ${formatValue(point.value)}${unitSuffix}`);
   }else{
     let descriptor=[metricName,modeLabel,scaleLabel].filter(Boolean).join(" ").trim();
     descriptor=descriptor?` ${descriptor}`:"";
