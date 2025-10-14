@@ -37,16 +37,15 @@ body {
 }
 
 .viz-download-button { 
-    width: clamp(32px, 2.8vw, 40px); 
-    height: clamp(32px, 2.8vw, 40px); 
-    border-radius: 50%; 
+    width: clamp(16px, 2vw, 30px); 
+    height: clamp(16px, 2vw, 30px); 
+    border-radius: 25%; 
     border: none; 
     background-color: rgba(39,86,211,0.92); 
     color: #ffffff; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    box-shadow: 0 8px 22px rgba(16,26,53,0.22); 
     cursor: pointer; 
     transition: transform .16s ease, box-shadow .18s ease, background-color .18s ease; 
     z-index: 12; 
@@ -55,13 +54,11 @@ body {
 
 .viz-download-button:hover { 
     transform: translateY(-1px); 
-    box-shadow: 0 6px 18px rgba(16,26,53,0.25); 
-    background-color: #2f64f1; 
+    background-color: #7573d2; 
 }
 
 .viz-download-button:active { 
     transform: translateY(0); 
-    box-shadow: 0 6px 18px rgba(16,26,53,0.22); 
     background-color: rgba(39,86,211,0.85); 
 }
 
@@ -69,7 +66,6 @@ body {
     opacity: 0.7; 
     cursor: wait; 
     transform: none; 
-    box-shadow: 0 4px 12px rgba(16,26,53,0.18); 
 }
 
 .viz-download-button:focus-visible { 
