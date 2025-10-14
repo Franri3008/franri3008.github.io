@@ -314,10 +314,6 @@ body.slider-hidden #container2 {
   pointer-events: none; 
   letter-spacing: 0.01em; 
 }
-
-.capture-only{display:none;}
-body.capturing .capture-only{display:block !important;}
-body.capturing #container1 .y-axis-container{visibility:hidden;}
 </style>
 
 </head>
@@ -1687,7 +1683,11 @@ function createTooltipHtml(point,labelText,metricDef){
     lines.push(`Actual: ${actualValue}${actualSuffix?` ${actualSuffix}`:""}`);
   }else if(currentMode==="cumulative"){
     const unitSuffix=metricName?` ${metricName}`:"";
-    lines.push(`So far: ${formatValue(point.value)}${unitSuffix}`);
+    lines.push(`Start of week: ${formatValue(point.value)}${unitSuffix}`);
+    const endVal=Number.isFinite(point.endValue)?point.endValue:null;
+    if(endVal!==null){
+      lines.push(`End of week: ${formatValue(endVal)}${unitSuffix}`);
+    }
   }else{
     let descriptor=[metricName,modeLabel,scaleLabel].filter(Boolean).join(" ").trim();
     descriptor=descriptor?` ${descriptor}`:"";
@@ -2366,9 +2366,6 @@ async function handleDownloadClick(){
   if(!downloadButton||downloadButton.disabled){ return; }
   downloadButton.disabled=true;
   downloadButton.setAttribute("aria-busy","true");
-  const yAxisContainer=document.querySelector("#container1 .y-axis-container");
-  let yAxisHidden=false;
-  let previousYAxisVisibility="";
   try{
     const html2canvasLib=await ensureHtml2Canvas();
     if(!html2canvasLib){ throw new Error("html2canvas is not available"); }
@@ -2376,12 +2373,6 @@ async function handleDownloadClick(){
     if(!target){ throw new Error("Screenshot target not found"); }
     const preloadPromises=Array.from(LOGO_PRELOADS.values()).map(entry=>entry.promise);
     if(preloadPromises.length){ await Promise.allSettled(preloadPromises); }
-    if(yAxisContainer){
-      previousYAxisVisibility=yAxisContainer.style.visibility||"";
-      yAxisContainer.style.visibility="hidden";
-      yAxisHidden=true;
-      await new Promise(resolve=>window.requestAnimationFrame(()=>resolve()));
-    }
     const background=resolveBackgroundColor(target)||"#ffffff";
     const scale=Math.min(3, window.devicePixelRatio||2);
     const canvas=await html2canvasLib(target,{
@@ -2406,13 +2397,6 @@ async function handleDownloadClick(){
   }catch(err){
     console.error("Failed to save visualization screenshot:",err);
   }finally{
-    if(yAxisHidden&&yAxisContainer){
-      if(previousYAxisVisibility){
-        yAxisContainer.style.visibility=previousYAxisVisibility;
-      }else{
-        yAxisContainer.style.removeProperty("visibility");
-      }
-    }
     downloadButton.disabled=false;
     downloadButton.removeAttribute("aria-busy");
   }
