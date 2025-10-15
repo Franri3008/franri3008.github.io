@@ -50,12 +50,17 @@ let data=[];
 let keys=[];
 let labels={};
 const NO_MATCH_LABEL = "No match";
-const NO_MATCH_COLOR = "#9aa0a6";
-const GROUP_COLOR_MAP = {"Country match":"#207164","NUTS-2 match":"#702528","Partner country":"#F3C64C","No match":NO_MATCH_COLOR};
+const NO_MATCH_COLOR = "#848683";
+const GROUP_COLOR_MAP = {
+  "Country match":"#24d501",
+  "NUTS-2 match":"#105b00",
+  "Partner country":"#F3C64C",
+  "No match":NO_MATCH_COLOR
+};
 const colorPalette={
-  Publications:"#264653",
-  Investments:"#2a9d8f",
-  Patents:"#e9c46a"
+  Publications:"#BBDEFB",
+  Investments:"#1976D2",
+  Patents:"#64B5F6"
 };
 const svg=d3.select("#chart");
 const tooltip=d3.select("#tooltip");
