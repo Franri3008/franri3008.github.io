@@ -199,8 +199,20 @@ d3.csv("fig5a.csv", function(data) {
         }
         return myColor(d.value);
       })
-      .style("stroke", "#ffffff")
-      .style("stroke-width", 0.5)
+      .style("stroke", function(d) {
+        // Bright yellow border for same country (first 2 letters match), but not for diagonal cells
+        if (d.row === d.column) {
+          return "#ffffff";
+        }
+        return d.row.substring(0, 2) === d.column.substring(0, 2) ? "#FFD700" : "#ffffff";
+      })
+      .style("stroke-width", function(d) {
+        // Thicker border for same country, but not for diagonal cells
+        if (d.row === d.column) {
+          return 0.5;
+        }
+        return d.row.substring(0, 2) === d.column.substring(0, 2) ? 3 : 0.5;
+      })
       .style("cursor", "pointer")
       .on("mouseover", function(d) {
         // Highlight the hovered square
@@ -379,6 +391,32 @@ d3.csv("fig5a.csv", function(data) {
   // Style all axis tick lines
   svg.selectAll(".x-axis .tick line, .y-axis .tick line")
     .style("stroke", "#e0e0e0");
+
+  // Add footnote with yellow square indicator
+  var footnote = svg.append("g")
+    .attr("transform", "translate(" + (width - 130) + ", " + (height + 60) + ")");
+
+  // Draw yellow square
+  footnote.append("rect")
+    .attr("x", 0)
+    .attr("y", -10)
+    .attr("width", 12)
+    .attr("height", 12)
+    .attr("rx", 1)
+    .attr("ry", 1)
+    .style("fill", "#f7f7f7")
+    .style("stroke", "#FFD700")
+    .style("stroke-width", 2.5);
+
+  // Add text
+  footnote.append("text")
+    .attr("x", 18)
+    .attr("y", 0)
+    .attr("text-anchor", "start")
+    .style("font-size", "18px")
+    .style("font-family", FONT_FAMILY)
+    .style("fill", AXIS_COLOR)
+    .text("Same country");
 })
 
 </script>
