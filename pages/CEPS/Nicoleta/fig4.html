@@ -202,21 +202,21 @@ function render(){
       d3.select(this).style("filter",null);
     });
 
-  // Add labels at the end of bars
+  // Add labels inside bars, right-aligned in white
   const labelsG=gRoot.selectAll("g.bar-labels").data([null]).join("g").attr("class","bar-labels");
   const labelFont=Math.max(9, Math.min(12, fullW/120));
   const labelsSel=labelsG.selectAll("text").data(data, d=>d.site);
   labelsSel.join(
     enter=>enter.append("text")
-      .attr("text-anchor","start")
+      .attr("text-anchor","end")
       .attr("dy","0.35em")
-      .style("fill","var(--text-strong)")
+      .style("fill","#ffffff")
       .style("font-weight","600")
       .style("pointer-events","none"),
     update=>update
   )
   .style("font-size",labelFont+"px")
-  .attr("x",d=>x(d.price)+6)
+  .attr("x",d=>x(d.price)-6)
   .attr("y",d=>y(d.site)+y.bandwidth()/2)
   .text(function(d){
     const raw=d.price;
