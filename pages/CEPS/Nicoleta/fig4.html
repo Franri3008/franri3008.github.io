@@ -189,9 +189,9 @@ function render(){
     .attr("y",d=>y(d.site)+(y.bandwidth()-barH)/2)
     .attr("width",d=>Math.max(0.5,x(d.price)-labelGap))
     .attr("height",barH)
-    .attr("fill",d=>colorScale(d.country) || "#7f7f7f")
+    .attr("fill","#207164")
     .on("mouseenter",(event,d)=>{
-      d3.select(event.currentTarget).style("filter",`drop-shadow(0 0 8px ${colorScale(d.country) || "#7f7f7f"})`);
+      d3.select(event.currentTarget).style("filter",`drop-shadow(0 0 8px #207164)`);
     })
     .on("mousemove",(event,d)=>{
       const html=`<strong>${d.site}</strong><br/>Price: €${d.price}/MWh<br/>Market: ${d.market}<br/>Metric: ${d.metric}`;
