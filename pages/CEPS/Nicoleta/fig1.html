@@ -58,9 +58,9 @@ const GROUP_COLOR_MAP = {
   "No match":NO_MATCH_COLOR
 };
 const colorPalette={
-  Publications:"#BBDEFB",
-  Investments:"#1976D2",
-  Patents:"#64B5F6"
+  Publications:"#d8e0e9",
+  Investments:"#0D2545",
+  Patents:"#5F82A4"
 };
 const svg=d3.select("#chart");
 const tooltip=d3.select("#tooltip");
@@ -249,7 +249,7 @@ function render(){
     .style("fill", "var(--text-strong)")
     .style("font-weight", 700)
     .style("font-size", "14px")
-    .text("AI Index");
+    .text("AI ecosystem index");
   const yAxis=gRoot.selectAll("g.y").data([null]).join("g").attr("class","axis y");
   const padTicks=Math.max(4, Math.min(12, labelGap*0.35));
   yAxis.attr("transform", `translate(${axisOffset},0)`)

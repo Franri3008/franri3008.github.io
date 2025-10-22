@@ -24,6 +24,9 @@ body{margin:0;overflow:hidden;background:var(--bg);font-family:"Helvetica Neue",
 .axis path.domain{stroke:var(--axis);}
 .axis .tick line{stroke:var(--grid);}
 .axis .tick text{fill:var(--text);font-size:12px;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;}
+.break-wall{fill:#d9d9d9;stroke:#c3c3c3;stroke-width:1;opacity:0.9;pointer-events:none;}
+.break-label{font-weight:700;font-size:32px;fill:#ffffff;pointer-events:none;text-anchor:middle;}
+.axis-break{stroke:#8a8a8a;stroke-width:1.6;stroke-linecap:round;fill:none;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -51,6 +54,41 @@ const svg=d3.select("#chart");
 const tooltip=d3.select("#tooltip");
 let activeKey=null;
 const valueFormatter=d3.format(".2~f");
+const breakConfig={
+  start:15,
+  end:45,
+  minGap:28,
+  maxGap:90,
+  gapRatio:0.1
+};
+
+function createBreakPath(x0,x1,y0,height){
+  const width=Math.max(0,x1-x0);
+  if(width<=0||height<=0){return "";}
+  const amplitude=Math.min(width*0.35,10);
+  const segments=Math.max(4,Math.round(height/12));
+  const step=height/segments;
+  let path=`M${x0},${y0}`;
+  let currentY=y0;
+  for(let i=0;i<segments;i++){
+    const nextY=(i===segments-1)?(y0+height):(currentY+step);
+    const midY=(currentY+nextY)/2;
+    const controlX=x0+(i%2===0?-amplitude:amplitude);
+    path+=` Q${controlX},${midY} ${x0},${nextY}`;
+    currentY=nextY;
+  }
+  path+=` L${x1},${y0+height}`;
+  currentY=y0+height;
+  for(let i=0;i<segments;i++){
+    const nextY=(i===segments-1)?y0:(currentY-step);
+    const midY=(currentY+nextY)/2;
+    const controlX=x1+(i%2===0?amplitude:-amplitude);
+    path+=` Q${controlX},${midY} ${x1},${nextY}`;
+    currentY=nextY;
+  }
+  path+=" Z";
+  return path;
+}
 
 function updateHighlight(){
   const applyOpacity=selection=>{
@@ -117,13 +155,27 @@ function render(){
     .attr("transform",`translate(${margin.left},${margin.top})`);
 
   // Create scales
-  const xDomain=[-1.5, 50];
-  const xMin=xDomain[0];
-  const xMax=xDomain[1];
+  const xMin=-1.5;
+  const xMax=50;
+  const breakStart=breakConfig.start;
+  const breakEnd=breakConfig.end;
+  const rawSpan=(breakStart-xMin)+(xMax-breakEnd);
+  const gapSize=Math.min(
+    Math.max(width*breakConfig.gapRatio, breakConfig.minGap),
+    Math.min(breakConfig.maxGap, width*0.4)
+  );
+  const usableWidth=Math.max(width-gapSize, 0);
+  const leftSpan=breakStart-xMin;
+  const rangeLeft=rawSpan>0 ? (usableWidth*leftSpan)/rawSpan : usableWidth/2;
+  const rangeRight=Math.max(usableWidth-rangeLeft, 0);
   const x=d3.scaleLinear()
-    .domain(xDomain)
-    .range([0, width])
+    .domain([xMin, breakStart, breakEnd, xMax])
+    .range([0, rangeLeft, rangeLeft+gapSize, rangeLeft+gapSize+rangeRight])
     .clamp(true);
+  const breakXStart=x(breakStart);
+  const breakXEnd=x(breakEnd);
+  const breakSpan=breakEnd-breakStart;
+  const breakSpanLabel=d3.format("~g")(breakSpan);
 
   const y=d3.scaleBand()
     .domain(data.map(d=>d.site))
@@ -133,6 +185,8 @@ function render(){
   const barHeight = y.bandwidth();
   const arrowWidth = Math.min(barHeight*0.8, 16);
   const labelPadding = 6;
+  const topDatum=data.length ? data[0] : null;
+  const breakActive=!!(topDatum && topDatum.National!=null && topDatum.National>breakStart);
 
   // Draw alternating row backgrounds
   const rowBG=gRoot.selectAll("rect.row").data(data);
@@ -145,6 +199,15 @@ function render(){
       .attr("height", barHeight)
       .attr("fill", (d,i)=>i%2 ? "#f5f5f5" : "#ffffff")
   );
+
+  const overlayY=breakActive ? y(topDatum.site) : 0;
+  const overlayHeight=breakActive ? Math.max(height-overlayY, 0) : 0;
+  const breakOverlayData=breakActive ? [{
+    x0:breakXStart,
+    x1:breakXEnd,
+    y:overlayY,
+    height:overlayHeight
+  }] : [];
 
   // Prepare bar data
   const barData = [];
@@ -253,12 +316,53 @@ function render(){
     .attr("fill", "#ffffff")
     .text(d => valueFormatter(d.value));
 
+  const breakOverlay=gRoot.selectAll("path.break-wall").data(breakOverlayData).join(
+    enter=>enter.append("path").attr("class","break-wall")
+  )
+    .attr("d", d=>createBreakPath(d.x0,d.x1,d.y,d.height));
+  if(breakActive){
+    breakOverlay.raise();
+  }
+
+  const labelY=breakActive ? overlayY + overlayHeight / 2 : 0;
+  const breakLabelData=breakActive ? [{
+    x:(breakXStart+breakXEnd)/2,
+    y:labelY,
+    text:`+${breakSpanLabel}`
+  }] : [];
+  const breakLabel=gRoot.selectAll("text.break-label").data(breakLabelData);
+  breakLabel.join(
+    enter=>enter.append("text")
+      .attr("class","break-label")
+      .attr("dy","0.35em")
+      .attr("text-anchor","middle")
+  )
+    .attr("x", d=>d.x)
+    .attr("y", d=>d.y)
+    .text(d=>d.text);
+  if(breakActive){
+    breakLabel.raise();
+  }
+
   // X axis
   const xAxis = gRoot.selectAll("g.x-axis").data([null]).join("g")
     .attr("class", "axis x-axis")
     .attr("transform", `translate(0, ${height})`);
 
-  xAxis.call(d3.axisBottom(x).ticks(8));
+  const tickValues=[-1,0,5,10,breakStart,breakEnd,xMax];
+  xAxis.call(
+    d3.axisBottom(x)
+      .tickValues(tickValues)
+      .tickFormat(d=>d3.format("~g")(d))
+  );
+  const breakMarkerWidth=Math.max(Math.min(breakXEnd-breakXStart,26),12);
+  const markerOffset=(breakXEnd-breakXStart-breakMarkerWidth)/2;
+  const markerStart=breakXStart+markerOffset;
+  const markerStep=breakMarkerWidth/4;
+  const axisBreakPath=`M${markerStart},0 l${markerStep},-6 l${markerStep},6 l${markerStep},-6 l${markerStep},6`;
+  xAxis.selectAll("path.axis-break").data([null]).join("path")
+    .attr("class","axis-break")
+    .attr("d", axisBreakPath);
 
   // X axis title
   xAxis.selectAll("text.axis-title").data([null]).join("text")
