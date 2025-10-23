@@ -22,8 +22,8 @@ body{margin:0;overflow:hidden;background:var(--bg);font-family:"Helvetica Neue",
 .legend-square{width:clamp(10px,1.2vw,14px);height:clamp(10px,1.2vw,14px);border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,0.15) inset;}
 .d3plus-Axis path.domain{stroke:var(--axis)!important;}
 .d3plus-Axis .tick line{stroke:var(--grid)!important;}
-.d3plus-Axis .tick text{fill:var(--text)!important;font-size:12px!important;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;}
-.d3plus-Axis .title{fill:var(--text-strong)!important;font-size:14px!important;font-weight:600!important;}
+.d3plus-Axis .tick text{fill:var(--text)!important;font-size:12px!important;font-family:"Inter",sans-serif!important;}
+.d3plus-Axis .title{fill:var(--text-strong)!important;font-size:14px!important;font-weight:600!important;font-family:"Roboto",sans-serif!important;}
 .d3plus-tooltip{background:#ffffff!important;border:1px solid #e5e5e5!important;border-radius:8px!important;box-shadow:0 10px 24px rgba(0,0,0,.1)!important;color:var(--text-strong)!important;}
 .d3plus-tooltip-title{font-weight:700!important;font-size:13px!important;color:var(--text-strong)!important;}
 .d3plus-tooltip-body{font-size:12px!important;color:var(--text)!important;}
@@ -294,16 +294,16 @@ function drawPlot(loaded,selectedGeo){
     .yDomain(yDomain)
     .yConfig({
       title:"AI Penetration",
-      titleConfig:{fontSize:()=>14,fontWeight:600,fill:'#333'},
+      titleConfig:{fontSize:()=>14,fontWeight:600,fill:'#333',fontFamily:()=>'Roboto'},
       gridConfig:{stroke:'#e9e9e9',strokeWidth:1},
-      shapeConfig:{labelConfig:{fontSize:()=>12}}
+      shapeConfig:{labelConfig:{fontSize:()=>12,fontFamily:()=>'Inter'}}
     })
     .xDomain(xDomain)
     .xConfig({
       title:"Relative Competitiveness",
-      titleConfig:{fontSize:()=>14,fontWeight:600,fill:'#333'},
+      titleConfig:{fontSize:()=>14,fontWeight:600,fill:'#333',fontFamily:()=>'Roboto'},
       gridConfig:{stroke:'#e9e9e9',strokeWidth:1},
-      shapeConfig:{labelConfig:{fontSize:()=>12}}
+      shapeConfig:{labelConfig:{fontSize:()=>12,fontFamily:()=>'Inter'}}
     })
     .legend(false)
     .downloadButton(false)
