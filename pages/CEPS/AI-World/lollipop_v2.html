@@ -5,23 +5,216 @@
 <title>AI World Lollipop Chart</title>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
-body{font-family:sans-serif; margin:0; padding:20px;}
-.axis path,.axis line{stroke:#bbb;}
-.tick text{font-size: 12px;}
-#tooltip{position:absolute;background:#fff; border:1px solid #ccc; padding:4px 8px;font-size:12px; pointer-events:none; opacity:0; transition:opacity 0.2s;}
-#chart{display:block;margin:0 auto; width: 100%; height: auto;}
-#tooltip:after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;border-width:6px 6px 0 6px;border-style:solid;border-color:#ccc transparent transparent transparent;}
-#tooltip:before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;border-width:7px 7px 0 7px;border-style:solid;border-color:#fff transparent transparent transparent;}
-.axis text {
+html, body { height: 100%; }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #ffffff;
+  color: #111;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif;
+  height: 100vh;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-rows: 19fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  padding-bottom: clamp(8px, 2vh, 18px);
+}
+
+#container1 {
+  grid-row: 1;
+  grid-column: 1 / span 2;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+  column-gap: 0;
+  padding: clamp(12px, 2.4vw, 28px);
+  box-sizing: border-box;
+}
+
+#container1 .chart-wrapper {
+  flex: 1 1 auto;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+}
+
+#container1 .chart-wrapper-inner {
+  flex: 1 1 auto;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+#viz {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+#chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#tooltip {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #d9d9df;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: opacity .12s ease;
+}
+
+#tooltip:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -6px;
+  border-width: 6px 6px 0 6px;
+  border-style: solid;
+  border-color: #d9d9df transparent transparent transparent;
+}
+
+#tooltip:before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -7px;
+  border-width: 7px 7px 0 7px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+}
+
+#container3 {
+  grid-row: 2;
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 clamp(20px, 3vw, 40px);
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+#container4 {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 clamp(20px, 3vw, 40px);
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.logo {
+  height: clamp(22px, 4vh, 40px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  pointer-events: auto;
+}
+
+.source-text {
+  font-size: clamp(10px, 1.4vw, 15px);
+  font-weight: 600;
+  color: #333;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-style: normal;
+}
+
+.source-text a {
+  color: #2756d3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.source-text a:visited {
+  color: #2756d3;
+}
+
+.axis path,
+.axis line {
+  stroke: #cfd2d7;
+}
+
+.tick text {
+  font-size: clamp(9px, 1vw, 12px);
+  font-weight: 600;
+  fill: #333;
+}
+
+.row-bg {
+  transition: fill .2s ease;
+}
+
+@media (max-height: 600px) {
+  .viz-grid {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    padding-bottom: 0;
+  }
+
+  #container1 {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  #container3,
+  #container4 {
+    display: none !important;
+  }
 }
 </style>
 </head>
 <body>
-<svg id = "chart"></svg>
-<div id = "tooltip"></div>
+<div class="viz-grid">
+  <div id="container1" class="container chart-container">
+    <div class="chart-wrapper">
+      <div class="chart-wrapper-inner">
+        <div id="viz">
+          <svg id="chart"></svg>
+          <div id="tooltip"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="container3" class="container source-container">
+    <div class="source-text">Source: <a href="https://huggingface.co" target="_blank" rel="noopener">Hugging Face</a></div>
+  </div>
+  <div id="container4" class="container logo-container">
+    <a href="https://aiworld.eu" target="_blank" rel="noopener">
+      <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo">
+    </a>
+  </div>
+</div>
 <script>
 const tooltip = d3.select("#tooltip");
+const svg = d3.select("#chart");
 const data = [
   {id: "Ai2", x: 455, y: 1057},
   {id: "NVIDIA", x: 182, y: 547},
@@ -45,7 +238,6 @@ const addLogo = (id) => {
     console.error("Missing id:", id);
     return '';
   }
-  console.log("Logo ID:", id);
   const logoPath = `./orgs-icons/${id.toLowerCase().replace(/\s+/g, '-')}.png`;
   return logoPath;
 };
@@ -65,11 +257,15 @@ data.sort((a,b) => (b.x+b.y) - (a.x+a.y));
 data.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
 
 function createChart() {
-  d3.select("#chart").selectAll("*").remove();
-  
-  const containerWidth = Math.max(window.innerWidth - 40, 400);
-  const containerHeight = Math.max(window.innerHeight - 100, 300);
-  
+  svg.selectAll("*").remove();
+
+  const vizElement = document.getElementById("viz");
+  if (!vizElement) return;
+
+  const rect = vizElement.getBoundingClientRect();
+  const containerWidth = Math.max(1, rect.width);
+  const containerHeight = Math.max(1, rect.height);
+
   const tempSvg = d3.select("body").append("svg").style("visibility", "hidden");
   const tempText = tempSvg.append("text").style("font-size", "12px").style("font-family", "sans-serif");
 
@@ -82,26 +278,30 @@ function createChart() {
 
   tempSvg.remove();
 
-  const logoWidth = 24;
-  const padding = 16;
-  const dynamicLeftMargin = maxLabelWidth + logoWidth + padding;
+  const logoWidth = 26;
+  const padding = 24;
+  const dynamicLeftMargin = Math.max(40, Math.min(maxLabelWidth + logoWidth + padding, containerWidth * 0.45));
 
   const margin = {
-    top: 20, 
-    right: Math.max(30, containerWidth * 0.05), 
-    bottom: 80, 
+    top: Math.min(Math.max(16, containerHeight * 0.04), 48),
+    right: Math.min(Math.max(32, containerWidth * 0.08), 120),
+    bottom: Math.min(Math.max(36, containerHeight * 0.1), 96),
     left: dynamicLeftMargin
   };
-  
-  const width = containerWidth - margin.left - margin.right;
-  const height = Math.max(data.length * 30, containerHeight - margin.top - margin.bottom);
 
-  const svg = d3.select("#chart")
+  const width = Math.max(containerWidth - margin.left - margin.right, 1);
+  const availableInnerHeight = Math.max(containerHeight - margin.top - margin.bottom, 1);
+  const targetInnerHeight = data.length * 40;
+  const density = Math.min(1, availableInnerHeight / targetInnerHeight);
+  const bandPadding = Math.max(0.2, Math.min(0.6, 0.2 + density * 0.4));
+  const height = availableInnerHeight;
+
+  svg
     .attr("width", containerWidth)
-    .attr("height", height + margin.top + margin.bottom)
-    .attr("viewBox", `0 0 ${containerWidth} ${height + margin.top + margin.bottom}`)
+    .attr("height", containerHeight)
+    .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
     .style("width", "100%")
-    .style("height", "auto");
+    .style("height", "100%");
 
   const defs = svg.append("defs");
   defs.append("marker")
@@ -129,33 +329,46 @@ function createChart() {
     .append("path")
     .attr("d","M 10 0 L 0 5 L 10 10 z")
     .attr("fill", "#e74c3c");
-    
+
   const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
-  
+
   const xMin = d3.min(data, d => Math.min(d.x, d.y));
   const xMax = d3.max(data, d => Math.max(d.x, d.y));
   const x = d3.scaleLinear()
-    .domain([Math.min(0, xMin) - (xMax - xMin) * 0.02, xMax + (xMax - xMin) * 0.1]).nice()
+    .domain([
+      Math.min(0, xMin) - (xMax - xMin) * 0.02,
+      xMax + (xMax - xMin) * 0.1
+    ]).nice()
     .range([0, width]);
   const y = d3.scaleBand()
     .domain(data.map(d => d.id))
     .range([0, height])
-    .padding(0.8);
+    .padding(bandPadding);
 
   const step = y.step();
   const padGap = (step - y.bandwidth()) / 2;
-  
-  g.selectAll("rect.row-bg").data(data).enter().append("rect")
+
+  const rowBackgrounds = g.selectAll("rect.row-bg").data(data);
+  rowBackgrounds.enter().append("rect")
     .attr("class","row-bg")
     .attr("x", -margin.left)
     .attr("y", d => y(d.id) - padGap)
-    .attr("width", width + margin.left + margin.right)
+    .attr("width", containerWidth)
     .attr("height", step)
-    .attr("fill", (d,i) => i % 2 ? "#f5f5f5" : "#ffffff")
-    .attr("pointer-events","none")
-    .lower();
-    
-  const yAxisGroup = g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+    .attr("fill", (d,i) => i % 2 ? "rgba(0,0,0,0.035)" : "rgba(255,255,255,0)")
+    .attr("pointer-events","none");
+  g.selectAll("rect.row-bg").lower();
+
+  const axisLeft = d3.axisLeft(y).tickSize(0);
+  const yAxisGroup = g.append("g").attr("class", "axis").call(axisLeft);
+  yAxisGroup.select(".domain").remove();
+
+  const logoSize = 24;
+  const logoOffset = 6;
+
+  yAxisGroup.selectAll("text")
+    .attr("x", -(logoSize + logoOffset + 8))
+    .attr("dy", "0.32em");
 
   yAxisGroup.selectAll(".tick")
     .each(function(d) {
@@ -163,30 +376,32 @@ function createChart() {
       const text = d3.select(this).select("text");
       d3.select(this)
         .append("image")
-        .attr("x", 8)
+        .attr("x", -(logoOffset + logoSize))
         .attr("y", -12)
-        .attr("width", 24)
-        .attr("height", 24)
-        .attr("xlink:href", logoPath);
+        .attr("width", logoSize)
+        .attr("height", logoSize)
+        .attr("xlink:href", logoPath)
+        .attr("aria-hidden", "true");
+      text.attr("text-anchor", "end");
     });
-    
+
   const xAxis = d3.axisBottom(x).tickValues(x.ticks().filter(d => d >= 0));
   g.append("g").attr("class", "axis")
     .attr("transform", `translate(0,${height})`)
     .call(xAxis);
-    
+
+  const axisLabelOffset = Math.min(Math.max(20, margin.bottom - 12), 48);
   g.append("text")
-    .attr("transform", `translate(${width / 2}, ${height + 45})`)
+    .attr("transform", `translate(${width / 2}, ${height + axisLabelOffset})`)
     .style("text-anchor", "middle")
     .style("font-size", "12px")
     .style("fill", "#666")
     .text("Number of Hugging Face Repositories");
-    
+
   const rNode = 8;
   const rNodeLarge = 14;
-  const arrowOffset = rNodeLarge - rNode;
   const minArrow = 14;
-  
+
   g.selectAll("line.lolli").data(data.filter(d=>!d.same)).enter().append("line")
     .attr("class", "lolli")
     .attr("data-id", d => d.id)
@@ -213,11 +428,11 @@ function createChart() {
     tt.style("left", left + "px").style("top", top + "px");
   };
   const hide = () => tooltip.style("opacity", 0);
-  
+
   const enlargeSimple = function(e, val, d){
     d3.select(this).transition().duration(150).attr("r", rNodeLarge);
     showNode(e, this, val);
-    
+
     if (!d.same) {
       const line = g.select(`line.lolli[data-id="${d.id}"]`);
       if (d.inc) {
@@ -231,7 +446,6 @@ function createChart() {
   const shrinkSimple = function(d){
     d3.select(this).transition().duration(150).attr("r", rNode); 
     hide();
-
     if (!d.same) {
       const line = g.select(`line.lolli[data-id="${d.id}"]`);
       if (d.inc) {
@@ -251,13 +465,13 @@ function createChart() {
         .transition().duration(150)
         .attr("font-weight", "bold")
         .attr("font-size", "14px")
-        .attr("x", x(d.y) + 20);
+        .attr("x", Math.min(width - 4, x(d.y) + 20));
     } else if (d.dec && !d.same) {
       g.select(`text.diffDown[data-id="${d.id}"]`)
         .transition().duration(150)
         .attr("font-weight", "bold")
         .attr("font-size", "14px")
-        .attr("x", x(d.y) - 20);
+        .attr("x", Math.max(4, x(d.y) - 20));
     }
     
     if (!d.same) {
@@ -279,13 +493,13 @@ function createChart() {
         .transition().duration(150)
         .attr("font-weight", "normal")
         .attr("font-size", "11px")
-        .attr("x", x(d.y) + 12);
+        .attr("x", Math.min(width - 4, x(d.y) + 12));
     } else if (d.dec && !d.same) {
       g.select(`text.diffDown[data-id="${d.id}"]`)
         .transition().duration(150)
         .attr("font-weight", "normal")
         .attr("font-size", "11px")
-        .attr("x", x(d.y) - 12);
+        .attr("x", Math.max(4, x(d.y) - 12));
     }
     
     if (!d.same) {
@@ -319,7 +533,7 @@ function createChart() {
   g.selectAll("text.diffUp").data(data.filter(d=>d.inc && !d.same)).enter().append("text")
     .attr("class","diffUp")
     .attr("data-id", d => d.id)
-    .attr("x", d => x(d.y) + 12)
+    .attr("x", d => Math.min(width - 4, x(d.y) + 12))
     .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
     .attr("text-anchor","start")
     .attr("fill", upColor)
@@ -329,49 +543,19 @@ function createChart() {
   g.selectAll("text.diffDown").data(data.filter(d=>d.dec && !d.same)).enter().append("text")
     .attr("class","diffDown")
     .attr("data-id", d => d.id)
-    .attr("x", d => x(d.y) - 12)
+    .attr("x", d => Math.max(4, x(d.y) - 12))
     .attr("y", d => y(d.id) + y.bandwidth()/2 + 4)
     .attr("text-anchor","end")
     .attr("fill", downColor)
     .attr("font-size","11px")
     .text(d => "-" + diff(d));
-
-  const logoSize = Math.min(100, width * 0.15);
-  const logo = svg.append("g")
-    .attr("transform", `translate(${margin.left + width - logoSize}, ${height + margin.top + 40})`);
-
-  logo.append("a")
-    .attr("href", "https://aiworld.eu")
-    .attr("target", "_blank")
-    .append("image")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", logoSize)
-    .attr("height", logoSize * 0.3)
-    .attr("xlink:href", "https://aiworld.eu/logo-transparent.svg");
-
-  const source = svg.append("g")
-    .attr("transform", `translate(${margin.left}, ${height + margin.top + 50})`);
-
-  source.append("a")
-    .attr("href", "https://huggingface.co")
-    .attr("target", "_blank")
-    .append("text")
-    .attr("x", 0)
-    .attr("y", 10)
-    .style("text-anchor", "start")
-    .style("font-size", "12px")
-    .style("font-style", "italic")
-    .style("fill", "#999")
-    .style("cursor", "pointer")
-    .text("Source: Hugging Face");
 }
 
 createChart();
 
 let resizeTimeout;
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTime);
+  clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(() => {
     createChart();
   }, 250);
