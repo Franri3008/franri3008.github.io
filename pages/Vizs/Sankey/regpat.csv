@@ -1,0 +1,40 @@
+"from","to","count","parent","color","IDsource","IDtarget"
+"AI & Big Data","Berlin (DE30)",26,"ICT","#365a94",0,39
+"Automation & robotics","Hamburg (DE60)",13,"ICT","#365a94",1,40
+"Autonomous & connected mobility","Berlin (DE30)",40,"Future Mobility","#6a0dad",2,39
+"Biophotonics","Thüringen (DEG0)",13,"Life Sciences","#EEDC82",3,41
+"Bioprocess technology","Detmold (DEA4)",20,"AgriFood Tech","#800020",4,42
+"Biotechnologies","Kassel (DE73)",11,"Life Sciences","#EEDC82",5,43
+"CCS / CCU","Hamburg (DE60)",3,"Climate Tech","#8cab79",6,40
+"CO2-neutral production","Rheinhessen-Pfalz (DEB3)",39,"Industrial Tech","#e28f26",7,44
+"Cyber defense & infrastructure","Arnsberg (DEA5)",5,"Defense Tech","#8B4513",8,45
+"Cybersecurity","Oberbayern (DE21)",10,"ICT","#365a94",9,46
+"Data ecosystems","Berlin (DE30)",3,"Industrial Tech","#e28f26",10,39
+"Data sciences & digital health","Kassel (DE73)",5,"Life Sciences","#EEDC82",11,43
+"Geothermal energy","Hamburg (DE60)",7,"Climate Tech","#8cab79",12,40
+"Immersive technologies","Oberbayern (DE21)",11,"ICT","#365a94",13,46
+"Individual mass production","Detmold (DEA4)",16,"Industrial Tech","#e28f26",14,42
+"Industrial robotics","Detmold (DEA4)",24,"Industrial Tech","#e28f26",15,42
+"Maritime technology","Bremen (DE50)",12,"Defense Tech","#8B4513",16,47
+"Medical technology","Kassel (DE73)",33,"Life Sciences","#EEDC82",17,43
+"Mobility services","Berlin (DE30)",63,"Future Mobility","#6a0dad",18,39
+"More flexible energy systems","Berlin (DE30)",7,"Climate Tech","#8cab79",19,39
+"Nanotechnologies","Berlin (DE30)",2,"Deep Tech","#669999",20,39
+"Neural interfaces","Thüringen (DEG0)",10,"Deep Tech","#669999",21,41
+"Nuclear fusion","Düsseldorf (DEA1)",1,"Climate Tech","#8cab79",22,48
+"Optics & photonics","Stuttgart (DE11)",15,"Deep Tech","#669999",23,49
+"Overall defense strategy","Oberbayern (DE21)",17,"Defense Tech","#8B4513",24,46
+"Personalized medicine","Köln (DEA2)",4,"Life Sciences","#EEDC82",25,50
+"Personalized nutrition","Detmold (DEA4)",9,"AgriFood Tech","#800020",26,42
+"Platform economy","Darmstadt (DE71)",2,"AgriFood Tech","#800020",27,51
+"Precision breeding","Münster (DEA3)",26,"AgriFood Tech","#800020",28,52
+"Private air transport","Hamburg (DE60)",4,"Future Mobility","#6a0dad",29,40
+"Quantum technologies","Bremen (DE50)",1,"Deep Tech","#669999",30,47
+"Semiconductors & microchips","Hamburg (DE60)",2,"Deep Tech","#669999",31,40
+"Smart factories","Detmold (DEA4)",18,"Industrial Tech","#e28f26",32,42
+"Smart farming","Münster (DEA3)",42,"AgriFood Tech","#800020",33,52
+"Space logistics","Berlin (DE30)",1,"Future Mobility","#6a0dad",34,39
+"UAS & drone defense","Bremen (DE50)",2,"Defense Tech","#8B4513",35,47
+"Ubiquitous computing","Detmold (DEA4)",10,"ICT","#365a94",36,42
+"Water purification","Detmold (DEA4)",7,"Climate Tech","#8cab79",37,42
+"Weapon systems & ammunition","Bremen (DE50)",12,"Defense Tech","#8B4513",38,47
