@@ -437,10 +437,11 @@ function createChart() {
 
   const showNode = (e, node, val) => {
     const tt = tooltip.style("opacity",1).html(formatNumber(val));
+    const vizRect = vizElement.getBoundingClientRect();
     const nb = node.getBoundingClientRect();
     const tb = tt.node().getBoundingClientRect();
-    const left = nb.left + nb.width/2 - tb.width/2 + window.scrollX;
-    const top  = nb.top  - tb.height - 12 + window.scrollY;
+    const left = nb.left - vizRect.left + nb.width/2 - tb.width/2;
+    const top  = nb.top - vizRect.top - tb.height - 12;
     tt.style("left", left + "px").style("top", top + "px");
   };
   const hide = () => tooltip.style("opacity", 0);
