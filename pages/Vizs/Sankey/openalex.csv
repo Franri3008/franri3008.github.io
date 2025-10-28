@@ -1,0 +1,38 @@
+"from","to","count","parent","color","IDsource","IDtarget"
+"AI & Big Data","Berlin (DE30)",250,"ICT","#365a94",0,37
+"Automation & robotics","Berkshire, Buckinghamshire and Oxfordshire (UKJ1)",60,"ICT","#365a94",1,38
+"Autonomous & connected mobility","Köln (DEA2)",65,"Future Mobility","#6a0dad",2,39
+"Biophotonics","Berlin (DE30)",189,"Life Sciences","#EEDC82",3,37
+"Bioprocess technology","Oberbayern (DE21)",131,"AgriFood Tech","#800020",4,40
+"Biotechnologies","Saarland (DEC0)",63,"Life Sciences","#EEDC82",5,41
+"CCS / CCU","Chemnitz (DED4)",22,"Climate Tech","#8cab79",6,42
+"CO2-neutral production","Berlin (DE30)",20,"Industrial Tech","#e28f26",7,37
+"Cybersecurity","Arnsberg (DEA5)",31,"ICT","#365a94",8,43
+"Data ecosystems","Berlin (DE30)",73,"Industrial Tech","#e28f26",9,37
+"Data sciences & digital health","Berlin (DE30)",36,"Life Sciences","#EEDC82",10,37
+"Geothermal energy","Schleswig-Holstein (DEF0)",20,"Climate Tech","#8cab79",11,44
+"Immersive technologies","Bremen (DE50)",15,"ICT","#365a94",12,45
+"Individual mass production","Berlin (DE30)",88,"Industrial Tech","#e28f26",13,37
+"Industrial robotics","Oberbayern (DE21)",16,"Industrial Tech","#e28f26",14,40
+"Maritime technology","Zuid-Holland (NL33)",5,"Defense Tech","#8B4513",15,46
+"Medical technology","Berlin (DE30)",433,"Life Sciences","#EEDC82",16,37
+"Mobility services","Köln (DEA2)",26,"Future Mobility","#6a0dad",17,39
+"More flexible energy systems","Köln (DEA2)",68,"Climate Tech","#8cab79",18,39
+"Nanotechnologies","Berlin (DE30)",136,"Deep Tech","#669999",19,37
+"Neural interfaces","Berlin (DE30)",213,"Deep Tech","#669999",20,37
+"Nuclear fusion","Île de France (FR10)",75,"Climate Tech","#8cab79",21,47
+"Optics & photonics","Île de France (FR10)",450,"Deep Tech","#669999",22,47
+"Overall defense strategy","Köln (DEA2)",27,"Defense Tech","#8B4513",23,39
+"Personalized medicine","Köln (DEA2)",101,"Life Sciences","#EEDC82",24,39
+"Personalized nutrition","Köln (DEA2)",20,"AgriFood Tech","#800020",25,39
+"Precision breeding","Sachsen-Anhalt (DEE0)",97,"AgriFood Tech","#800020",26,48
+"Private air transport","Köln (DEA2)",24,"Future Mobility","#6a0dad",27,39
+"Quantum technologies","Berlin (DE30)",63,"Deep Tech","#669999",28,37
+"Semiconductors & microchips","Berlin (DE30)",22,"Deep Tech","#669999",29,37
+"Smart factories","Hamburg (DE60)",24,"Industrial Tech","#e28f26",30,49
+"Smart farming","Brandenburg (DE40)",12,"AgriFood Tech","#800020",31,50
+"Space logistics","Île de France (FR10)",56,"Future Mobility","#6a0dad",32,47
+"UAS & drone defense","Köln (DEA2)",25,"Defense Tech","#8B4513",33,39
+"Ubiquitous computing","Köln (DEA2)",30,"ICT","#365a94",34,39
+"Water purification","Berlin (DE30)",35,"Climate Tech","#8cab79",35,37
+"Weapon systems & ammunition","Düsseldorf (DEA1)",2,"Defense Tech","#8B4513",36,51
