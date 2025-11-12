@@ -10,7 +10,7 @@ html,body{height:100%;}
 body{
     margin:0;
     overflow:hidden;
-    background:#fff;
+    background:#f9fafc;
     color:#111;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;
     height:100vh;
@@ -314,7 +314,7 @@ function createChart(){
   const containerWidth=Math.max(320,rect.width);
   const containerHeight=Math.max(240,rect.height);
   const sizeFactor=Math.max(.6,Math.min(1.15,Math.min(containerWidth/900,containerHeight/650)));
-  let axisFS=Math.max(9,Math.round(12*sizeFactor));
+  let axisFS=Math.max(12,Math.round(16*sizeFactor));
   const valueFS=Math.max(9,Math.round(12*sizeFactor));
   const sourceFS=Math.max(9,Math.round(12*sizeFactor));
   const logoWH=Math.max(10,Math.round(24*sizeFactor));
@@ -326,7 +326,7 @@ function createChart(){
   const responsiveRadius=Math.max(4,Math.min(12,Math.round(8*sizeFactor)));
   chartState.barRadius=responsiveRadius;
   const tempSvg=d3.select('body').append('svg').style('visibility','hidden');
-  const tempText=tempSvg.append('text').style('font-size','12px').style('font-family','sans-serif');
+  const tempText=tempSvg.append('text').style('font-size','16px').style('font-family','sans-serif');
   const allTop20=getAggregated().slice(0,1000).map(d=>d.id);
   const uniqLabels=Array.from(new Set(allTop20));
   let maxLabelWidth=0;
@@ -338,10 +338,10 @@ function createChart(){
   tempSvg.remove();
   const logoWidth=24;
   const padding=16;
-  const dynamicLeftMargin=Math.min(maxLabelWidth+logoWidth+padding,Math.max(100,containerWidth*.25));
+  const dynamicLeftMargin=Math.min(maxLabelWidth+logoWidth+padding,Math.max(150,containerWidth*.35));
   const availForText=Math.max(40,dynamicLeftMargin-logoWidth-padding-8);
-  const fitFS=Math.floor(12*(availForText/Math.max(1,maxLabelWidth)));
-  axisFS=Math.max(8,Math.min(axisFS,fitFS));
+  const fitFS=Math.floor(16*(availForText/Math.max(1,maxLabelWidth)));
+  axisFS=Math.max(12,Math.min(axisFS,fitFS));
   chartState.axisFS=axisFS;
   const footerH=computeFooterMargin(containerWidth,containerHeight,sizeFactor);
   const margin={top:12,right:Math.max(30,containerWidth*.05),bottom:footerH,left:dynamicLeftMargin};
