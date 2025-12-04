@@ -56,8 +56,8 @@
             padding: 16px;
         }
 
-        .card.dragging {
-            opacity: 0.7;
+.card.dragging {
+  opacity: 0.7;
             cursor: grabbing;
             transform: scale(1.08) rotate(2deg);
             z-index: 1000;
@@ -86,14 +86,25 @@
             background: #203fa1;
         }
 
-        .card-face {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-        }
+.card-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+}
+
+.card-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+}
 
         .card-logo svg {
             width: 64px;
@@ -105,16 +116,21 @@
             cursor: default;
         }
 
-        .card-title {
-            display: block;
-            width: 100%;
-            color: inherit;
-            line-height: 1.4;
-        }
+.card-title {
+  display: block;
+  width: 100%;
+  color: inherit;
+  line-height: 1.4;
+}
+.card-id {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
 
-        .card.no-content .card-logo svg {
-            color: #a6b1dd;
-        }
+.card.no-content .card-logo svg {
+  color: #a6b1dd;
+}
 
         .card-content {
             display: none;
@@ -180,21 +196,49 @@
             background: white;
         }
 
-        .warning-icon {
+.card.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.card.disabled.dragging {
+  opacity: 0.7;
+  transform: scale(1.08) rotate(2deg);
+}
+
+.card.disabled .card-logo svg {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+        .status-icon {
             position: absolute;
             top: 8px;
             right: 8px;
-            width: 24px;
-            height: 24px;
-            background: #fbbf24;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             font-weight: bold;
-            color: #78350f;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
             z-index: 10;
+        }
+
+        .status-icon.warning {
+            background: #fbbf24;
+            color: #78350f;
+        }
+
+        .status-icon.progress {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .status-icon.success {
+            background: #34d399;
+            color: #064e3b;
         }
     </style>
 </head>
@@ -222,7 +266,7 @@
         const cardsData = {
             1: {
                 label: "🔮<br>Clem's2025 predictions",
-                warning: 0,
+                warning: 2,
                 content: `
         <h2>Day 1 - Six Predictions for AI in 2025 (and a review of how my 2024 predictions turned out)</h2>
         <div style="display: flex; align-items: center; margin-bottom: 20px;">
@@ -267,7 +311,7 @@
             },
             2: {
                 label: "NVIDIA is the biggest repo contributor",
-                warning: 0,
+                warning: 3,
                 content: `
         <p>NVIDIA was the biggest repository contributor in 2025, reaching _ repos, closely followed by AliBaba with _.</p>
 
@@ -279,7 +323,7 @@
             },
             3: {
                 label: "NeurIPS Treemap",
-                warning: 0,
+                warning: 3,
                 content: `
         <p>This treemaps showcases how...</p>
 
@@ -301,11 +345,35 @@
         </div>
     `
             },
-            6: {
-                label: "Repos animation",
-                warning: 1,
+            5: {
+                label: "Deepseek becomes the most liked model",
+                warning: 0,
                 content: `
-        <p>(These are not smaller orgs)</p>
+        <p>Deepseek was the surprise of the year, becoming the most liked model in HF</p>
+
+        <div class="responsive-iframe-container">
+            <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
+            <iframe src="https://franri3008.github.io/pages/Vizs/Sankey/regpat.html" allowfullscreen></iframe>
+        </div>
+    `
+            },
+            6: {
+                label: "Small orgs are also part of the race",
+                warning: 0,
+                content: `
+        <p>Small organizations are...</p>
+
+        <div class="responsive-iframe-container">
+            <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
+            <iframe src="https://cepsai.github.io/aiworld/OpenSource2025/story_animation.html" allowfullscreen></iframe>
+        </div>
+    `
+            },
+            7: {
+                label: "Small models are closing the gap",
+                warning: 0,
+                content: `
+        <p>Small models are...</p>
 
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
@@ -314,10 +382,22 @@
     `
             },
             8: {
-                label: "Multimodal lollipop",
-                warning: 1,
+                label: "Model types dominance",
+                warning: 0,
                 content: `
         <p>(This is not multimodal)</p>
+
+        <div class="responsive-iframe-container">
+            <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
+            <iframe src="https://franri3008.github.io/pages/CEPS/AI-World/lollipop_v2.html" allowfullscreen></iframe>
+        </div>
+    `
+            },
+            9: {
+                label: "2025 Timeline of events",
+                warning: 0,
+                content: `
+        <p>Not ready</p>
 
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
@@ -339,7 +419,7 @@
             },
             11: {
                 label: "Datasets recommender",
-                warning: 1,
+                warning: 0,
                 content: `
         <p>Idk</p>
 
@@ -350,20 +430,20 @@
     `
             },
             12: {
-                label: "Vision lollipop",
+                label: "Most liked datasets",
                 warning: 1,
                 content: `
-        <p>(This is not vision)</p>
+        <p>Not updated!</p>
 
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
-            <iframe src="https://franri3008.github.io/pages/CEPS/AI-World/lollipop_v2.html" allowfullscreen></iframe>
+            <iframe src="https://franri3008.github.io/pages/CEPS/Graphs/Wheel/wheel2.html" allowfullscreen></iframe>
         </div>
     `
             },
             13: {
                 label: "Model count is skyrocketing",
-                warning: 0,
+                warning: 3,
                 content: `
         <p>The number of models in HuggingFace is still growing at a fast pace</p>
 
@@ -374,7 +454,7 @@
     `
             },
             14: {
-                label: "Most liked models",
+                label: "NeurIPS Sankey",
                 warning: 1,
                 content: `
         <p>(This is not models)</p>
@@ -438,6 +518,11 @@
                 warning: 0
             }
         };
+        const STATUS_ICONS = {
+            1: { className: 'warning', symbol: '⚠' },
+            2: { className: 'progress', symbol: '…' },
+            3: { className: 'success', symbol: '✓' }
+        };
         function getCardLink(day) {
             const rootUrl = window.location.href.split('?')[0];
             return `${rootUrl}?id=${day}`;
@@ -453,29 +538,36 @@
             card.dataset.day = i;
             card.dataset.link = getCardLink(i);
             const cardData = cardsData[i];
-            const hasContent = Boolean(cardData?.content);
-            card.dataset.hasContent = hasContent;
-            card.classList.add(hasContent ? 'has-content' : 'no-content');
-            if (hasContent) {
+            const rawHasContent = Boolean(cardData?.content);
+            const statusValue = Number(cardData?.warning || 0);
+            const canOpen = rawHasContent && statusValue !== 0;
+            card.dataset.hasContent = canOpen ? 'true' : 'false';
+            card.classList.add(rawHasContent ? 'has-content' : 'no-content');
+            if (canOpen) {
                 card.classList.add('active');
+            } else if (statusValue === 0) {
+                card.classList.add('disabled');
             }
             const cardTitle = cardData?.label || i;
-            const warning = cardData?.warning || 0;
-            const warningIcon = warning === 1 ? '<div class="warning-icon">⚠</div>' : '';
-            const sharingMarkup = hasContent ? `
+            const statusIconData = STATUS_ICONS[statusValue];
+            const statusIcon = statusIconData ? `<div class="status-icon ${statusIconData.className}">${statusIconData.symbol}</div>` : '';
+            const sharingMarkup = canOpen ? `
                     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
                 
                         <p style="font-size: 0.8em;">🔗 Share this card:</p><input type="text" value="${getCardLink(i)}" readonly style="width: 100%; padding: 8px; margin: px 0; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; font-size: 0.8em;" onclick="this.select(); document.execCommand('copy');">
                     </div>
             ` : '';
-            const cardBodyContent = hasContent ? `<h2>${cardTitle}</h2>${cardData.content}` : '';
+            const cardBodyContent = canOpen ? `<h2>${cardTitle}</h2>${cardData.content}` : '';
             card.innerHTML = `
-                ${warningIcon}
+                ${statusIcon}
                 <div class="card-face">
-                    <div class="card-logo">
-                        ${logoMarkup}
+                    <div class="card-main">
+                        <div class="card-logo">
+                            ${logoMarkup}
+                        </div>
+                        <div class="card-title">${cardTitle}</div>
                     </div>
-                    <div class="card-title">${cardTitle}</div>
+                    <div class="card-id">${i}</div>
                 </div>
                 <div class="card-content">
                     ${cardBodyContent}
@@ -513,6 +605,7 @@
             });
 
             card.addEventListener('click', () => {
+                if (card.classList.contains('disabled')) return;
                 if (card.dataset.hasContent === 'true' && !isDragging) {
                     card.classList.add('opened');
                     modalContent.innerHTML = card.querySelector('.card-content').innerHTML;
