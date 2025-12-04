@@ -3,7 +3,6 @@
 
 <head>
   <meta charset="utf-8">
-  <title>OpenAlex Sankey</title>
   <style>
     body {
       margin: 0;
@@ -515,7 +514,7 @@
           tooltip.transition().duration(200).style('opacity', 0.95);
           const columnText = graph.levelCount ? `Column: ${Math.min(d.level + 1, graph.levelCount)} / ${graph.levelCount}` : '';
           const nodeTooltip = columnText
-            ? `Name: ${d.name}<br/>Total: ${d.value}<br/>${columnText}`
+            ? `Name: ${d.name}<br/>Total: ${d.value}<br/>`
             : `Name: ${d.name}<br/>Total: ${d.value}`;
           tooltip.html(nodeTooltip);
           positionTooltip(d3.event);
