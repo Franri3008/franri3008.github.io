@@ -139,9 +139,10 @@
             background: white;
             padding: 40px;
             border-radius: 12px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 90vh;
+            max-width: 1100px;
+            width: min(95%, 1100px);
+            max-height: 95vh;
+            height: min(95vh, 800px);
             overflow-y: auto;
             position: relative;
         }
@@ -159,7 +160,7 @@
         .responsive-iframe-container {
             position: relative;
             width: 100%;
-            height: 500px;
+            height: 600px;
             transition: all 0.3s ease;
         }
 
@@ -269,7 +270,7 @@
                 warning: 0,
                 content: `
         <p>NVIDIA was the biggest repository contributor in 2025, reaching _ repos, closely followed by AliBaba with _.</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://cepsai.github.io/aiworld/OpenSource2025/story_white.html" allowfullscreen></iframe>
@@ -281,7 +282,7 @@
                 warning: 0,
                 content: `
         <p>This treemaps showcases how...</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://cepsai.github.io/huggingface/neurips/viz_proportion.html" allowfullscreen></iframe>
@@ -293,7 +294,7 @@
                 warning: 1,
                 content: `
         <p>(This is not Neurips)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/Vizs/Sankey/regpat.html" allowfullscreen></iframe>
@@ -305,7 +306,7 @@
                 warning: 1,
                 content: `
         <p>(These are not smaller orgs)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://cepsai.github.io/aiworld/OpenSource2025/story_animation.html" allowfullscreen></iframe>
@@ -317,7 +318,7 @@
                 warning: 1,
                 content: `
         <p>(This is not multimodal)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/CEPS/AI-World/lollipop_v2.html" allowfullscreen></iframe>
@@ -329,7 +330,7 @@
                 warning: 1,
                 content: `
         <p>(This is not updated)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://aiworld.eu/embed/api/paper/top-20-hf-papers-at-neurips" allowfullscreen></iframe>
@@ -341,7 +342,7 @@
                 warning: 1,
                 content: `
         <p>Idk</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <image src="Imagen 1.png" style="width: 800px">
@@ -353,7 +354,7 @@
                 warning: 1,
                 content: `
         <p>(This is not vision)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/CEPS/AI-World/lollipop_v2.html" allowfullscreen></iframe>
@@ -365,7 +366,7 @@
                 warning: 0,
                 content: `
         <p>The number of models in HuggingFace is still growing at a fast pace</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/CEPS/HF2025/v13/viz.html" allowfullscreen></iframe>
@@ -377,7 +378,7 @@
                 warning: 1,
                 content: `
         <p>(This is not models)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/CEPS/Graphs/Wheel/wheel2.html" allowfullscreen></iframe>
@@ -389,7 +390,7 @@
                 warning: 1,
                 content: `
         <p>(This is not audio)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/CEPS/AI-World/lollipop_v2.html" allowfullscreen></iframe>
@@ -401,7 +402,7 @@
                 warning: 1,
                 content: `
         <p>(This is not text)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://franri3008.github.io/pages/CEPS/AI-World/lollipop_v2.html" allowfullscreen></iframe>
@@ -413,7 +414,7 @@
                 warning: 1,
                 content: `
         <p>(This is not updated)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://aiworld.eu/embed/model/tag/stacked-model-count-other" allowfullscreen></iframe>
@@ -425,7 +426,7 @@
                 warning: 1,
                 content: `
         <p>(This is not updated)</p>
-        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+
         <div class="responsive-iframe-container">
             <button onclick="toggleBrowserFullscreen(this.parentElement)" style="position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; cursor: pointer;">⛶</button>
             <iframe src="https://aiworld.eu/embed/model/tag/stacked-model-count-other" allowfullscreen></iframe>
@@ -463,7 +464,7 @@
             const warningIcon = warning === 1 ? '<div class="warning-icon">⚠</div>' : '';
             const sharingMarkup = hasContent ? `
                     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
-                        <p><em style="font-size: 0.8em;">💡Tip: Click the small square icon in the top right corner to access full screen view!</em></p>
+                
                         <p style="font-size: 0.8em;">🔗 Share this card:</p><input type="text" value="${getCardLink(i)}" readonly style="width: 100%; padding: 8px; margin: px 0; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; font-size: 0.8em;" onclick="this.select(); document.execCommand('copy');">
                     </div>
             ` : '';
