@@ -561,7 +561,7 @@
           const levelInfo = (sourceLevel && targetLevel)
             ? `<br/>Columns: ${sourceLevel} -> ${targetLevel} / ${graph.levelCount}`
             : '';
-          tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}${levelInfo}`);
+          tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}`);
           positionTooltip(d3.event);
 
           const connectedNodes = new Set([d.source.index, d.target.index]);
