@@ -491,6 +491,55 @@
         .enter().append('g')
         .attr('transform', d => `translate(${d.x0},${d.y0})`);
 
+      function getLabelFontSize() {
+        const minSide = Math.max(0, Math.min(width, height));
+        return Math.max(12, Math.min(22, Math.round(minSide * 0.022)));
+      }
+
+      const labelLayer = svg.append('g')
+        .attr('class', 'link-labels')
+        .style('pointer-events', 'none');
+
+      function clearLinkLabels() {
+        labelLayer.selectAll('*').remove();
+      }
+
+      function showLinkLabels(links) {
+        clearLinkLabels();
+        if (!links || !links.length) {
+          return;
+        }
+        links.forEach(link => {
+          const pathNode = linkSelection.filter(ld => ld.id === link.id).node();
+          if (!pathNode || !pathNode.getTotalLength) return;
+          const pathLength = pathNode.getTotalLength();
+          if (!pathLength) return;
+          const midpoint = pathNode.getPointAtLength(pathLength / 2);
+          if (!midpoint) return;
+          const targetTotal = graph.nodes[link.target.index].value || 0;
+          const targetShare = targetTotal ? (link.value / targetTotal) * 100 : null;
+          if (targetShare === null) return;
+          const fontSize = getLabelFontSize();
+          const labelFill = '#ffffff';
+          const labelStroke = 'rgba(0,0,0,0.45)';
+          labelLayer.append('text')
+            .attr('x', midpoint.x)
+            .attr('y', midpoint.y)
+            .attr('dy', '0.35em')
+            .attr('text-anchor', 'middle')
+            .attr('fill', labelFill)
+            .attr('stroke', labelStroke)
+            .attr('stroke-width', Math.max(1.5, fontSize * 0.12))
+            .attr('paint-order', 'stroke fill')
+            .style('font-weight', '700')
+            .style('font-size', `${fontSize}px`)
+            .style('fill', labelFill)
+            .style('stroke', labelStroke)
+            .style('paint-order', 'stroke fill')
+            .text(`${targetShare.toFixed(1)}%`);
+        });
+      }
+
       nodeSelection.append('rect')
         .attr('height', d => d.y1 - d.y0)
         .attr('width', sankey.nodeWidth())
@@ -527,6 +576,7 @@
             connectedNodes.add(l.source.index);
             connectedNodes.add(l.target.index);
           });
+          showLinkLabels(connectedLinks);
 
           nodeSelection.classed('dimmedNode', true).classed('hoveredNode', false);
           linkSelection.classed('dimmedLink', true).classed('hoveredLink', false);
@@ -544,6 +594,7 @@
         .on('mouseout', function () {
           tooltip.transition().duration(200).style('opacity', 0);
           clearHoveredLinks();
+          clearLinkLabels();
           nodeSelection.classed('hoveredNode', false).classed('dimmedNode', false);
           linkSelection.classed('hoveredLink', false).classed('dimmedLink', false);
           d3.select(this).style('cursor', null);
@@ -568,6 +619,7 @@
 
           const connectedNodes = new Set([d.source.index, d.target.index]);
           setHoveredLinks([d]);
+          showLinkLabels([d]);
           nodeSelection.classed('dimmedNode', true).classed('hoveredNode', false);
           linkSelection.classed('dimmedLink', true).classed('hoveredLink', false);
 
@@ -582,6 +634,7 @@
         .on('mouseout', function () {
           tooltip.transition().duration(200).style('opacity', 0);
           clearHoveredLinks();
+          clearLinkLabels();
           nodeSelection.classed('hoveredNode', false).classed('dimmedNode', false);
           linkSelection.classed('hoveredLink', false).classed('dimmedLink', false);
           d3.select(this).style('cursor', null);
