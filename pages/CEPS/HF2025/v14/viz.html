@@ -560,7 +560,10 @@
           const levelInfo = (sourceLevel && targetLevel)
             ? `<br/>Columns: ${sourceLevel} -> ${targetLevel} / ${graph.levelCount}`
             : '';
-          tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}`);
+          const targetTotal = graph.nodes[d.target.index].value || 0;
+          const targetShare = targetTotal ? (d.value / targetTotal) * 100 : null;
+          const shareText = targetShare !== null ? `<br/>Share: ${targetShare.toFixed(1)}%` : '';
+          tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}${shareText}`);
           positionTooltip(d3.event);
 
           const connectedNodes = new Set([d.source.index, d.target.index]);
