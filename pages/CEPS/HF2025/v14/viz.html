@@ -249,8 +249,12 @@
     <div id="container3" class="container source-container">
       <div class="source-text">
         Source:
-        <a href="https://huggingface.co" target="_blank" rel="noopener">
-          HuggingFace
+        <a href="https://neurips.cc/" target="_blank" rel="noopener">
+          NeurIPS
+        </a>
+        & 
+        <a href="https://aiworld.eu" target="_blank" rel="noopener">
+          AI World
         </a>
       </div>
     </div>
@@ -316,21 +320,24 @@
     function positionTooltip(event) {
       const tooltipOffset = 10;
       const screenWidth = window.innerWidth;
-      const isLeftSide = event.pageX < screenWidth / 2;
+      const screenHeight = window.innerHeight;
+      const tooltipNode = tooltip.node();
+      const tooltipWidth = tooltipNode ? tooltipNode.offsetWidth : 150;
+      const tooltipHeight = tooltipNode ? tooltipNode.offsetHeight : 120;
 
-      if (isLeftSide) {
-        // Mouse is on left side, show tooltip to the right
-        tooltip
-          .style('left', `${event.pageX + tooltipOffset}px`)
-          .style('top', `${event.pageY - 28}px`);
-      } else {
-        // Mouse is on right side, show tooltip to the left
-        const tooltipNode = tooltip.node();
-        const tooltipWidth = tooltipNode ? tooltipNode.offsetWidth : 150;
-        tooltip
-          .style('left', `${event.pageX - tooltipWidth - tooltipOffset}px`)
-          .style('top', `${event.pageY - 28}px`);
-      }
+      const isLeftSide = event.pageX < screenWidth / 2;
+      const isTopHalf = event.pageY < screenHeight / 2;
+
+      const leftPos = isLeftSide
+        ? (event.pageX + tooltipOffset)
+        : (event.pageX - tooltipWidth - tooltipOffset);
+      const topPos = isTopHalf
+        ? (event.pageY + tooltipOffset)
+        : (event.pageY - tooltipHeight - tooltipOffset);
+
+      tooltip
+        .style('left', `${leftPos}px`)
+        .style('top', `${topPos}px`);
     }
 
     function setHoveredLinks(links) {
@@ -475,6 +482,24 @@
 
       sankey(graph);
 
+      const incomingTotals = new Map();
+      const outgoingTotals = new Map();
+      graph.links.forEach(l => {
+        incomingTotals.set(l.target.index, (incomingTotals.get(l.target.index) || 0) + l.value);
+        outgoingTotals.set(l.source.index, (outgoingTotals.get(l.source.index) || 0) + l.value);
+      });
+
+      const totalFlow = d3.sum(graph.links, l => l.value) || 0;
+      graph.nodes.forEach(n => {
+        const nodeFlow = Math.max(
+          incomingTotals.get(n.index) || 0,
+          outgoingTotals.get(n.index) || 0,
+          n.value || 0
+        );
+        const share = totalFlow ? (nodeFlow / totalFlow) : null;
+        n.rca = Number.isFinite(share) ? share : null;
+      });
+
       const linkSelection = svg.append('g')
         .attr('class', 'links')
         .selectAll('path')
@@ -545,8 +570,8 @@
           const startPoint = pathNode.getPointAtLength(startLen);
           const endPoint = pathNode.getPointAtLength(endLen);
 
-          const sourceTotal = graph.nodes[link.source.index].value || 0;
-          const targetTotal = graph.nodes[link.target.index].value || 0;
+          const sourceTotal = outgoingTotals.get(link.source.index) || graph.nodes[link.source.index].value || 0;
+          const targetTotal = incomingTotals.get(link.target.index) || graph.nodes[link.target.index].value || 0;
           const sourceShare = sourceTotal ? (link.value / sourceTotal) * 100 : null;
           const targetShare = targetTotal ? (link.value / targetTotal) * 100 : null;
 
@@ -581,9 +606,10 @@
           d3.select(this).style('cursor', 'pointer');
           tooltip.transition().duration(200).style('opacity', 0.95);
           const columnText = graph.levelCount ? `Column: ${Math.min(d.level + 1, graph.levelCount)} / ${graph.levelCount}` : '';
+          const rcaText = Number.isFinite(d.rca) ? `<br/>RCA: ${d.rca.toFixed(3)}` : '';
           const nodeTooltip = columnText
-            ? `Name: ${d.name}<br/>Total: ${d.value}<br/>`
-            : `Name: ${d.name}<br/>Total: ${d.value}`;
+            ? `Name: ${d.name}<br/>Total: ${d.value}${rcaText}<br/>`
+            : `Name: ${d.name}<br/>Total: ${d.value}${rcaText}`;
           tooltip.html(nodeTooltip);
           positionTooltip(d3.event);
 
@@ -630,7 +656,7 @@
           const levelInfo = (sourceLevel && targetLevel)
             ? `<br/>Columns: ${sourceLevel} -> ${targetLevel} / ${graph.levelCount}`
             : '';
-          const targetTotal = graph.nodes[d.target.index].value || 0;
+          const targetTotal = incomingTotals.get(d.target.index) || graph.nodes[d.target.index].value || 0;
           const targetShare = targetTotal ? (d.value / targetTotal) * 100 : null;
           const shareText = targetShare !== null ? `<br/>Share: ${targetShare.toFixed(1)}%` : '';
           tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}${shareText}`);
