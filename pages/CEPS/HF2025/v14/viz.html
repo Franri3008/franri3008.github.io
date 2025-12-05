@@ -15,7 +15,7 @@
 
     .viz-grid {
       display: grid;
-      grid-template-rows: 19fr 1fr;
+      grid-template-rows: 18fr auto 1fr;
       grid-template-columns: 1fr 1fr;
       gap: clamp(8px, 1vh, 18px);
       height: 100vh;
@@ -30,6 +30,49 @@
       box-shadow: none;
     }
 
+    #containerYear {
+      grid-row: 2;
+      grid-column: 1 / span 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 clamp(12px, 2vw, 20px);
+      font-size: clamp(18px, 2.5vw, 26px);
+      font-weight: 700;
+      color: #0f172a;
+      height: clamp(28px, 4vh, 40px);
+      position: relative;
+    }
+
+    .year-left,
+    .year-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+
+    .year-left {
+      justify-content: center;
+    }
+
+    .year-right {
+      justify-content: center;
+    }
+
+    .year-left::before,
+    .year-right::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.35) 50%, rgba(15, 23, 42, 0) 100%);
+      pointer-events: none;
+    }
+
     #container1 {
       grid-row: 1;
       grid-column: 1 / span 2;
@@ -41,7 +84,7 @@
     }
 
     #container3 {
-      grid-row: 2;
+      grid-row: 3;
       grid-column: 1;
       display: flex;
       align-items: center;
@@ -50,7 +93,7 @@
     }
 
     #container4 {
-      grid-row: 2;
+      grid-row: 3;
       grid-column: 2;
       display: flex;
       align-items: center;
@@ -154,7 +197,7 @@
     }
 
     .nodes text {
-      font-size: 14px;
+      font-size: clamp(12px, 1vw, 16px);
       pointer-events: none;
       transition: all 0.3s ease;
     }
@@ -165,7 +208,7 @@
     }
 
     .hoveredNode text {
-      font-size: 16px;
+      font-size: clamp(14px, 1.2vw, 18px);
       stroke: #fff;
       stroke-width: 2px;
       paint-order: stroke fill;
@@ -187,7 +230,7 @@
       fill: #666 !important;
       stroke: none;
       font-weight: normal;
-      font-size: 14px;
+      font-size: clamp(12px, 1vw, 16px);
     }
 
     .dimmedLink {
@@ -240,6 +283,10 @@
 
 <body>
   <div class="viz-grid">
+    <div id="containerYear" class="container year-container">
+      <div class="year-left">2024</div>
+      <div class="year-right">2025</div>
+    </div>
     <div id="container1" class="container viz-container">
       <div id="viz">
         <canvas id="particle-canvas"></canvas>
@@ -436,9 +483,18 @@
         }
       });
 
+      const isMisc = name => {
+        const lower = (name || '').toLowerCase();
+        return lower.includes('other') || lower.includes('rest');
+      };
+
       const sortedNames = Array.from(nodeNames).sort((a, b) => {
         const levelDiff = (levels.get(a) || 0) - (levels.get(b) || 0);
-        return levelDiff !== 0 ? levelDiff : a.localeCompare(b);
+        if (levelDiff !== 0) return levelDiff;
+        const aMisc = isMisc(a);
+        const bMisc = isMisc(b);
+        if (aMisc !== bMisc) return aMisc ? 1 : -1;
+        return a.localeCompare(b);
       });
 
       const nodes = sortedNames.map(name => ({
@@ -513,23 +569,19 @@
         levelMap.set(colorKey, (levelMap.get(colorKey) || 0) + l.value);
       });
 
-      const totalFlow = d3.sum(graph.links, l => l.value) || 0;
       graph.nodes.forEach(n => {
-        const nodeFlow = Math.max(
-          incomingTotals.get(n.index) || 0,
-          outgoingTotals.get(n.index) || 0,
-          n.value || 0
-        );
-        const share = totalFlow ? (nodeFlow / totalFlow) : null;
-        n.rca = Number.isFinite(share) ? share : null;
-
         const isFinal = graph.levelCount ? n.level === graph.levelCount - 1 : false;
+        const isMiddle = graph.levelCount ? n.level === midLevel : false;
         if (isFinal && n.color) {
           const currentMap = colorTotalsByLevel.get(n.level);
           const prevMap = colorTotalsByLevel.get(n.level - 1);
           const currentTotal = currentMap ? (currentMap.get(n.color) || 0) : 0;
           const prevTotal = prevMap ? (prevMap.get(n.color) || 0) : 0;
           n.growth = prevTotal > 0 ? (currentTotal - prevTotal) / prevTotal : null;
+        } else if (isMiddle) {
+          const incoming = incomingTotals.get(n.index) || 0;
+          const outgoing = outgoingTotals.get(n.index) || 0;
+          n.growth = incoming > 0 ? (outgoing - incoming) / incoming : null;
         } else {
           n.growth = null;
         }
@@ -625,32 +677,39 @@
         .attr('fill', d => (d.level === midLevel ? '#ffffff' : (d.color || '#b3b3b3')))
         .attr('stroke', '#999');
 
+      function getLabelX(node, isHovered) {
+        const baseOffset = sankey.nodeWidth();
+        const hoverShift = isHovered ? 48 : 0;
+        if (node.x0 < width / 2) {
+          return 6 + baseOffset + hoverShift;
+        }
+        return -6 - hoverShift;
+      }
+
       nodeSelection.append('text')
-        .attr('x', -6)
+        .attr('x', d => getLabelX(d, false))
         .attr('y', d => (d.y1 - d.y0) / 2)
         .attr('dy', '0.35em')
-        .attr('text-anchor', 'end')
+        .attr('text-anchor', d => (d.x0 < width / 2 ? 'start' : 'end'))
         .attr('fill', '#000')
-        .text(d => d.name)
-        .filter(d => d.x0 < width / 2)
-        .attr('x', 6 + sankey.nodeWidth())
-        .attr('text-anchor', 'start');
+        .text(d => d.name);
 
       nodeSelection
         .on('mouseover', function (d) {
           d3.select(this).style('cursor', 'pointer');
           tooltip.transition().duration(200).style('opacity', 0.95);
           const columnText = graph.levelCount ? `Column: ${Math.min(d.level + 1, graph.levelCount)} / ${graph.levelCount}` : '';
-          const rcaText = Number.isFinite(d.rca) ? `<br/>RCA: ${d.rca.toFixed(3)}` : '';
           const isFinal = graph.levelCount ? d.level === graph.levelCount - 1 : false;
-          const growthText = isFinal && Number.isFinite(d.growth)
+          const isMiddle = graph.levelCount ? d.level === midLevel : false;
+          const growthText = (isFinal || isMiddle) && Number.isFinite(d.growth)
             ? `<br/>Growth: ${(d.growth * 100).toFixed(1)}%`
             : '';
           const nodeTooltip = columnText
-            ? `Name: ${d.name}<br/>Total: ${d.value}${rcaText}${growthText}<br/>`
-            : `Name: ${d.name}<br/>Total: ${d.value}${rcaText}${growthText}`;
+            ? `Name: ${d.name}<br/>Total: ${d.value}${growthText}<br/>`
+            : `Name: ${d.name}<br/>Total: ${d.value}${growthText}`;
           tooltip.html(nodeTooltip);
           positionTooltip(d3.event);
+          d3.select(this).select('text').attr('x', nd => getLabelX(nd, true));
 
           const nodeIndex = d.index;
           const connectedLinks = graph.links.filter(l => l.source.index === nodeIndex || l.target.index === nodeIndex);
@@ -682,6 +741,7 @@
           nodeSelection.classed('hoveredNode', false).classed('dimmedNode', false);
           linkSelection.classed('hoveredLink', false).classed('dimmedLink', false);
           d3.select(this).style('cursor', null);
+          d3.select(this).select('text').attr('x', nd => getLabelX(nd, false));
         });
 
       linkSelection
@@ -745,6 +805,17 @@
         return;
       }
 
+      function getResponsiveSizeRange() {
+        const minSide = Math.max(0, Math.min(width, height));
+        const factor = minSide
+          ? Math.max(0.75, Math.min(1.5, minSide / 800))
+          : 1;
+        return [
+          PARTICLE_SETTINGS.sizeRange[0] * factor,
+          PARTICLE_SETTINGS.sizeRange[1] * factor
+        ];
+      }
+
       const values = graph.links.map(l => l.value);
       const extent = d3.extent(values);
       if (!extent || !Number.isFinite(extent[0]) || !Number.isFinite(extent[1])) {
@@ -757,9 +828,11 @@
       const frequencyScale = d3.scaleLinear()
         .domain(normalizedExtent)
         .range(PARTICLE_SETTINGS.frequencyRange);
+
+      const responsiveSizeRange = getResponsiveSizeRange();
       const sizeScale = d3.scaleLinear()
         .domain(normalizedExtent)
-        .range(PARTICLE_SETTINGS.sizeRange);
+        .range(responsiveSizeRange);
 
       particleLinks = [];
       linkSelection.each(function (d) {
