@@ -509,22 +509,16 @@
         if (!links || !links.length) {
           return;
         }
-        links.forEach(link => {
-          const pathNode = linkSelection.filter(ld => ld.id === link.id).node();
-          if (!pathNode || !pathNode.getTotalLength) return;
-          const pathLength = pathNode.getTotalLength();
-          if (!pathLength) return;
-          const midpoint = pathNode.getPointAtLength(pathLength / 2);
-          if (!midpoint) return;
-          const targetTotal = graph.nodes[link.target.index].value || 0;
-          const targetShare = targetTotal ? (link.value / targetTotal) * 100 : null;
-          if (targetShare === null) return;
-          const fontSize = getLabelFontSize();
-          const labelFill = '#ffffff';
-          const labelStroke = 'rgba(0,0,0,0.45)';
+        const fontSize = getLabelFontSize();
+        const labelOffset = Math.max(14, fontSize * 1.4);
+        const labelFill = '#ffffff';
+        const labelStroke = 'rgba(0,0,0,0.45)';
+
+        function appendLabel(point, textValue) {
+          if (!point || textValue === null || textValue === undefined) return;
           labelLayer.append('text')
-            .attr('x', midpoint.x)
-            .attr('y', midpoint.y)
+            .attr('x', point.x)
+            .attr('y', point.y)
             .attr('dy', '0.35em')
             .attr('text-anchor', 'middle')
             .attr('fill', labelFill)
@@ -536,7 +530,32 @@
             .style('fill', labelFill)
             .style('stroke', labelStroke)
             .style('paint-order', 'stroke fill')
-            .text(`${targetShare.toFixed(1)}%`);
+            .text(textValue);
+        }
+
+        links.forEach(link => {
+          const pathNode = linkSelection.filter(ld => ld.id === link.id).node();
+          if (!pathNode || !pathNode.getTotalLength) return;
+          const pathLength = pathNode.getTotalLength();
+          if (!pathLength) return;
+
+          const startLen = Math.min(pathLength, labelOffset);
+          const endLen = Math.max(0, pathLength - labelOffset);
+
+          const startPoint = pathNode.getPointAtLength(startLen);
+          const endPoint = pathNode.getPointAtLength(endLen);
+
+          const sourceTotal = graph.nodes[link.source.index].value || 0;
+          const targetTotal = graph.nodes[link.target.index].value || 0;
+          const sourceShare = sourceTotal ? (link.value / sourceTotal) * 100 : null;
+          const targetShare = targetTotal ? (link.value / targetTotal) * 100 : null;
+
+          if (sourceShare !== null) {
+            appendLabel(startPoint, `${sourceShare.toFixed(1)}%`);
+          }
+          if (targetShare !== null) {
+            appendLabel(endPoint, `${targetShare.toFixed(1)}%`);
+          }
         });
       }
 
