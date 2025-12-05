@@ -376,11 +376,15 @@
             id: key,
             sourceName: d.from,
             targetName: d.to,
-            value: 0
+            value: 0,
+            color: null
           };
           linkKeyMap.set(key, link);
         }
         link.value += d.value;
+        if (d.color && !link.color) {
+          link.color = d.color;
+        }
       });
 
       const adjacency = new Map();
@@ -445,19 +449,23 @@
 
       const nodeIndexMap = new Map(nodes.map((node, index) => [node.name, index]));
 
+      const levelCount = nodes.length
+        ? nodes.reduce((max, node) => Math.max(max, node.level), 0) + 1
+        : 0;
+
+      const midLevel = levelCount ? Math.floor(levelCount / 2) : 1;
+
       const links = Array.from(linkKeyMap.values())
         .map(link => ({
           id: link.id || `${link.sourceName}|${link.targetName}`,
           source: nodeIndexMap.get(link.sourceName),
           target: nodeIndexMap.get(link.targetName),
           value: link.value,
-          color: nodeColorMap.get(link.sourceName) || '#999'
+          color: ((levels.get(link.sourceName) || 0) >= midLevel
+            ? (link.color || nodeColorMap.get(link.targetName) || nodeColorMap.get(link.sourceName) || '#999')
+            : (link.color || nodeColorMap.get(link.sourceName) || '#999'))
         }))
         .filter(link => link.source !== undefined && link.target !== undefined && link.value > 0);
-
-      const levelCount = nodes.length
-        ? nodes.reduce((max, node) => Math.max(max, node.level), 0) + 1
-        : 0;
 
       return { nodes, links, levelCount };
     }
@@ -472,6 +480,7 @@
       svg.selectAll('*').remove();
 
       const graph = buildGraph(cleanData);
+      const midLevel = graph.levelCount ? Math.floor(graph.levelCount / 2) : 0;
 
       sankey.nodeAlign((node, columns) => {
         const maxColumns = Number.isFinite(columns) ? columns : (graph.levelCount ? graph.levelCount - 1 : 0);
@@ -489,6 +498,21 @@
         outgoingTotals.set(l.source.index, (outgoingTotals.get(l.source.index) || 0) + l.value);
       });
 
+      const colorTotalsByLevel = new Map();
+      graph.links.forEach(l => {
+        const targetNode = graph.nodes[l.target.index];
+        if (!targetNode) return;
+        const targetLevel = typeof targetNode.level === 'number' ? targetNode.level : null;
+        if (targetLevel === null) return;
+        const colorKey = l.color || (graph.nodes[l.target.index] && graph.nodes[l.target.index].color) || (graph.nodes[l.source.index] && graph.nodes[l.source.index].color);
+        if (!colorKey) return;
+        if (!colorTotalsByLevel.has(targetLevel)) {
+          colorTotalsByLevel.set(targetLevel, new Map());
+        }
+        const levelMap = colorTotalsByLevel.get(targetLevel);
+        levelMap.set(colorKey, (levelMap.get(colorKey) || 0) + l.value);
+      });
+
       const totalFlow = d3.sum(graph.links, l => l.value) || 0;
       graph.nodes.forEach(n => {
         const nodeFlow = Math.max(
@@ -498,6 +522,17 @@
         );
         const share = totalFlow ? (nodeFlow / totalFlow) : null;
         n.rca = Number.isFinite(share) ? share : null;
+
+        const isFinal = graph.levelCount ? n.level === graph.levelCount - 1 : false;
+        if (isFinal && n.color) {
+          const currentMap = colorTotalsByLevel.get(n.level);
+          const prevMap = colorTotalsByLevel.get(n.level - 1);
+          const currentTotal = currentMap ? (currentMap.get(n.color) || 0) : 0;
+          const prevTotal = prevMap ? (prevMap.get(n.color) || 0) : 0;
+          n.growth = prevTotal > 0 ? (currentTotal - prevTotal) / prevTotal : null;
+        } else {
+          n.growth = null;
+        }
       });
 
       const linkSelection = svg.append('g')
@@ -587,7 +622,7 @@
       nodeSelection.append('rect')
         .attr('height', d => d.y1 - d.y0)
         .attr('width', sankey.nodeWidth())
-        .attr('fill', d => d.color || '#b3b3b3')
+        .attr('fill', d => (d.level === midLevel ? '#ffffff' : (d.color || '#b3b3b3')))
         .attr('stroke', '#999');
 
       nodeSelection.append('text')
@@ -607,9 +642,13 @@
           tooltip.transition().duration(200).style('opacity', 0.95);
           const columnText = graph.levelCount ? `Column: ${Math.min(d.level + 1, graph.levelCount)} / ${graph.levelCount}` : '';
           const rcaText = Number.isFinite(d.rca) ? `<br/>RCA: ${d.rca.toFixed(3)}` : '';
+          const isFinal = graph.levelCount ? d.level === graph.levelCount - 1 : false;
+          const growthText = isFinal && Number.isFinite(d.growth)
+            ? `<br/>Growth: ${(d.growth * 100).toFixed(1)}%`
+            : '';
           const nodeTooltip = columnText
-            ? `Name: ${d.name}<br/>Total: ${d.value}${rcaText}<br/>`
-            : `Name: ${d.name}<br/>Total: ${d.value}${rcaText}`;
+            ? `Name: ${d.name}<br/>Total: ${d.value}${rcaText}${growthText}<br/>`
+            : `Name: ${d.name}<br/>Total: ${d.value}${rcaText}${growthText}`;
           tooltip.html(nodeTooltip);
           positionTooltip(d3.event);
 
@@ -831,6 +870,9 @@
         cleanData.forEach(d => {
           if (d.color && !nodeColorMap.has(d.from)) {
             nodeColorMap.set(d.from, d.color);
+          }
+          if (d.color && !nodeColorMap.has(d.to)) {
+            nodeColorMap.set(d.to, d.color);
           }
         });
 
