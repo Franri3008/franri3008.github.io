@@ -488,9 +488,35 @@
         return lower.includes('other') || lower.includes('rest');
       };
 
+      const maxLevel = levels.size
+        ? Math.max(...Array.from(levels.values()))
+        : 0;
+
+      const priorityOrder = ['computer', 'natural', 'reinforcement', 'explainable', 'science', 'ethics'];
+      const priorityIndex = name => {
+        const lower = (name || '').toLowerCase();
+        const idx = priorityOrder.findIndex(key => lower.includes(key));
+        if (idx !== -1) return idx;
+        if (isMisc(name)) return priorityOrder.length + 1;
+        return priorityOrder.length;
+      };
+
       const sortedNames = Array.from(nodeNames).sort((a, b) => {
-        const levelDiff = (levels.get(a) || 0) - (levels.get(b) || 0);
+        const levelA = levels.get(a) || 0;
+        const levelB = levels.get(b) || 0;
+        const levelDiff = levelA - levelB;
         if (levelDiff !== 0) return levelDiff;
+
+        const isEdgeLevel = levelA === 0 || levelA === maxLevel;
+        if (isEdgeLevel) {
+          const aMisc = isMisc(a);
+          const bMisc = isMisc(b);
+          if (aMisc !== bMisc) return aMisc ? 1 : -1;
+          const pa = priorityIndex(a);
+          const pb = priorityIndex(b);
+          if (pa !== pb) return pa - pb;
+        }
+
         const aMisc = isMisc(a);
         const bMisc = isMisc(b);
         if (aMisc !== bMisc) return aMisc ? 1 : -1;
@@ -538,11 +564,28 @@
       const graph = buildGraph(cleanData);
       const midLevel = graph.levelCount ? Math.floor(graph.levelCount / 2) : 0;
 
+      const priorityOrderSort = ['computer', 'natural', 'reinforcement', 'explainable', 'science', 'ethics'];
+      const priorityIndexSort = name => {
+        const lower = (name || '').toLowerCase();
+        const idx = priorityOrderSort.findIndex(k => lower.includes(k));
+        if (idx !== -1) return idx;
+        if (lower.includes('other') || lower.includes('rest')) return priorityOrderSort.length + 1;
+        return priorityOrderSort.length;
+      };
+
       sankey.nodeAlign((node, columns) => {
         const maxColumns = Number.isFinite(columns) ? columns : (graph.levelCount ? graph.levelCount - 1 : 0);
         const maxLevel = graph.levelCount ? Math.min(graph.levelCount - 1, maxColumns) : maxColumns;
         const nodeLevel = typeof node.level === 'number' ? node.level : 0;
         return Math.max(0, Math.min(nodeLevel, maxLevel));
+      });
+
+      sankey.nodeSort((a, b) => {
+        if (!a || !b) return 0;
+        if (a.level !== b.level) return 0;
+        const isEdge = (a.level === 0) || (graph.levelCount && a.level === graph.levelCount - 1);
+        if (!isEdge) return 0;
+        return priorityIndexSort(a.name) - priorityIndexSort(b.name);
       });
 
       sankey(graph);
@@ -671,6 +714,18 @@
         });
       }
 
+      function bringLinksToFront(linkIds) {
+        if (!linkIds || !linkSelection) return;
+        const ids = Array.isArray(linkIds) ? new Set(linkIds.map(id => (typeof id === 'object' && id.id) ? id.id : id)) : new Set(linkIds);
+        linkSelection
+          .filter(ld => ids.has(ld.id))
+          .each(function () {
+            if (this.parentNode) {
+              this.parentNode.appendChild(this);
+            }
+          });
+      }
+
       nodeSelection.append('rect')
         .attr('height', d => d.y1 - d.y0)
         .attr('width', sankey.nodeWidth())
@@ -704,9 +759,15 @@
           const growthText = (isFinal || isMiddle) && Number.isFinite(d.growth)
             ? `<br/>Growth: ${(d.growth * 100).toFixed(1)}%`
             : '';
+          const incomingTotal = incomingTotals.get(d.index) || 0;
+          const outgoingTotal = outgoingTotals.get(d.index) || 0;
+          const totalText = isMiddle
+            ? `2024 Total: ${incomingTotal}<br/>2025 Total: ${outgoingTotal}`
+            : `Total: ${d.value}`;
+
           const nodeTooltip = columnText
-            ? `Name: ${d.name}<br/>Total: ${d.value}${growthText}<br/>`
-            : `Name: ${d.name}<br/>Total: ${d.value}${growthText}`;
+            ? `Name: ${d.name}<br/>${totalText}${growthText}<br/>`
+            : `Name: ${d.name}<br/>${totalText}${growthText}`;
           tooltip.html(nodeTooltip);
           positionTooltip(d3.event);
           d3.select(this).select('text').attr('x', nd => getLabelX(nd, true));
@@ -720,6 +781,7 @@
             connectedNodes.add(l.target.index);
           });
           showLinkLabels(connectedLinks);
+          bringLinksToFront(connectedLinkIds);
 
           nodeSelection.classed('dimmedNode', true).classed('hoveredNode', false);
           linkSelection.classed('dimmedLink', true).classed('hoveredLink', false);
@@ -764,6 +826,7 @@
           const connectedNodes = new Set([d.source.index, d.target.index]);
           setHoveredLinks([d]);
           showLinkLabels([d]);
+          bringLinksToFront([d.id]);
           nodeSelection.classed('dimmedNode', true).classed('hoveredNode', false);
           linkSelection.classed('dimmedLink', true).classed('hoveredLink', false);
 
