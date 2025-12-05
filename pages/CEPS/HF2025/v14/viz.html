@@ -424,6 +424,7 @@
             sourceName: d.from,
             targetName: d.to,
             value: 0,
+            growth: null,
             color: null
           };
           linkKeyMap.set(key, link);
@@ -431,6 +432,9 @@
         link.value += d.value;
         if (d.color && !link.color) {
           link.color = d.color;
+        }
+        if (Number.isFinite(d.growth) && link.growth === null) {
+          link.growth = d.growth;
         }
       });
 
@@ -543,6 +547,7 @@
           source: nodeIndexMap.get(link.sourceName),
           target: nodeIndexMap.get(link.targetName),
           value: link.value,
+          growth: link.growth,
           color: ((levels.get(link.sourceName) || 0) >= midLevel
             ? (link.color || nodeColorMap.get(link.targetName) || nodeColorMap.get(link.sourceName) || '#999')
             : (link.color || nodeColorMap.get(link.sourceName) || '#999'))
@@ -820,7 +825,8 @@
           const targetTotal = incomingTotals.get(d.target.index) || graph.nodes[d.target.index].value || 0;
           const targetShare = targetTotal ? (d.value / targetTotal) * 100 : null;
           const shareText = targetShare !== null ? `<br/>Share: ${targetShare.toFixed(1)}%` : '';
-          tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}${shareText}`);
+          const growthText = Number.isFinite(d.growth) ? `<br/>Growth: ${(d.growth * 100).toFixed(1)}%` : '';
+          tooltip.html(`Source: ${sourceName}<br/>Target: ${targetName}<br/>Value: ${d.value}${shareText}${growthText}`);
           positionTooltip(d3.event);
 
           const connectedNodes = new Set([d.source.index, d.target.index]);
@@ -997,7 +1003,8 @@
             const to = row.to ? row.to.trim() : null;
             const color = row.color ? row.color.trim() : null;
             const value = row.count ? +row.count : NaN;
-            return { from, to, color, value };
+            const growth = row.growth ? +row.growth : NaN;
+            return { from, to, color, value, growth };
           })
           .filter(d => d.from && d.to && Number.isFinite(d.value));
 
