@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>test</title>
+<style>
+html,body{margin:0; height:100%;}
+#scatter-container{width:100vw; height:100vh; overflow:hidden; position:relative;}
+#tooltip{position:fixed; padding:6px 8px; background:rgba(0,0,0,0.75); color:#fff; font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; font-size:12px; border-radius:4px; pointer-events:none; opacity:0; transform:translate(8px,8px); transition:opacity 0.08s linear; white-space:nowrap;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/three@0.106.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/scatter-gl@0.0.1/lib/scatter-gl.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+<div id="scatter-container"></div>
+<div id="tooltip"></div>
+<script>
+(function(){
+var scatterDiv=document.getElementById('scatter-container');
+var tooltip=document.getElementById('tooltip');
+var mouseX=0;
+var mouseY=0;
+scatterDiv.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;});
+fetch('data.csv').then(function(r){return r.text();}).then(function(text){
+var parsed=Papa.parse(text,{header:true,skipEmptyLines:true});
+var points=[];
+var labels=[];
+var colors=[];
+var defaultColor='#4a90e2';
+for (var i=0; i<parsed.data.length; i++){
+var row=parsed.data[i];
+var txt=row.text!==undefined?String(row.text):'';
+var x=parseFloat(row.u0);
+var y=parseFloat(row.u1);
+var z=parseFloat(row.u2);
+var color=row.color!==undefined?String(row.color):defaultColor;
+if (isFinite(x)&&isFinite(y)&&isFinite(z)){
+points.push([x,y,z]);
+labels.push(txt);
+colors.push(color);
+}
+}
+var dataset=new ScatterGL.Dataset(points);
+var scatterGL=new ScatterGL(scatterDiv,{
+    selectEnabled:true,
+    rotateOnStart:true,
+    orbitControls:{
+        autoRotateSpeed:1.2,
+        zoomSpeed:1.0,
+        mouseRotateSpeed:1.0
+    },
+    pointColorer:function(index){return colors[index]||defaultColor;},
+    onHover:function(ix){
+        if (ix===null||ix===undefined){tooltip.style.opacity=0;return;}
+        var name=labels[ix]!==undefined?labels[ix]:'';
+        if (!name){tooltip.style.opacity=0;return;}
+
+        tooltip.textContent=name;
+        tooltip.style.opacity=1;
+
+        tooltip.style.whiteSpace='nowrap';
+        tooltip.style.wordBreak='normal';
+        tooltip.style.maxWidth='none';
+
+        var margin=8;
+        var left=mouseX+12;
+        var top=mouseY+12;
+        tooltip.style.left=left+'px';
+        tooltip.style.top=top+'px';
+
+        var rect=tooltip.getBoundingClientRect();
+
+        if (rect.right>window.innerWidth-margin){
+            var available=window.innerWidth-margin-left;
+            if (available<120){
+                available=Math.max(120,window.innerWidth-margin*2);
+                left=Math.min(left,window.innerWidth-margin-available);
+                tooltip.style.left=left+'px';
+            }
+            tooltip.style.maxWidth=available+'px';
+            tooltip.style.whiteSpace='normal';
+            tooltip.style.wordBreak='break-word';
+            rect=tooltip.getBoundingClientRect();
+        }
+
+        if (rect.bottom>window.innerHeight-margin){
+            var newTop=window.innerHeight-margin-rect.height;
+            if (newTop<margin){newTop=margin;}
+            tooltip.style.top=newTop+'px';
+        }
+    }
+});
+scatterGL.render(dataset);
+scatterGL.startOrbitAnimation();
+var idleTimer=null;
+function scheduleAutoRotate(){
+    if(idleTimer){clearTimeout(idleTimer);} 
+    idleTimer=setTimeout(function(){scatterGL.startOrbitAnimation();},3000);
+}
+['mousedown','mouseup','wheel','touchstart','touchend','mousemove','keydown'].forEach(function(evt){
+    window.addEventListener(evt,scheduleAutoRotate,{passive:true});
+});
+function onResize(){scatterGL.resize();}
+window.addEventListener('resize',onResize);
+}).catch(function(err){console.error(err);});
+})();
+</script>
+</body>
+</html>
