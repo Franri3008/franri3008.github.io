@@ -239,7 +239,7 @@
 
     .x-axis text,
     .y-axis text {
-      font-size: 11px;
+      font-size: 14px;
       fill: #475569;
     }
 
@@ -465,6 +465,9 @@
       }
 
       const yearLabelFontSize = Math.max(14, Math.min(32, Math.min(innerHeight * 0.045, innerWidth * 0.025)));
+      const yearAxisFontSize = isSmallWindow
+        ? 12
+        : Math.max(16, Math.min(26, innerWidth * 0.03));
 
       const svg = d3.select(vizContainer)
         .append('svg')
@@ -676,6 +679,7 @@
           .attr('x', d => d.x)
           .attr('y', labelY)
           .attr('text-anchor', 'middle')
+          .style('font-size', `${yearAxisFontSize}px`)
           .text(d => d.year);
       }
 
