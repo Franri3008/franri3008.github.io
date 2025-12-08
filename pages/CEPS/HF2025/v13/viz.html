@@ -370,7 +370,8 @@
       { model: 'BLOOM', release_date: '2022-07-06', logo: 'bloom.jpg' },
       { model: 'LLaMA 2', release_date: '2023-07-28', logo: 'meta.jpg' },
       { model: 'Qwen2', release_date: '2024-06-07', logo: 'qwen.png' },
-      { model: 'DeepSeek-R1', release_date: '2025-01-20', logo: 'deepseek.png' }
+      { model: 'DeepSeek-R1', release_date: '2025-01-20', logo: 'deepseek.png' },
+      { model: 'Kimi K2-Thinking', release_date: '2025-07-11', logo: 'kimi.png '}
     ];
 
     const DATA_PATH = 'daily_models.csv';
@@ -808,6 +809,7 @@
         const annotationXOffset = Math.max(6, Math.min(12, innerWidth * 0.015));
         const annotationLineOffset = isSmallWindow ? 4 : 8;
         const annotationSubtitleOffset = isSmallWindow ? 18 : 28;
+        const keyMomentRightPadding = isSmallWindow ? Math.max(12, Math.min(30, innerWidth * 0.05)) : 0;
 
         KEY_MOMENTS.forEach(moment => {
           const mDate = parseDate(moment.date);
@@ -831,8 +833,11 @@
             .attr('stroke-dasharray', '2 2')
             .attr('opacity', 0.7);
 
+          const annotationXBase = xPos - annotationXOffset;
+          const cappedAnnotationX = Math.min(annotationXBase, innerWidth - keyMomentRightPadding);
+
           const annotation = momentsGroup.append('g')
-            .attr('transform', `translate(${xPos - annotationXOffset}, ${yPos - annotationYOffset})`);
+            .attr('transform', `translate(${cappedAnnotationX}, ${yPos - annotationYOffset})`);
 
           const dateText = annotation.append('text')
             .attr('x', 0)
