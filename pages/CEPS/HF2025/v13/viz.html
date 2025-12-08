@@ -53,7 +53,7 @@
       overflow: hidden;
       height: 100vh;
       font-family: "Inter", "Segoe UI", Arial, sans-serif;
-      background: #f4f6fb;
+      background: #ffffff;
       color: #1f2933;
     }
 
@@ -287,7 +287,25 @@
     }
 
     .y-axis-label {
+      font-size: 18px;
+      fill: #475569;
+    }
+
+    .year-axis-label {
       font-size: 12px;
+      font-weight: 600;
+      fill: #0f172a;
+    }
+
+    .custom-title .title-text {
+      font-size: clamp(18px, 3vh, 30px);
+      font-weight: 700;
+      fill: #0f172a;
+    }
+
+    .custom-title .subtitle-text {
+      font-size: clamp(12px, 2vh, 18px);
+      font-weight: 500;
       fill: #475569;
     }
 
@@ -326,6 +344,10 @@
         <a href="https://huggingface.co" target="_blank" rel="noopener">
           HuggingFace
         </a>
+        &
+        <a href="https://aiworld.eu" target="_blank" rel="noopener">
+          AI World
+        </a>
       </div>
     </div>
     <div id="container4" class="container logo-container">
@@ -353,7 +375,7 @@
 
     const DATA_PATH = 'daily_models.csv';
     const VIZ_CONTAINER_ID = 'viz';
-    const COLOR_PALETTE = ['#f33221', '#ffaa0c', '#11b462', '#5e7fac'];
+    const COLOR_PALETTE = ['#5BB5C1', '#4A94C3', '#3355CB', '#6654DB'];
     const layoutMediaQuery = (typeof window !== 'undefined' && typeof window.matchMedia === 'function')
       ? window.matchMedia('(max-height: 500px)')
       : { matches: false };
@@ -374,6 +396,7 @@
     let preparedRows = [];
     let stackKeys = [];
     let colorScale = null;
+    let showCustomTitle = false;
 
     function hideTooltip() {
       tooltipElement.style.opacity = 0;
@@ -427,7 +450,12 @@
       vizContainer.innerHTML = '';
 
       const isSmallWindow = height < 500 || width < 600;
-      const margin = { top: 20, right: 32, bottom: isSmallWindow ? 10 : 45, left: 90 };
+      const margin = {
+        top: 20,
+        right: 32,
+        bottom: isSmallWindow ? 30 : 55,
+        left: isSmallWindow ? 60 : 90
+      };
       const innerWidth = Math.max(0, width - margin.left - margin.right);
       const innerHeight = Math.max(0, height - margin.top - margin.bottom);
 
@@ -445,6 +473,30 @@
 
       const chartGroup = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
+
+      if (showCustomTitle) {
+        const titleOffsetX = Math.max(0, Math.min(24, innerWidth * 0.02));
+        const titleOffsetY = Math.max(12, Math.min(36, innerHeight * 0.05));
+        const subtitleSpacing = isSmallWindow ? 16 : 22;
+
+        const titleGroup = chartGroup.append('g')
+          .attr('class', 'custom-title')
+          .attr('transform', `translate(${titleOffsetX}, ${titleOffsetY})`);
+
+        titleGroup.append('text')
+          .attr('class', 'title-text')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('text-anchor', 'start')
+          .text('HF Models Increase Over the Years');
+
+        titleGroup.append('text')
+          .attr('class', 'subtitle-text')
+          .attr('x', 0)
+          .attr('y', subtitleSpacing)
+          .attr('text-anchor', 'start')
+          .text('I do not know what to write here');
+      }
 
       const x = d3.scaleUtc()
         .domain(d3.extent(data, d => d.date))
@@ -552,6 +604,8 @@
           .curve(d3.curveMonotoneX)
         );
 
+      let yearAxisLabelData = [];
+
       if (VERTICAL_YEAR_COLORING !== 1) {
         const labelX = innerWidth - 10;
         const labelData = stackedSeries.map(series => {
@@ -581,49 +635,67 @@
         const minDate = data[0].date;
         const maxDate = data[data.length - 1].date;
 
-        stackKeys.forEach(year => {
+        yearAxisLabelData = stackKeys.map(year => {
           const yearStart = new Date(Date.UTC(parseInt(year), 0, 1));
           const yearEnd = new Date(Date.UTC(parseInt(year) + 1, 0, 1));
 
           let start = yearStart < minDate ? minDate : yearStart;
           let end = yearEnd > maxDate ? maxDate : yearEnd;
 
-          if (start < end) {
-            chartGroup.append('text')
-              .attr('class', 'area-label')
-              .attr('x', x(end) - 10)
-              .attr('y', innerHeight - 10)
-              .attr('text-anchor', 'end')
-              .style('font-size', `${yearLabelFontSize}px`)
-              .text(year);
+          if (start >= end) {
+            return null;
           }
-        });
+          const midTime = start.getTime() + (end.getTime() - start.getTime()) / 2;
+          return {
+            year,
+            x: x(new Date(midTime))
+          };
+        }).filter(Boolean);
       }
 
+      const xAxisTickCount = (VERTICAL_YEAR_COLORING === 1 || isSmallWindow)
+        ? 0
+        : Math.min(10, Math.floor(innerWidth / 90));
       const xAxis = d3.axisBottom(x)
-        .ticks(isSmallWindow ? 0 : Math.min(10, Math.floor(innerWidth / 90)))
-        .tickFormat(VERTICAL_YEAR_COLORING === 1 ? d3.utcFormat('%b') : formatAxisDate);
+        .ticks(xAxisTickCount)
+        .tickFormat(VERTICAL_YEAR_COLORING === 1 ? (() => '') : formatAxisDate);
 
       chartGroup.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0,${innerHeight})`)
         .call(xAxis);
 
+      if (yearAxisLabelData.length) {
+        const labelY = innerHeight + (isSmallWindow ? 18 : 30);
+        const yearLabelsGroup = chartGroup.append('g')
+          .attr('class', 'year-axis-labels');
+        yearLabelsGroup.selectAll('text')
+          .data(yearAxisLabelData)
+          .join('text')
+          .attr('class', 'year-axis-label')
+          .attr('x', d => d.x)
+          .attr('y', labelY)
+          .attr('text-anchor', 'middle')
+          .text(d => d.year);
+      }
+
       const yAxis = d3.axisLeft(y)
-        .ticks(Math.min(8, Math.floor(innerHeight / 70)))
+        .ticks(Math.min(5, Math.floor(innerHeight / 90)))
         .tickFormat(value => shortFormatter(value));
 
       chartGroup.append('g')
         .attr('class', 'y-axis')
         .call(yAxis);
 
-      chartGroup.append('text')
-        .attr('class', 'y-axis-label')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', -innerHeight / 2)
-        .attr('y', -margin.left + 24)
-        .attr('text-anchor', 'middle')
-        .text('Models (cumulative)');
+      if (!isSmallWindow) {
+        chartGroup.append('text')
+          .attr('class', 'y-axis-label')
+          .attr('transform', 'rotate(-90)')
+          .attr('x', -innerHeight / 2)
+          .attr('y', -margin.left + 24)
+          .attr('text-anchor', 'middle')
+          .text('Models');
+      }
 
       const focusLine = chartGroup.append('line')
         .attr('class', 'focus-line')
@@ -680,6 +752,12 @@
             .attr('cy', logoSize / 2)
             .attr('r', logoSize / 2);
 
+          modelGroup.append('circle')
+            .attr('cx', 0)
+            .attr('cy', 0)
+            .attr('r', logoSize / 2)
+            .attr('fill', '#ffffff');
+
           modelGroup.append('image')
             .attr('href', modelInfo.logo)
             .attr('x', 0)
@@ -698,14 +776,16 @@
             .attr('stroke', '#0f172a')
             .attr('stroke-width', 2);
 
-          modelGroup.append('text')
-            .attr('x', -logoSize / 2 - 8)
-            .attr('y', 4)
-            .attr('text-anchor', 'end')
-            .style('font-size', `${modelNameFontSize}px`)
-            .attr('font-weight', '600')
-            .attr('fill', '#0f172a')
-            .text(modelInfo.model);
+          if (!isSmallWindow) {
+            modelGroup.append('text')
+              .attr('x', -logoSize / 2 - 8)
+              .attr('y', 4)
+              .attr('text-anchor', 'end')
+              .style('font-size', `${modelNameFontSize}px`)
+              .attr('font-weight', '600')
+              .attr('fill', '#0f172a')
+              .text(modelInfo.model);
+          }
 
           modelsGroup.append('circle')
             .attr('cx', xPos)
@@ -720,6 +800,10 @@
       if (KEY_MOMENTS && KEY_MOMENTS.length) {
         const momentsGroup = chartGroup.append('g').attr('class', 'key-moments');
         const momentDateFormatter = d3.utcFormat('%b %d, %Y');
+        const annotationYOffset = Math.max(20, Math.min(50, innerHeight * 0.08));
+        const annotationXOffset = Math.max(6, Math.min(12, innerWidth * 0.015));
+        const annotationLineOffset = isSmallWindow ? 4 : 8;
+        const annotationSubtitleOffset = isSmallWindow ? 18 : 28;
 
         KEY_MOMENTS.forEach(moment => {
           const mDate = parseDate(moment.date);
@@ -731,11 +815,12 @@
 
           const xPos = x(mDate);
           const yPos = y(d.number);
+          const connectedLineTop = Math.max(0, yPos - annotationYOffset + annotationLineOffset);
 
           momentsGroup.append('line')
             .attr('x1', xPos)
             .attr('x2', xPos)
-            .attr('y1', yPos)
+            .attr('y1', connectedLineTop)
             .attr('y2', innerHeight)
             .attr('stroke', '#0f172a')
             .attr('stroke-width', 1)
@@ -743,7 +828,7 @@
             .attr('opacity', 0.7);
 
           const annotation = momentsGroup.append('g')
-            .attr('transform', `translate(${xPos - 12}, ${yPos - 60})`);
+            .attr('transform', `translate(${xPos - annotationXOffset}, ${yPos - annotationYOffset})`);
 
           const dateText = annotation.append('text')
             .attr('x', 0)
@@ -759,14 +844,14 @@
           annotation.append('line')
             .attr('x1', 0)
             .attr('x2', -textWidth)
-            .attr('y1', 8)
-            .attr('y2', 8)
+            .attr('y1', annotationLineOffset)
+            .attr('y2', annotationLineOffset)
             .attr('stroke', '#0f172a')
             .attr('stroke-width', 2);
 
           annotation.append('text')
             .attr('x', 0)
-            .attr('y', 28)
+            .attr('y', annotationSubtitleOffset)
             .attr('text-anchor', 'end')
             .style('font-size', 'clamp(8px, 2vh, 14px)')
             .attr('fill', '#475569')
@@ -775,7 +860,7 @@
           momentsGroup.append('circle')
             .attr('cx', xPos)
             .attr('cy', yPos)
-            .attr('r', 4)
+            .attr('r', 8)
             .attr('fill', '#0f172a')
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 2);
@@ -783,7 +868,15 @@
       }
 
       if (KEY_MOMENTS && KEY_MOMENTS.length && data.length) {
-        const intervalsGroup = chartGroup.append('g').attr('class', 'moment-intervals');
+        const intervalsGroup = chartGroup.append('g')
+          .attr('class', 'moment-intervals')
+          .attr('data-priority', '-1');
+        intervalsGroup.lower();
+        const labelsGroup = !isSmallWindow ? chartGroup.append('g')
+          .attr('class', 'moment-interval-labels') : null;
+        if (labelsGroup) {
+          labelsGroup.raise();
+        }
 
         const allMoments = [
           { date: data[0].date, isStart: true },
@@ -834,19 +927,34 @@
             .attr('stroke-width', 1)
             .attr('stroke-dasharray', '4 4');
 
-          intervalsGroup.append('text')
-            .attr('x', midX)
-            .attr('y', midY + 4)
-            .attr('text-anchor', 'middle')
-            .attr('font-size', '11px')
-            .attr('font-weight', '500')
-            .attr('fill', '#475569')
-            .attr('paint-order', 'stroke')
-            .attr('stroke', '#f4f6fb')
-            .attr('stroke-width', 6)
-            .attr('stroke-linecap', 'round')
-            .attr('stroke-linejoin', 'round')
-            .text(`${numberFormatter(days)} days`);
+          if (labelsGroup) {
+            const labelGroup = labelsGroup.append('g')
+              .attr('transform', `translate(${midX}, ${midY + 4})`);
+
+            const labelText = labelGroup.append('text')
+              .attr('x', 0)
+              .attr('y', 0)
+              .attr('text-anchor', 'middle')
+              .attr('font-size', '11px')
+              .attr('font-weight', '500')
+              .attr('fill', '#475569')
+              .text(`${numberFormatter(days)} days`);
+
+            const labelBox = labelText.node().getBBox();
+            const paddingX = 8;
+            const paddingY = 4;
+
+            labelGroup.insert('rect', 'text')
+              .attr('x', labelBox.x - paddingX)
+              .attr('y', labelBox.y - paddingY)
+              .attr('width', labelBox.width + paddingX * 2)
+              .attr('height', labelBox.height + paddingY * 2)
+              .attr('fill', '#ffffff')
+              .attr('stroke', '#d7dce7')
+              .attr('stroke-width', 1.5)
+              .attr('rx', 6)
+              .attr('ry', 6);
+          }
         }
       }
 
@@ -858,7 +966,13 @@
 
       overlay
         .on('mousemove', function (event) {
-          const [mx] = d3.pointer(event, this);
+          const [mx, my] = d3.pointer(event, this);
+          if (mx < 0 || mx > innerWidth || my < 0 || my > innerHeight) {
+            focusLine.style('opacity', 0);
+            focusDot.style('opacity', 0);
+            hideTooltip();
+            return;
+          }
           const hoveredDate = x.invert(mx);
           const index = Math.min(Math.max(bisectDate(data, hoveredDate), 1), data.length - 1);
           const d0 = data[index - 1];
@@ -1056,6 +1170,14 @@
       });
       resizeObserver.observe(vizContainer);
     }
+
+    document.addEventListener('keydown', function (event) {
+      if (!event || typeof event.key !== 'string') return;
+      if (event.key.toLowerCase() === 't') {
+        showCustomTitle = !showCustomTitle;
+        renderVisualizationForContainer();
+      }
+    });
 
     loadData();
   </script>
