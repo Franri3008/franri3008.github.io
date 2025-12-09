@@ -69,7 +69,7 @@
     }
 
     .container {
-      border-radius: 16px;
+      border-radius: 0px;
     }
 
     #container1 {
@@ -77,7 +77,7 @@
       grid-column: 1 / span 2;
       display: flex;
       flex-direction: column;
-      padding: clamp(8px, 2vw, 20px);
+      padding: 0px;
       position: relative;
       overflow: hidden;
     }
@@ -88,7 +88,7 @@
       display: flex;
       align-items: center;
       padding: 0 clamp(12px, 2vw, 20px);
-      overflow: hidden;
+      overflow: visible;
     }
 
     #container4 {
@@ -97,10 +97,10 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: clamp(10px, 1vw, 24px);
       padding: 0 clamp(12px, 2vw, 20px);
-      overflow: hidden;
+      overflow: visible;
     }
 
     .logo-pair {
@@ -108,8 +108,8 @@
       align-items: center;
       justify-content: flex-end;
       gap: clamp(8px, 1vw, 16px);
-      flex-wrap: wrap;
-      flex: 1 1 auto;
+      flex-wrap: nowrap;
+      flex: 0 1 auto;
       min-width: 0;
     }
 
@@ -162,19 +162,21 @@
       border-radius: 6px;
       background: #2756d3;
       color: #ffffff;
-      font-weight: 600;
-      font-size: clamp(6px, 1.3vw, 14px);
-      padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 26px);
+      font-weight: 400;
+      font-size: clamp(18px, 2vw, 26px);
+      padding: 0;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
       transform: translateY(8px);
       transition: opacity 0.4s ease, transform 0.4s ease;
       flex: 0 0 auto;
-      white-space: nowrap;
+      width: clamp(44px, 4vw, 60px);
+      height: clamp(20px, 4vw, 40px);
+      margin-right: clamp(8px, 1vw, 16px);
     }
 
     .restart-button.visible {
@@ -183,10 +185,13 @@
       transform: translateY(0);
     }
 
+    .restart-button::before {
+      content: '↻';
+      line-height: 1;
+    }
+
     .restart-button.skip-mode::before {
       content: '⏭';
-      font-size: 1.1em;
-      line-height: 1;
     }
 
     .loading-state,
@@ -208,7 +213,6 @@
       background: rgba(255, 255, 255, 0.98);
       border-radius: 12px;
       padding: 14px 16px;
-      box-shadow: 0 18px 28px rgba(15, 23, 42, 0.15);
       border: 1px solid rgba(39, 86, 211, 0.15);
       min-width: 220px;
       max-width: 280px;
@@ -338,13 +342,13 @@
     }
 
     .current-pointer-label {
-      font-size: 12px;
+      font-size: clamp(10px, 1.8vh, 18px);
       font-weight: 600;
       fill: #0f172a;
       text-anchor: middle;
       paint-order: stroke;
-      stroke: rgba(255, 255, 255, 0.9);
-      stroke-width: 4px;
+      stroke: #ffffff;
+      stroke-width: 3px;
       stroke-linejoin: round;
     }
 
@@ -360,7 +364,7 @@
     }
 
     .y-axis-label {
-      font-size: 18px;
+      font-size: clamp(12px, 2vh, 24px);
       fill: #475569;
     }
 
@@ -370,14 +374,20 @@
       fill: #0f172a;
     }
 
+    .custom-title {
+      opacity: 0;
+      transition: opacity 0.025s ease;
+      pointer-events: none;
+    }
+
     .custom-title .title-text {
-      font-size: clamp(18px, 3vh, 30px);
+      font-size: clamp(24px, 5vh, 52px);
       font-weight: 700;
       fill: #0f172a;
     }
 
     .custom-title .subtitle-text {
-      font-size: clamp(12px, 2vh, 18px);
+      font-size: clamp(16px, 3vh, 32px);
       font-weight: 500;
       fill: #475569;
     }
@@ -392,8 +402,8 @@
       }
 
       .restart-button {
-        width: 100%;
-        text-align: center;
+        width: 48px;
+        height: 24px;
       }
     }
 
@@ -439,7 +449,7 @@
       </div>
     </div>
     <div id="container4" class="container logo-container">
-      <button id="restart-animation" class="restart-button" type="button">Restart</button>
+      <button id="restart-animation" class="restart-button" type="button"></button>
       <div class="logo-pair">
         <a href="https://huggingface.co/" id="logo-link" target="_blank" rel="noopener">
           <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" class="logo" alt="Hugging Face logo" />
@@ -500,7 +510,34 @@
     let preparedRows = [];
     let stackKeys = [];
     let colorScale = null;
-    let showCustomTitle = false;
+    const getUrlBooleanParam = (param, defaultValue = false) => {
+      if (typeof window === 'undefined' || !window.location) return defaultValue;
+      try {
+        const params = new URLSearchParams(window.location.search || '');
+        if (!params.has(param)) return defaultValue;
+        const value = (params.get(param) || '').trim().toLowerCase();
+        if (!value) return defaultValue;
+        return value === '1' || value === 'true' || value === 'yes' || value === 'on';
+      } catch (error) {
+        console.warn(`Unable to read URL parameter "${param}"`, error);
+        return defaultValue;
+      }
+    };
+    const updateUrlBooleanParam = (param, value) => {
+      if (typeof window === 'undefined' || !window.history || typeof window.history.replaceState !== 'function') return;
+      try {
+        const url = new URL(window.location.href);
+        if (value) {
+          url.searchParams.set(param, '1');
+        } else {
+          url.searchParams.delete(param);
+        }
+        window.history.replaceState({}, '', url);
+      } catch (error) {
+        console.warn(`Unable to update URL parameter "${param}"`, error);
+      }
+    };
+    let showCustomTitle = getUrlBooleanParam('title', false);
     let activeAnimationFrame = null;
     let restartAnimationHandler = null;
     let skipAnimationHandler = null;
@@ -520,8 +557,25 @@
       restartButton.classList.add('visible');
       const isSkip = mode === BUTTON_MODES.SKIP;
       restartButton.classList.toggle('skip-mode', isSkip);
-      restartButton.textContent = isSkip ? 'Skip' : 'Restart';
-      restartButton.title = isSkip ? 'Skip animation' : 'Restart animation';
+      const label = isSkip ? 'Skip animation' : 'Restart animation';
+      restartButton.title = label;
+      restartButton.setAttribute('aria-label', label);
+    }
+
+    function animateTitleVisibility(visible, animate = true) {
+      if (!vizContainer) return false;
+      const titleNode = vizContainer.querySelector('svg .custom-title');
+      if (!titleNode) return false;
+      const selection = d3.select(titleNode);
+      selection.interrupt();
+      if (animate) {
+        selection.transition()
+          .duration(500)
+          .style('opacity', visible ? 1 : 0);
+      } else {
+        selection.style('opacity', visible ? 1 : 0);
+      }
+      return true;
     }
 
     function getMomentLabel(moment) {
@@ -715,29 +769,37 @@
         .attr('class', 'chart-content')
         .attr('clip-path', `url(#${chartClipId})`);
 
-      if (showCustomTitle) {
-        const titleOffsetX = Math.max(0, Math.min(24, innerWidth * 0.02));
-        const titleOffsetY = Math.max(12, Math.min(36, innerHeight * 0.05));
-        const subtitleSpacing = isSmallWindow ? 16 : 22;
+      const titleOffsetX = Math.max(0, Math.min(24, innerWidth * 0.02));
+      const titleOffsetY = Math.max(12, Math.min(36, innerHeight * 0.05));
+      const subtitleSpacing = Math.max(isSmallWindow ? 28 : 40, Math.min(60, innerHeight * 0.08));
 
-        const titleGroup = chartGroup.append('g')
-          .attr('class', 'custom-title')
-          .attr('transform', `translate(${titleOffsetX}, ${titleOffsetY})`);
+      const titleGroup = chartGroup.append('g')
+        .attr('class', 'custom-title')
+        .attr('transform', `translate(${titleOffsetX}, ${titleOffsetY})`)
+        .style('opacity', showCustomTitle ? 1 : 0);
 
-        titleGroup.append('text')
-          .attr('class', 'title-text')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('text-anchor', 'start')
-          .text('HF Models Increase Over the Years');
+      const titleText = titleGroup.append('text')
+        .attr('class', 'title-text')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('text-anchor', 'start');
 
-        titleGroup.append('text')
-          .attr('class', 'subtitle-text')
-          .attr('x', 0)
-          .attr('y', subtitleSpacing)
-          .attr('text-anchor', 'start')
-          .text('I do not know what to write here');
-      }
+      titleText.append('tspan')
+        .attr('x', 0)
+        .attr('dy', 50)
+        .text("Hugging Face's Model");
+
+      titleText.append('tspan')
+        .attr('x', 0)
+        .attr('dy', '1.1em')
+        .text('count increase over');
+
+      titleText.append('tspan')
+        .attr('x', 0)
+        .attr('dy', '1.1em')
+        .text('the years');
+
+
 
       const x = d3.scaleUtc()
         .domain(d3.extent(data, d => d.date))
@@ -846,6 +908,7 @@
         );
 
       let yearAxisLabelData = [];
+      let yearAxisLabels = null;
 
       if (VERTICAL_YEAR_COLORING !== 1) {
         const labelX = innerWidth - 10;
@@ -876,7 +939,7 @@
         const minDate = data[0].date;
         const maxDate = data[data.length - 1].date;
 
-        yearAxisLabelData = stackKeys.map(year => {
+        yearAxisLabelData = stackKeys.map((year, idx) => {
           const yearStart = new Date(Date.UTC(parseInt(year), 0, 1));
           const yearEnd = new Date(Date.UTC(parseInt(year) + 1, 0, 1));
 
@@ -889,7 +952,11 @@
           const midTime = start.getTime() + (end.getTime() - start.getTime()) / 2;
           return {
             year,
-            x: x(new Date(midTime))
+            x: x(new Date(midTime)),
+            startTime: start.getTime(),
+            endTime: end.getTime(),
+            isLastYear: idx === stackKeys.length - 1,
+            revealed: false
           };
         }).filter(Boolean);
       }
@@ -906,18 +973,48 @@
         .attr('transform', `translate(0,${innerHeight})`)
         .call(xAxis);
 
+      const updateYearLabelVisibility = pointerTime => {
+        if (!yearAxisLabels) return;
+        yearAxisLabels.each(function (d) {
+          if (!d) return;
+          const labelSelection = d3.select(this);
+          const withinEnd = d.isLastYear ? pointerTime <= d.endTime : pointerTime < d.endTime;
+          if (!d.revealed && pointerTime >= d.startTime && withinEnd) {
+            d.revealed = true;
+            labelSelection.interrupt()
+              .style('opacity', 0)
+              .transition()
+              .duration(400)
+              .style('opacity', 1);
+          } else if (!d.revealed) {
+            labelSelection.interrupt().style('opacity', 0);
+          }
+        });
+      };
+
+      const resetYearLabelVisibility = () => {
+        if (!yearAxisLabels || !yearAxisLabelData.length) return;
+        yearAxisLabelData.forEach(d => {
+          if (d) {
+            d.revealed = false;
+          }
+        });
+        yearAxisLabels.interrupt().style('opacity', 0);
+      };
+
       if (yearAxisLabelData.length) {
         const labelY = innerHeight + (isSmallWindow ? 18 : 30);
         const yearLabelsGroup = chartGroup.append('g')
           .attr('class', 'year-axis-labels');
-        yearLabelsGroup.selectAll('text')
-          .data(yearAxisLabelData)
+        yearAxisLabels = yearLabelsGroup.selectAll('text')
+          .data(yearAxisLabelData, d => d.year)
           .join('text')
           .attr('class', 'year-axis-label')
           .attr('x', d => d.x)
           .attr('y', labelY)
           .attr('text-anchor', 'middle')
           .style('font-size', `${yearAxisFontSize}px`)
+          .style('opacity', 0)
           .text(d => d.year);
       }
 
@@ -961,6 +1058,12 @@
         .attr('class', 'focus-dot')
         .attr('r', 4.5);
 
+      const bringPointerElementsToFront = () => {
+        pointerGroup.raise();
+        focusLine.raise();
+        focusDot.raise();
+      };
+
       const startDateMs = data[0].date.getTime();
       const endDateMs = data[data.length - 1].date.getTime();
       const dateSpan = Math.max(1, endDateMs - startDateMs);
@@ -1002,6 +1105,7 @@
           .attr('y', labelY)
           .text(numberFormatter(Math.round(pointerValue)));
         pointerGroup.style('opacity', 1);
+        updateYearLabelVisibility(pointerTime);
       };
 
       const revealTargets = [];
@@ -1038,7 +1142,9 @@
       };
 
       if (KEY_MODELS && KEY_MODELS.length) {
-        const keyModelsGroup = chartContent.append('g').attr('class', 'key-models');
+        const keyModelsGroup = chartGroup.append('g')
+          .attr('class', 'key-models')
+          .style('overflow', 'visible');
         const logoSize = Math.max(30, Math.min(50, innerHeight * 0.06));
         const distanceFromLine = Math.max(15, Math.min(30, innerHeight * 0.04));
         const modelNameFontSize = Math.max(10, Math.min(14, innerHeight * 0.02));
@@ -1058,7 +1164,7 @@
           const modelWrapper = keyModelsGroup.append('g')
             .attr('class', 'key-model');
 
-          modelWrapper.append('line')
+          const connectorLine = modelWrapper.append('line')
             .attr('x1', xPos)
             .attr('x2', xPos)
             .attr('y1', logoYPosition + logoSize / 2)
@@ -1068,8 +1174,19 @@
             .attr('stroke-dasharray', '2 2')
             .attr('opacity', 0.5);
 
+          const anchorCircle = modelWrapper.append('circle')
+            .attr('cx', xPos)
+            .attr('cy', yPos)
+            .attr('r', 4)
+            .attr('fill', '#0f172a')
+            .attr('stroke', '#ffffff')
+            .attr('stroke-width', 2);
+
           const modelGroup = modelWrapper.append('g')
             .attr('transform', `translate(${xPos}, ${logoYPosition})`);
+          if (typeof modelGroup.raise === 'function') {
+            modelGroup.raise();
+          }
 
           const clipId = `clip-${modelInfo.model.replace(/\s+/g, '-')}-${Math.floor(Math.random() * 10000)}`;
           defs.append('clipPath')
@@ -1115,20 +1232,21 @@
               .text(modelInfo.model);
           }
 
-          modelWrapper.append('circle')
-            .attr('cx', xPos)
-            .attr('cy', yPos)
-            .attr('r', 4)
-            .attr('fill', '#0f172a')
-            .attr('stroke', '#ffffff')
-            .attr('stroke-width', 2);
+          if (typeof connectorLine.lower === 'function') {
+            connectorLine.lower();
+          }
+          if (typeof anchorCircle.lower === 'function') {
+            anchorCircle.lower();
+          }
 
           registerRevealTarget(modelWrapper, xPos, Math.max(logoSize, distanceFromLine * 2));
         });
       }
 
       if (KEY_MOMENTS && KEY_MOMENTS.length) {
-        const momentsGroup = chartContent.append('g').attr('class', 'key-moments');
+        const momentsGroup = chartGroup.append('g')
+          .attr('class', 'key-moments')
+          .style('overflow', 'visible');
         const annotationYOffsetBase = Math.max(18, Math.min(45, innerHeight * 0.07));
         const annotationLift = Math.max(12, innerHeight * 0.02);
         const annotationYOffset = annotationYOffsetBase + annotationLift;
@@ -1188,7 +1306,10 @@
             .attr('dominant-baseline', 'middle')
             .style('font-size', commentFontSize)
             .attr('font-weight', '700')
-            .attr('fill', '#0f172a');
+            .attr('fill', '#0f172a')
+            .attr('stroke', '#ffffff')
+            .attr('stroke-width', 2)
+            .attr('paint-order', 'stroke');
 
           annotationText.append('tspan')
             .attr('x', 0)
@@ -1220,6 +1341,7 @@
         .attr('width', innerWidth)
         .attr('height', innerHeight)
         .attr('fill', 'transparent');
+      bringPointerElementsToFront();
 
       overlay
         .on('mousemove', function (event) {
@@ -1298,6 +1420,7 @@
         }
         updatePointerPosition(0);
         resetRevealTargets();
+        resetYearLabelVisibility();
         skipAnimationHandler = () => {
           cancelActiveAnimation();
           clipRect.attr('width', innerWidth);
@@ -1471,7 +1594,8 @@
       if (!event || typeof event.key !== 'string') return;
       if (event.key.toLowerCase() === 't') {
         showCustomTitle = !showCustomTitle;
-        renderVisualizationForContainer();
+        animateTitleVisibility(showCustomTitle, true);
+        updateUrlBooleanParam('title', showCustomTitle);
       }
     });
 
