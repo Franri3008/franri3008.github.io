@@ -1147,7 +1147,7 @@
           .style('overflow', 'visible');
         const logoSize = Math.max(30, Math.min(50, innerHeight * 0.06));
         const distanceFromLine = Math.max(15, Math.min(30, innerHeight * 0.04));
-        const modelNameFontSize = Math.max(10, Math.min(14, innerHeight * 0.02));
+        const modelNameFontSize = Math.max(6, Math.min(12, innerHeight * 0.018));
 
         KEY_MODELS.forEach(modelInfo => {
           const mDate = parseDate(modelInfo.release_date);
@@ -1220,17 +1220,15 @@
             .attr('stroke', '#0f172a')
             .attr('stroke-width', 2);
 
-          if (!isSmallWindow) {
-            modelGroup.append('text')
-              .attr('x', -logoSize / 2 - 8)
-              .attr('y', 4)
-              .attr('text-anchor', 'end')
-              .style('font-size', `${modelNameFontSize}px`)
-              .style('font-style', 'italic')
-              .attr('font-weight', '600')
-              .attr('fill', '#0f172a')
-              .text(modelInfo.model);
-          }
+          modelGroup.append('text')
+            .attr('x', -logoSize / 2 - 8)
+            .attr('y', 4)
+            .attr('text-anchor', 'end')
+            .style('font-size', `${modelNameFontSize}px`)
+            .style('font-style', 'italic')
+            .attr('font-weight', '600')
+            .attr('fill', '#0f172a')
+            .text(modelInfo.model);
 
           if (typeof connectorLine.lower === 'function') {
             connectorLine.lower();
