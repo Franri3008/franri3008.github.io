@@ -159,12 +159,15 @@
 
     .restart-button {
       border: none;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 6px;
+      background: #2756d3;
       color: #ffffff;
       font-weight: 600;
-      font-size: clamp(10px, 1.3vw, 14px);
+      font-size: clamp(6px, 1.3vw, 14px);
       padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 26px);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
@@ -174,15 +177,16 @@
       white-space: nowrap;
     }
 
-    .restart-button:disabled {
-      cursor: not-allowed;
-      opacity: 0.4;
-    }
-
     .restart-button.visible {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
+    }
+
+    .restart-button.skip-mode::before {
+      content: '⏭';
+      font-size: 1.1em;
+      line-height: 1;
     }
 
     .loading-state,
@@ -435,6 +439,7 @@
       </div>
     </div>
     <div id="container4" class="container logo-container">
+      <button id="restart-animation" class="restart-button" type="button">Restart</button>
       <div class="logo-pair">
         <a href="https://huggingface.co/" id="logo-link" target="_blank" rel="noopener">
           <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" class="logo" alt="Hugging Face logo" />
@@ -444,7 +449,6 @@
           <img src="https://aiworld.eu/logo-transparent.svg" class="logo" alt="AI World logo" />
         </a>
       </div>
-      <button id="restart-animation" class="restart-button" type="button">Restart</button>
     </div>
   </div>
 
@@ -453,16 +457,20 @@
     const SHOW_CONTAINER_4 = 1;
     const VERTICAL_YEAR_COLORING = 1;
     const KEY_MOMENTS = [
-      { date: '2024-10-18', subtitle: '1 Million Models Crossed' },
-      { date: '2025-09-18', subtitle: '2 Million Models Crossed' }
+      { date: '2022-12-29', label: '100K' },
+      { date: '2024-03-01', label: '500K' },
+      { date: '2024-10-19', label: '1M' },
+      { date: '2025-09-19', label: '2M' }
     ];
 
     const KEY_MODELS = [
       { model: 'BLOOM', release_date: '2022-07-06', logo: 'bloom.jpg' },
       { model: 'LLaMA 2', release_date: '2023-07-28', logo: 'meta.jpg' },
       { model: 'Qwen2', release_date: '2024-06-07', logo: 'qwen.png' },
+      { model: 'Flux 1.0', release_date: '2024-08-01', logo: 'bfl.png' },
       { model: 'DeepSeek-R1', release_date: '2025-01-20', logo: 'deepseek.png' },
-      { model: 'Kimi K2-Thinking', release_date: '2025-07-11', logo: 'kimi.png '}
+      { model: 'GPT-OSS', release_date: '2025-08-05', logo: 'gpt.jpg'},
+      { model: 'Kimi K2-Thinking', release_date: '2025-11-07', logo: 'kimi.png '}
     ];
 
     const CHART_ANIMATION_DURATION = 14000;
@@ -495,17 +503,58 @@
     let showCustomTitle = false;
     let activeAnimationFrame = null;
     let restartAnimationHandler = null;
+    let skipAnimationHandler = null;
+    const BUTTON_MODES = {
+      SKIP: 'skip',
+      RESTART: 'restart'
+    };
+    let currentButtonMode = BUTTON_MODES.RESTART;
 
     function hideTooltip() {
       tooltipElement.style.opacity = 0;
     }
 
+    function setButtonMode(mode) {
+      if (!restartButton || !mode) return;
+      currentButtonMode = mode;
+      restartButton.classList.add('visible');
+      const isSkip = mode === BUTTON_MODES.SKIP;
+      restartButton.classList.toggle('skip-mode', isSkip);
+      restartButton.textContent = isSkip ? 'Skip' : 'Restart';
+      restartButton.title = isSkip ? 'Skip animation' : 'Restart animation';
+    }
+
+    function getMomentLabel(moment) {
+      if (!moment) return '';
+      if (moment.label) return String(moment.label);
+      const subtitle = (moment.subtitle || '').trim();
+      if (!subtitle) return '';
+      const millionMatch = subtitle.match(/(\d+(?:\.\d+)?)\s*million/i);
+      if (millionMatch) {
+        const value = millionMatch[1].replace(/\.0+$/, '');
+        return `${value}M`;
+      }
+      const kMatch = subtitle.match(/(\d+(?:\.\d+)?)\s*k/i);
+      if (kMatch) {
+        const value = kMatch[1].replace(/\.0+$/, '');
+        return `${value}K`;
+      }
+      const numberMatch = subtitle.match(/(\d+(?:\.\d+)?)/);
+      if (numberMatch) {
+        return numberMatch[1];
+      }
+      return subtitle;
+    }
+
     if (restartButton) {
-      restartButton.disabled = true;
       restartButton.addEventListener('click', () => {
+        if (currentButtonMode === BUTTON_MODES.SKIP) {
+          if (typeof skipAnimationHandler === 'function') {
+            skipAnimationHandler();
+          }
+          return;
+        }
         if (typeof restartAnimationHandler === 'function') {
-          restartButton.disabled = true;
-          restartButton.classList.remove('visible');
           restartAnimationHandler();
         }
       });
@@ -621,10 +670,7 @@
       vizContainer.innerHTML = '';
       cancelActiveAnimation();
       restartAnimationHandler = null;
-      if (restartButton) {
-        restartButton.disabled = true;
-        restartButton.classList.remove('visible');
-      }
+      skipAnimationHandler = null;
 
       const isSmallWindow = height < 500 || width < 600;
       const margin = {
@@ -958,9 +1004,41 @@
         pointerGroup.style('opacity', 1);
       };
 
+      const revealTargets = [];
+      const registerRevealTarget = (selection, xPos, padding = 32) => {
+        const threshold = Math.max(0, Math.min(innerWidth, xPos + padding));
+        revealTargets.push({
+          selection,
+          threshold,
+          visible: false
+        });
+        selection.style('opacity', 0);
+      };
+
+      const resetRevealTargets = () => {
+        revealTargets.forEach(target => {
+          target.visible = false;
+          if (target.selection) {
+            target.selection.interrupt().style('opacity', 0);
+          }
+        });
+      };
+
+      const updateRevealTargets = (progress = 0) => {
+        if (!revealTargets.length) return;
+        const revealWidth = innerWidth * Math.max(0, Math.min(1, progress));
+        revealTargets.forEach(target => {
+          if (!target.visible && revealWidth >= target.threshold && target.selection) {
+            target.visible = true;
+            target.selection.transition()
+              .duration(600)
+              .style('opacity', 1);
+          }
+        });
+      };
+
       if (KEY_MODELS && KEY_MODELS.length) {
-        const modelsLinesGroup = chartContent.append('g').attr('class', 'key-models-lines');
-        const modelsGroup = chartContent.append('g').attr('class', 'key-models');
+        const keyModelsGroup = chartContent.append('g').attr('class', 'key-models');
         const logoSize = Math.max(30, Math.min(50, innerHeight * 0.06));
         const distanceFromLine = Math.max(15, Math.min(30, innerHeight * 0.04));
         const modelNameFontSize = Math.max(10, Math.min(14, innerHeight * 0.02));
@@ -977,7 +1055,10 @@
           const yPos = y(d.number);
           const logoYPosition = yPos - distanceFromLine - logoSize / 2;
 
-          modelsLinesGroup.append('line')
+          const modelWrapper = keyModelsGroup.append('g')
+            .attr('class', 'key-model');
+
+          modelWrapper.append('line')
             .attr('x1', xPos)
             .attr('x2', xPos)
             .attr('y1', logoYPosition + logoSize / 2)
@@ -987,7 +1068,7 @@
             .attr('stroke-dasharray', '2 2')
             .attr('opacity', 0.5);
 
-          const modelGroup = modelsGroup.append('g')
+          const modelGroup = modelWrapper.append('g')
             .attr('transform', `translate(${xPos}, ${logoYPosition})`);
 
           const clipId = `clip-${modelInfo.model.replace(/\s+/g, '-')}-${Math.floor(Math.random() * 10000)}`;
@@ -1028,28 +1109,33 @@
               .attr('y', 4)
               .attr('text-anchor', 'end')
               .style('font-size', `${modelNameFontSize}px`)
+              .style('font-style', 'italic')
               .attr('font-weight', '600')
               .attr('fill', '#0f172a')
               .text(modelInfo.model);
           }
 
-          modelsGroup.append('circle')
+          modelWrapper.append('circle')
             .attr('cx', xPos)
             .attr('cy', yPos)
             .attr('r', 4)
             .attr('fill', '#0f172a')
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 2);
+
+          registerRevealTarget(modelWrapper, xPos, Math.max(logoSize, distanceFromLine * 2));
         });
       }
 
       if (KEY_MOMENTS && KEY_MOMENTS.length) {
         const momentsGroup = chartContent.append('g').attr('class', 'key-moments');
-        const momentDateFormatter = d3.utcFormat('%b %d, %Y');
-        const annotationYOffset = Math.max(20, Math.min(50, innerHeight * 0.08));
-        const annotationXOffset = Math.max(6, Math.min(12, innerWidth * 0.015));
-        const annotationLineOffset = isSmallWindow ? 4 : 8;
-        const annotationSubtitleOffset = isSmallWindow ? 18 : 28;
+        const annotationYOffsetBase = Math.max(18, Math.min(45, innerHeight * 0.07));
+        const annotationLift = Math.max(12, innerHeight * 0.02);
+        const annotationYOffset = annotationYOffsetBase + annotationLift;
+        const annotationXOffset = Math.max(10, Math.min(18, innerWidth * 0.02));
+        const commentFontSize = isSmallWindow ? 'clamp(14px, 2.8vh, 24px)' : 'clamp(16px, 3.5vh, 30px)';
+        const commentSubFontSize = isSmallWindow ? 'clamp(10px, 2.2vh, 16px)' : 'clamp(12px, 2vh, 18px)';
+        const commentLineSpacing = isSmallWindow ? '1.1em' : '1.2em';
         const keyMomentRightPadding = isSmallWindow ? Math.max(12, Math.min(30, innerWidth * 0.05)) : 0;
 
         KEY_MOMENTS.forEach(moment => {
@@ -1062,12 +1148,16 @@
 
           const xPos = x(mDate);
           const yPos = y(d.number);
-          const connectedLineTop = Math.max(0, yPos - annotationYOffset + annotationLineOffset);
+          const milestoneLabel = getMomentLabel(moment).replace(/\s+/g, ' ').trim();
+          if (!milestoneLabel) return;
 
-          momentsGroup.append('line')
+          const momentWrapper = momentsGroup.append('g')
+            .attr('class', 'key-moment');
+
+          momentWrapper.append('line')
             .attr('x1', xPos)
             .attr('x2', xPos)
-            .attr('y1', connectedLineTop)
+            .attr('y1', Math.max(0, yPos - annotationYOffset))
             .attr('y2', innerHeight)
             .attr('stroke', '#0f172a')
             .attr('stroke-width', 1)
@@ -1076,137 +1166,54 @@
 
           const annotationXBase = xPos - annotationXOffset;
           const cappedAnnotationX = Math.min(annotationXBase, innerWidth - keyMomentRightPadding);
+          const labelY = Math.max(0, yPos - annotationYOffset);
 
-          const annotation = momentsGroup.append('g')
-            .attr('transform', `translate(${cappedAnnotationX}, ${yPos - annotationYOffset})`);
+          momentWrapper.append('line')
+            .attr('x1', xPos)
+            .attr('x2', cappedAnnotationX)
+            .attr('y1', labelY)
+            .attr('y2', labelY)
+            .attr('stroke', '#0f172a')
+            .attr('stroke-width', 2)
+            .attr('stroke-dasharray', '2 2')
+            .attr('opacity', 0.8);
 
-          const dateText = annotation.append('text')
+          const annotation = momentWrapper.append('g')
+            .attr('transform', `translate(${cappedAnnotationX}, ${labelY})`);
+
+          const annotationText = annotation.append('text')
             .attr('x', 0)
             .attr('y', 0)
             .attr('text-anchor', 'end')
-            .style('font-size', 'clamp(14px, 2.5vh, 24px)')
+            .attr('dominant-baseline', 'middle')
+            .style('font-size', commentFontSize)
             .attr('font-weight', '700')
-            .attr('fill', '#0f172a')
-            .text(momentDateFormatter(mDate));
+            .attr('fill', '#0f172a');
 
-          const textWidth = dateText.node().getComputedTextLength() || 100;
-
-          annotation.append('line')
-            .attr('x1', 0)
-            .attr('x2', -textWidth)
-            .attr('y1', annotationLineOffset)
-            .attr('y2', annotationLineOffset)
-            .attr('stroke', '#0f172a')
-            .attr('stroke-width', 2);
-
-          annotation.append('text')
+          annotationText.append('tspan')
             .attr('x', 0)
-            .attr('y', annotationSubtitleOffset)
-            .attr('text-anchor', 'end')
-            .style('font-size', 'clamp(8px, 2vh, 14px)')
-            .attr('fill', '#475569')
-            .text(moment.subtitle);
+            .attr('dy', 0)
+            .text(milestoneLabel);
 
-          momentsGroup.append('circle')
+          annotationText.append('tspan')
+            .attr('x', 0)
+            .attr('dy', commentLineSpacing)
+            .style('font-size', commentSubFontSize)
+            .attr('font-weight', '600')
+            .text('Models');
+
+          momentWrapper.append('circle')
             .attr('cx', xPos)
             .attr('cy', yPos)
             .attr('r', 8)
             .attr('fill', '#0f172a')
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 2);
+
+          registerRevealTarget(momentWrapper, xPos, Math.max(24, annotationXOffset * 3));
         });
       }
 
-      if (KEY_MOMENTS && KEY_MOMENTS.length && data.length) {
-        const intervalsGroup = chartContent.append('g')
-          .attr('class', 'moment-intervals')
-          .attr('data-priority', '-1');
-        intervalsGroup.lower();
-        const labelsGroup = !isSmallWindow ? chartContent.append('g')
-          .attr('class', 'moment-interval-labels') : null;
-        if (labelsGroup) {
-          labelsGroup.raise();
-        }
-
-        const allMoments = [
-          { date: data[0].date, isStart: true },
-          ...KEY_MOMENTS.map(m => ({ date: parseDate(m.date), isStart: false }))
-        ].sort((a, b) => a.date - b.date);
-
-        const momentCoords = allMoments.map(m => {
-          const index = bisectDate(data, m.date);
-          const safeIndex = Math.max(0, Math.min(data.length - 1, index));
-          const d = data[safeIndex];
-
-          if (!d) return null;
-          const yPos = y(d.number);
-          return {
-            date: m.date,
-            x: x(m.date),
-            y: yPos
-          };
-        }).filter(Boolean);
-
-        if (momentCoords.length > 0) {
-          const start = momentCoords[0];
-          intervalsGroup.append('line')
-            .attr('x1', start.x)
-            .attr('x2', start.x)
-            .attr('y1', start.y)
-            .attr('y2', innerHeight)
-            .attr('stroke', '#0f172a')
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '2 2')
-            .attr('opacity', 0.4);
-        }
-
-        for (let i = 0; i < momentCoords.length - 1; i++) {
-          const start = momentCoords[i];
-          const end = momentCoords[i + 1];
-
-          const days = Math.round((end.date - start.date) / (1000 * 60 * 60 * 24));
-          const midX = (start.x + end.x) / 2;
-          const midY = (start.y + end.y) / 2;
-
-          intervalsGroup.append('line')
-            .attr('x1', start.x)
-            .attr('x2', end.x)
-            .attr('y1', start.y)
-            .attr('y2', end.y)
-            .attr('stroke', '#475569')
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '4 4');
-
-          if (labelsGroup) {
-            const labelGroup = labelsGroup.append('g')
-              .attr('transform', `translate(${midX}, ${midY + 4})`);
-
-            const labelText = labelGroup.append('text')
-              .attr('x', 0)
-              .attr('y', 0)
-              .attr('text-anchor', 'middle')
-              .attr('font-size', '11px')
-              .attr('font-weight', '500')
-              .attr('fill', '#475569')
-              .text(`${numberFormatter(days)} days`);
-
-            const labelBox = labelText.node().getBBox();
-            const paddingX = 8;
-            const paddingY = 4;
-
-            labelGroup.insert('rect', 'text')
-              .attr('x', labelBox.x - paddingX)
-              .attr('y', labelBox.y - paddingY)
-              .attr('width', labelBox.width + paddingX * 2)
-              .attr('height', labelBox.height + paddingY * 2)
-              .attr('fill', '#ffffff')
-              .attr('stroke', '#d7dce7')
-              .attr('stroke-width', 1.5)
-              .attr('rx', 6)
-              .attr('ry', 6);
-          }
-        }
-      }
 
       const overlay = chartGroup.append('rect')
         .attr('class', 'interaction-overlay')
@@ -1274,32 +1281,39 @@
           hideTooltip();
         });
 
-      const handleAnimationComplete = () => {
+      const completeAnimation = () => {
         updatePointerPosition(1);
+        updateRevealTargets(1);
         pointerGroup.style('opacity', 1);
+        skipAnimationHandler = null;
         if (restartButton) {
-          restartButton.disabled = false;
-          restartButton.classList.add('visible');
+          setButtonMode(BUTTON_MODES.RESTART);
         }
       };
 
       const triggerAnimation = () => {
         pointerGroup.style('opacity', 0);
         if (restartButton) {
-          restartButton.disabled = true;
-          restartButton.classList.remove('visible');
+          setButtonMode(BUTTON_MODES.SKIP);
         }
         updatePointerPosition(0);
+        resetRevealTargets();
+        skipAnimationHandler = () => {
+          cancelActiveAnimation();
+          clipRect.attr('width', innerWidth);
+          completeAnimation();
+        };
         startRevealAnimation({
           clipRect,
           targetWidth: innerWidth,
           onProgress: progress => {
             updatePointerPosition(progress);
+            updateRevealTargets(progress);
             if (progress > 0) {
               pointerGroup.style('opacity', 1);
             }
           },
-          onComplete: handleAnimationComplete
+          onComplete: completeAnimation
         });
       };
 
