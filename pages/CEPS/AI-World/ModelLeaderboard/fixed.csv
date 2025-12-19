@@ -1,30 +1,34 @@
-model;lma;aa;lb;logo
-gemini-2-5-pro;1452;60;71.92;gemini
-claude-sonnet-4-5-20250929-thinking-32k;1449;63;78.26;claude
-claude-opus-4-1-20250805;1439;45;67.77;claude
-claude-sonnet-4-5-20250929;1436;50;70.56;claude
-gpt-5-high;1436;68;79.33;gpt
-o3-2025-04-16;1434;65;;gpt
-glm-4-6;1428;45;71.22;zai
-gpt-5-chat;1424;42;61.04;gpt
-qwen3-max-2025-09-23;1423;55;69.86;qwen
-kimi-k2-thinking;1422;67;71.56;moonshot
-deepseek-v3-2-exp-thinking;1421;57;71.64;deepseek
-grok-4-fast;1420;60;70.1;grok
-kimi-k2-0905-preview;1416;50;63.77;moonshot
-deepseek-v3-1-terminus;1415;46;64.71;deepseek
-deepseek-v3-1-terminus-thinking;1414;58;71.4;deepseek
-deepseek-v3-2-exp;1413;46;66.64;deepseek
-mistral-medium-2508;1411;35;50.29;mistral
-grok-4;1409;65;72.84;grok
-gemini-2-5-flash;1408;54;64.35;gemini
-claude-haiku-4-5-20251001;1402;42;60.42;claude
-gpt-5-mini-high;1392;64;75.31;gpt
-glm-4-5-air;1370;49;60.53;zai
-gpt-oss-120b;1352;61;55.56;gpt
-llama-3-1-nemotron-ultra-253b-v1;1345;38;;meta
-gpt-5-nano-high;1339;51;58.73;gpt
-llama-3-1-405b-instruct-bf16;1335;28;;meta
-llama-4-maverick-17b-128e-instruct;1327;36;;meta
-llama-3-3-nemotron-49b-super-v1;1325;35;;meta
-minimax-m2;;61;64.26;minimax
+model;name;lma;aa;lb;logo
+gemini-3-pro;Gemini 3 Pro;1491;73;74.86;gemini
+grok-4-1-thinking;Grok 4.1 (Thinking);1477;;;grok
+gemini-3-flash;Gemini 3 Flash;1477;71;73.62;gemini
+claude-opus-4-5-thinking;Claude Opus 4.5 (Thinking);1468;70;75.58;claude
+gpt-5-1;GPT-5.1 (Thinking);1458;70;72.52;gpt
+gemini-2-5-pro;Gemini 2.5 Pro;1450;60;62.23;gemini
+claude-sonnet-4-5-thinking;Claude Sonnet 4.5 (Thinking);1449;63;71.83;claude
+claude-opus-4-1;Claude Opus 4.1;1447;45;66.86;claude
+gpt-5-high;GPT-5 (Thinking);1436;68;73.48;gpt
+o3-2025-04-16;o3;1434;65;;gpt
+glm-4-6;GLM 4.6;1428;45;71.22;zai
+qwen3-max-2025-09-23;Qwen 3 Max;1423;55;69.86;qwen
+kimi-k2-thinking;Kimi-K2 (Thinking);1426;67;65.85;moonshot
+deepseek-v3-2-exp-thinking;DeepSeek v3.2 (Thinking);1421;57;71.64;deepseek
+grok-4-1-fast;Grok 4.1 Fast;1433;64;62.73;grok
+deepseek-v3-1-terminus;DeepSeek v3.1 Terminus;1415;46;64.71;deepseek
+deepseek-v3-1-terminus-thinking;DeepSeek v3.1 Terminus (Thinking);1414;58;71.4;deepseek
+deepseek-v3-2-exp;DeepSeek v3.2 (exp);1413;46;66.64;deepseek
+mistral-medium-2508;Mistral;1304;35;50.29;mistral
+magistral-medium;Magistral Medium;1411;52;;mistral
+grok-4;Grok 4;1409;65;72.84;grok
+gemini-2-5-flash;Gemini 2.5 Flash;1408;54;55.95;gemini
+claude-haiku-4-5;Claude Haiku 4.5;1402;42;64.28;claude
+gpt-5-mini;GPT-5 Mini;1392;64;69.33;gpt
+glm-4-5-air;GLM 4.5 Air;1370;49;60.53;zai
+gpt-oss;GPT-OSS;1352;61;51.66;gpt
+nemotron-ultra-v1;Nemotron Ultra v1;1345;38;;nemotron
+gpt-5-nano;GPT-5 Nano;1338;51;54.24;gpt
+llama-3-1-405b-instruct-bf16;Llama 3.1;1335;28;;meta
+llama-4-maverick-17b-128e-instruct;Llama 4 Maverick;1327;36;;meta
+nemotron-super-v1-5;Nemotron Super v1.5;1340;45;;nemotron
+nemotron-3-nano;Nemotron 3 Nano;1326;52;;nemotron
+minimax-m2;MiniMax M2;61;64.26;;minimax

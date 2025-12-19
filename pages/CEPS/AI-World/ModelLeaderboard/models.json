@@ -64,5 +64,11 @@
     "name": "GLM",
     "org": "Z.ai",
     "color": "#000000"
+    },
+    {
+    "id": "nemotron",
+    "name": "Nemotron",
+    "org": "NVIDIA",
+    "color": "#76b900"
     }
 ]
