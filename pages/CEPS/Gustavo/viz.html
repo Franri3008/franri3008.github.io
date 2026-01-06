@@ -65,7 +65,7 @@
       transform: rotate(180deg);
       text-align: center;
       font-weight: 600;
-      font-size: clamp(10px, 1.2vw, 16px);
+      font-size: clamp(6px, 1.2vw, 16px);
       color: #111;
     }
 
@@ -117,7 +117,7 @@
     }
 
     .x-axis text {
-      font-size: clamp(12px, 1.2vw, 18px);
+      font-size: clamp(6px, 1.2vw, 18px);
     }
 
     .grid line {
@@ -228,12 +228,12 @@
   <script>
     const LINE_COLORS = {
       'New': '#207264',
-      'CEPS1': '#f3c74d',
+      'CEPS1': '#6b6b69',
       'CEPS2': '#0c2443',
       'CEPS3': '#b02441'
     };
 
-    const SCATTER_COLOR = '#8c564b';
+    const SCATTER_COLOR = '#f3c74d';
 
     const svg = d3.select("#chart");
     const tooltip = d3.select("#tooltip");
@@ -313,6 +313,35 @@
 
         legendEl.appendChild(item);
       });
+
+      if (scatterPoints.length > 0) {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('role', 'button');
+        item.setAttribute('aria-pressed', 'true');
+        item.dataset.seriesId = 'Repurposed';
+
+        const square = document.createElement('div');
+        square.className = 'legend-square';
+        square.style.backgroundColor = SCATTER_COLOR;
+
+        const label = document.createElement('span');
+        label.textContent = 'Repurposed';
+
+        item.appendChild(square);
+        item.appendChild(label);
+
+        item.addEventListener('click', () => toggleSeries('Repurposed'));
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleSeries('Repurposed');
+          }
+        });
+
+        legendEl.appendChild(item);
+      }
     }
 
     function toggleSeries(seriesId) {
@@ -472,8 +501,13 @@
       const baseDotR = Math.max(3, Math.min(6, Math.round(innerW / 250)));
       const dotR = baseDotR * 1.5;
 
+      const allUniqueYears = Array.from(new Set([
+        ...allYears,
+        ...scatterPoints.map(p => p.year)
+      ])).sort((a, b) => a - b);
+
       const xAxis = d3.axisBottom(xScale)
-        .ticks(Math.max(5, Math.min(20, Math.floor((xDomain[1] - xDomain[0]) / 2))))
+        .tickValues(allUniqueYears)
         .tickFormat(d3.format("d"));
 
       const yAxis = d3.axisLeft(yScale)
@@ -518,10 +552,7 @@
       seriesEnter.append("path")
         .attr("class", "series-line")
         .attr("fill", "none")
-        .attr("stroke-width", 2.5);
-
-      seriesEnter.append("g")
-        .attr("class", "series-dots");
+        .attr("stroke-width", 5);
 
       const seriesMerged = seriesEnter.merge(seriesGroups);
 
@@ -536,48 +567,11 @@
           .attr("stroke", getColor(series.id))
           .attr("d", lineGenerator(series.values));
 
-        // Make CEPS lines dashed
         if (isCEPSLine(series.id)) {
           linePath.attr("stroke-dasharray", "8 4");
         } else {
           linePath.attr("stroke-dasharray", null);
         }
-
-        const dotsSel = group.select("g.series-dots")
-          .selectAll("circle.dot")
-          .data(series.values, d => d.year);
-
-        dotsSel.enter()
-          .append("circle")
-          .attr("class", "dot")
-          .attr("fill", getColor(series.id))
-          .attr("stroke", "#fff")
-          .attr("stroke-width", 1)
-          .merge(dotsSel)
-          .attr("r", dotR)
-          .attr("cx", point => xScale(point.year))
-          .attr("cy", point => yScale(point.value))
-          .on("mouseenter", function (event, point) {
-            d3.select(this)
-              .transition()
-              .duration(120)
-              .attr("r", dotR + 3)
-              .attr("stroke-width", 2);
-            showTooltip(event, { ...point, seriesId: series.id });
-          })
-          .on("mousemove", function (event, point) {
-            moveTooltip(event, { ...point, seriesId: series.id });
-          })
-          .on("mouseleave", function () {
-            d3.select(this)
-              .transition()
-              .duration(120)
-              .attr("r", dotR)
-              .attr("stroke-width", 1);
-            hideTooltip();
-          });
-
-        dotsSel.exit().remove();
       });
 
       seriesGroups.exit().remove();
@@ -587,7 +581,7 @@
         .join("g")
         .attr("class", "scatter-group");
 
-      const isScatterHidden = hiddenSeries.has('scatter');
+      const isScatterHidden = hiddenSeries.has('Repurposed');
       scatterGroup.style("display", isScatterHidden ? "none" : null);
 
       const scatterDots = scatterGroup.selectAll("circle.scatter-dot")
@@ -610,10 +604,10 @@
             .duration(120)
             .attr("r", dotR + 4)
             .attr("stroke-width", 2);
-          showTooltip(event, { ...point, id: "Data Point", seriesId: "Data Point" });
+          showTooltip(event, { ...point, id: "Repurposed", seriesId: "Repurposed" });
         })
         .on("mousemove", function (event, point) {
-          moveTooltip(event, { ...point, id: "Data Point", seriesId: "Data Point" });
+          moveTooltip(event, { ...point, id: "Repurposed", seriesId: "Repurposed" });
         })
         .on("mouseleave", function () {
           d3.select(this)
