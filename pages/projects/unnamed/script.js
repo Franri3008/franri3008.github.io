@@ -1,4 +1,3 @@
-import { joinRoom } from 'https://cdn.skypack.dev/trystero';
 
 const modalOverlay = document.getElementById('modal-overlay');
 const nameInput = document.getElementById('name-input');
@@ -9,75 +8,26 @@ const sendBtn = document.getElementById('send-btn');
 const connectionStatus = document.getElementById('connection-status');
 
 // ==========================================
-// Trystero Configuration (P2P Mesh)
+// CONFIGURATION: Pantry Cloud
 // ==========================================
-// We use a specific namespace ID to group our peers.
-const APP_ID = 'franri_project_unnamed_chat_v1';
-const room = joinRoom({ appId: APP_ID }, 'global_lobby');
+const PANTRY_ID = "c75173ef-42bc-499b-b61e-5b8cc96e842e";
+const BASKET_NAME = "franri_project_chat_data";
+const PANTRY_URL = `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET_NAME}`;
 
-// Actions
-const [sendMessageSignal, getMessageSignal] = room.makeAction('chat');
-const [checkNameSignal, getCheckNameSignal] = room.makeAction('checkName');
-const [nameTakenSignal, getNameTakenSignal] = room.makeAction('nameTaken');
-const [announceNameSignal, getAnnounceNameSignal] = room.makeAction('announceName');
-
-// State
 let currentUser = '';
-let peerNames = {}; // peerId -> name
-const myPeerId = room.selfId;
-
-// Local History Storage
-const STORAGE_KEY = 'chat_messages_v2_p2p';
+let isSending = false;
+let pollingInterval = null;
 
 // ==========================================
-// Init & Listeners
+// INIT
 // ==========================================
 
 function init() {
-    connectionStatus.style.backgroundColor = '#eab308'; // Yellow = Connecting to mesh...
+    connectionStatus.style.backgroundColor = '#eab308'; // Connecting color
 
-    // Trystero Events
-    room.onPeerJoin(peerId => {
-        // When a new peer joins, tell them who we are
-        if (currentUser) {
-            announceNameSignal({ name: currentUser }, peerId);
-        }
-    });
-
-    room.onPeerLeave(peerId => {
-        if (peerNames[peerId]) {
-            // Optional: User left system message
-            // displaySystemMessage(`${peerNames[peerId]} left.`);
-            delete peerNames[peerId];
-        }
-    });
-
-    // Received a Chat Message
-    getMessageSignal((data, peerId) => {
-        const senderName = peerNames[peerId] || data.user || 'Unknown';
-        displayMessage(senderName, data.text, data.timestamp);
-    });
-
-    // Received a Name Announcement (someone joined or introduced themselves)
-    getAnnounceNameSignal((data, peerId) => {
-        peerNames[peerId] = data.name;
-    });
-
-    // Received a Name Check request
-    getCheckNameSignal((data, peerId) => {
-        // Someone is asking if data.name is taken
-        if (currentUser === data.name) {
-            nameTakenSignal({ name: data.name, originalReqId: data.reqId }, peerId);
-        }
-    });
-
-    // Setup UI
     setupEventListeners();
 
-    // Load local history
-    loadMessages();
-
-    // Check session storage
+    // Try to auto-fill name
     const savedName = sessionStorage.getItem('chat_username');
     if (savedName) {
         nameInput.value = savedName;
@@ -85,111 +35,155 @@ function init() {
 
     showModal();
 
-    // Give the mesh a moment to find peers, then turn green? 
-    // Trystero doesn't have a distinct "Connected" event for the whole mesh, 
-    // but we can assume we are ready.
-    setTimeout(() => {
-        connectionStatus.style.backgroundColor = '#22c55e'; // Green
-        connectionStatus.title = "Connected to P2P Swarm";
-        // connectionStatus.classList.add('connected');
-    }, 1000);
+    // Start trying to fetch data to ensure connection works
+    fetchMessages().then(startPolling).catch(err => {
+        console.warn("Initial fetch failed", err);
+        // If bucket doesn't exist yet, we handle it
+    });
 }
 
 // ==========================================
-// P2P Logic
+// CORE LOGIC (Fetch / Join / Send)
 // ==========================================
 
+async function fetchMessages() {
+    try {
+        const response = await fetch(PANTRY_URL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            // If 404, it means the basket doesn't exist yet. That's fine, we'll create it on first message.
+            if (response.status === 404) {
+                return [];
+            }
+            throw new Error(`Pantry error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // We expect structure: { messages: [...] }
+        return data.messages || [];
+    } catch (e) {
+        console.error("Fetch error:", e);
+        return [];
+    }
+}
+
 async function joinChat() {
-    let name = nameInput.value.trim();
+    const name = nameInput.value.trim();
     if (!name) {
         shakeInput();
         return;
     }
 
-    connectionStatus.style.backgroundColor = '#eab308'; // Checking...
+    joinBtn.disabled = true;
+    joinBtn.textContent = 'Checking...';
 
-    const finalName = await findAvailableName(name);
+    // 1. Get current messages to check for name validation
+    const messages = await fetchMessages();
+
+    // 2. Extract all user names sent in history (to avoid confusion/collision)
+    // Note: This matches the user request "If there was already a user with that name".
+    // Since we don't have a "user list", we use the "message history authors" as the list of taken names.
+    const usedNames = new Set(messages.map(m => m.user));
+
+    let finalName = name;
+    let attempt = 1;
+
+    while (usedNames.has(finalName)) {
+        finalName = `${name} (${attempt})`;
+        attempt++;
+    }
 
     currentUser = finalName;
     sessionStorage.setItem('chat_username', currentUser);
 
-    // Broadcast my name to everyone to update their lists
-    announceNameSignal({ name: currentUser });
-
-    connectionStatus.style.backgroundColor = '#22c55e'; // Green
+    joinBtn.textContent = 'Join Chat';
+    joinBtn.disabled = false;
     hideModal();
+
+    // Render what we have immediately
+    renderMessages(messages);
+    connectionStatus.classList.add('connected');
+    connectionStatus.style.backgroundColor = '#22c55e'; // Green
 }
 
-/**
- * Iteratively checks if a name is taken by asking peers.
- * If taken, appends (x) and retries.
- */
-async function findAvailableName(baseName) {
-    let attempt = 0;
-    let currentName = baseName;
-
-    while (true) {
-        if (attempt > 0) {
-            currentName = `${baseName} (${attempt})`;
-        }
-
-        const isTaken = await checkNameInSwarm(currentName);
-        if (!isTaken) {
-            return currentName;
-        }
-        attempt++;
-    }
-}
-
-function checkNameInSwarm(nameToCheck) {
-    return new Promise((resolve) => {
-        let taken = false;
-        const reqId = Date.now() + Math.random();
-
-        // Listen for objections
-        const removeListener = getNameTakenSignal((data, peerId) => {
-            if (data.name === nameToCheck && data.originalReqId === reqId) {
-                taken = true;
-            }
-        });
-
-        // Broadcast Check
-        checkNameSignal({ name: nameToCheck, reqId: reqId });
-
-        // Wait for responses (short timeout since P2P can be fast, but latency varies)
-        // 500ms is usually enough for a LAN/fast WAN check
-        setTimeout(() => {
-            // Clean up listener? Trystero doesn't explicitly remove listeners easily in this API style,
-            // but our logic handles ignores. 
-            // Actually, `getNameTakenSignal` returns a specific listener? No. 
-            // Trystero's makeAction is persistent. We need to handle the one-off logic carefully.
-            // Since we can't unregister easily with the closure implementation above without a wrapper, 
-            // we'll just ignore late messages in the next loop iteration.
-            resolve(taken);
-        }, 600);
-    });
-}
-
-// ==========================================
-// Logic
-// ==========================================
-
-function sendMessage() {
+async function sendMessage() {
     const text = messageInput.value.trim();
-    if (text && currentUser) {
-        const timestamp = Date.now();
+    if (!text || !currentUser || isSending) return;
 
-        // 1. Send to all peers
-        sendMessageSignal({
+    isSending = true;
+    sendBtn.disabled = true;
+
+    try {
+        // 1. Fetch latest state (Concurrency safety attempt)
+        let messages = await fetchMessages();
+
+        // 2. Append new message
+        const newMessage = {
             user: currentUser,
             text: text,
-            timestamp: timestamp
+            timestamp: Date.now()
+        };
+
+        messages.push(newMessage);
+
+        // 3. Write back to Pantry
+        // PUT replaces the entire content of the basket
+        await fetch(PANTRY_URL, {
+            method: 'POST', // POST merges, but since we are sending the whole 'messages' array key, it overwrites that key.
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: messages })
         });
 
-        // 2. Display locally
-        displayMessage(currentUser, text, timestamp);
         messageInput.value = '';
+        renderMessages(messages); // Update UI immediately
+
+    } catch (e) {
+        console.error("Send failed", e);
+        alert("Failed to send message. Please try again.");
+    } finally {
+        isSending = false;
+        sendBtn.disabled = false;
+        messageInput.focus();
     }
+}
+
+// ==========================================
+// POLLING (Simple Sync)
+// ==========================================
+
+function startPolling() {
+    if (pollingInterval) clearInterval(pollingInterval);
+    // Poll every 5 seconds to avoid hitting rate limits too hard but keep it responsive
+    pollingInterval = setInterval(async () => {
+        const messages = await fetchMessages();
+        renderMessages(messages);
+    }, 3000);
+}
+
+// ==========================================
+// UI HELPERS
+// ==========================================
+
+let lastRenderedTime = 0;
+
+function renderMessages(messages) {
+    // Basic diffing: only append new messages based on timestamp
+    // Or just clear and redraw if list is small. 
+    // Optimization: find messages > lastRenderedTime
+
+    const newMessages = messages.filter(m => m.timestamp > lastRenderedTime);
+
+    if (newMessages.length === 0) return;
+
+    newMessages.forEach(m => {
+        displayMessage(m.user, m.text, m.timestamp);
+        lastRenderedTime = m.timestamp;
+    });
 }
 
 function displayMessage(user, text, timestamp) {
@@ -210,33 +204,16 @@ function displayMessage(user, text, timestamp) {
     `;
 
     chatArea.appendChild(msgDiv);
+    // Only scroll if we were near bottom or if it's own message
     scrollToBottom();
-
-    // Save to local history
-    saveMessage(user, text, timestamp);
 }
-
-function saveMessage(user, text, timestamp) {
-    let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    history.push({ user, text, timestamp });
-    if (history.length > 50) history = history.slice(-50);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-}
-
-function loadMessages() {
-    const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    history.forEach(m => displayMessage(m.user, m.text, m.timestamp));
-}
-
-// ==========================================
-// UI Helpers
-// ==========================================
 
 function setupEventListeners() {
     joinBtn.addEventListener('click', joinChat);
     nameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') joinChat();
     });
+
     sendBtn.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
@@ -272,5 +249,4 @@ function escapeHtml(text) {
         .replace(/'/g, "&#039;");
 }
 
-// Start
 init();
