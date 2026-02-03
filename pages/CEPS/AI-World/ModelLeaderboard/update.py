@@ -1,0 +1,546 @@
+import random
+import re
+import requests
+import pandas as pd
+import time
+from datetime import datetime
+from pathlib import Path
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+STRIP_SELECTORS = "svg,img,picture,source,use,i,[aria-hidden='true'],*[hidden],.sr-only,.sr_only,.srOnly,.visually-hidden,[class*='icon'],i[class*='fa-']"
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+]
+
+# ============================================================================
+# UTILITY FUNCTIONS
+# ============================================================================
+def print_step(message, level="INFO"):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    prefix = ">>>" if level == "INFO" else "***"
+    print(f"\n{prefix} [{timestamp}] {message}")
+
+def extract_numeric_score(score_value):
+    """Extract numeric value from score string, handling tags like 'Preliminary'."""
+    if pd.isna(score_value):
+        return None
+    score_str = str(score_value).strip()
+    # Extract first number (int or float) from the string
+    match = re.search(r'-?\d+\.?\d*', score_str)
+    if match:
+        return match.group()
+    return None
+
+def clean_text(tag):
+    clone = BeautifulSoup(str(tag), "html.parser")
+    for el in clone.select(STRIP_SELECTORS):
+        el.decompose()
+    return " ".join(clone.stripped_strings)
+
+def get_chrome_driver(headless=True):
+    opts = Options()
+    if headless:
+        opts.add_argument("--headless=new")
+    opts.add_argument("--disable-gpu")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument(f"user-agent={random.choice(USER_AGENTS)}")
+    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
+
+def extract_table_data(table, skip_first_empty=False):
+    thead = table.find("thead")
+    header_cells = thead.select("tr")[-1].find_all("th") if thead and thead.select("tr") else table.select("tr th")
+    headers = [clean_text(th) for idx, th in enumerate(header_cells) if not (skip_first_empty and idx == 0 and clean_text(th) == "")]
+
+    tbody = table.find("tbody") or table
+    rows = []
+    for tr in tbody.find_all("tr", recursive=False):
+        cells = tr.find_all(["td", "th"], recursive=False)
+        if not cells:
+            continue
+        row = [clean_text(td) for idx, td in enumerate(cells) if not (skip_first_empty and idx == 0 and clean_text(td) == "")]
+        if len(row) != len(headers):
+            row = (row + [""] * len(headers))[:len(headers)]
+        rows.append(row)
+    return pd.DataFrame(rows, columns=headers)
+
+# ============================================================================
+# STEP 1: SCRAPE LEADERBOARDS
+# ============================================================================
+print("=" * 80)
+print_step("STARTING LEADERBOARD UPDATE", "START")
+print("=" * 80)
+
+# Create data directory
+data_dir = Path("data/scraped")
+data_dir.mkdir(parents=True, exist_ok=True)
+print_step(f"Data directory: {data_dir.absolute()}")
+
+# 1. LMArena Text Leaderboard
+print_step("[1/3] Scraping LMArena Text Leaderboard")
+print_step("Fetching page with requests...")
+resp = requests.get("https://lmarena.ai/leaderboard/text", headers={
+    "User-Agent": USER_AGENTS[0], "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "no-cache", "Pragma": "no-cache"
+}, timeout=30)
+resp.raise_for_status()
+print_step("Parsing HTML and extracting table...")
+soup = BeautifulSoup(resp.text, "html.parser")
+table = soup.select_one("table.w-full.caption-bottom.text-sm")
+if not table:
+    raise ValueError("LMArena table not found")
+lma_df = extract_table_data(table)
+print_step(f"Extracted {len(lma_df)} rows, {len(lma_df.columns)} columns")
+lma_file = data_dir / "lmarena_text_leaderboard.csv"
+lma_df.to_csv(lma_file, index=False)
+print_step(f"✓ Saved: {lma_file}", "SUCCESS")
+
+# 2. Artificial Analysis Models Leaderboard
+print_step("[2/3] Scraping Artificial Analysis Models Leaderboard")
+print_step("Launching headless Chrome browser...")
+driver = get_chrome_driver()
+print_step("Loading page and waiting for table to render...")
+driver.get("https://artificialanalysis.ai/leaderboards/models?deprecation=all")
+WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.w-full.caption-bottom.text-sm.rounded")))
+print_step("Parsing rendered HTML...")
+soup = BeautifulSoup(driver.page_source, "html.parser")
+driver.quit()
+table = soup.select_one("table.w-full.caption-bottom.text-sm.rounded")
+if not table:
+    raise RuntimeError("ArtificialAnalysis table not found")
+aa_df = extract_table_data(table, skip_first_empty=True)
+print_step(f"Extracted {len(aa_df)} rows, {len(aa_df.columns)} columns")
+aa_file = data_dir / "aa_models_leaderboard.csv"
+aa_df.to_csv(aa_file, index=False)
+print_step(f"✓ Saved: {aa_file}", "SUCCESS")
+
+# 3. LiveBench Leaderboard
+print_step("[3/3] Scraping LiveBench Leaderboard")
+print_step("Launching headless Chrome browser...")
+driver = get_chrome_driver()
+
+print_step("Loading page and waiting for table to render...")
+driver.get("https://livebench.ai/#/")
+
+# Wait for table with data rows (tbody tr)
+print_step("Waiting for table data to load...")
+WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.main-tabl.table tbody tr")))
+
+# Additional wait for dynamic content
+time.sleep(3)
+
+print_step("Scrolling table to ensure all content is loaded...")
+table_el = driver.find_element(By.CSS_SELECTOR, "table.main-tabl.table")
+driver.execute_script("arguments[0].parentElement.scrollLeft=arguments[0].parentElement.scrollWidth", table_el)
+
+# Get full page source instead of just table element
+print_step("Parsing complex table with rowspan/colspan...")
+soup = BeautifulSoup(driver.page_source, "html.parser")
+table = soup.select_one("table.main-tabl.table")
+
+if not table:
+    raise RuntimeError("LiveBench table not found in page")
+
+soup = BeautifulSoup(str(table), "html.parser")
+thead = soup.find("thead")
+header_rows = thead.find_all("tr") if thead else []
+
+# Build header matrix from rowspan/colspan cells
+grid, spans = [], {}
+for tr in header_rows:
+    row = []
+    for cell in tr.find_all(["th", "td"]):
+        row.append({"text": cell.get_text(strip=True), "colspan": int(cell.get("colspan", 1)), "rowspan": int(cell.get("rowspan", 1))})
+    grid.append(row)
+
+header_matrix = []
+for r_idx in range(len(grid)):
+    row_out, col_idx = [], 0
+    for cell in grid[r_idx]:
+        while (r_idx, col_idx) in spans:
+            row_out.append(spans[(r_idx, col_idx)])
+            col_idx += 1
+        for _ in range(cell["colspan"]):
+            row_out.append(cell["text"])
+        if cell["rowspan"] > 1:
+            for r in range(1, cell["rowspan"]):
+                for i in range(cell["colspan"]):
+                    spans[(r_idx + r, col_idx + i)] = cell["text"]
+        col_idx += cell["colspan"]
+    header_matrix.append(row_out)
+
+max_cols = max(len(r) for r in header_matrix) if header_matrix else 0
+headers = [" | ".join(filter(None, [header_matrix[r][c] if c < len(header_matrix[r]) else "" for r in range(len(header_matrix))])) or f"col_{c+1}" for c in range(max_cols)]
+
+tbody = soup.find("tbody")
+if not tbody:
+    print_step("⚠ Warning: No tbody found in LiveBench table")
+    tbody_rows = []
+else:
+    tbody_rows = tbody.find_all("tr", recursive=False)
+    print_step(f"Found {len(tbody_rows)} rows in tbody")
+
+data = []
+for tr in tbody_rows:
+    cells = tr.find_all(["td", "th"])
+    if cells:
+        row = [td.get_text(strip=True) for td in cells]
+        data.append(row)
+
+print_step(f"Extracted {len(data)} data rows before processing")
+
+# Align row lengths with headers
+for row in data:
+    if len(row) < len(headers):
+        row += [""] * (len(headers) - len(row))
+    elif len(row) > len(headers):
+        # Truncate if row is longer
+        data[data.index(row)] = row[:len(headers)]
+
+lb_df = pd.DataFrame(data, columns=headers if headers else None)
+print_step(f"Extracted {len(lb_df)} rows, {len(lb_df.columns)} columns")
+
+lb_file = data_dir / "livebench_leaderboard.csv"
+lb_df.to_csv(lb_file, index=False)
+print_step(f"✓ Saved: {lb_file}", "SUCCESS")
+    
+driver.quit()
+
+print("\n" + "=" * 80)
+print_step("ALL SCRAPING COMPLETED!", "SUCCESS")
+print("=" * 80)
+
+# ============================================================================
+# STEP 2: BUILD DATA.CSV
+# ============================================================================
+print("\n" + "=" * 80)
+print_step("BUILDING DATA.CSV", "START")
+print("=" * 80)
+
+# Read tracking.json configuration
+print_step("Reading tracking.json (configuration)...")
+fixed_df = pd.read_json("config/tracking.json")
+# Ensure empty lookups are treated as None/NaN
+fixed_df = fixed_df.replace({"": None, float("nan"): None})
+print_step(f"Loaded {len(fixed_df)} models configuration")
+
+# Initialize result dataframe
+result = fixed_df[['model', 'name', 'logo']].copy()
+result['lma'] = None
+result['aa'] = None
+result['lb'] = None
+
+# Use the scraped data we just loaded
+lma_data = lma_df
+aa_data = aa_df
+lb_data = lb_df
+
+# Process each model in the dataframe
+print_step("Matching models and extracting scores...")
+matches_found = {'lma': 0, 'aa': 0, 'lb': 0}
+
+for idx, row in fixed_df.iterrows():
+    # Extract LMArena score
+    if lma_data is not None and pd.notna(row['lma_lookup']):
+        lma_name = str(row['lma_lookup']).strip()
+        if lma_name:
+            # Look for model in LMArena data
+            for col in lma_data.columns:
+                if 'model' in col.lower():
+                    model_col = col
+                    break
+            else:
+                model_col = lma_data.columns[0]
+
+            lma_match = lma_data[lma_data[model_col].str.contains(lma_name, case=False, na=False, regex=False)]
+            if not lma_match.empty:
+                # Find score column
+                for col in lma_data.columns:
+                    if any(keyword in col.lower() for keyword in ['arena', 'elo', 'score', 'rating']):
+                        score = lma_match.iloc[0][col]
+                        numeric_score = extract_numeric_score(score)
+                        if numeric_score:
+                            try:
+                                result.at[idx, 'lma'] = int(float(numeric_score))
+                                matches_found['lma'] += 1
+                            except (ValueError, TypeError):
+                                pass
+                        break
+
+    # Extract Artificial Analysis score
+    if aa_data is not None and pd.notna(row['aa_lookup']):
+        aa_name = str(row['aa_lookup']).strip()
+        if aa_name:
+            # Look for model in AA data
+            for col in aa_data.columns:
+                if 'model' in col.lower() or 'name' in col.lower():
+                    model_col = col
+                    break
+            else:
+                model_col = aa_data.columns[0]
+
+            aa_match = aa_data[aa_data[model_col].str.contains(aa_name, case=False, na=False, regex=False)]
+            if not aa_match.empty:
+                # Find quality score column
+                for col in aa_data.columns:
+                    if any(keyword in col.lower() for keyword in ['quality', 'score', 'index']):
+                        score = aa_match.iloc[0][col]
+                        numeric_score = extract_numeric_score(score)
+                        if numeric_score:
+                            try:
+                                result.at[idx, 'aa'] = int(float(numeric_score))
+                                matches_found['aa'] += 1
+                            except (ValueError, TypeError):
+                                pass
+                        break
+
+    # Extract LiveBench score
+    if lb_data is not None and pd.notna(row['lb_lookup']):
+        lb_name = str(row['lb_lookup']).strip()
+        if lb_name:
+            # Look for model in LiveBench data
+            for col in lb_data.columns:
+                if 'model' in col.lower():
+                    model_col = col
+                    break
+            else:
+                model_col = lb_data.columns[0]
+
+            lb_match = lb_data[lb_data[model_col].str.contains(lb_name, case=False, na=False, regex=False)]
+            if not lb_match.empty:
+                # Find average or overall score column
+                for col in lb_data.columns:
+                    if any(keyword in col.lower() for keyword in ['average', 'overall', 'total', 'score']):
+                        score = lb_match.iloc[0][col]
+                        numeric_score = extract_numeric_score(score)
+                        if numeric_score:
+                            try:
+                                result.at[idx, 'lb'] = float(numeric_score)
+                                matches_found['lb'] += 1
+                            except (ValueError, TypeError):
+                                pass
+                        break
+
+print_step(f"Matches found - LMArena: {matches_found['lma']}, AA: {matches_found['aa']}, LiveBench: {matches_found['lb']}")
+
+# Save the result
+print_step("Saving data/processed.csv...")
+result.to_csv("data/processed.csv", sep=";", index=False)
+print_step(f"✓ Saved data/processed.csv with {len(result)} models", "SUCCESS")
+
+# ============================================================================
+# STEP 3: GENERATE ALERTS
+# ============================================================================
+print("\n" + "=" * 80)
+print_step("GENERATING NEW MODEL ALERTS", "START")
+print("=" * 80)
+
+def check_tracking_status(model_name, fixed_df, lookup_col):
+    """Check if a raw model name matches any lookup string in fixed.csv"""
+    if pd.isna(model_name):
+        return False, None
+    
+    # Iterate through all configured lookups
+    for idx, row in fixed_df.iterrows():
+        lookup = row[lookup_col]
+        if pd.notna(lookup) and str(lookup).strip():
+            # Check if lookup string is in the model name (case-insensitive)
+            if str(lookup).strip().lower() in str(model_name).lower():
+                return True, row['name']
+    return False, None
+
+def parse_previous_alerts(file_path):
+    """Parse previous alerts file to identify which models were already top ranked."""
+    if not file_path.exists():
+        return {}
+    
+    previous_data = {}
+    current_section = None
+    
+    try:
+        with open(file_path, "r", encoding='utf-8') as f:
+            lines = f.readlines()
+            
+        for line in lines:
+            line = line.strip()
+            if not line: continue
+            
+            # Detect section
+            if line.startswith("[") and "TOP" in line:
+                if "LMArena" in line: current_section = "LMArena"
+                elif "Artificial Analysis" in line: current_section = "Artificial Analysis"
+                elif "LiveBench" in line: current_section = "LiveBench"
+                else: current_section = None
+                
+                if current_section and current_section not in previous_data:
+                    previous_data[current_section] = set()
+                continue
+            
+            if not current_section: continue
+            if "RANK" in line or "---" in line: continue
+            
+            # Parse row to extract name
+            # Format usually: RANK SCORE STATUS NAME
+            # We can rely on [YES] or [NO] being present
+            model_name = None
+            if "[YES]" in line:
+                parts = line.split("[YES]")
+                if len(parts) > 1:
+                    # Take everything after [YES], removing optional [NEW] if it existed previously
+                    raw = parts[1]
+                    raw = raw.replace("[NEW]", "").strip()
+                    model_name = raw
+            elif "[NO]" in line:
+                parts = line.split("[NO]")
+                if len(parts) > 1:
+                    # Take everything after [NO], remove !!! and [NEW]
+                    raw = parts[1]
+                    raw = raw.replace("!!!", "").replace("[NEW]", "").strip()
+                    model_name = raw
+            
+            if model_name:
+                previous_data[current_section].add(model_name)
+                    
+    except Exception as e:
+        print_step(f"Warning: Could not parse previous alerts: {e}", "WARNING")
+        
+    return previous_data
+
+def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, top_n=20, previous_models=None):
+    if df is None or df.empty:
+        return f"\n[{source_name}] - NO DATA AVAILABLE\n"
+    
+    # Find Model Column
+    model_col = None
+    for col in df.columns:
+        if 'model' in col.lower() or 'name' in col.lower():
+            model_col = col
+            break
+    if not model_col:
+        model_col = df.columns[0]
+        
+    # Find Score Column
+    score_col = None
+    for col in df.columns:
+        if any(keyword in col.lower() for keyword in score_keywords):
+            score_col = col
+            break
+    
+    if not score_col:
+        return f"\n[{source_name}] - COULD NOT IDENTIFY SCORE COLUMN\n"
+
+    # Extract numeric scores for sorting
+    df = df.copy()
+    df['__numeric_score'] = df[score_col].apply(lambda x: float(extract_numeric_score(x) or 0))
+    
+    # Sort and take top N
+    top_models = df.sort_values('__numeric_score', ascending=False).head(top_n)
+    
+    report = [f"\n[{source_name} - TOP {top_n}]"]
+    report.append(f"{'RANK':<5} {'SCORE':<8} {'TRACKED?':<20} {'MODEL NAME'}")
+    report.append("-" * 70)
+    
+    for rank, (idx, row) in enumerate(top_models.iterrows(), 1):
+        raw_name = str(row[model_col]).strip()
+        score = row['__numeric_score']
+        
+        is_tracked, tracked_name = check_tracking_status(raw_name, fixed_df, lookup_col)
+        
+        # Determine status string
+        if is_tracked:
+            status = "[YES]"
+        else:
+            status = "[NO] !!!"
+            
+        # Check if new
+        is_new = False
+        if previous_models is not None:
+            # We assume a model is new if it wasn't in the set for this source
+            if raw_name not in previous_models:
+                is_new = True
+                status += " [NEW]"
+        
+        report.append(f"{rank:<5} {score:<8} {status:<20} {raw_name}")
+        
+    return "\n".join(report)
+
+# Generate logic
+print_step("Reading previous alerts to detect new models...")
+previous_alerts_file = Path("alerts.txt")
+previous_models_map = parse_previous_alerts(previous_alerts_file)
+
+alerts_output = []
+alerts_output.append("NEW MODEL ALERTS REPORT")
+alerts_output.append(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+alerts_output.append("=" * 70)
+
+# LMArena Analysis
+print_step("Analyzing LMArena Top 20...")
+prev_lma = previous_models_map.get("LMArena", set())
+alerts_output.append(analyze_top_models(lma_df, "LMArena", ['arena', 'elo', 'score', 'rating'], fixed_df, 'lma_lookup', top_n=20, previous_models=prev_lma))
+
+# Artificial Analysis
+print_step("Analyzing Artificial Analysis Top 20...")
+prev_aa = previous_models_map.get("Artificial Analysis", set())
+alerts_output.append(analyze_top_models(aa_df, "Artificial Analysis", ['quality', 'score', 'index'], fixed_df, 'aa_lookup', top_n=20, previous_models=prev_aa))
+
+# LiveBench Analysis
+print_step("Analyzing LiveBench Top 20...")
+prev_lb = previous_models_map.get("LiveBench", set())
+alerts_output.append(analyze_top_models(lb_df, "LiveBench", ['average', 'overall', 'total', 'score'], fixed_df, 'lb_lookup', top_n=20, previous_models=prev_lb))
+
+# Write to file
+alert_file = Path("alerts.txt")
+with open(alert_file, "w") as f:
+    f.write("\n".join(alerts_output))
+
+print_step(f"✓ Alerts saved to: {alert_file.absolute()}", "SUCCESS")
+
+# ============================================================================
+# STEP 4: SAVE METADATA
+# ============================================================================
+print("\n" + "=" * 80)
+print_step("SAVING METADATA", "START")
+print("=" * 80)
+
+import json
+
+metadata = {
+    "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "stats": {
+        "models_tracked": len(fixed_df),
+        "matches_found": matches_found,
+        "rows_scraped": {
+            "lmarena": len(lma_df) if lma_df is not None else 0,
+            "artificial_analysis": len(aa_df) if aa_df is not None else 0,
+            "livebench": len(lb_df) if lb_df is not None else 0
+        }
+    },
+    "alerts_summary": {
+        "new_models_detected": alerts_output[-1].count("[NO] !!!") if alerts_output else 0
+    }
+}
+
+metadata_file = Path("metadata.json")
+with open(metadata_file, "w") as f:
+    json.dump(metadata, f, indent=4)
+
+print_step(f"✓ Metadata saved to: {metadata_file.absolute()}", "SUCCESS")
+
+# ============================================================================
+# COMPLETION
+# ============================================================================
+print("\n" + "=" * 80)
+print_step("UPDATE COMPLETED SUCCESSFULLY!", "SUCCESS")
+print("=" * 80)
