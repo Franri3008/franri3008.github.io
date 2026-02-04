@@ -18,7 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r pages/CEPS/AI-World/ModelLeaderboard/requirements.txt
 
       - name: Run update script
         run: |
