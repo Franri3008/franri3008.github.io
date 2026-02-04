@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-03 16:15:45
+Generated on: 2026-02-04 01:36:49
 ======================================================================
 
 [LMArena - TOP 20]
@@ -23,7 +23,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 16    1445.0   [YES]                claude-opus-4-1-20250805
 17    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
 18    1443.0   [NO] !!!             chatgpt-4o-latest-20250326
-19    1440.0   [YES]                gpt-5.2-high
+19    1440.0   [NO] !!! [NEW]       glm-4.7
 20    1440.0   [NO] !!!             gpt-5.2
 
 [Artificial Analysis - TOP 20]
@@ -39,8 +39,8 @@ RANK  SCORE    TRACKED?             MODEL NAME
 8     46.0     [YES]                Gemini 3 Flash
 9     45.0     [YES]                GPT-5 (high)
 10    45.0     [NO] !!!             GPT-5 Codex (high)
-11    43.0     [YES]                Claude 4.5 Sonnet
-12    43.0     [YES]                Claude Opus 4.5
+11    43.0     [YES]                Claude Opus 4.5
+12    43.0     [YES]                Claude 4.5 Sonnet
 13    42.0     [NO] !!!             GPT-5.1 Codex (high)
 14    42.0     [NO] !!!             GLM-4.7
 15    42.0     [NO] !!!             GPT-5 (medium)
