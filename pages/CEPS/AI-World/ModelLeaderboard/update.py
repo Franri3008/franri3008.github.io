@@ -17,6 +17,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 # ============================================================================
 # CONSTANTS
 # ============================================================================
+BASE_DIR = Path(__file__).parent.absolute()
 STRIP_SELECTORS = "svg,img,picture,source,use,i,[aria-hidden='true'],*[hidden],.sr-only,.sr_only,.srOnly,.visually-hidden,[class*='icon'],i[class*='fa-']"
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
@@ -83,7 +84,8 @@ print_step("STARTING LEADERBOARD UPDATE", "START")
 print("=" * 80)
 
 # Create data directory
-data_dir = Path("data/scraped")
+# Create data directory
+data_dir = BASE_DIR / "data/scraped"
 data_dir.mkdir(parents=True, exist_ok=True)
 print_step(f"Data directory: {data_dir.absolute()}")
 
@@ -229,8 +231,9 @@ print_step("BUILDING DATA.CSV", "START")
 print("=" * 80)
 
 # Read tracking.json configuration
+# Read tracking.json configuration
 print_step("Reading tracking.json (configuration)...")
-fixed_df = pd.read_json("config/tracking.json")
+fixed_df = pd.read_json(BASE_DIR / "config/tracking.json")
 # Ensure empty lookups are treated as None/NaN
 fixed_df = fixed_df.replace({"": None, float("nan"): None})
 print_step(f"Loaded {len(fixed_df)} models configuration")
@@ -335,8 +338,9 @@ for idx, row in fixed_df.iterrows():
 print_step(f"Matches found - LMArena: {matches_found['lma']}, AA: {matches_found['aa']}, LiveBench: {matches_found['lb']}")
 
 # Save the result
+# Save the result
 print_step("Saving data/processed.csv...")
-result.to_csv("data/processed.csv", sep=";", index=False)
+result.to_csv(BASE_DIR / "data/processed.csv", sep=";", index=False)
 print_step(f"✓ Saved data/processed.csv with {len(result)} models", "SUCCESS")
 
 # ============================================================================
@@ -476,8 +480,9 @@ def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, to
     return "\n".join(report)
 
 # Generate logic
+# Generate logic
 print_step("Reading previous alerts to detect new models...")
-previous_alerts_file = Path("alerts.txt")
+previous_alerts_file = BASE_DIR / "alerts.txt"
 previous_models_map = parse_previous_alerts(previous_alerts_file)
 
 alerts_output = []
@@ -501,7 +506,8 @@ prev_lb = previous_models_map.get("LiveBench", set())
 alerts_output.append(analyze_top_models(lb_df, "LiveBench", ['average', 'overall', 'total', 'score'], fixed_df, 'lb_lookup', top_n=20, previous_models=prev_lb))
 
 # Write to file
-alert_file = Path("alerts.txt")
+# Write to file
+alert_file = BASE_DIR / "alerts.txt"
 with open(alert_file, "w") as f:
     f.write("\n".join(alerts_output))
 
@@ -532,7 +538,7 @@ metadata = {
     }
 }
 
-metadata_file = Path("metadata.json")
+metadata_file = BASE_DIR / "metadata.json"
 with open(metadata_file, "w") as f:
     json.dump(metadata, f, indent=4)
 
