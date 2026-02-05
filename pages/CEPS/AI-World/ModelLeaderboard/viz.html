@@ -467,7 +467,7 @@
     function getTop20() { return getAggregated().slice().sort((a, b) => b.total - a.total).slice(0, displayLimit); }
     function getXDomain() {
       if (active.question === 'LMArena') { return [1300, 1500]; }
-      if (active.question === 'Artificial Analysis') { return [20, 80]; }
+      if (active.question === 'Artificial Analysis') { return [15, 60]; }
       if (active.question === 'LiveBench') { return [40, 90]; }
       if (active.question === 'ALL') {
         const data = getAggregated();
@@ -662,9 +662,23 @@
         this._h = barH;
       });
       const fmt = getValueFormatter();
-      g.selectAll('text.value').data(data, d => d.id).enter().append('text').attr('class', 'value').attr('x', d => x(clampValue(d.total)) - 8).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * sizeFactor)).attr('text-anchor', 'end').attr('font-size', chartState.valueFS + 'px').attr('font-weight', '600').attr('fill', '#ffffff').text(d => fmt(d.total));
+      g.selectAll('text.value').data(data, d => d.id).enter().append('text').attr('class', 'value').attr('x', d => x(clampValue(d.total)) - 12).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * sizeFactor)).attr('text-anchor', 'end').attr('font-size', chartState.valueFS + 'px').attr('font-weight', '600').attr('fill', '#ffffff').text(d => fmt(d.total));
       g.selectAll('image.logo').data(data, d => d.id).enter().append('image').attr('class', 'logo').attr('x', d => x(clampValue(d.total)) + 6).attr('y', d => y(d.id) + (y.bandwidth() - logoSize) / 2).attr('width', logoSize).attr('height', logoSize).attr('href', d => d.logo).attr('xlink:href', d => d.logo);
       chartState.logos = g.selectAll('image.logo');
+
+      const aiwW = 133 * sizeFactor;
+      const aiwH = 53 * sizeFactor;
+      g.append('a')
+        .attr('href', 'https://aiworld.eu')
+        .attr('target', '_blank')
+        .append('image')
+        .attr('href', 'https://aiworld.eu/logo-transparent.svg')
+        .attr('width', aiwW)
+        .attr('height', aiwH)
+        .attr('x', width - aiwW - (10 * sizeFactor))
+        .attr('y', height - aiwH - (10 * sizeFactor))
+        .style('cursor', 'pointer');
+
       const hoverSel = g.selectAll('.bar-win,.bar-tie');
       hoverSel.on('mousemove', (event, d) => {
         let html = '';
@@ -816,8 +830,8 @@
       const fmt = getValueFormatter();
       const values = chartState.svg.select('g').selectAll('text.value').data(data, d => d.id);
       values.join(
-        enter => enter.append('text').attr('class', 'value').attr('x', d => x(clampValue(d.total)) - 8).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * (chartState.sizeFactor || 1))).attr('text-anchor', 'end').attr('font-size', (chartState.valueFS || 12) + 'px').attr('font-weight', '600').attr('fill', '#ffffff').attr('opacity', 0).text(d => fmt(d.total)).transition().duration(700).attr('opacity', 1),
-        update => update.transition().duration(700).attr('x', d => x(clampValue(d.total)) - 8).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * (chartState.sizeFactor || 1))).tween('text', function (d) {
+        enter => enter.append('text').attr('class', 'value').attr('x', d => x(clampValue(d.total)) - 12).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * (chartState.sizeFactor || 1))).attr('text-anchor', 'end').attr('font-size', (chartState.valueFS || 12) + 'px').attr('font-weight', '600').attr('fill', '#ffffff').attr('opacity', 0).text(d => fmt(d.total)).transition().duration(700).attr('opacity', 1),
+        update => update.transition().duration(700).attr('x', d => x(clampValue(d.total)) - 12).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * (chartState.sizeFactor || 1))).tween('text', function (d) {
           const that = d3.select(this);
           const parseNum = v => +String(v).replace(/[^0-9eE+.-]/g, '');
           const start = parseNum(that.text());
