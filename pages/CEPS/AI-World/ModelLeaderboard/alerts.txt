@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-05 04:30:06
+Generated on: 2026-02-06 04:30:27
 ======================================================================
 
 [LMArena - TOP 20]
@@ -37,39 +37,39 @@ RANK  SCORE    TRACKED?             MODEL NAME
 6     47.0     [YES]                Kimi K2.5
 7     47.0     [NO] !!!             GPT-5.2 (medium)
 8     46.0     [YES]                Gemini 3 Flash
-9     45.0     [YES]                GPT-5 (high)
-10    45.0     [NO] !!!             GPT-5 Codex (high)
-11    43.0     [YES]                Claude Opus 4.5
-12    43.0     [YES]                Claude 4.5 Sonnet
-13    42.0     [NO] !!!             GPT-5.1 Codex (high)
-14    42.0     [NO] !!!             GLM-4.7
-15    42.0     [NO] !!!             GPT-5 (medium)
-16    42.0     [NO] !!!             DeepSeek V3.2
-17    41.0     [NO] !!!             Grok 4
-18    41.0     [NO] !!!             Gemini 3 Pro Preview (low)
-19    41.0     [YES]                GPT-5 mini (high)
-20    41.0     [YES]                o3
+9     46.0     [NO] !!! [NEW]       Claude Opus 4.6
+10    45.0     [YES]                GPT-5 (high)
+11    45.0     [NO] !!!             GPT-5 Codex (high)
+12    43.0     [YES]                Claude Opus 4.5
+13    43.0     [YES]                Claude 4.5 Sonnet
+14    42.0     [NO] !!!             GPT-5.1 Codex (high)
+15    42.0     [NO] !!!             GLM-4.7
+16    42.0     [NO] !!!             GPT-5 (medium)
+17    42.0     [NO] !!!             DeepSeek V3.2
+18    41.0     [NO] !!!             Grok 4
+19    41.0     [NO] !!!             Gemini 3 Pro Preview (low)
+20    41.0     [YES]                GPT-5 mini (high)
 
 [LiveBench - TOP 20]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     75.96    [YES]                Claude 4.5 Opus Thinking High Effort
-2     74.84    [YES]                GPT-5.2 High
-3     74.3     [NO] !!!             GPT-5.2 Codex
-4     73.98    [NO] !!!             GPT-5.1 Codex Max High
-5     73.39    [YES]                Gemini 3 Pro Preview High
-6     72.4     [YES]                Gemini 3 Flash Preview High
-7     72.04    [YES]                GPT-5.1 High
-8     70.48    [YES]                GPT-5 Pro
-9     69.07    [YES]                Kimi K2.5 Thinking
-10    68.61    [NO] !!!             GPT-5.1 Codex
-11    68.19    [YES]                Claude Sonnet 4.5 Thinking
-12    65.91    [YES]                GPT-5 Mini High
-13    62.2     [NO] !!!             DeepSeek V3.2 Thinking
-14    62.02    [NO] !!!             Grok 4
-15    61.81    [YES]                Claude 4.1 Opus Thinking
-16    61.59    [YES]                Kimi K2 Thinking
-17    61.32    [YES]                Claude Haiku 4.5 Thinking
-18    61.27    [NO] !!!             Claude 4 Sonnet Thinking
-19    60.38    [NO] !!!             GPT-5.1 Codex Mini
-20    59.99    [YES]                Grok 4.1 Fast
+1     76.33    [NO] !!! [NEW]       Claude 4.6 Opus Thinking High Effort
+2     75.96    [YES]                Claude 4.5 Opus Thinking High Effort
+3     74.84    [YES]                GPT-5.2 High
+4     74.3     [NO] !!!             GPT-5.2 Codex
+5     73.98    [NO] !!!             GPT-5.1 Codex Max High
+6     73.39    [YES]                Gemini 3 Pro Preview High
+7     72.4     [YES]                Gemini 3 Flash Preview High
+8     72.04    [YES]                GPT-5.1 High
+9     70.48    [YES]                GPT-5 Pro
+10    69.07    [YES]                Kimi K2.5 Thinking
+11    68.61    [NO] !!!             GPT-5.1 Codex
+12    68.19    [YES]                Claude Sonnet 4.5 Thinking
+13    65.91    [YES]                GPT-5 Mini High
+14    62.2     [NO] !!!             DeepSeek V3.2 Thinking
+15    62.02    [NO] !!!             Grok 4
+16    61.81    [YES]                Claude 4.1 Opus Thinking
+17    61.59    [YES]                Kimi K2 Thinking
+18    61.32    [YES]                Claude Haiku 4.5 Thinking
+19    61.27    [NO] !!!             Claude 4 Sonnet Thinking
+20    60.38    [NO] !!!             GPT-5.1 Codex Mini

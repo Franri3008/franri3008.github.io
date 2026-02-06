@@ -1,4 +1,5 @@
 Model,Organization,Global Average,Reasoning Average,Coding Average,Agentic Coding Average,Mathematics Average,Data Analysis Average,Language Average,IF Average
+Claude 4.6 Opus Thinking High Effort,Anthropic,76.33,88.67,78.18,61.67,89.32,69.89,83.27,63.31
 Claude 4.5 Opus Thinking High Effort,Anthropic,75.96,80.09,79.65,63.33,90.39,74.44,81.26,62.55
 GPT-5.2 High,OpenAI,74.84,83.21,76.07,51.67,93.17,78.16,79.81,61.77
 GPT-5.2 Codex,OpenAI,74.30,77.71,83.62,51.67,88.77,78.20,73.68,66.45
