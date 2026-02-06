@@ -24,6 +24,14 @@
         "lb_lookup": "Gemini 3 Flash Preview High"
     },
     {
+        "model": "claude-opus-4-6-thinking",
+        "name": "Claude Opus 4.6 (Thinking)",
+        "logo": "claude",
+        "lma_lookup": null,
+        "aa_lookup": "Claude Opus 4.6 (Adaptive)",
+        "lb_lookup": "Claude 4.6 Opus Thinking High Effort"
+    },
+    {
         "model": "claude-opus-4-5-thinking",
         "name": "Claude Opus 4.5 (Thinking)",
         "logo": "claude",

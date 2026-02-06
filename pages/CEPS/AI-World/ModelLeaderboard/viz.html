@@ -274,13 +274,17 @@
     let active = { question: 'ALL' };
     let displayLimit = 30;
     let styleMode = 0;
+    let highlightMode = null;
     function parseNum(v) { if (v == null) { return 0; } const s = String(v).replace(/,/g, '.'); const n = parseFloat(s); return isNaN(n) ? 0 : n; }
     function hexToRgb(hex) { const s = hex.replace('#', ''); const v = s.length === 3 ? s.split('').map(ch => ch + ch).join('') : s; const n = parseInt(v, 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
     function rgbToHex(r, g, b) { const toHex = x => x.toString(16).padStart(2, '0'); return '#' + toHex(r) + toHex(g) + toHex(b); }
     function lighten(hex, amt) { if (!hex) { return null; } const { r, g, b } = hexToRgb(hex); const lr = Math.min(255, Math.round(r + (255 - r) * amt)); const lg = Math.min(255, Math.round(g + (255 - g) * amt)); const lb = Math.min(255, Math.round(b + (255 - b) * amt)); return rgbToHex(lr, lg, lb); }
     function load() {
+      const params = new URLSearchParams(window.location.search);
+      const snapshotParam = params.get('snapshot');
+      const csvPath = snapshotParam ? `data/snapshot/${snapshotParam}.csv` : 'data/processed.csv';
       Promise.all([
-        d3.dsv(";", "data/processed.csv"),
+        d3.dsv(";", csvPath),
         d3.json("config/models.json")
       ]).then(([data, modelsData]) => {
         rawData = data;
@@ -336,6 +340,9 @@
           const s = parseInt(styleParam, 10);
           if (s === 1) styleMode = 1;
         }
+
+        const highlightParam = params.get('highlight');
+        if (highlightParam) highlightMode = highlightParam;
 
         setupTabs();
         createChart();
@@ -613,6 +620,12 @@
       patternTie.append('rect').attr('width', 8).attr('height', 8).attr('fill', '#c4c9d6');
       patternTie.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 8).attr('y2', 8).attr('stroke', 'rgba(79,109,181,.75)').attr('stroke-width', 1.5);
       patternTie.append('line').attr('x1', 8).attr('y1', 0).attr('x2', 0).attr('y2', 8).attr('stroke', 'rgba(79,109,181,.75)').attr('stroke-width', 1.5);
+
+      const filter = defs.append('filter').attr('id', 'blurFilter').append('feGaussianBlur').attr('stdDeviation', 4);
+      const mask = defs.append('mask').attr('id', 'highlightMask');
+      mask.append('rect').attr('class', 'mask-bg').attr('fill', 'white');
+      mask.append('rect').attr('class', 'mask-hole').attr('fill', 'black').style('filter', 'url(#blurFilter)');
+
       const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
       chartState.g = g;
       const bgLayer = g.append('g').attr('class', 'bg-layer');
@@ -666,21 +679,29 @@
       g.selectAll('image.logo').data(data, d => d.id).enter().append('image').attr('class', 'logo').attr('x', d => x(clampValue(d.total)) + 6).attr('y', d => y(d.id) + (y.bandwidth() - logoSize) / 2).attr('width', logoSize).attr('height', logoSize).attr('href', d => d.logo).attr('xlink:href', d => d.logo);
       chartState.logos = g.selectAll('image.logo');
 
+      const overlay = svg.append('rect').attr('class', 'highlight-overlay')
+        .attr('fill', '#f9fafc')
+        .attr('pointer-events', 'none')
+        .attr('opacity', 0);
+
       const aiwW = 133 * sizeFactor;
       const aiwH = 53 * sizeFactor;
-      g.append('a')
+      svg.append('a')
         .attr('href', 'https://aiworld.eu')
         .attr('target', '_blank')
         .append('image')
         .attr('href', 'https://aiworld.eu/logo-transparent.svg')
         .attr('width', aiwW)
         .attr('height', aiwH)
-        .attr('x', width - aiwW - (10 * sizeFactor))
-        .attr('y', height - aiwH - (10 * sizeFactor))
+        .attr('x', margin.left + width - aiwW - (10 * sizeFactor))
+        .attr('y', margin.top + height - aiwH - (10 * sizeFactor))
         .style('cursor', 'pointer');
+
+      updateHighlight(data, false);
 
       const hoverSel = g.selectAll('.bar-win,.bar-tie');
       hoverSel.on('mousemove', (event, d) => {
+        if (highlightMode && d.id !== highlightMode) return;
         let html = '';
         if (active.question === 'ALL') {
           const rawEntry = rawData.find(r => String(r.model || '').trim() === d.model);
@@ -699,6 +720,43 @@
         }
         tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px').style('opacity', 1);
       }).on('mouseleave', () => { tooltip.style('opacity', 0); });
+    }
+    function updateHighlight(data, animate) {
+      if (!chartState.svg) return;
+      const overlay = chartState.svg.select('.highlight-overlay');
+      const maskHole = chartState.svg.select('#highlightMask .mask-hole');
+      const maskBg = chartState.svg.select('#highlightMask .mask-bg');
+
+      if (highlightMode) {
+        const found = data.find(d => d.id === highlightMode);
+        if (found) {
+          const y = chartState.y;
+          const step = y.step();
+          const gap = (step - y.bandwidth()) / 2;
+          const yPos = chartState.margin.top + y(found.id) - gap;
+
+          maskBg.attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
+            .attr('height', chartState.height + chartState.margin.top + chartState.margin.bottom);
+
+          const holeSel = animate ? maskHole.transition().duration(700) : maskHole;
+          holeSel.attr('x', 0)
+            .attr('y', yPos)
+            .attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
+            .attr('height', step);
+
+          const overlaySel = animate ? overlay.transition().duration(700) : overlay;
+          overlaySel.attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
+            .attr('height', chartState.height + chartState.margin.top + chartState.margin.bottom)
+            .attr('mask', 'url(#highlightMask)')
+            .attr('opacity', 0.8);
+        } else {
+          const overlaySel = animate ? overlay.transition().duration(700) : overlay;
+          overlaySel.attr('opacity', 0);
+        }
+      } else {
+        const overlaySel = animate ? overlay.transition().duration(700) : overlay;
+        overlaySel.attr('opacity', 0);
+      }
     }
     function updateChart() {
       const data = getTop20();
@@ -851,6 +909,7 @@
       chartState.logos = chartState.svg.select('g').selectAll('image.logo');
       const hoverSel = chartState.svg.select('g').selectAll('.bar-win,.bar-tie');
       hoverSel.on('mousemove', (event, d) => {
+        if (highlightMode && d.id !== highlightMode) return;
         let html = '';
         if (active.question === 'ALL') {
           const rawEntry = rawData.find(r => String(r.model || '').trim() === d.model);
@@ -869,6 +928,7 @@
         }
         tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px').style('opacity', 1);
       }).on('mouseleave', () => { tooltip.style('opacity', 0); });
+      updateHighlight(data, true);
     }
     let resizeTimeout;
     window.addEventListener('resize', () => {
