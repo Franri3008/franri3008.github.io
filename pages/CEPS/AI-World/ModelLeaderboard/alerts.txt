@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-06 21:42:13
+Generated on: 2026-02-07 04:23:48
 ======================================================================
 
 [LMArena - TOP 20]
@@ -15,12 +15,12 @@ RANK  SCORE    TRACKED?             MODEL NAME
 8     1463.0   [YES]                gemini-3-flash (thinking-minimal)
 9     1458.0   [YES]                gpt-5.1-high
 10    1452.0   [YES]                ernie-5.0-0110
-11    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
-12    1450.0   [YES]                gemini-2.5-pro
-13    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
-14    1449.0   [YES]                kimi-k2.5-thinking
-15    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
-16    1449.0   [NO] !!!             ernie-5.0-preview-1203
+11    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
+12    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+13    1450.0   [YES]                gemini-2.5-pro
+14    1449.0   [NO] !!!             ernie-5.0-preview-1203
+15    1449.0   [YES]                kimi-k2.5-thinking
+16    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
 17    1445.0   [YES]                claude-opus-4-1-20250805
 18    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
 19    1442.0   [NO] !!!             chatgpt-4o-latest-20250326
@@ -41,8 +41,8 @@ RANK  SCORE    TRACKED?             MODEL NAME
 10    46.0     [NO] !!!             Claude Opus 4.6
 11    45.0     [YES]                GPT-5 (high)
 12    45.0     [NO] !!!             GPT-5 Codex (high)
-13    43.0     [YES]                Claude 4.5 Sonnet
-14    43.0     [YES]                Claude Opus 4.5
+13    43.0     [YES]                Claude Opus 4.5
+14    43.0     [YES]                Claude 4.5 Sonnet
 15    42.0     [NO] !!!             GPT-5.1 Codex (high)
 16    42.0     [NO] !!!             GLM-4.7
 17    42.0     [NO] !!!             GPT-5 (medium)
