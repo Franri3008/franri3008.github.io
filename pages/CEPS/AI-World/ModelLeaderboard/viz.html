@@ -574,7 +574,7 @@
       const c1 = document.getElementById('container1');
       const rect = c1 ? c1.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
       const containerWidth = Math.max(320, rect.width);
-      const isCompactWidth = containerWidth < 500;
+      const isCompactWidth = containerWidth < 540;
       const containerHeight = Math.max(240, rect.height);
       const sizeFactor = Math.max(.6, Math.min(1.15, Math.min(containerWidth / 900, containerHeight / 650)));
 
