@@ -93,6 +93,38 @@ fixed_testing.csv   Old output file (replaced by data.csv)
 
 Keep for reference or delete - update.py replaces both.
 
+## URL QUERY PARAMETERS
+
+You can customize the visualization using the following URL parameters:
+
+- **source**: Selects the active tab.
+  - `aiw`: AIW Overall (default)
+  - `llma`: LMArena
+  - `aa`: Artificial Analysis
+  - `lb`: LiveBench
+  - Example: `viz.html?source=lb`
+
+- **top**: Sets the number of models to display (default: 30).
+  - Example: `viz.html?top=10`
+
+- **style**: Changes the visual style of bars.
+  - `1`: Slanted/angled bars
+  - `0`: Standard rounded bars (default)
+  - Example: `viz.html?style=1`
+
+- **highlight**: Highlights a specific model and dims the rest.
+  - Value: The internal `model` ID (from `config/tracking.json`)
+  - Features: 
+    - Obscures other rows with a blur effect.
+    - Pauses highlighting while mouse is moving.
+    - Shows tooltips only for the highlighted model (unless paused).
+  - Example: `viz.html?highlight=gpt-4o-2024-08-06`
+
+- **snapshot**: Loads a historical data snapshot.
+  - Format: `YYYY_M_D` (e.g., `2026_2_6`)
+  - Reads from: `data/snapshot/{YYYY_M_D}.csv`
+  - Example: `viz.html?snapshot=2026_2_6`
+
 ## LAST UPDATED
 
-2025-12-31
+2026-02-06
