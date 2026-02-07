@@ -277,6 +277,7 @@
     let highlightMode = null;
     let highlightPaused = false;
     let highlightPauseTimeout = null;
+    let bgColor = '#f9fafc';
     function parseNum(v) { if (v == null) { return 0; } const s = String(v).replace(/,/g, '.'); const n = parseFloat(s); return isNaN(n) ? 0 : n; }
     function hexToRgb(hex) { const s = hex.replace('#', ''); const v = s.length === 3 ? s.split('').map(ch => ch + ch).join('') : s; const n = parseInt(v, 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
     function rgbToHex(r, g, b) { const toHex = x => x.toString(16).padStart(2, '0'); return '#' + toHex(r) + toHex(g) + toHex(b); }
@@ -346,7 +347,21 @@
         const highlightParam = params.get('highlight');
         if (highlightParam) {
           highlightMode = highlightParam;
+          highlightMode = highlightParam;
           document.addEventListener('mousemove', pauseHighlight);
+        }
+
+        const colorParam = params.get('color');
+        if (colorParam === 'white') {
+          bgColor = '#ffffff';
+          document.body.style.background = bgColor;
+          const fn = document.getElementById('footnote-container');
+          if (fn) fn.style.background = bgColor;
+        } else if (colorParam === 'gray') {
+          bgColor = '#f9fafc';
+          document.body.style.background = bgColor;
+          const fn = document.getElementById('footnote-container');
+          if (fn) fn.style.background = bgColor;
         }
 
         setupTabs();
@@ -692,7 +707,7 @@
       chartState.logos = g.selectAll('image.logo');
 
       const overlay = svg.append('rect').attr('class', 'highlight-overlay')
-        .attr('fill', '#f9fafc')
+        .attr('fill', bgColor)
         .attr('pointer-events', 'none')
         .attr('opacity', 0);
 
