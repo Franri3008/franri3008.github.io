@@ -23,7 +23,7 @@
 
     .viz-grid {
       display: grid;
-      grid-template-rows: auto 1fr auto;
+      grid-template-rows: auto 19fr 1fr;
       grid-template-columns: 1fr auto;
       height: 100vh;
       width: 100vw;
@@ -190,9 +190,10 @@
       height: 100%;
       width: auto;
       max-height: 100%;
-      max-width: 100%;
+      max-width: clamp(80px, 15vw, 200px);
       pointer-events: auto;
       object-fit: contain;
+      flex-shrink: 0;
     }
 
     #tooltip {
@@ -206,6 +207,28 @@
       opacity: 0;
       transition: opacity 0.2s;
       z-index: 1000;
+    }
+
+    .viz-grid.with-logo #footnote-container {
+      grid-column: 1;
+    }
+
+    .viz-grid.with-logo #container4 {
+      display: flex;
+      grid-row: 3;
+      grid-column: 2;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 4px 16px 4px 0;
+      overflow: hidden;
+      min-width: 0;
+      gap: 0;
+    }
+
+    .viz-grid.with-logo #container4 .logo {
+      height: auto;
+      max-height: 100%;
+      width: auto;
     }
 
     @media (max-height:500px),
@@ -364,6 +387,11 @@
           if (fn) fn.style.background = bgColor;
         }
 
+        const logoParam = params.get('logo');
+        if (logoParam === '1') {
+          document.querySelector('.viz-grid').classList.add('with-logo');
+        }
+
         setupTabs();
         createChart();
         updateFootnote();
@@ -493,11 +521,11 @@
     }
     function getTop20() { return getAggregated().slice().sort((a, b) => b.total - a.total).slice(0, displayLimit); }
     function getXDomain() {
-      if (active.question === 'LMArena') { return [1300, 1500]; }
+      if (active.question === 'LMArena') { return [1300, 1505]; }
       if (active.question === 'Artificial Analysis') { return [15, 60]; }
-      if (active.question === 'LiveBench') { return [40, 90]; }
+      if (active.question === 'LiveBench') { return [40, 80]; }
       if (active.question === 'ALL') {
-        const data = getAggregated();
+        const data = getTop20();
         const minScore = d3.min(data, d => d.total) || 0;
         const maxScore = d3.max(data, d => d.total) || 0;
         const lower = Math.max(0, minScore - 0.02);
@@ -711,20 +739,7 @@
         .attr('pointer-events', 'none')
         .attr('opacity', 0);
 
-      if (!isCompactWidth) {
-        const aiwW = 133 * sizeFactor;
-        const aiwH = 53 * sizeFactor;
-        svg.append('a')
-          .attr('href', 'https://aiworld.eu')
-          .attr('target', '_blank')
-          .append('image')
-          .attr('href', 'https://aiworld.eu/logo-transparent.svg')
-          .attr('width', aiwW)
-          .attr('height', aiwH)
-          .attr('x', margin.left + width - aiwW - (10 * sizeFactor))
-          .attr('y', margin.top + height - aiwH - (10 * sizeFactor))
-          .style('cursor', 'pointer');
-      }
+
 
       updateHighlight(data, false);
 
