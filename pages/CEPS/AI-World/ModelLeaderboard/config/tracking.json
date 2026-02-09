@@ -96,6 +96,14 @@
         "lb_lookup": null
     },
     {
+        "model": "glm-4-7",
+        "name": "GLM 4.7",
+        "logo": "zai",
+        "lma_lookup": "glm-4.7",
+        "aa_lookup": "GLM-4.7",
+        "lb_lookup": "GLM 4.7"
+    },
+    {
         "model": "glm-4-6",
         "name": "GLM 4.6",
         "logo": "zai",
@@ -123,9 +131,9 @@
         "model": "deepseek-v3-2-exp-thinking",
         "name": "DeepSeek v3.2 (Thinking)",
         "logo": "deepseek",
-        "lma_lookup": null,
-        "aa_lookup": null,
-        "lb_lookup": null
+        "lma_lookup": "deepseek-v3.2-thinking",
+        "aa_lookup": "DeepSeek V3.2",
+        "lb_lookup": "DeepSeek V3.2 Thinking"
     },
     {
         "model": "grok-4-1-fast",
@@ -134,30 +142,6 @@
         "lma_lookup": "grok-4-1-fast-reasoning",
         "aa_lookup": "Grok 4.1 Fast",
         "lb_lookup": "Grok 4.1 Fast"
-    },
-    {
-        "model": "deepseek-v3-1-terminus",
-        "name": "DeepSeek v3.1 Terminus",
-        "logo": "deepseek",
-        "lma_lookup": null,
-        "aa_lookup": null,
-        "lb_lookup": null
-    },
-    {
-        "model": "deepseek-v3-1-terminus-thinking",
-        "name": "DeepSeek v3.1 Terminus (Thinking)",
-        "logo": "deepseek",
-        "lma_lookup": null,
-        "aa_lookup": null,
-        "lb_lookup": null
-    },
-    {
-        "model": "deepseek-v3-2-exp",
-        "name": "DeepSeek v3.2 (exp)",
-        "logo": "deepseek",
-        "lma_lookup": null,
-        "aa_lookup": null,
-        "lb_lookup": null
     },
     {
         "model": "mistral-medium-2508",

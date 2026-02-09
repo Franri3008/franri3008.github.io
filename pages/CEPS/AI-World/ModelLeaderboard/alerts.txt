@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-09 04:53:12
+Generated on: 2026-02-09 10:40:48
 ======================================================================
 
 [LMArena - TOP 20]
@@ -15,16 +15,16 @@ RANK  SCORE    TRACKED?             MODEL NAME
 8     1463.0   [YES]                gemini-3-flash (thinking-minimal)
 9     1458.0   [YES]                gpt-5.1-high
 10    1452.0   [YES]                ernie-5.0-0110
-11    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
-12    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
-13    1450.0   [YES]                gemini-2.5-pro
-14    1449.0   [NO] !!!             ernie-5.0-preview-1203
-15    1449.0   [YES]                kimi-k2.5-thinking
-16    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
+11    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+12    1450.0   [YES]                gemini-2.5-pro
+13    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
+14    1449.0   [YES]                kimi-k2.5-thinking
+15    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
+16    1449.0   [NO] !!!             ernie-5.0-preview-1203
 17    1445.0   [YES]                claude-opus-4-1-20250805
 18    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
 19    1442.0   [NO] !!!             chatgpt-4o-latest-20250326
-20    1441.0   [NO] !!!             glm-4.7
+20    1441.0   [YES]                glm-4.7
 
 [Artificial Analysis - TOP 20]
 RANK  SCORE    TRACKED?             MODEL NAME
@@ -41,12 +41,12 @@ RANK  SCORE    TRACKED?             MODEL NAME
 10    46.0     [NO] !!!             Claude Opus 4.6
 11    45.0     [YES]                GPT-5 (high)
 12    45.0     [NO] !!!             GPT-5 Codex (high)
-13    43.0     [YES]                Claude Opus 4.5
-14    43.0     [YES]                Claude 4.5 Sonnet
+13    43.0     [YES]                Claude 4.5 Sonnet
+14    43.0     [YES]                Claude Opus 4.5
 15    42.0     [NO] !!!             GPT-5.1 Codex (high)
-16    42.0     [NO] !!!             GLM-4.7
+16    42.0     [YES]                GLM-4.7
 17    42.0     [NO] !!!             GPT-5 (medium)
-18    42.0     [NO] !!!             DeepSeek V3.2
+18    42.0     [YES]                DeepSeek V3.2
 19    41.0     [NO] !!!             Grok 4
 20    41.0     [NO] !!!             Gemini 3 Pro Preview (low)
 
@@ -66,7 +66,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 11    68.61    [NO] !!!             GPT-5.1 Codex
 12    68.19    [YES]                Claude Sonnet 4.5 Thinking
 13    65.91    [YES]                GPT-5 Mini High
-14    62.2     [NO] !!!             DeepSeek V3.2 Thinking
+14    62.2     [YES]                DeepSeek V3.2 Thinking
 15    62.02    [NO] !!!             Grok 4
 16    61.81    [YES]                Claude 4.1 Opus Thinking
 17    61.59    [YES]                Kimi K2 Thinking
