@@ -96,6 +96,14 @@
         "lb_lookup": null
     },
     {
+        "model": "glm-5",
+        "name": "GLM 5",
+        "logo": "zai",
+        "lma_lookup": "glm-5",
+        "aa_lookup": "GLM-5",
+        "lb_lookup": "GLM 5"
+    },
+    {
         "model": "glm-4-7",
         "name": "GLM 4.7",
         "logo": "zai",

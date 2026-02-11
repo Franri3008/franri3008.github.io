@@ -38,15 +38,18 @@ def extract_numeric_score(score_value):
     if pd.isna(score_value):
         return None
     score_str = str(score_value).strip()
-    # Extract first number (int or float) from the string
+
     match = re.search(r'-?\d+\.?\d*', score_str)
     if match:
         return match.group()
     return None
 
-def clean_text(tag):
+def clean_text(tag, extra_selectors=None):
     clone = BeautifulSoup(str(tag), "html.parser")
-    for el in clone.select(STRIP_SELECTORS):
+    selectors = STRIP_SELECTORS
+    if extra_selectors:
+        selectors += "," + extra_selectors
+    for el in clone.select(selectors):
         el.decompose()
     return " ".join(clone.stripped_strings)
 
@@ -59,10 +62,10 @@ def get_chrome_driver(headless=True):
     opts.add_argument(f"user-agent={random.choice(USER_AGENTS)}")
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
 
-def extract_table_data(table, skip_first_empty=False):
+def extract_table_data(table, skip_first_empty=False, extra_selectors=None):
     thead = table.find("thead")
     header_cells = thead.select("tr")[-1].find_all("th") if thead and thead.select("tr") else table.select("tr th")
-    headers = [clean_text(th) for idx, th in enumerate(header_cells) if not (skip_first_empty and idx == 0 and clean_text(th) == "")]
+    headers = [clean_text(th, extra_selectors) for idx, th in enumerate(header_cells) if not (skip_first_empty and idx == 0 and clean_text(th, extra_selectors) == "")]
 
     tbody = table.find("tbody") or table
     rows = []
@@ -70,7 +73,7 @@ def extract_table_data(table, skip_first_empty=False):
         cells = tr.find_all(["td", "th"], recursive=False)
         if not cells:
             continue
-        row = [clean_text(td) for idx, td in enumerate(cells) if not (skip_first_empty and idx == 0 and clean_text(td) == "")]
+        row = [clean_text(td, extra_selectors) for idx, td in enumerate(cells) if not (skip_first_empty and idx == 0 and clean_text(td, extra_selectors) == "")]
         if len(row) != len(headers):
             row = (row + [""] * len(headers))[:len(headers)]
         rows.append(row)
@@ -83,8 +86,6 @@ print("=" * 80)
 print_step("STARTING LEADERBOARD UPDATE", "START")
 print("=" * 80)
 
-# Create data directory
-# Create data directory
 data_dir = BASE_DIR / "data/scraped"
 data_dir.mkdir(parents=True, exist_ok=True)
 print_step(f"Data directory: {data_dir.absolute()}")
@@ -102,7 +103,7 @@ soup = BeautifulSoup(resp.text, "html.parser")
 table = soup.select_one("table.w-full.caption-bottom.text-sm")
 if not table:
     raise ValueError("LMArena table not found")
-lma_df = extract_table_data(table)
+lma_df = extract_table_data(table, extra_selectors="span.text-text-secondary")
 print_step(f"Extracted {len(lma_df)} rows, {len(lma_df.columns)} columns")
 lma_file = data_dir / "lmarena_text_leaderboard.csv"
 lma_df.to_csv(lma_file, index=False)
@@ -135,19 +136,16 @@ driver = get_chrome_driver()
 print_step("Loading page and waiting for table to render...")
 driver.get("https://livebench.ai/#/")
 
-# Wait for table with data rows (tbody tr)
 print_step("Waiting for table data to load...")
 WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.main-tabl.table tbody tr")))
 
-# Additional wait for dynamic content
 time.sleep(3)
 
 print_step("Scrolling table to ensure all content is loaded...")
 table_el = driver.find_element(By.CSS_SELECTOR, "table.main-tabl.table")
 driver.execute_script("arguments[0].parentElement.scrollLeft=arguments[0].parentElement.scrollWidth", table_el)
 
-# Get full page source instead of just table element
-print_step("Parsing complex table with rowspan/colspan...")
+print_step("Parsing complex table...")
 soup = BeautifulSoup(driver.page_source, "html.parser")
 table = soup.select_one("table.main-tabl.table")
 
@@ -158,7 +156,6 @@ soup = BeautifulSoup(str(table), "html.parser")
 thead = soup.find("thead")
 header_rows = thead.find_all("tr") if thead else []
 
-# Build header matrix from rowspan/colspan cells
 grid, spans = [], {}
 for tr in header_rows:
     row = []
@@ -202,12 +199,10 @@ for tr in tbody_rows:
 
 print_step(f"Extracted {len(data)} data rows before processing")
 
-# Align row lengths with headers
 for row in data:
     if len(row) < len(headers):
         row += [""] * (len(headers) - len(row))
     elif len(row) > len(headers):
-        # Truncate if row is longer
         data[data.index(row)] = row[:len(headers)]
 
 lb_df = pd.DataFrame(data, columns=headers if headers else None)
@@ -230,35 +225,27 @@ print("\n" + "=" * 80)
 print_step("BUILDING DATA.CSV", "START")
 print("=" * 80)
 
-# Read tracking.json configuration
-# Read tracking.json configuration
 print_step("Reading tracking.json (configuration)...")
 fixed_df = pd.read_json(BASE_DIR / "config/tracking.json")
-# Ensure empty lookups are treated as None/NaN
 fixed_df = fixed_df.replace({"": None, float("nan"): None})
 print_step(f"Loaded {len(fixed_df)} models configuration")
 
-# Initialize result dataframe
 result = fixed_df[['model', 'name', 'logo']].copy()
 result['lma'] = None
 result['aa'] = None
 result['lb'] = None
 
-# Use the scraped data we just loaded
 lma_data = lma_df
 aa_data = aa_df
 lb_data = lb_df
 
-# Process each model in the dataframe
 print_step("Matching models and extracting scores...")
 matches_found = {'lma': 0, 'aa': 0, 'lb': 0}
 
 for idx, row in fixed_df.iterrows():
-    # Extract LMArena score
     if lma_data is not None and pd.notna(row['lma_lookup']):
         lma_name = str(row['lma_lookup']).strip()
         if lma_name:
-            # Look for model in LMArena data
             for col in lma_data.columns:
                 if 'model' in col.lower():
                     model_col = col
@@ -268,7 +255,6 @@ for idx, row in fixed_df.iterrows():
 
             lma_match = lma_data[lma_data[model_col].str.contains(lma_name, case=False, na=False, regex=False)]
             if not lma_match.empty:
-                # Find score column
                 for col in lma_data.columns:
                     if any(keyword in col.lower() for keyword in ['arena', 'elo', 'score', 'rating']):
                         score = lma_match.iloc[0][col]
@@ -281,11 +267,9 @@ for idx, row in fixed_df.iterrows():
                                 pass
                         break
 
-    # Extract Artificial Analysis score
     if aa_data is not None and pd.notna(row['aa_lookup']):
         aa_name = str(row['aa_lookup']).strip()
         if aa_name:
-            # Look for model in AA data
             for col in aa_data.columns:
                 if 'model' in col.lower() or 'name' in col.lower():
                     model_col = col
@@ -295,7 +279,6 @@ for idx, row in fixed_df.iterrows():
 
             aa_match = aa_data[aa_data[model_col].str.contains(aa_name, case=False, na=False, regex=False)]
             if not aa_match.empty:
-                # Find quality score column
                 for col in aa_data.columns:
                     if any(keyword in col.lower() for keyword in ['quality', 'score', 'index']):
                         score = aa_match.iloc[0][col]
@@ -308,11 +291,9 @@ for idx, row in fixed_df.iterrows():
                                 pass
                         break
 
-    # Extract LiveBench score
     if lb_data is not None and pd.notna(row['lb_lookup']):
         lb_name = str(row['lb_lookup']).strip()
         if lb_name:
-            # Look for model in LiveBench data
             for col in lb_data.columns:
                 if 'model' in col.lower():
                     model_col = col
@@ -322,7 +303,6 @@ for idx, row in fixed_df.iterrows():
 
             lb_match = lb_data[lb_data[model_col].str.contains(lb_name, case=False, na=False, regex=False)]
             if not lb_match.empty:
-                # Find average or overall score column
                 for col in lb_data.columns:
                     if any(keyword in col.lower() for keyword in ['average', 'overall', 'total', 'score']):
                         score = lb_match.iloc[0][col]
@@ -337,11 +317,9 @@ for idx, row in fixed_df.iterrows():
 
 print_step(f"Matches found - LMArena: {matches_found['lma']}, AA: {matches_found['aa']}, LiveBench: {matches_found['lb']}")
 
-# Save the result
-# Save the result
-print_step("Saving data/processed.csv...")
+print_step("Saving...")
 result.to_csv(BASE_DIR / "data/processed.csv", sep=";", index=False)
-print_step(f"✓ Saved data/processed.csv with {len(result)} models", "SUCCESS")
+print_step(f"✓ Saved data with {len(result)} models", "SUCCESS")
 
 # ============================================================================
 # STEP 3: GENERATE ALERTS
@@ -355,11 +333,9 @@ def check_tracking_status(model_name, fixed_df, lookup_col):
     if pd.isna(model_name):
         return False, None
     
-    # Iterate through all configured lookups
     for idx, row in fixed_df.iterrows():
         lookup = row[lookup_col]
         if pd.notna(lookup) and str(lookup).strip():
-            # Check if lookup string is in the model name (case-insensitive)
             if str(lookup).strip().lower() in str(model_name).lower():
                 return True, row['name']
     return False, None
@@ -380,7 +356,6 @@ def parse_previous_alerts(file_path):
             line = line.strip()
             if not line: continue
             
-            # Detect section
             if line.startswith("[") and "TOP" in line:
                 if "LMArena" in line: current_section = "LMArena"
                 elif "Artificial Analysis" in line: current_section = "Artificial Analysis"
@@ -394,21 +369,16 @@ def parse_previous_alerts(file_path):
             if not current_section: continue
             if "RANK" in line or "---" in line: continue
             
-            # Parse row to extract name
-            # Format usually: RANK SCORE STATUS NAME
-            # We can rely on [YES] or [NO] being present
             model_name = None
             if "[YES]" in line:
                 parts = line.split("[YES]")
                 if len(parts) > 1:
-                    # Take everything after [YES], removing optional [NEW] if it existed previously
                     raw = parts[1]
                     raw = raw.replace("[NEW]", "").strip()
                     model_name = raw
             elif "[NO]" in line:
                 parts = line.split("[NO]")
                 if len(parts) > 1:
-                    # Take everything after [NO], remove !!! and [NEW]
                     raw = parts[1]
                     raw = raw.replace("!!!", "").replace("[NEW]", "").strip()
                     model_name = raw
@@ -425,7 +395,6 @@ def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, to
     if df is None or df.empty:
         return f"\n[{source_name}] - NO DATA AVAILABLE\n"
     
-    # Find Model Column
     model_col = None
     for col in df.columns:
         if 'model' in col.lower() or 'name' in col.lower():
@@ -434,7 +403,6 @@ def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, to
     if not model_col:
         model_col = df.columns[0]
         
-    # Find Score Column
     score_col = None
     for col in df.columns:
         if any(keyword in col.lower() for keyword in score_keywords):
@@ -444,11 +412,9 @@ def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, to
     if not score_col:
         return f"\n[{source_name}] - COULD NOT IDENTIFY SCORE COLUMN\n"
 
-    # Extract numeric scores for sorting
     df = df.copy()
     df['__numeric_score'] = df[score_col].apply(lambda x: float(extract_numeric_score(x) or 0))
     
-    # Sort and take top N
     top_models = df.sort_values('__numeric_score', ascending=False).head(top_n)
     
     report = [f"\n[{source_name} - TOP {top_n}]"]
@@ -457,20 +423,18 @@ def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, to
     
     for rank, (idx, row) in enumerate(top_models.iterrows(), 1):
         raw_name = str(row[model_col]).strip()
+        
         score = row['__numeric_score']
         
         is_tracked, tracked_name = check_tracking_status(raw_name, fixed_df, lookup_col)
         
-        # Determine status string
         if is_tracked:
             status = "[YES]"
         else:
             status = "[NO] !!!"
             
-        # Check if new
         is_new = False
         if previous_models is not None:
-            # We assume a model is new if it wasn't in the set for this source
             if raw_name not in previous_models:
                 is_new = True
                 status += " [NEW]"
@@ -479,8 +443,6 @@ def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, to
         
     return "\n".join(report)
 
-# Generate logic
-# Generate logic
 print_step("Reading previous alerts to detect new models...")
 previous_alerts_file = BASE_DIR / "alerts.txt"
 previous_models_map = parse_previous_alerts(previous_alerts_file)
@@ -505,8 +467,6 @@ print_step("Analyzing LiveBench Top 20...")
 prev_lb = previous_models_map.get("LiveBench", set())
 alerts_output.append(analyze_top_models(lb_df, "LiveBench", ['average', 'overall', 'total', 'score'], fixed_df, 'lb_lookup', top_n=20, previous_models=prev_lb))
 
-# Write to file
-# Write to file
 alert_file = BASE_DIR / "alerts.txt"
 with open(alert_file, "w") as f:
     f.write("\n".join(alerts_output))
