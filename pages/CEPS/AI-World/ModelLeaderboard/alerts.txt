@@ -1,30 +1,30 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-10 04:56:32
+Generated on: 2026-02-11 04:55:20
 ======================================================================
 
 [LMArena - TOP 20]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     1504.0   [YES] [NEW]          claude-opus-4-6-thinking Anthropic · Proprietary
-2     1501.0   [YES] [NEW]          claude-opus-4-6 Anthropic · Proprietary
-3     1486.0   [YES] [NEW]          gemini-3-pro Google · Proprietary
-4     1475.0   [YES] [NEW]          grok-4.1-thinking xAI · Proprietary
-5     1472.0   [YES] [NEW]          gemini-3-flash Google · Proprietary
-6     1471.0   [YES] [NEW]          claude-opus-4-5-20251101-thinking-32k Anthropic · Proprietary
-7     1467.0   [NO] !!! [NEW]       claude-opus-4-5-20251101 Anthropic · Proprietary
-8     1465.0   [NO] !!! [NEW]       grok-4.1 xAI · Proprietary
-9     1463.0   [YES] [NEW]          gemini-3-flash (thinking-minimal) Google · Proprietary
-10    1458.0   [YES] [NEW]          gpt-5.1-high OpenAI · Proprietary
-11    1451.0   [YES] [NEW]          ernie-5.0-0110 Baidu · Proprietary
-12    1450.0   [NO] !!! [NEW]       claude-sonnet-4-5-20250929 Anthropic · Proprietary
-13    1450.0   [YES] [NEW]          claude-sonnet-4-5-20250929-thinking-32k Anthropic · Proprietary
-14    1449.0   [YES] [NEW]          gemini-2.5-pro Google · Proprietary
-15    1449.0   [NO] !!! [NEW]       ernie-5.0-preview-1203 Baidu · Proprietary
-16    1449.0   [YES] [NEW]          claude-opus-4-1-20250805-thinking-16k Anthropic · Proprietary
-17    1447.0   [YES] [NEW]          kimi-k2.5-thinking Moonshot · Modified MIT
-18    1445.0   [YES] [NEW]          claude-opus-4-1-20250805 Anthropic · Proprietary
-19    1444.0   [NO] !!! [NEW]       gpt-4.5-preview-2025-02-27 OpenAI · Proprietary
-20    1442.0   [NO] !!! [NEW]       chatgpt-4o-latest-20250326 OpenAI · Proprietary
+1     1505.0   [YES]                claude-opus-4-6-thinking Anthropic · Proprietary
+2     1503.0   [YES]                claude-opus-4-6 Anthropic · Proprietary
+3     1486.0   [YES]                gemini-3-pro Google · Proprietary
+4     1475.0   [YES]                grok-4.1-thinking xAI · Proprietary
+5     1472.0   [YES]                gemini-3-flash Google · Proprietary
+6     1471.0   [YES]                claude-opus-4-5-20251101-thinking-32k Anthropic · Proprietary
+7     1467.0   [NO] !!!             claude-opus-4-5-20251101 Anthropic · Proprietary
+8     1464.0   [NO] !!!             grok-4.1 xAI · Proprietary
+9     1462.0   [YES]                gemini-3-flash (thinking-minimal) Google · Proprietary
+10    1458.0   [YES]                gpt-5.1-high OpenAI · Proprietary
+11    1452.0   [YES]                ernie-5.0-0110 Baidu · Proprietary
+12    1451.0   [NO] !!!             claude-sonnet-4-5-20250929 Anthropic · Proprietary
+13    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k Anthropic · Proprietary
+14    1449.0   [NO] !!!             ernie-5.0-preview-1203 Baidu · Proprietary
+15    1449.0   [YES]                gemini-2.5-pro Google · Proprietary
+16    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k Anthropic · Proprietary
+17    1448.0   [YES]                kimi-k2.5-thinking Moonshot · Modified MIT
+18    1445.0   [YES]                claude-opus-4-1-20250805 Anthropic · Proprietary
+19    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27 OpenAI · Proprietary
+20    1442.0   [NO] !!!             chatgpt-4o-latest-20250326 OpenAI · Proprietary
 
 [Artificial Analysis - TOP 20]
 RANK  SCORE    TRACKED?             MODEL NAME
@@ -48,7 +48,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 17    42.0     [NO] !!!             GPT-5 (medium)
 18    42.0     [YES]                DeepSeek V3.2
 19    41.0     [NO] !!!             Grok 4
-20    41.0     [NO] !!!             Gemini 3 Pro Preview (low)
+20    41.0     [NO] !!! [NEW]       MiMo-V2-Flash (Feb 2026)
 
 [LiveBench - TOP 20]
 RANK  SCORE    TRACKED?             MODEL NAME
