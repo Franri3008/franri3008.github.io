@@ -970,7 +970,7 @@
         .attr('transform', `translate(0,${innerHeight})`)
         .call(xAxis);
 
-      const updateYearLabelVisibility = pointerTime => {
+      const updateYearLabelVisibility = (pointerTime, immediate = false) => {
         if (!yearAxisLabels) return;
         yearAxisLabels.each(function (d) {
           if (!d) return;
@@ -978,11 +978,16 @@
           const withinEnd = d.isLastYear ? pointerTime <= d.endTime : pointerTime < d.endTime;
           if (!d.revealed && pointerTime >= d.startTime && withinEnd) {
             d.revealed = true;
-            labelSelection.interrupt()
-              .style('opacity', 0)
-              .transition()
-              .duration(400)
-              .style('opacity', 1);
+            labelSelection.interrupt();
+            if (immediate) {
+              labelSelection.style('opacity', 1);
+            } else {
+              labelSelection
+                .style('opacity', 0)
+                .transition()
+                .duration(400)
+                .style('opacity', 1);
+            }
           } else if (!d.revealed) {
             labelSelection.interrupt().style('opacity', 0);
           }
@@ -1065,7 +1070,7 @@
       const endDateMs = data[data.length - 1].date.getTime();
       const dateSpan = Math.max(1, endDateMs - startDateMs);
 
-      const updatePointerPosition = (progress = 0) => {
+      const updatePointerPosition = (progress = 0, immediate = false) => {
         const safeProgress = Math.max(0, Math.min(1, progress || 0));
         const pointerTime = startDateMs + (dateSpan * safeProgress);
         let pointerDate = new Date(pointerTime);
@@ -1102,7 +1107,7 @@
           .attr('y', labelY)
           .text(numberFormatter(Math.round(pointerValue)));
         pointerGroup.style('opacity', 1);
-        updateYearLabelVisibility(pointerTime);
+        updateYearLabelVisibility(pointerTime, immediate);
       };
 
       const revealTargets = [];
@@ -1125,15 +1130,20 @@
         });
       };
 
-      const updateRevealTargets = (progress = 0) => {
+      const updateRevealTargets = (progress = 0, immediate = false) => {
         if (!revealTargets.length) return;
         const revealWidth = innerWidth * Math.max(0, Math.min(1, progress));
         revealTargets.forEach(target => {
-          if (!target.visible && revealWidth >= target.threshold && target.selection) {
+          if ((!target.visible && revealWidth >= target.threshold && target.selection) || (immediate && !target.visible)) {
             target.visible = true;
-            target.selection.transition()
-              .duration(600)
-              .style('opacity', 1);
+            target.selection.interrupt();
+            if (immediate) {
+              target.selection.style('opacity', 1);
+            } else {
+              target.selection.transition()
+                .duration(600)
+                .style('opacity', 1);
+            }
           }
         });
       };
@@ -1398,9 +1408,9 @@
           hideTooltip();
         });
 
-      const completeAnimation = () => {
-        updatePointerPosition(1);
-        updateRevealTargets(1);
+      const completeAnimation = (immediate = false) => {
+        updatePointerPosition(1, immediate);
+        updateRevealTargets(1, immediate);
         pointerGroup.style('opacity', 1);
         skipAnimationHandler = null;
         if (restartButton) {
@@ -1411,13 +1421,11 @@
       const triggerAnimation = (force = false) => {
         if (!shouldAnimate && !force) {
           cancelActiveAnimation();
-          pointerGroup.style('opacity', 0);
-          updatePointerPosition(0);
           resetRevealTargets();
           resetYearLabelVisibility();
 
           clipRect.attr('width', innerWidth);
-          completeAnimation();
+          completeAnimation(true);
           return;
         }
 
