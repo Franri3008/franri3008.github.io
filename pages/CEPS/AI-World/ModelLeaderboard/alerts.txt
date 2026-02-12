@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-12 04:51:13
+Generated on: 2026-02-12 14:15:20
 ======================================================================
 
 [LMArena - TOP 20]
@@ -15,9 +15,9 @@ RANK  SCORE    TRACKED?             MODEL NAME
 8     1464.0   [NO] !!!             grok-4.1
 9     1462.0   [YES]                gemini-3-flash (thinking-minimal)
 10    1457.0   [YES]                gpt-5.1-high
-11    1452.0   [YES] [NEW]          glm-5
-12    1451.0   [YES]                ernie-5.0-0110
-13    1451.0   [NO] !!!             claude-sonnet-4-5-20250929
+11    1452.0   [YES]                glm-5
+12    1451.0   [NO] !!!             claude-sonnet-4-5-20250929
+13    1451.0   [YES]                ernie-5.0-0110
 14    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
 15    1449.0   [NO] !!!             ernie-5.0-preview-1203
 16    1449.0   [YES]                gemini-2.5-pro
@@ -42,8 +42,8 @@ RANK  SCORE    TRACKED?             MODEL NAME
 11    46.0     [NO] !!!             Claude Opus 4.6
 12    45.0     [YES]                GPT-5 (high)
 13    45.0     [NO] !!!             GPT-5 Codex (high)
-14    43.0     [YES]                Claude Opus 4.5
-15    43.0     [YES]                Claude 4.5 Sonnet
+14    43.0     [YES]                Claude 4.5 Sonnet
+15    43.0     [YES]                Claude Opus 4.5
 16    42.0     [NO] !!!             GPT-5.1 Codex (high)
 17    42.0     [YES]                GLM-4.7
 18    42.0     [NO] !!!             GPT-5 (medium)
