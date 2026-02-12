@@ -452,7 +452,8 @@
       <button id="restart-animation" class="restart-button" type="button"></button>
       <div class="logo-pair">
         <a href="https://huggingface.co/" id="logo-link" target="_blank" rel="noopener">
-          <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" class="logo" alt="Hugging Face logo" />
+          <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" class="logo"
+            alt="Hugging Face logo" />
         </a>
         ×
         <a href="https://aiworld.eu/" id="logo-link" target="_blank" rel="noopener">
@@ -479,8 +480,8 @@
       { model: 'Qwen2', release_date: '2024-06-07', logo: 'qwen.png' },
       { model: 'Flux 1.0', release_date: '2024-08-01', logo: 'bfl.png' },
       { model: 'DeepSeek-R1', release_date: '2025-01-20', logo: 'deepseek.png' },
-      { model: 'GPT-OSS', release_date: '2025-08-05', logo: 'gpt.jpg'},
-      { model: 'Kimi K2-Thinking', release_date: '2025-11-07', logo: 'kimi.png '}
+      { model: 'GPT-OSS', release_date: '2025-08-05', logo: 'gpt.jpg' },
+      { model: 'Kimi K2-Thinking', release_date: '2025-11-07', logo: 'kimi.png ' }
     ];
 
     const CHART_ANIMATION_DURATION = 14000;
@@ -538,6 +539,7 @@
       }
     };
     let showCustomTitle = getUrlBooleanParam('title', false);
+    let shouldAnimate = getUrlBooleanParam('anim', true);
     let activeAnimationFrame = null;
     let restartAnimationHandler = null;
     let skipAnimationHandler = null;
@@ -1406,7 +1408,19 @@
         }
       };
 
-      const triggerAnimation = () => {
+      const triggerAnimation = (force = false) => {
+        if (!shouldAnimate && !force) {
+          cancelActiveAnimation();
+          pointerGroup.style('opacity', 0);
+          updatePointerPosition(0);
+          resetRevealTargets();
+          resetYearLabelVisibility();
+
+          clipRect.attr('width', innerWidth);
+          completeAnimation();
+          return;
+        }
+
         pointerGroup.style('opacity', 0);
         if (restartButton) {
           setButtonMode(BUTTON_MODES.SKIP);
@@ -1434,7 +1448,7 @@
       };
 
       triggerAnimation();
-      restartAnimationHandler = triggerAnimation;
+      restartAnimationHandler = () => triggerAnimation(true);
     }
 
     function renderVisualizationForContainer() {
