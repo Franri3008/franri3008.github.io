@@ -11,7 +11,7 @@ claude-sonnet-4-5-thinking;Claude Sonnet 4.5 (Thinking);claude;1450;43;68.19
 claude-opus-4-1;Claude Opus 4.1;claude;1449;32;61.81
 gpt-5-high;GPT-5 (Thinking);gpt;1435;45;70.48
 o3-2025-04-16;o3;gpt;1433;41;
-glm-5;GLM 5;zai;1452;50;
+glm-5;GLM 5;zai;1452;50;68.85
 glm-4-7;GLM 4.7;zai;1441;42;58.09
 glm-4-6;GLM 4.6;zai;1425;33;55.19
 qwen3-max;Qwen 3 Max;qwen;1425;29;52.97

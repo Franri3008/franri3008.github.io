@@ -429,6 +429,7 @@
     }
   </style>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -1611,6 +1612,21 @@
         showCustomTitle = !showCustomTitle;
         animateTitleVisibility(showCustomTitle, true);
         updateUrlBooleanParam('title', showCustomTitle);
+      }
+      if (event.key.toLowerCase() === 's') {
+        if (typeof html2canvas === 'undefined') {
+          console.warn('html2canvas library is not loaded');
+          return;
+        }
+        html2canvas(document.body).then(canvas => {
+          const image = canvas.toDataURL('image/jpeg', 0.9);
+          const link = document.createElement('a');
+          link.download = `viz-snapshot-${new Date().toISOString().slice(0, 10)}.jpg`;
+          link.href = image;
+          link.click();
+        }).catch(err => {
+          console.error('Screenshot failed:', err);
+        });
       }
     });
 
