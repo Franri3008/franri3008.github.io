@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-13 04:47:20
+Generated on: 2026-02-14 04:26:13
 ======================================================================
 
 [LMArena - TOP 20]
@@ -46,7 +46,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 15    43.0     [YES]                Claude 4.5 Sonnet
 16    42.0     [NO] !!!             GPT-5.1 Codex (high)
 17    42.0     [YES]                GLM-4.7
-18    42.0     [NO] !!! [NEW]       MiniMax-M2.5
+18    42.0     [NO] !!!             MiniMax-M2.5
 19    42.0     [NO] !!!             GPT-5 (medium)
 20    42.0     [YES]                DeepSeek V3.2
 
@@ -63,7 +63,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 8     72.04    [YES]                GPT-5.1 High
 9     70.48    [YES]                GPT-5 Pro
 10    69.07    [YES]                Kimi K2.5 Thinking
-11    68.85    [YES] [NEW]          GLM 5
+11    68.85    [YES]                GLM 5
 12    68.61    [NO] !!!             GPT-5.1 Codex
 13    68.19    [YES]                Claude Sonnet 4.5 Thinking
 14    65.91    [YES]                GPT-5 Mini High
