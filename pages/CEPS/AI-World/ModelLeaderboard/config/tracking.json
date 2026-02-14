@@ -264,12 +264,12 @@
         "lb_lookup": null
     },
     {
-        "model": "minimax-m2",
-        "name": "MiniMax M2",
+        "model": "minimax-m2-5",
+        "name": "MiniMax M2.5",
         "logo": "minimax",
         "lma_lookup": null,
-        "aa_lookup": null,
-        "lb_lookup": null
+        "aa_lookup": "Minimax-M2.5",
+        "lb_lookup": "Minimax M2.5"
     },
     {
         "model": "ernie-5.0",
