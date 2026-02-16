@@ -1,28 +1,28 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-15 04:47:44
+Generated on: 2026-02-16 04:52:03
 ======================================================================
 
 [LMArena - TOP 20]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     1506.0   [YES]                claude-opus-4-6-thinking
-2     1502.0   [YES]                claude-opus-4-6
+1     1507.0   [YES]                claude-opus-4-6-thinking
+2     1504.0   [YES]                claude-opus-4-6
 3     1486.0   [YES]                gemini-3-pro
 4     1475.0   [YES]                grok-4.1-thinking
 5     1473.0   [YES]                gemini-3-flash
 6     1471.0   [YES]                claude-opus-4-5-20251101-thinking-32k
 7     1467.0   [NO] !!!             claude-opus-4-5-20251101
-8     1464.0   [NO] !!!             grok-4.1
+8     1463.0   [NO] !!!             grok-4.1
 9     1462.0   [YES]                gemini-3-flash (thinking-minimal)
-10    1457.0   [YES]                gpt-5.1-high
-11    1452.0   [YES]                glm-5
-12    1451.0   [YES]                ernie-5.0-0110
-13    1451.0   [NO] !!!             claude-sonnet-4-5-20250929
-14    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
-15    1449.0   [NO] !!!             ernie-5.0-preview-1203
-16    1449.0   [YES]                gemini-2.5-pro
+10    1458.0   [YES]                gpt-5.1-high
+11    1455.0   [YES]                glm-5
+12    1453.0   [YES]                ernie-5.0-0110
+13    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+14    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
+15    1449.0   [YES]                gemini-2.5-pro
+16    1449.0   [NO] !!!             ernie-5.0-preview-1203
 17    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
-18    1447.0   [YES]                kimi-k2.5-thinking
+18    1448.0   [YES]                kimi-k2.5-thinking
 19    1445.0   [YES]                claude-opus-4-1-20250805
 20    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
 
