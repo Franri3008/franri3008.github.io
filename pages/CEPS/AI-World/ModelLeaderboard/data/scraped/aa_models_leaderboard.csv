@@ -1,348 +1,347 @@
 Model,Context Window,Creator,Artificial Analysis Intelligence Index,Blended USD/1M Tokens,Median Tokens/s,Latency First Answer Chunk (s),Further Analysis
-Claude Opus 4.6 (Adaptive),200k,Anthropic,53,$10.00,64,1.69,Model Providers
-GPT-5.2 (xhigh),400k,OpenAI,51,$4.81,101,42.55,Model Providers
-Claude Opus 4.5,200k,Anthropic,50,$10.00,82,1.47,Model Providers
-GLM-5,200k,Z AI,50,$1.55,75,1.53,Model Providers
-GPT-5.2 Codex (xhigh),400k,OpenAI,49,$4.81,91,22.70,Model Providers
-Gemini 3 Pro Preview (high),1m,Google,48,$4.50,134,29.94,Model Providers
-GPT-5.1 (high),400k,OpenAI,48,$3.44,115,34.27,Model Providers
-Kimi K2.5,256k,Kimi,47,$1.20,46,1.31,Model Providers
+Claude Opus 4.6 (Adaptive),200k,Anthropic,53,$10.00,69,1.76,Model Providers
+GPT-5.2 (xhigh),400k,OpenAI,51,$4.81,99,42.01,Model Providers
+Claude Opus 4.5,200k,Anthropic,50,$10.00,85,1.48,Model Providers
+GLM-5,200k,Z AI,50,$1.55,78,1.46,Model Providers
+GPT-5.2 Codex (xhigh),400k,OpenAI,49,$4.81,91,22.32,Model Providers
+Gemini 3 Pro Preview (high),1m,Google,48,$4.50,133,30.23,Model Providers
+GPT-5.1 (high),400k,OpenAI,48,$3.44,111,34.92,Model Providers
+Kimi K2.5,256k,Kimi,47,$1.20,47,1.20,Model Providers
 GPT-5.2 (medium),400k,OpenAI,47,$4.81,0,0.00,Model Providers
-Gemini 3 Flash,1m,Google,46,$1.13,209,12.13,Model Providers
+Gemini 3 Flash,1m,Google,46,$1.13,209,11.95,Model Providers
 Claude Opus 4.6,200k,Anthropic,46,$10.00,0,0.00,Model Providers
-GPT-5 (high),400k,OpenAI,45,$3.44,84,104.54,Model Providers
-GPT-5 Codex (high),400k,OpenAI,45,$3.44,363,10.78,Model Providers
-Claude Opus 4.5,200k,Anthropic,43,$10.00,71,1.55,Model Providers
-Claude 4.5 Sonnet,1m,Anthropic,43,$6.00,80,1.25,Model Providers
-GPT-5.1 Codex (high),400k,OpenAI,42,$3.44,179,14.48,Model Providers
-GLM-4.7,200k,Z AI,42,$0.94,135,0.71,Model Providers
-MiniMax-M2.5,205k,MiniMax,42,$0.53,65,1.73,Model Providers
-GPT-5 (medium),400k,OpenAI,42,$3.44,94,53.85,Model Providers
-DeepSeek V3.2,128k,DeepSeek,42,$0.32,46,1.34,Model Providers
-Grok 4,256k,xAI,41,$6.00,38,12.58,Model Providers
-MiMo-V2-Flash (Feb 2026),256k,Xiaomi,41,$0.15,167,1.40,Model Providers
-Gemini 3 Pro Preview (low),1m,Google,41,$4.50,132,3.78,Model Providers
-GPT-5 mini (high),400k,OpenAI,41,$0.69,129,59.76,Model Providers
-Kimi K2 Thinking,256k,Kimi,41,$1.07,82,0.66,Model Providers
-o3-pro,200k,OpenAI,41 E,$35.00,30,103.72,Model Providers
-GLM-5,200k,Z AI,40,$0.00,0,0.00,Model Providers
-Qwen3 Max Thinking,256k,Alibaba,40,$2.40,36,1.75,Model Providers
-MiniMax-M2.1,205k,MiniMax,40,$0.53,59,1.47,Model Providers
-MiMo-V2-Flash,256k,Xiaomi,39,$0.15,173,1.26,Model Providers
-GPT-5 (low),400k,OpenAI,39,$3.44,89,27.51,Model Providers
-GPT-5 mini (medium),400k,OpenAI,39,$0.69,124,19.06,Model Providers
-Claude 4 Sonnet,1m,Anthropic,39,$6.00,79,1.15,Model Providers
-GPT-5.1 Codex mini (high),400k,OpenAI,39,$0.69,139,13.37,Model Providers
-Grok 4.1 Fast,2m,xAI,39,$0.28,182,5.38,Model Providers
-o3,200k,OpenAI,38,$3.50,114,18.85,Model Providers
-Kimi K2.5,256k,Kimi,37,$1.20,40,1.35,Model Providers
-Claude 4.5 Sonnet,1m,Anthropic,37,$6.00,73,1.16,Model Providers
-Claude 4.5 Haiku,200k,Anthropic,37,$2.00,118,0.47,Model Providers
-KAT-Coder-Pro V1,256k,KwaiKAT,36,$0.53,58,1.82,Model Providers
-MiniMax-M2,205k,MiniMax,36,$0.53,50,2.26,Model Providers
-Nova 2.0 Pro Preview (medium),256k,Amazon,36,$3.44,129,23.30,Model Providers
-Gemini 3 Flash,1m,Google,35,$1.13,172,1.29,Model Providers
-Grok 4 Fast,2m,xAI,35,$0.28,169,4.54,Model Providers
+GPT-5 (high),400k,OpenAI,45,$3.44,87,107.11,Model Providers
+GPT-5 Codex (high),400k,OpenAI,45,$3.44,366,10.96,Model Providers
+Claude Opus 4.5,200k,Anthropic,43,$10.00,74,1.52,Model Providers
+Claude 4.5 Sonnet,1m,Anthropic,43,$6.00,80,1.24,Model Providers
+GPT-5.1 Codex (high),400k,OpenAI,42,$3.44,191,18.43,Model Providers
+GLM-4.7,200k,Z AI,42,$0.94,147,0.65,Model Providers
+MiniMax-M2.5,205k,MiniMax,42,$0.53,57,2.09,Model Providers
+GPT-5 (medium),400k,OpenAI,42,$3.44,94,54.67,Model Providers
+DeepSeek V3.2,128k,DeepSeek,42,$0.32,49,1.21,Model Providers
+Grok 4,256k,xAI,41,$6.00,39,10.20,Model Providers
+MiMo-V2-Flash (Feb 2026),256k,Xiaomi,41,$0.15,167,1.34,Model Providers
+Gemini 3 Pro Preview (low),1m,Google,41,$4.50,132,3.75,Model Providers
+GPT-5 mini (high),400k,OpenAI,41,$0.69,131,65.66,Model Providers
+Kimi K2 Thinking,256k,Kimi,41,$1.07,86,0.66,Model Providers
+o3-pro,200k,OpenAI,41 E,$35.00,32,97.59,Model Providers
+GLM-5,200k,Z AI,40,$1.55,36,1.87,Model Providers
+Qwen3 Max Thinking,256k,Alibaba,40,$2.40,37,1.71,Model Providers
+MiniMax-M2.1,205k,MiniMax,40,$0.53,56,1.30,Model Providers
+MiMo-V2-Flash,256k,Xiaomi,39,$0.15,171,1.26,Model Providers
+GPT-5 (low),400k,OpenAI,39,$3.44,85,27.54,Model Providers
+GPT-5 mini (medium),400k,OpenAI,39,$0.69,123,19.32,Model Providers
+Claude 4 Sonnet,1m,Anthropic,39,$6.00,82,1.19,Model Providers
+GPT-5.1 Codex mini (high),400k,OpenAI,39,$0.69,152,9.50,Model Providers
+Grok 4.1 Fast,2m,xAI,39,$0.28,213,5.24,Model Providers
+o3,200k,OpenAI,38,$3.50,134,17.38,Model Providers
+Kimi K2.5,256k,Kimi,37,$1.20,40,1.25,Model Providers
+Claude 4.5 Sonnet,1m,Anthropic,37,$6.00,69,1.14,Model Providers
+Claude 4.5 Haiku,200k,Anthropic,37,$2.00,112,0.48,Model Providers
+KAT-Coder-Pro V1,256k,KwaiKAT,36,$0.53,57,1.87,Model Providers
+MiniMax-M2,205k,MiniMax,36,$0.53,49,2.23,Model Providers
+Nova 2.0 Pro Preview (medium),256k,Amazon,36,$3.44,131,22.08,Model Providers
+Gemini 3 Flash,1m,Google,35,$1.13,173,1.46,Model Providers
+Grok 4 Fast,2m,xAI,35,$0.28,167,4.55,Model Providers
 Claude 3.7 Sonnet,200k,Anthropic,35,$6.00,0,0.00,Model Providers
-Gemini 2.5 Pro,1m,Google,34,$3.44,153,37.65,Model Providers
-GLM-4.7,200k,Z AI,34,$1.00,135,0.55,Model Providers
+Gemini 2.5 Pro,1m,Google,34,$3.44,153,37.54,Model Providers
+GLM-4.7,200k,Z AI,34,$1.00,141,0.51,Model Providers
 DeepSeek V3.2 Speciale,128k,DeepSeek,34 E,$0.42,0,0.00,Model Providers
 DeepSeek V3.1 Terminus,128k,DeepSeek,34,$0.80,0,0.00,Model Providers
-GPT-5.2,400k,OpenAI,34,$4.81,81,0.65,Model Providers
+GPT-5.2,400k,OpenAI,34,$4.81,79,0.61,Model Providers
 Doubao Seed Code,256k,ByteDance Seed,34,$0.00,0,0.00,Model Providers
-gpt-oss-120B (high),131k,OpenAI,33,$0.26,315,0.46,Model Providers
-o4-mini (high),200k,OpenAI,33,$1.93,135,58.81,Model Providers
-Claude 4 Sonnet,1m,Anthropic,33,$6.00,66,1.17,Model Providers
-DeepSeek V3.2 Exp,128k,DeepSeek,33,$0.32,47,1.24,Model Providers
-GLM-4.6,200k,Z AI,33,$0.96,100,0.63,Model Providers
-Qwen3 Max Thinking (Preview),262k,Alibaba,32,$2.40,55,1.85,Model Providers
-K-EXAONE,256k,LG AI Research,32,$0.00,131,0.30,Model Providers
-DeepSeek V3.2,128k,DeepSeek,32,$0.32,47,1.32,Model Providers
-Grok 3 mini Reasoning (high),1m,xAI,32,$0.35,194,0.71,Model Providers
-Claude 4.1 Opus,200k,Anthropic,32 E,$30.00,50,1.30,Model Providers
-Nova 2.0 Pro Preview (low),256k,Amazon,32,$3.44,134,11.94,Model Providers
-Qwen3 Max,262k,Alibaba,31,$2.40,28,2.36,Model Providers
-Gemini 2.5 Flash (Sep),1m,Google,31,$0.85,310,10.86,Model Providers
-Claude 4.5 Haiku,200k,Anthropic,31,$2.00,112,0.44,Model Providers
+gpt-oss-120B (high),131k,OpenAI,33,$0.26,320,0.47,Model Providers
+o4-mini (high),200k,OpenAI,33,$1.93,136,59.31,Model Providers
+Claude 4 Sonnet,1m,Anthropic,33,$6.00,69,1.18,Model Providers
+DeepSeek V3.2 Exp,128k,DeepSeek,33,$0.32,50,1.13,Model Providers
+GLM-4.6,200k,Z AI,33,$0.96,108,0.63,Model Providers
+Qwen3 Max Thinking (Preview),262k,Alibaba,32,$2.40,59,1.86,Model Providers
+K-EXAONE,256k,LG AI Research,32,$0.00,116,0.29,Model Providers
+DeepSeek V3.2,128k,DeepSeek,32,$0.32,49,1.21,Model Providers
+Grok 3 mini Reasoning (high),1m,xAI,32,$0.35,194,0.76,Model Providers
+Claude 4.1 Opus,200k,Anthropic,32 E,$30.00,50,1.32,Model Providers
+Nova 2.0 Pro Preview (low),256k,Amazon,32,$3.44,131,12.16,Model Providers
+Qwen3 Max,262k,Alibaba,31,$2.40,28,2.29,Model Providers
+Gemini 2.5 Flash (Sep),1m,Google,31,$0.85,299,12.50,Model Providers
+Claude 4.5 Haiku,200k,Anthropic,31,$2.00,109,0.45,Model Providers
 Kimi K2 0905,256k,Kimi,31,$1.20,63,0.49,Model Providers
 Claude 3.7 Sonnet,200k,Anthropic,31,$6.00,0,0.00,Model Providers
-o1,200k,OpenAI,31,$26.25,174,18.14,Model Providers
-MiMo-V2-Flash,256k,Xiaomi,31,$0.15,148,1.16,Model Providers
+o1,200k,OpenAI,31,$26.25,161,19.60,Model Providers
+MiMo-V2-Flash,256k,Xiaomi,31,$0.15,143,1.20,Model Providers
 Gemini 2.5 Pro (Mar),1m,Google,30 E,$0.00,0,0.00,Model Providers
-GLM-4.6,200k,Z AI,30,$1.00,87,0.68,Model Providers
-GLM-4.7-Flash,200k,Z AI,30,$0.15,48,0.72,Model Providers
-Nova 2.0 Lite (medium),1m,Amazon,30,$0.85,236,17.28,Model Providers
+GLM-4.6,200k,Z AI,30,$1.00,80,0.66,Model Providers
+GLM-4.7-Flash,200k,Z AI,30,$0.15,59,0.71,Model Providers
+Nova 2.0 Lite (medium),1m,Amazon,30,$0.85,238,18.44,Model Providers
 Gemini 2.5 Pro (May),1m,Google,30 E,$3.44,0,0.00,Model Providers
-Qwen3 235B A22B 2507,256k,Alibaba,29,$2.63,48,1.33,Model Providers
+Qwen3 235B A22B 2507,256k,Alibaba,29,$2.63,48,1.31,Model Providers
 ERNIE 5.0 Thinking Preview,128k,Baidu,29,$0.00,0,0.00,Model Providers
-Grok Code Fast 1,256k,xAI,29,$0.53,356,7.12,Model Providers
+Grok Code Fast 1,256k,xAI,29,$0.53,354,7.93,Model Providers
 DeepSeek V3.1 Terminus,128k,DeepSeek,28,$0.80,0,0.00,Model Providers
-Apriel-v1.5-15B-Thinker,128k,ServiceNow,28 E,$0.00,147,0.20,Model Providers
-DeepSeek V3.2 Exp,128k,DeepSeek,28,$0.32,47,1.10,Model Providers
-Qwen3-Coder-Next,256k,Alibaba,28,$0.53,129,0.81,Model Providers
+Apriel-v1.5-15B-Thinker,128k,ServiceNow,28 E,$0.00,147,0.18,Model Providers
+DeepSeek V3.2 Exp,128k,DeepSeek,28,$0.32,49,1.11,Model Providers
+Qwen3-Coder-Next,256k,Alibaba,28,$0.53,129,0.82,Model Providers
 DeepSeek V3.1,128k,DeepSeek,28,$0.84,0,0.00,Model Providers
 Nova 2.0 Omni (medium),1m,Amazon,28,$0.85,0,0.00,Model Providers
 DeepSeek V3.1,128k,DeepSeek,28,$0.86,0,0.00,Model Providers
-Apriel-v1.6-15B-Thinker,128k,ServiceNow,28,$0.00,144,0.21,Model Providers
-Qwen3 VL 235B A22B,262k,Alibaba,28,$2.63,47,1.18,Model Providers
-GPT-5.1,400k,OpenAI,27,$3.44,84,0.69,Model Providers
-Claude 4 Opus,200k,Anthropic,27 E,$30.00,45,1.26,Model Providers
-Magistral Medium 1.2,128k,Mistral,27,$2.75,36,0.52,Model Providers
+Apriel-v1.6-15B-Thinker,128k,ServiceNow,28,$0.00,143,0.23,Model Providers
+Qwen3 VL 235B A22B,262k,Alibaba,28,$2.63,47,1.21,Model Providers
+GPT-5.1,400k,OpenAI,27,$3.44,88,0.68,Model Providers
+Claude 4 Opus,200k,Anthropic,27 E,$30.00,47,1.26,Model Providers
+Magistral Medium 1.2,128k,Mistral,27,$2.75,35,0.49,Model Providers
 DeepSeek R1 0528,128k,DeepSeek,27,$2.36,0,0.00,Model Providers
-Gemini 2.5 Flash,1m,Google,27,$0.85,301,14.91,Model Providers
-GPT-5 nano (high),400k,OpenAI,27,$0.14,145,106.67,Model Providers
-Qwen3 Next 80B A3B,262k,Alibaba,26,$1.88,171,1.17,Model Providers
-GLM-4.5,128k,Z AI,26,$1.00,44,0.75,Model Providers
-Kimi K2,128k,Kimi,26,$1.07,45,0.62,Model Providers
-Qwen3 Max (Preview),262k,Alibaba,26,$2.40,45,1.79,Model Providers
-o3-mini,200k,OpenAI,26 E,$1.93,142,16.53,Model Providers
+Gemini 2.5 Flash,1m,Google,27,$0.85,298,13.94,Model Providers
+GPT-5 nano (high),400k,OpenAI,27,$0.14,145,104.85,Model Providers
+Qwen3 Next 80B A3B,262k,Alibaba,26,$1.88,167,1.08,Model Providers
+GLM-4.5,128k,Z AI,26,$1.00,43,0.74,Model Providers
+Kimi K2,128k,Kimi,26,$1.07,46,0.61,Model Providers
+Qwen3 Max (Preview),262k,Alibaba,26,$2.40,50,1.73,Model Providers
+o3-mini,200k,OpenAI,26 E,$1.93,148,16.53,Model Providers
 o1-pro,200k,OpenAI,26 E,$262.50,0,0.00,Model Providers
-GPT-5 nano (medium),400k,OpenAI,26,$0.14,135,51.35,Model Providers
-GPT-4.1,1m,OpenAI,26,$3.50,100,0.43,Model Providers
-Gemini 2.5 Flash (Sep),1m,Google,26,$0.85,270,0.37,Model Providers
-o3-mini (high),200k,OpenAI,25,$1.93,146,54.33,Model Providers
-Grok 3,1m,xAI,25,$6.00,63,0.69,Model Providers
-Seed-OSS-36B-Instruct,512k,ByteDance Seed,25,$0.30,32,1.56,Model Providers
-Qwen3 235B 2507,256k,Alibaba,25,$1.23,53,1.18,Model Providers
-Qwen3 Coder 480B,262k,Alibaba,25,$3.00,55,1.67,Model Providers
+GPT-5 nano (medium),400k,OpenAI,26,$0.14,132,51.83,Model Providers
+GPT-4.1,1m,OpenAI,26,$3.50,104,0.44,Model Providers
+Gemini 2.5 Flash (Sep),1m,Google,26,$0.85,268,0.38,Model Providers
+o3-mini (high),200k,OpenAI,25,$1.93,146,53.31,Model Providers
+Grok 3,1m,xAI,25,$6.00,62,0.71,Model Providers
+Seed-OSS-36B-Instruct,512k,ByteDance Seed,25,$0.30,32,1.55,Model Providers
+Qwen3 235B 2507,256k,Alibaba,25,$1.23,47,1.22,Model Providers
+Qwen3 Coder 480B,262k,Alibaba,25,$3.00,56,1.67,Model Providers
 Sonar Reasoning Pro,127k,Perplexity,25 E,$0.00,0,0.00,Model Providers
 K2 Think V2,262k,MBZUAI Institute of Foundation Models,25,$0.00,0,0.00,Model Providers
-Qwen3 VL 32B,256k,Alibaba,25,$2.63,84,1.29,Model Providers
+Qwen3 VL 32B,256k,Alibaba,25,$2.63,85,1.34,Model Providers
 gpt-oss-20B (high),131k,OpenAI,24,$0.10,309,0.51,Model Providers
 Gemini 2.5 Flash,1m,Google,24 E,$0.00,0,0.00,Model Providers
-NVIDIA Nemotron 3 Nano,1m,NVIDIA,24,$0.10,200,0.54,Model Providers
+NVIDIA Nemotron 3 Nano,1m,NVIDIA,24,$0.10,195,0.48,Model Providers
 MiniMax M1 80k,1m,MiniMax,24,$0.96,0,0.00,Model Providers
-Nova 2.0 Lite (low),1m,Amazon,24,$0.85,229,6.79,Model Providers
-gpt-oss-120B (low),131k,OpenAI,24,$0.26,318,0.42,Model Providers
+Nova 2.0 Lite (low),1m,Amazon,24,$0.85,228,5.78,Model Providers
+gpt-oss-120B (low),131k,OpenAI,24,$0.26,321,0.40,Model Providers
 o1-preview,128k,OpenAI,24 E,$28.88,0,0.00,Model Providers
-GPT-5 (minimal),400k,OpenAI,24,$3.44,73,0.95,Model Providers
+GPT-5 (minimal),400k,OpenAI,24,$3.44,71,1.04,Model Providers
 HyperCLOVA X SEED Think (32B),128k,Naver,24,$0.00,0,0.00,Model Providers
-Claude 4.1 Opus,200k,Anthropic,24 E,$30.00,40,1.46,Model Providers
-Grok 4.1 Fast,2m,xAI,24,$0.28,159,0.67,Model Providers
-GLM-4.6V,128k,Z AI,23,$0.45,77,0.69,Model Providers
+Claude 4.1 Opus,200k,Anthropic,24 E,$30.00,40,1.41,Model Providers
+Grok 4.1 Fast,2m,xAI,24,$0.28,171,0.66,Model Providers
+GLM-4.6V,128k,Z AI,23,$0.45,72,0.71,Model Providers
 Nova 2.0 Omni (low),1m,Amazon,23,$0.85,0,0.00,Model Providers
-GLM-4.5-Air,128k,Z AI,23,$0.42,108,0.68,Model Providers
-K-EXAONE,256k,LG AI Research,23,$0.00,87,0.31,Model Providers
+GLM-4.5-Air,128k,Z AI,23,$0.42,111,0.66,Model Providers
+K-EXAONE,256k,LG AI Research,23,$0.00,87,0.30,Model Providers
 Mi:dm K 2.5 Pro,128k,Korea Telecom,23,$0.00,0,0.00,Model Providers
-Nova 2.0 Pro Preview,256k,Amazon,23,$3.44,160,0.47,Model Providers
-Mistral Large 3,256k,Mistral,23,$0.75,55,0.51,Model Providers
-Grok 4 Fast,2m,xAI,23,$0.28,150,0.65,Model Providers
+Nova 2.0 Pro Preview,256k,Amazon,23,$3.44,161,0.46,Model Providers
+Mistral Large 3,256k,Mistral,23,$0.75,56,0.51,Model Providers
+Grok 4 Fast,2m,xAI,23,$0.28,159,0.67,Model Providers
 Ring-1T,128k,InclusionAI,23,$0.00,0,0.00,Model Providers
-Qwen3 30B A3B 2507,262k,Alibaba,22,$0.75,143,1.16,Model Providers
-GPT-4.1 mini,1m,OpenAI,22,$0.70,85,0.50,Model Providers
-Claude 4 Opus,200k,Anthropic,22 E,$30.00,40,1.32,Model Providers
-INTELLECT-3,131k,Prime Intellect,22,$0.42,87,0.62,Model Providers
+Qwen3 30B A3B 2507,262k,Alibaba,22,$0.75,153,1.13,Model Providers
+GPT-4.1 mini,1m,OpenAI,22,$0.70,86,0.54,Model Providers
+Claude 4 Opus,200k,Anthropic,22 E,$30.00,39,1.34,Model Providers
+INTELLECT-3,131k,Prime Intellect,22,$0.42,87,0.61,Model Providers
 Devstral 2,256k,Mistral,22,$0.00,74,0.40,Model Providers
-GPT-5 (ChatGPT),128k,OpenAI,22 E,$3.44,231,0.57,Model Providers
+GPT-5 (ChatGPT),128k,OpenAI,22 E,$3.44,224,0.61,Model Providers
 DeepSeek V3 0324,128k,DeepSeek,22,$1.25,0,0.00,Model Providers
 Grok 3 Reasoning Beta,1m,xAI,22 E,$0.00,0,0.00,Model Providers
-Gemini 2.5 Flash-Lite (Sep),1m,Google,22,$0.17,473,7.52,Model Providers
+Gemini 2.5 Flash-Lite (Sep),1m,Google,22,$0.17,499,6.83,Model Providers
 Solar Open 100B,128k,Upstage,22,$0.00,0,0.00,Model Providers
 GLM-4.7-Flash,200k,Z AI,21,$0.15,0,0.00,Model Providers
-Mistral Medium 3.1,128k,Mistral,21,$0.80,97,0.37,Model Providers
+Mistral Medium 3.1,128k,Mistral,21,$0.80,103,0.36,Model Providers
 MiniMax M1 40k,1m,MiniMax,21 E,$0.00,0,0.00,Model Providers
-gpt-oss-20B (low),131k,OpenAI,21,$0.10,306,0.45,Model Providers
+gpt-oss-20B (low),131k,OpenAI,21,$0.10,309,0.43,Model Providers
 K2-V2 (high),512k,MBZUAI Institute of Foundation Models,21,$0.00,0,0.00,Model Providers
-GPT-5 mini (minimal),400k,OpenAI,21,$0.69,115,0.63,Model Providers
-Qwen3 VL 235B A22B,262k,Alibaba,21,$1.23,44,1.13,Model Providers
-Gemini 2.5 Flash,1m,Google,21,$0.85,258,0.39,Model Providers
+GPT-5 mini (minimal),400k,OpenAI,21,$0.69,117,0.60,Model Providers
+Qwen3 VL 235B A22B,262k,Alibaba,21,$1.23,45,1.18,Model Providers
+Gemini 2.5 Flash,1m,Google,21,$0.85,258,0.40,Model Providers
 o1-mini,128k,OpenAI,20 E,$0.00,0,0.00,Model Providers
-Qwen3 Next 80B A3B,262k,Alibaba,20,$0.88,161,1.15,Model Providers
-Qwen3 Coder 30B A3B,262k,Alibaba,20,$0.90,22,1.57,Model Providers
+Qwen3 Next 80B A3B,262k,Alibaba,20,$0.88,155,1.17,Model Providers
+Qwen3 Coder 30B A3B,262k,Alibaba,20,$0.90,22,1.63,Model Providers
 GPT-4.5 (Preview),128k,OpenAI,20 E,$0.00,0,0.00,Model Providers
-Qwen3 235B,33k,Alibaba,20,$2.63,52,1.21,Model Providers
-QwQ-32B,131k,Alibaba,20 E,$0.47,29,0.50,Model Providers
-Qwen3 VL 30B A3B,256k,Alibaba,20,$0.75,118,1.03,Model Providers
+Qwen3 235B,33k,Alibaba,20,$2.63,52,1.18,Model Providers
+QwQ-32B,131k,Alibaba,20 E,$0.47,29,0.52,Model Providers
+Qwen3 VL 30B A3B,256k,Alibaba,20,$0.75,116,1.04,Model Providers
 Gemini 2.0 Flash Thinking exp. (Jan),1m,Google,20 E,$0.00,0,0.00,Model Providers
-Gemini 2.5 Flash-Lite (Sep),1m,Google,19,$0.17,335,0.46,Model Providers
-Devstral Small 2,256k,Mistral,19,$0.00,198,0.35,Model Providers
+Gemini 2.5 Flash-Lite (Sep),1m,Google,19,$0.17,348,0.56,Model Providers
+Devstral Small 2,256k,Mistral,19,$0.00,199,0.34,Model Providers
 Motif-2-12.7B,128k,Motif Technologies,19,$0.00,0,0.00,Model Providers
 Ling-1T,128k,InclusionAI,19,$0.00,0,0.00,Model Providers
-Nova Premier,1m,Amazon,19,$5.00,80,0.81,Model Providers
-GPT-4o (Aug),128k,OpenAI,19,$4.38,105,0.52,Model Providers
+Nova Premier,1m,Amazon,19,$5.00,79,0.82,Model Providers
+GPT-4o (Aug),128k,OpenAI,19,$4.38,98,0.46,Model Providers
 Solar Pro 2,64k,Upstage,19 E,$0.00,0,0.00,Model Providers
 DeepSeek R1 (Jan),128k,DeepSeek,19,$2.36,0,0.00,Model Providers
+Mistral Medium 3,128k,Mistral,19,$0.80,91,0.36,Model Providers
 Magistral Medium 1,40k,Mistral,19,$2.75,0,0.00,Model Providers
-Mistral Medium 3,128k,Mistral,19,$0.80,89,0.37,Model Providers
 K2-V2 (medium),512k,MBZUAI Institute of Foundation Models,19,$0.00,0,0.00,Model Providers
-Claude 3.5 Haiku,200k,Anthropic,19,$1.60,49,0.67,Model Providers
-Llama Nemotron Super 49B v1.5,128k,NVIDIA,19,$0.17,75,0.23,Model Providers
-Devstral Medium,256k,Mistral,19,$0.80,115,0.43,Model Providers
+Claude 3.5 Haiku,200k,Anthropic,19,$1.60,49,0.69,Model Providers
+Llama Nemotron Super 49B v1.5,128k,NVIDIA,19,$0.17,75,0.27,Model Providers
+Devstral Medium,256k,Mistral,19,$0.80,114,0.44,Model Providers
 Qwen3 4B 2507,262k,Alibaba,19,$0.00,0,0.00,Model Providers
-Hermes 4 405B,128k,Nous Research,19,$1.50,35,0.74,Model Providers
-GPT-4o (Mar),128k,OpenAI,19 E,$7.50,179,0.44,Model Providers
+Hermes 4 405B,128k,Nous Research,19,$1.50,36,0.78,Model Providers
+GPT-4o (Mar),128k,OpenAI,19 E,$7.50,181,0.43,Model Providers
 Gemini 2.0 Flash,1m,Google,19,$0.26,0,0.00,Model Providers
 Llama 3.3 Nemotron Super 49B,128k,NVIDIA,18 E,$0.00,0,0.00,Model Providers
-Llama 4 Maverick,1m,Meta,18,$0.46,128,0.45,Model Providers
-Magistral Small 1.2,128k,Mistral,18,$0.75,92,0.35,Model Providers
+Llama 4 Maverick,1m,Meta,18,$0.46,128,0.44,Model Providers
+Magistral Small 1.2,128k,Mistral,18,$0.75,163,0.35,Model Providers
 Gemini 2.0 Pro Experimental,2m,Google,18 E,$0.00,0,0.00,Model Providers
 Devstral Small (May),256k,Mistral,18,$0.15,0,0.00,Model Providers
-Nova 2.0 Lite,1m,Amazon,18,$0.85,197,0.53,Model Providers
+Nova 2.0 Lite,1m,Amazon,18,$0.85,199,0.52,Model Providers
 Sonar Reasoning,127k,Perplexity,18 E,$0.00,0,0.00,Model Providers
 Gemini 2.5 Flash,1m,Google,18 E,$0.00,0,0.00,Model Providers
-Hermes 4 405B,128k,Nous Research,18,$1.50,32,0.75,Model Providers
+Hermes 4 405B,128k,Nous Research,18,$1.50,32,0.72,Model Providers
 Gemini 2.5 Flash-Lite,1m,Google,17,$0.17,432,11.82,Model Providers
-GPT-4o (Nov),128k,OpenAI,17,$4.38,175,0.43,Model Providers
-Qwen3 VL 32B,256k,Alibaba,17,$1.23,66,1.10,Model Providers
-DeepSeek R1 Distill Qwen 32B,128k,DeepSeek,17 E,$0.27,57,0.47,Model Providers
-GLM-4.6V,128k,Z AI,17,$0.45,35,0.95,Model Providers
-Qwen3 235B,33k,Alibaba,17,$1.23,45,1.16,Model Providers
+GPT-4o (Nov),128k,OpenAI,17,$4.38,171,0.45,Model Providers
+Qwen3 VL 32B,256k,Alibaba,17,$1.23,63,1.07,Model Providers
+DeepSeek R1 Distill Qwen 32B,128k,DeepSeek,17 E,$0.27,57,0.50,Model Providers
+GLM-4.6V,128k,Z AI,17,$0.45,29,0.91,Model Providers
+Qwen3 235B,33k,Alibaba,17,$1.23,43,1.17,Model Providers
 Magistral Small 1,40k,Mistral,17 E,$0.75,0,0.00,Model Providers
 Gemini 2.0 Flash (exp),1m,Google,17 E,$0.00,0,0.00,Model Providers
-EXAONE 4.0 32B,131k,LG AI Research,17,$0.70,98,0.31,Model Providers
-Qwen3 VL 8B,256k,Alibaba,17,$0.66,122,1.17,Model Providers
-Nova 2.0 Omni,1m,Amazon,17,$0.85,206,0.66,Model Providers
-Qwen3 32B,33k,Alibaba,17,$2.63,92,1.03,Model Providers
+EXAONE 4.0 32B,131k,LG AI Research,17,$0.70,97,0.29,Model Providers
+Qwen3 VL 8B,256k,Alibaba,17,$0.66,122,1.09,Model Providers
+Nova 2.0 Omni,1m,Amazon,17,$0.85,206,0.65,Model Providers
+Qwen3 32B,33k,Alibaba,17,$2.63,90,1.11,Model Providers
 DeepSeek R1 0528 Qwen3 8B,33k,DeepSeek,16 E,$0.00,0,0.00,Model Providers
 DeepSeek V3 (Dec),128k,DeepSeek,16,$0.63,0,0.00,Model Providers
-Qwen2.5 Max,32k,Alibaba,16 E,$2.80,41,1.14,Model Providers
+Qwen2.5 Max,32k,Alibaba,16 E,$2.80,41,1.16,Model Providers
 Qwen3 14B,33k,Alibaba,16,$1.31,57,1.05,Model Providers
 Qwen3 VL 30B A3B,256k,Alibaba,16,$0.35,104,1.03,Model Providers
-Hermes 4 70B,128k,Nous Research,16,$0.20,84,0.62,Model Providers
-GPT-4o (May),128k,OpenAI,16 E,$7.50,98,0.54,Model Providers
+Hermes 4 70B,128k,Nous Research,16,$0.20,84,0.63,Model Providers
+GPT-4o (May),128k,OpenAI,16 E,$7.50,100,0.58,Model Providers
 Gemini 1.5 Pro (Sep),2m,Google,16 E,$0.00,0,0.00,Model Providers
 Solar Pro 2,64k,Upstage,16 E,$0.00,0,0.00,Model Providers
-Ministral 3 14B,256k,Mistral,16,$0.20,144,0.28,Model Providers
-DeepSeek R1 Distill Llama 70B,128k,DeepSeek,16 E,$0.88,56,0.87,Model Providers
+Ministral 3 14B,256k,Mistral,16,$0.20,141,0.28,Model Providers
+DeepSeek R1 Distill Llama 70B,128k,DeepSeek,16 E,$0.88,56,0.90,Model Providers
 Claude 3.5 Sonnet (Oct),200k,Anthropic,16 E,$6.00,0,0.00,Model Providers
 DeepSeek R1 Distill Qwen 14B,128k,DeepSeek,16 E,$0.00,0,0.00,Model Providers
 Falcon-H1R-7B,256k,TII UAE,16,$0.00,0,0.00,Model Providers
-Qwen3 Omni 30B A3B,66k,Alibaba,16,$0.43,96,1.00,Model Providers
+Qwen3 Omni 30B A3B,66k,Alibaba,16,$0.43,93,1.05,Model Providers
 Qwen2.5 72B,131k,Alibaba,16 E,$0.00,46,1.12,Model Providers
-Sonar,127k,Perplexity,15 E,$1.00,146,1.31,Model Providers
-Ling-flash-2.0,128k,InclusionAI,15,$0.25,59,1.43,Model Providers
+Sonar,127k,Perplexity,15 E,$1.00,148,1.34,Model Providers
+Ling-flash-2.0,128k,InclusionAI,15,$0.25,58,1.45,Model Providers
 Step3 VL 10B,66k,StepFun,15,$0.00,0,0.00,Model Providers
-Qwen3 30B,33k,Alibaba,15,$0.75,77,1.10,Model Providers
-Sonar Pro,200k,Perplexity,15 E,$6.00,127,1.38,Model Providers
-Devstral Small,256k,Mistral,15,$0.15,235,0.35,Model Providers
-QwQ 32B-Preview,33k,Alibaba,15 E,$0.14,56,0.50,Model Providers
+Qwen3 30B,33k,Alibaba,15,$0.75,72,1.13,Model Providers
+Sonar Pro,200k,Perplexity,15 E,$6.00,165,1.41,Model Providers
+Devstral Small,256k,Mistral,15,$0.15,235,0.34,Model Providers
+QwQ 32B-Preview,33k,Alibaba,15 E,$0.14,56,0.47,Model Providers
 Mistral Large 2 (Nov),128k,Mistral,15,$3.00,44,0.46,Model Providers
-Mistral Small 3.2,128k,Mistral,15,$0.15,115,0.29,Model Providers
-Llama Nemotron Ultra,128k,NVIDIA,15,$0.90,37,0.71,Model Providers
-Qwen3 30B A3B 2507,262k,Alibaba,15,$0.35,62,1.04,Model Providers
-ERNIE 4.5 300B A47B,131k,Baidu,15,$0.48,28,1.85,Model Providers
+Mistral Small 3.2,128k,Mistral,15,$0.15,117,0.29,Model Providers
+Llama Nemotron Ultra,128k,NVIDIA,15,$0.90,37,0.70,Model Providers
+Qwen3 30B A3B 2507,262k,Alibaba,15,$0.35,62,1.05,Model Providers
+ERNIE 4.5 300B A47B,131k,Baidu,15,$0.48,29,1.78,Model Providers
 Solar Pro 2,66k,Upstage,15,$0.00,0,0.00,Model Providers
-GLM-4.5V,64k,Z AI,15,$0.90,48,1.04,Model Providers
-NVIDIA Nemotron Nano 12B v2 VL,128k,NVIDIA,15,$0.30,128,0.22,Model Providers
-NVIDIA Nemotron Nano 9B V2,131k,NVIDIA,15,$0.07,112,0.21,Model Providers
+GLM-4.5V,64k,Z AI,15,$0.90,55,1.03,Model Providers
+NVIDIA Nemotron Nano 12B v2 VL,128k,NVIDIA,15,$0.30,127,0.23,Model Providers
+NVIDIA Nemotron Nano 9B V2,131k,NVIDIA,15,$0.07,107,0.22,Model Providers
 Gemini 2.0 Flash-Lite (Feb),1m,Google,15 E,$0.00,0,0.00,Model Providers
-Ministral 3 8B,256k,Mistral,15,$0.15,172,0.28,Model Providers
-Qwen3 32B,33k,Alibaba,15 E,$1.23,86,1.04,Model Providers
-Llama Nemotron Super 49B v1.5,128k,NVIDIA,15,$0.17,69,0.23,Model Providers
+Ministral 3 8B,256k,Mistral,15,$0.15,190,0.27,Model Providers
+Qwen3 32B,33k,Alibaba,15 E,$1.23,84,1.05,Model Providers
+Llama Nemotron Super 49B v1.5,128k,NVIDIA,15,$0.17,68,0.24,Model Providers
 Gemini 2.0 Flash-Lite (Preview),1m,Google,14 E,$0.00,0,0.00,Model Providers
 K2-V2 (low),512k,MBZUAI Institute of Foundation Models,14,$0.00,0,0.00,Model Providers
 Llama 3.1 Nemotron Nano 4B v1.1,128k,NVIDIA,14 E,$0.00,0,0.00,Model Providers
 Kimi Linear 48B A3B Instruct,1m,Kimi,14 E,$0.00,0,0.00,Model Providers
 Llama 3.3 Nemotron Super 49B,128k,NVIDIA,14 E,$0.00,0,0.00,Model Providers
 Qwen3 VL 8B,256k,Alibaba,14,$0.31,119,1.05,Model Providers
-Olmo 3.1 32B Think,66k,Allen Institute for AI,14,$0.00,99,0.45,Model Providers
-Llama 3.3 70B,128k,Meta,14,$0.68,104,0.47,Model Providers
-Qwen3 4B,32k,Alibaba,14 E,$0.40,90,1.16,Model Providers
-Llama 3.1 405B,128k,Meta,14,$4.19,25,0.77,Model Providers
+Olmo 3.1 32B Think,66k,Allen Institute for AI,14,$0.00,103,0.44,Model Providers
+Llama 3.3 70B,128k,Meta,14,$0.68,98,0.49,Model Providers
+Qwen3 4B,32k,Alibaba,14 E,$0.40,90,1.11,Model Providers
+Llama 3.1 405B,128k,Meta,14,$4.19,25,0.79,Model Providers
 Claude 3.5 Sonnet (June),200k,Anthropic,14 E,$6.00,0,0.00,Model Providers
 Tulu3 405B,128k,Allen Institute for AI,14 E,$0.00,0,0.00,Model Providers
-GPT-4o (ChatGPT),128k,OpenAI,14 E,$7.50,176,0.44,Model Providers
-Pixtral Large,128k,Mistral,14 E,$3.00,49,0.46,Model Providers
-Ring-flash-2.0,128k,InclusionAI,14,$0.25,80,1.34,Model Providers
-Mistral Small 3.1,128k,Mistral,14 E,$0.15,108,0.29,Model Providers
+GPT-4o (ChatGPT),128k,OpenAI,14 E,$7.50,186,0.43,Model Providers
+Pixtral Large,128k,Mistral,14 E,$3.00,49,0.44,Model Providers
+Ring-flash-2.0,128k,InclusionAI,14,$0.25,81,1.33,Model Providers
+Mistral Small 3.1,128k,Mistral,14 E,$0.15,109,0.28,Model Providers
 Grok 2,131k,xAI,14 E,$0.00,0,0.00,Model Providers
 Gemini 1.5 Flash (Sep),1m,Google,14 E,$0.00,0,0.00,Model Providers
 Qwen3 VL 4B,256k,Alibaba,14,$0.00,0,0.00,Model Providers
-GPT-4 Turbo,128k,OpenAI,14 E,$15.00,25,0.94,Model Providers
-GPT-5 nano (minimal),400k,OpenAI,14,$0.14,129,0.59,Model Providers
+GPT-4 Turbo,128k,OpenAI,14 E,$15.00,26,0.86,Model Providers
+GPT-5 nano (minimal),400k,OpenAI,14,$0.14,132,0.63,Model Providers
 Hermes 4 70B,128k,Nous Research,14 E,$0.20,76,0.60,Model Providers
 Solar Pro 2,66k,Upstage,14,$0.00,0,0.00,Model Providers
-Llama 4 Scout,10m,Meta,13,$0.29,156,0.48,Model Providers
+Llama 4 Scout,10m,Meta,13,$0.29,154,0.48,Model Providers
 Nova Pro,300k,Amazon,13,$1.40,0,0.00,Model Providers
-Command A,256k,Cohere,13,$4.38,56,0.29,Model Providers
-Llama 3.1 Nemotron 70B,128k,NVIDIA,13,$1.20,31,0.34,Model Providers
-NVIDIA Nemotron 3 Nano,1m,NVIDIA,13,$0.10,210,0.24,Model Providers
+Command A,256k,Cohere,13,$4.38,57,0.27,Model Providers
+Llama 3.1 Nemotron 70B,128k,NVIDIA,13,$1.20,30,0.34,Model Providers
+NVIDIA Nemotron 3 Nano,1m,NVIDIA,13,$0.10,173,0.24,Model Providers
 Grok Beta,128k,xAI,13 E,$0.00,0,0.00,Model Providers
 Qwen2.5 Instruct 32B,128k,Alibaba,13 E,$0.00,0,0.00,Model Providers
 Qwen3 4B 2507,262k,Alibaba,13,$0.00,0,0.00,Model Providers
-NVIDIA Nemotron Nano 9B V2,131k,NVIDIA,13,$0.10,121,0.56,Model Providers
-Qwen3 8B,131k,Alibaba,13,$0.66,86,1.02,Model Providers
+NVIDIA Nemotron Nano 9B V2,131k,NVIDIA,13,$0.10,122,0.56,Model Providers
+Qwen3 8B,131k,Alibaba,13,$0.66,86,1.00,Model Providers
 Mistral Large 2 (Jul),128k,Mistral,13 E,$3.00,0,0.00,Model Providers
-GPT-4.1 nano,1m,OpenAI,13,$0.17,121,0.38,Model Providers
-Qwen2.5 Coder 32B,131k,Alibaba,13 E,$0.14,41,0.49,Model Providers
-GPT-4,8k,OpenAI,13 E,$37.50,34,0.70,Model Providers
-Qwen3 14B,33k,Alibaba,13,$0.61,54,1.09,Model Providers
-Mistral Small 3,32k,Mistral,13 E,$0.15,231,0.36,Model Providers
-GPT-4o mini,128k,OpenAI,13 E,$0.26,53,0.49,Model Providers
-GLM-4.5V,64k,Z AI,13,$0.90,48,1.12,Model Providers
-Gemini 2.5 Flash-Lite,1m,Google,13,$0.17,248,0.28,Model Providers
+GPT-4.1 nano,1m,OpenAI,13,$0.17,125,0.37,Model Providers
+Qwen2.5 Coder 32B,131k,Alibaba,13 E,$0.14,42,0.47,Model Providers
+GPT-4,8k,OpenAI,13 E,$37.50,32,0.66,Model Providers
+Qwen3 14B,33k,Alibaba,13,$0.61,55,1.10,Model Providers
+Mistral Small 3,32k,Mistral,13 E,$0.15,230,0.36,Model Providers
+GPT-4o mini,128k,OpenAI,13 E,$0.26,54,0.47,Model Providers
+GLM-4.5V,64k,Z AI,13,$0.90,55,1.06,Model Providers
+Gemini 2.5 Flash-Lite,1m,Google,13,$0.17,305,0.46,Model Providers
 DeepSeek-V2.5 (Dec),128k,DeepSeek,13 E,$0.00,0,0.00,Model Providers
-Qwen3 4B,32k,Alibaba,12 E,$0.19,87,0.98,Model Providers
+Qwen3 4B,32k,Alibaba,12 E,$0.19,86,0.99,Model Providers
 Claude 3 Opus,200k,Anthropic,12 E,$30.00,0,0.00,Model Providers
-Nova Lite,300k,Amazon,12,$0.10,226,0.38,Model Providers
-Qwen3 30B,33k,Alibaba,12,$0.35,69,1.05,Model Providers
+Nova Lite,300k,Amazon,12,$0.10,228,0.39,Model Providers
+Qwen3 30B,33k,Alibaba,12,$0.35,61,1.03,Model Providers
 Gemini 2.0 Flash Thinking exp. (Dec),2m,Google,12 E,$0.00,0,0.00,Model Providers
 DeepSeek-V2.5,128k,DeepSeek,12 E,$0.00,0,0.00,Model Providers
-Llama 3.1 70B,128k,Meta,12,$0.56,42,0.49,Model Providers
+Llama 3.1 70B,128k,Meta,12,$0.56,39,0.51,Model Providers
 Mistral Saba,32k,Mistral,12 E,$0.00,0,0.00,Model Providers
 DeepSeek R1 Distill Llama 8B,128k,DeepSeek,12 E,$0.00,0,0.00,Model Providers
-Olmo 3.1 32B Instruct,66k,Allen Institute for AI,12,$0.30,46,0.23,Model Providers
+Olmo 3.1 32B Instruct,66k,Allen Institute for AI,12,$0.30,44,0.22,Model Providers
 Gemini 1.5 Pro (May),2m,Google,12 E,$0.00,0,0.00,Model Providers
 Olmo 3 32B Think,66k,Allen Institute for AI,12,$0.00,0,0.00,Model Providers
 R1 1776,128k,Perplexity,12 E,$0.00,0,0.00,Model Providers
-Qwen2.5 Turbo,1m,Alibaba,12 E,$0.09,69,1.17,Model Providers
-Reka Flash,128k,Reka AI,12 E,$0.35,70,1.31,Model Providers
-Llama 3.2 90B (Vision),128k,Meta,12 E,$0.72,49,0.38,Model Providers
+Qwen2.5 Turbo,1m,Alibaba,12 E,$0.09,69,1.16,Model Providers
+Reka Flash,128k,Reka AI,12 E,$0.35,68,1.29,Model Providers
+Llama 3.2 90B (Vision),128k,Meta,12 E,$0.72,48,0.37,Model Providers
 Grok-1,8k,xAI,12 E,$0.00,0,0.00,Model Providers
-Llama 3.1 8B,128k,Meta,12,$0.10,168,0.34,Model Providers
+Llama 3.1 8B,128k,Meta,12,$0.10,166,0.34,Model Providers
 Qwen2 72B,131k,Alibaba,12 E,$0.00,0,0.00,Model Providers
-EXAONE 4.0 32B,131k,LG AI Research,12,$0.70,82,0.30,Model Providers
-Ministral 3 3B,256k,Mistral,11,$0.10,297,0.26,Model Providers
+EXAONE 4.0 32B,131k,LG AI Research,12,$0.70,87,0.30,Model Providers
+Ministral 3 3B,256k,Mistral,11,$0.10,300,0.26,Model Providers
 Gemini 1.5 Flash-8B,1m,Google,11 E,$0.00,0,0.00,Model Providers
-Phi-4 Mini,128k,Microsoft Azure,11 E,$0.00,30,0.40,Model Providers
+Phi-4 Mini,128k,Microsoft Azure,11 E,$0.00,25,0.39,Model Providers
 DeepHermes 3 - Mistral 24B,32k,Nous Research,11 E,$0.00,0,0.00,Model Providers
-Llama 3.2 11B (Vision),128k,Meta,11 E,$0.16,70,0.41,Model Providers
-Granite 4.0 H Small,128k,IBM,11,$0.11,421,8.72,Model Providers
-Granite 3.3 8B,128k,IBM,11 E,$0.09,543,7.23,Model Providers
+Llama 3.2 11B (Vision),128k,Meta,11 E,$0.16,69,0.41,Model Providers
+Granite 4.0 H Small,128k,IBM,11,$0.11,446,8.71,Model Providers
 Jamba 1.5 Large,256k,AI21 Labs,11 E,$3.50,0,0.00,Model Providers
-Qwen3 Omni 30B A3B,66k,Alibaba,11,$0.43,87,0.96,Model Providers
-Hermes 3 - Llama-3.1 70B,128k,Nous Research,11 E,$0.30,35,0.49,Model Providers
+Qwen3 Omni 30B A3B,66k,Alibaba,11,$0.43,87,0.95,Model Providers
+Hermes 3 - Llama-3.1 70B,128k,Nous Research,11 E,$0.30,34,0.49,Model Providers
 DeepSeek-Coder-V2,128k,DeepSeek,11 E,$0.00,0,0.00,Model Providers
 OLMo 2 32B,4k,Allen Institute for AI,11 E,$0.00,0,0.00,Model Providers
-Jamba 1.6 Large,256k,AI21 Labs,11 E,$3.50,50,0.74,Model Providers
-Qwen3 8B,33k,Alibaba,11,$0.31,82,1.08,Model Providers
-Phi-4,16k,Microsoft Azure,10,$0.22,7,0.83,Model Providers
+Jamba 1.6 Large,256k,AI21 Labs,11 E,$3.50,50,0.75,Model Providers
+Qwen3 8B,33k,Alibaba,11,$0.31,79,1.00,Model Providers
+Phi-4,16k,Microsoft Azure,10,$0.22,9,0.69,Model Providers
 Gemini 1.5 Flash (May),1m,Google,10 E,$0.00,0,0.00,Model Providers
 Jamba Reasoning 3B,262k,AI21 Labs,10,$0.00,0,0.00,Model Providers
 Claude 3 Sonnet,200k,Anthropic,10 E,$6.00,0,0.00,Model Providers
-Nova Micro,130k,Amazon,10,$0.06,420,0.35,Model Providers
-Llama 3 70B,8k,Meta,10 E,$0.87,38,0.46,Model Providers
-Gemma 3 27B,128k,Google,10,$0.00,36,2.53,Model Providers
-Mistral Small (Sep),33k,Mistral,10 E,$0.30,118,0.28,Model Providers
+Nova Micro,130k,Amazon,10,$0.06,435,0.35,Model Providers
+Llama 3 70B,8k,Meta,10 E,$0.87,37,0.46,Model Providers
+Gemma 3 27B,128k,Google,10,$0.00,37,0.88,Model Providers
+Mistral Small (Sep),33k,Mistral,10 E,$0.30,122,0.28,Model Providers
 Gemini 1.0 Ultra,33k,Google,10 E,$0.00,0,0.00,Model Providers
-NVIDIA Nemotron Nano 12B v2 VL,128k,NVIDIA,10,$0.30,134,0.54,Model Providers
+NVIDIA Nemotron Nano 12B v2 VL,128k,NVIDIA,10,$0.30,133,0.56,Model Providers
 Phi-3 Mini,4k,Microsoft Azure,10 E,$0.23,0,0.00,Model Providers
 Gemma 3n E4B (May),32k,Google,10 E,$0.00,0,0.00,Model Providers
 Phi-4 Multimodal,128k,Microsoft Azure,10 E,$0.00,17,0.33,Model Providers
 Qwen2.5 Coder 7B,131k,Alibaba,10 E,$0.00,0,0.00,Model Providers
 Mistral Large (Feb),33k,Mistral,10 E,$6.00,0,0.00,Model Providers
 Mixtral 8x22B,65k,Mistral,10 E,$0.00,0,0.00,Model Providers
-Llama 3.2 3B,128k,Meta,10 E,$0.08,44,0.42,Model Providers
+Llama 3.2 3B,128k,Meta,10 E,$0.08,45,0.41,Model Providers
 Qwen1.5 Chat 110B,32k,Alibaba,10 E,$0.00,0,0.00,Model Providers
-Reka Flash 3,128k,Reka AI,10,$0.35,51,1.34,Model Providers
+Reka Flash 3,128k,Reka AI,10,$0.35,51,1.31,Model Providers
 Qwen3 VL 4B,256k,Alibaba,10,$0.00,0,0.00,Model Providers
-Olmo 3 7B Think,66k,Allen Institute for AI,9,$0.14,171,0.38,Model Providers
+Olmo 3 7B Think,66k,Allen Institute for AI,9,$0.14,167,0.37,Model Providers
 Claude 2.1,200k,Anthropic,9 E,$0.00,0,0.00,Model Providers
-Claude 3 Haiku,200k,Anthropic,9 E,$0.50,111,0.42,Model Providers
+Claude 3 Haiku,200k,Anthropic,9 E,$0.50,112,0.41,Model Providers
 OLMo 2 7B,4k,Allen Institute for AI,9 E,$0.00,0,0.00,Model Providers
-Jamba 1.7 Large,256k,AI21 Labs,9,$3.50,45,0.87,Model Providers
+Jamba 1.7 Large,256k,AI21 Labs,9,$3.50,48,0.86,Model Providers
 Molmo 7B-D,4k,Allen Institute for AI,9 E,$0.00,0,0.00,Model Providers
-Llama 3.2 1B,128k,Meta,9 E,$0.05,75,0.41,Model Providers
+Llama 3.2 1B,128k,Meta,9 E,$0.05,73,0.43,Model Providers
 DeepSeek R1 Distill Qwen 1.5B,128k,DeepSeek,9 E,$0.00,0,0.00,Model Providers
 Claude 2.0,100k,Anthropic,9 E,$0.00,0,0.00,Model Providers
 DeepSeek-V2,128k,DeepSeek,9 E,$0.00,0,0.00,Model Providers
-Mistral Small (Feb),33k,Mistral,9 E,$1.50,114,0.28,Model Providers
-Mistral Medium,33k,Mistral,9 E,$4.09,95,0.38,Model Providers
-GPT-3.5 Turbo,4k,OpenAI,9 E,$0.75,96,0.40,Model Providers
-Ling-mini-2.0,131k,InclusionAI,9,$0.12,146,1.37,Model Providers
+Mistral Small (Feb),33k,Mistral,9 E,$1.50,116,0.28,Model Providers
+Mistral Medium,33k,Mistral,9 E,$4.09,93,0.38,Model Providers
+GPT-3.5 Turbo,4k,OpenAI,9 E,$0.75,102,0.36,Model Providers
+Ling-mini-2.0,131k,InclusionAI,9,$0.12,142,1.42,Model Providers
 Arctic,4k,Snowflake,9 E,$0.00,0,0.00,Model Providers
 Qwen Chat 72B,34k,Alibaba,9 E,$0.00,0,0.00,Model Providers
-Gemma 3 12B,128k,Google,9,$0.00,35,11.82,Model Providers
+Gemma 3 12B,128k,Google,9,$0.00,36,21.08,Model Providers
 LFM 40B,32k,Liquid AI,9 E,$0.00,0,0.00,Model Providers
 Llama 3 8B,8k,Meta,9 E,$0.07,68,0.37,Model Providers
 PALM-2,8k,Google,9 E,$0.00,0,0.00,Model Providers
@@ -358,41 +357,42 @@ Olmo 3 7B,66k,Allen Institute for AI,8,$0.13,37,0.40,Model Providers
 LFM2.5-1.2B-Thinking,32k,Liquid AI,8,$0.00,0,0.00,Model Providers
 Exaone 4.0 1.2B,64k,LG AI Research,8,$0.00,0,0.00,Model Providers
 Jamba 1.5 Mini,256k,AI21 Labs,8 E,$0.25,0,0.00,Model Providers
-Solar Mini,4k,Upstage,8 E,$0.15,79,1.25,Model Providers
+Solar Mini,4k,Upstage,8 E,$0.15,79,1.37,Model Providers
 Granite 4.0 H 1B,128k,IBM,8,$0.00,0,0.00,Model Providers
 LFM2.5-1.2B-Instruct,32k,Liquid AI,8,$0.00,0,0.00,Model Providers
-Qwen3 1.7B,32k,Alibaba,8,$0.40,125,0.94,Model Providers
-Jamba 1.6 Mini,256k,AI21 Labs,8 E,$0.25,127,0.68,Model Providers
+Qwen3 1.7B,32k,Alibaba,8,$0.40,125,0.99,Model Providers
+Jamba 1.6 Mini,256k,AI21 Labs,8 E,$0.25,130,0.62,Model Providers
 LFM2 2.6B,33k,Liquid AI,8,$0.00,0,0.00,Model Providers
 Mixtral 8x7B,33k,Mistral,8 E,$0.54,0,0.00,Model Providers
 Granite 4.0 Micro,128k,IBM,8,$0.00,0,0.00,Model Providers
 DeepHermes 3 - Llama-3.1 8B,128k,Nous Research,8 E,$0.00,0,0.00,Model Providers
 Qwen Chat 14B,8k,Alibaba,7 E,$0.00,0,0.00,Model Providers
 Claude Instant,100k,Anthropic,7 E,$0.00,0,0.00,Model Providers
-Mistral 7B,8k,Mistral,7 E,$0.25,123,0.29,Model Providers
+Mistral 7B,8k,Mistral,7 E,$0.25,135,0.29,Model Providers
 Command-R (Mar),128k,Cohere,7 E,$0.75,0,0.00,Model Providers
 Jamba 1.7 Mini,258k,AI21 Labs,7,$0.25,0,0.00,Model Providers
 Granite 4.0 1B,128k,IBM,7,$0.00,0,0.00,Model Providers
 Llama 2 Chat 70B,4k,Meta,7 E,$0.00,0,0.00,Model Providers
 LFM2 8B A1B,33k,Liquid AI,7,$0.00,0,0.00,Model Providers
-Qwen3 1.7B,32k,Alibaba,7,$0.19,115,1.09,Model Providers
+Granite 3.3 8B,128k,IBM,7,$0.09,472,7.34,Model Providers
+Qwen3 1.7B,32k,Alibaba,7,$0.19,116,0.94,Model Providers
 Granite 4.0 350M,33k,IBM,7,$0.00,0,0.00,Model Providers
-Qwen3 0.6B,32k,Alibaba,6,$0.40,200,0.92,Model Providers
+Qwen3 0.6B,32k,Alibaba,6,$0.40,201,0.92,Model Providers
 LFM2 1.2B,33k,Liquid AI,6,$0.00,0,0.00,Model Providers
-Gemma 3 4B,128k,Google,6,$0.00,35,0.99,Model Providers
-Gemma 3n E4B,32k,Google,6,$0.03,39,0.37,Model Providers
+Gemma 3 4B,128k,Google,6,$0.00,35,0.95,Model Providers
+Gemma 3n E4B,32k,Google,6,$0.03,44,0.38,Model Providers
 LFM2.5-VL-1.6B,32k,Liquid AI,6,$0.00,0,0.00,Model Providers
-Qwen3 0.6B,32k,Alibaba,6,$0.19,188,0.95,Model Providers
-Gemma 3 1B,32k,Google,5,$0.00,33,0.53,Model Providers
+Qwen3 0.6B,32k,Alibaba,6,$0.19,189,0.97,Model Providers
+Gemma 3 1B,32k,Google,5,$0.00,37,0.51,Model Providers
 Granite 4.0 H 350M,33k,IBM,5,$0.00,0,0.00,Model Providers
 Llama 2 Chat 13B,4k,Meta,5 E,$0.00,0,0.00,Model Providers
-Gemma 3n E2B,32k,Google,5,$0.00,34,0.40,Model Providers
+Gemma 3n E2B,32k,Google,5,$0.00,38,0.39,Model Providers
 Llama 65B,2k,Meta,4 E,$0.00,0,0.00,Model Providers
-Llama 2 Chat 7B,4k,Meta,4 E,$0.10,110,5.21,Model Providers
-DeepSeek-OCR,8k,DeepSeek,--,$0.05,316,0.19,Model Providers
+Llama 2 Chat 7B,4k,Meta,4 E,$0.10,112,0.54,Model Providers
+DeepSeek-OCR,8k,DeepSeek,--,$0.05,325,0.18,Model Providers
 Grok Voice Agent,32k,xAI,--,$0.00,0,0.00,Model Providers
-Molmo2-8B,37k,Allen Institute for AI,--,$0.00,213,0.39,Model Providers
-Cogito v2.1,128k,Deep Cogito,--,$1.25,73,0.35,Model Providers
+Molmo2-8B,37k,Allen Institute for AI,--,$0.00,215,0.38,Model Providers
+Cogito v2.1,128k,Deep Cogito,--,$1.25,73,0.37,Model Providers
 Mi:dm K 2.5 Pro Preview,128k,Korea Telecom,--,$0.00,0,0.00,Model Providers
 GPT-4o Realtime (Dec),128k,OpenAI,--,$0.00,0,0.00,Model Providers
 GPT-4o mini Realtime (Dec),128k,OpenAI,--,$0.00,0,0.00,Model Providers
