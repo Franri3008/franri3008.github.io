@@ -391,7 +391,7 @@ def parse_previous_alerts(file_path):
         
     return previous_data
 
-def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, top_n=20, previous_models=None):
+def analyze_top_models(df, source_name, score_keywords, fixed_df, lookup_col, top_n=30, previous_models=None):
     if df is None or df.empty:
         return f"\n[{source_name}] - NO DATA AVAILABLE\n"
     
@@ -452,20 +452,17 @@ alerts_output.append("NEW MODEL ALERTS REPORT")
 alerts_output.append(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 alerts_output.append("=" * 70)
 
-# LMArena Analysis
-print_step("Analyzing LMArena Top 20...")
-prev_lma = previous_models_map.get("LMArena", set())
-alerts_output.append(analyze_top_models(lma_df, "LMArena", ['arena', 'elo', 'score', 'rating'], fixed_df, 'lma_lookup', top_n=20, previous_models=prev_lma))
+print_step("Analyzing LMArena Top 30...");
+prev_lma = previous_models_map.get("LMArena", set());
+alerts_output.append(analyze_top_models(lma_df, "LMArena", ['arena', 'elo', 'score', 'rating'], fixed_df, 'lma_lookup', top_n=30, previous_models=prev_lma));
 
-# Artificial Analysis
-print_step("Analyzing Artificial Analysis Top 20...")
-prev_aa = previous_models_map.get("Artificial Analysis", set())
-alerts_output.append(analyze_top_models(aa_df, "Artificial Analysis", ['quality', 'score', 'index'], fixed_df, 'aa_lookup', top_n=20, previous_models=prev_aa))
+print_step("Analyzing Artificial Analysis Top 30...");
+prev_aa = previous_models_map.get("Artificial Analysis", set());
+alerts_output.append(analyze_top_models(aa_df, "Artificial Analysis", ['quality', 'score', 'index'], fixed_df, 'aa_lookup', top_n=30, previous_models=prev_aa));
 
-# LiveBench Analysis
-print_step("Analyzing LiveBench Top 20...")
-prev_lb = previous_models_map.get("LiveBench", set())
-alerts_output.append(analyze_top_models(lb_df, "LiveBench", ['average', 'overall', 'total', 'score'], fixed_df, 'lb_lookup', top_n=20, previous_models=prev_lb))
+print_step("Analyzing LiveBench Top 30...");
+prev_lb = previous_models_map.get("LiveBench", set());
+alerts_output.append(analyze_top_models(lb_df, "LiveBench", ['average', 'overall', 'total', 'score'], fixed_df, 'lb_lookup', top_n=30, previous_models=prev_lb));
 
 alert_file = BASE_DIR / "alerts.txt"
 with open(alert_file, "w") as f:

@@ -125,6 +125,20 @@ You can customize the visualization using the following URL parameters:
   - Reads from: `data/snapshot/{YYYY_M_D}.csv`
   - Example: `viz.html?snapshot=2026_2_6`
 
+- **display**: Controls the visibility of UI containers on small screens.
+  - `1`: Shows all containers and contents always, regardless of screen width.
+  - `0`: (Default) Special mode for screens under 540px width where all buttons, legends, etc. are hidden and only the visualization remains.
+  - Example: `viz.html?display=1`
+
+- **color**: Changes the background color of the visualization.
+  - `white`: Sets the background to pure white.
+  - `gray`: Sets the background to a light gray (`#f9fafc`).
+  - Example: `viz.html?color=white`
+
+- **logo**: Controls whether the AI World logo is shown.
+  - `1`: Adds the AI World logo at the bottom right of the page.
+  - Example: `viz.html?logo=1`
+
 ## LAST UPDATED
 
 2026-02-06

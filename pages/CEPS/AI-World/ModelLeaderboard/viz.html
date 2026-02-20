@@ -45,10 +45,14 @@
       grid-column: 1 / span 2;
       background: #f9fafc;
       padding: 8px 16px;
-      font-style: italic;
       font-size: clamp(10px, 1.4vw, 13px);
       color: #666;
       text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-height: 50px;
+      box-sizing: border-box;
       display: none;
     }
 
@@ -77,7 +81,7 @@
       grid-column: 1 / span 2;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       overflow: hidden;
       padding: 12px 20px;
       position: relative;
@@ -164,6 +168,40 @@
       border-radius: 1px;
     }
 
+    .selector-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(2px, 0.5vw, 6px);
+      padding: clamp(2px, 0.4vw, 4px);
+      border-radius: 6px;
+      border: 1px solid rgba(17, 24, 39, 0.15);
+      background: #f8fafc;
+      max-width: 100%;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    .selector-button {
+      border: none;
+      background: transparent;
+      padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 14px);
+      border-radius: 6px;
+      font-size: clamp(9px, 1.4vw, 13px);
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    .selector-button.active {
+      background: #2756d3;
+      color: #fff;
+    }
+
     .source-text {
       font-size: clamp(10px, 1.6vw, 16px);
       font-weight: 600;
@@ -209,6 +247,49 @@
       z-index: 1000;
     }
 
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1vw, 14px);
+      background: rgba(255, 255, 255, 1);
+      padding: clamp(4px, 1vh, 10px) clamp(10px, 2vw, 16px);
+      border-radius: 0;
+      max-width: 100%;
+      max-height: 100%;
+      font-size: clamp(0.625rem, 1.4vw, 1rem);
+      font-style: normal;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: clamp(4px, 1vw, 8px);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      font-weight: 600;
+      color: #333;
+      font-size: inherit;
+      padding: 2px 6px;
+    }
+
+    .legend-item.dim {
+      opacity: 0.35;
+    }
+
+    .legend-item:focus-visible {
+      outline: 2px solid rgba(0, 0, 0, 0.5);
+      outline-offset: 2px;
+    }
+
+    .legend-square {
+      width: clamp(8px, 0.9vw, 12px);
+      height: clamp(8px, 0.9vw, 12px);
+      border-radius: 0;
+      flex-shrink: 0;
+    }
+
     .viz-grid.with-logo #footnote-container {
       grid-column: 1;
     }
@@ -231,24 +312,77 @@
       width: auto;
     }
 
+    @media (max-width:900px) {
+      .tab {
+        font-size: clamp(11px, 1.4vw, 14px);
+      }
+
+      .tabs-container {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .tab-separator {
+        display: none;
+      }
+
+      #container2 {
+        flex-direction: column;
+        gap: 12px;
+        height: auto;
+      }
+
+      #container2>div:first-child {
+        display: none;
+      }
+
+      #container2>div:last-child {
+        justify-content: center !important;
+        flex: 1 1 auto !important;
+      }
+    }
+
     @media (max-height:500px),
     (max-width:640px) {
       .viz-grid {
-        grid-template-rows: 1fr;
+        grid-template-rows: auto 1fr auto;
         grid-template-columns: 1fr;
         padding-bottom: 0px;
       }
 
-      #container2,
-      #container3,
-      #container4,
-      #footnote-container {
+      .viz-grid.display-mode-0 #container3,
+      .viz-grid.display-mode-0 #container4 {
         display: none !important;
       }
 
       #container1 {
+        grid-row: 2;
+        grid-column: 1;
+      }
+
+      #container2 {
         grid-row: 1;
         grid-column: 1;
+      }
+
+      #footnote-container {
+        grid-row: 3;
+        grid-column: 1;
+      }
+    }
+
+    @media (max-width:540px) {
+      .viz-grid.display-mode-0 {
+        grid-template-rows: 1fr !important;
+      }
+
+      .viz-grid.display-mode-0 #container2,
+      .viz-grid.display-mode-0 #footnote-container {
+        display: none !important;
+      }
+
+      .viz-grid.display-mode-0 #container1 {
+        grid-row: 1 !important;
       }
     }
   </style>
@@ -257,6 +391,7 @@
 <body>
   <div class="viz-grid">
     <div id="container2" class="container control-container">
+      <div style="flex: 1;"></div>
       <div class="tabs-container">
         <div class="tab active" data-question="ALL">AIW Overall</div>
         <div class="tab-separator"></div>
@@ -264,6 +399,15 @@
         <div class="tab" data-question="Artificial Analysis">Artificial Analysis</div>
         <div class="tab" data-question="LiveBench">LiveBench</div>
         <div class="tab-indicator"></div>
+      </div>
+      <div style="flex: 1; display: flex; justify-content: flex-end;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div style="font-size: clamp(10px, 1.2vw, 12px); font-weight: 600; color: #666;">Color by</div>
+          <div class="selector-group">
+            <button class="selector-button" data-palette="0">Organization</button>
+            <button class="selector-button" data-palette="1">Open Source</button>
+          </div>
+        </div>
       </div>
     </div>
     <div id="container1" class="container chart-container">
@@ -293,10 +437,13 @@
     let questions = [];
     let modelIcons = {};
     let modelColors = {};
+    let modelToOs = {};
+    let activeOsFilter = null;
     let questionAnswers = {};
     let active = { question: 'ALL' };
     let displayLimit = 30;
     let styleMode = 0;
+    let paletteMode = 0;
     let highlightMode = null;
     let highlightPaused = false;
     let highlightPauseTimeout = null;
@@ -311,14 +458,28 @@
       const csvPath = snapshotParam ? `data/snapshot/${snapshotParam}.csv` : 'data/processed.csv';
       Promise.all([
         d3.dsv(";", csvPath),
-        d3.json("config/models.json")
-      ]).then(([data, modelsData]) => {
+        d3.json("config/models.json"),
+        d3.json("config/tracking.json")
+      ]).then(([data, modelsData, trackingData]) => {
         rawData = data;
+
+        const params = new URLSearchParams(window.location.search);
+        const paletteParam = params.get('palette');
+        if (paletteParam) {
+          const p = parseInt(paletteParam, 10);
+          if (p === 1) paletteMode = 1;
+        }
 
         const idToColor = {};
         modelsData.forEach(model => {
           idToColor[model.id] = model.color;
         });
+
+        if (trackingData) {
+          trackingData.forEach(t => {
+            modelToOs[t.model] = t.os;
+          });
+        }
 
         rawData.forEach(d => {
           const model = String(d.model || '').trim();
@@ -327,16 +488,18 @@
           d.displayName = name || model;
           if (logo) {
             modelIcons[model] = `logos/${logo}.png`;
-            if (idToColor[logo]) {
-              modelColors[model] = idToColor[logo];
-            }
+          }
+          if (paletteMode === 1) {
+            const os = modelToOs[model] !== undefined ? modelToOs[model] : 0;
+            modelColors[model] = os === 1 ? '#188ab2' : '#ef476f';
+          } else if (logo && idToColor[logo]) {
+            modelColors[model] = idToColor[logo];
           }
         });
 
         questions = ['ALL', 'LMArena', 'Artificial Analysis', 'LiveBench'];
         active.question = 'ALL';
 
-        const params = new URLSearchParams(window.location.search);
         const sourceParam = params.get('source');
         if (sourceParam) {
           const map = { 'aiw': 'ALL', 'llma': 'LMArena', 'aa': 'Artificial Analysis', 'lb': 'LiveBench' };
@@ -392,7 +555,49 @@
           document.querySelector('.viz-grid').classList.add('with-logo');
         }
 
+        const displayParam = params.get('display');
+        if (displayParam === '1') {
+          document.querySelector('.viz-grid').classList.add('display-mode-1');
+        } else {
+          document.querySelector('.viz-grid').classList.add('display-mode-0');
+        }
+
         setupTabs();
+
+        const paletteButtons = document.querySelectorAll('.selector-button');
+        paletteButtons.forEach(btn => {
+          if (parseInt(btn.getAttribute('data-palette'), 10) === paletteMode) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+          btn.addEventListener('click', () => {
+            const val = parseInt(btn.getAttribute('data-palette'), 10);
+            if (paletteMode !== val) {
+              paletteMode = val;
+              activeOsFilter = null;
+              paletteButtons.forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+
+              rawData.forEach(d => {
+                const model = String(d.model || '').trim();
+                const logo = String(d.logo || '').trim();
+                if (paletteMode === 1) {
+                  const os = modelToOs[model] !== undefined ? modelToOs[model] : 0;
+                  modelColors[model] = os === 1 ? '#188ab2' : '#ef476f';
+                } else if (logo && idToColor[logo]) {
+                  modelColors[model] = idToColor[logo];
+                } else {
+                  modelColors[model] = '#1a73e8';
+                }
+              });
+
+              updateChart();
+              updateFootnote();
+            }
+          });
+        });
+
         createChart();
         updateFootnote();
       });
@@ -435,16 +640,63 @@
         }
       });
     }
-    function updateFootnote() { const footnote = document.getElementById('footnote-container'); if (!footnote) { return; } if (active.question === 'ALL') { footnote.style.display = 'block'; } else { footnote.style.display = 'none'; } }
+    const baseFootnote = "Scores are normalized from three benchmarks (LMArena, Artificial Analysis, LiveBench). If a model is missing one benchmark, it is estimated as the average of the other two.";
+    function updateFootnote() {
+      const footnote = document.getElementById('footnote-container');
+      if (!footnote) return;
+
+      if (active.question === 'ALL' || paletteMode === 1) {
+        footnote.style.display = 'flex';
+      } else {
+        footnote.style.display = 'none';
+      }
+
+      if (paletteMode === 1) {
+        footnote.style.justifyContent = 'center';
+        footnote.innerHTML = `
+          <div class="legend" style="margin: 0 auto; display: inline-flex;">
+            <div class="legend-item ${activeOsFilter === 0 ? 'dim' : ''}" tabindex="0" data-os="1">
+              <div class="legend-square" style="background: #188ab2;"></div>
+              <span>Open Source</span>
+            </div>
+            <div class="legend-item ${activeOsFilter === 1 ? 'dim' : ''}" tabindex="0" data-os="0">
+              <div class="legend-square" style="background: #ef476f;"></div>
+              <span>Proprietary</span>
+            </div>
+          </div>
+        `;
+        footnote.querySelectorAll('.legend-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const osVal = parseInt(item.getAttribute('data-os'), 10);
+            activeOsFilter = (activeOsFilter === osVal) ? null : osVal;
+            updateChart();
+            updateFootnote();
+          });
+          item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              item.click();
+            }
+          });
+        });
+      } else {
+        footnote.style.justifyContent = 'flex-end';
+        footnote.innerHTML = `<span style="font-style: italic;">${baseFootnote}</span>`;
+        if (activeOsFilter !== null) {
+          activeOsFilter = null;
+          updateChart();
+        }
+      }
+    }
     function updateAnswerDisplay() { const answerEl = document.getElementById('correctAnswer'); const answerSection = document.getElementById('answerSection'); if (!answerEl || !answerSection) { return; } if (active.question === 'ALL') { answerSection.classList.add('hidden'); } else { answerEl.textContent = questionAnswers[active.question] || '-'; answerSection.classList.remove('hidden'); } }
     function getAggregated() {
       let rows;
 
       if (active.question === 'ALL') {
         // Hard-coded baseline values (GPT-5)
-        const maxLma = 1436;
-        const maxAa = 68;
-        const maxLb = 73.48;
+        const maxLma = 1434;
+        const maxAa = 45;
+        const maxLb = 70.48;
 
         rows = rawData.map(d => {
           const model = String(d.model || '').trim();
@@ -505,7 +757,14 @@
         }));
       }
 
-      return rows.filter(d => d.score > 0).map(d => ({
+      return rows.filter(d => {
+        if (d.score <= 0) return false;
+        if (activeOsFilter !== null && paletteMode === 1) {
+          const os = modelToOs[d.model] !== undefined ? modelToOs[d.model] : 0;
+          if (os !== activeOsFilter) return false;
+        }
+        return true;
+      }).map(d => ({
         id: d.name || d.model,
         model: d.model,
         name: d.name,
@@ -533,15 +792,12 @@
         return [lower, upper];
       }
 
-      // Dynamic range with padding for other tabs
       const range = maxScore - minScore;
       let padding;
 
       if (active.question === 'LMArena') {
-        // approx range 200, use 10% padding (min 10)
         padding = Math.max(10, range * 0.10);
       } else {
-        // approx range 40-50, use 10% padding (min 5)
         padding = Math.max(5, range * 0.10);
       }
 
@@ -716,7 +972,7 @@
       const step = y.step();
       const padGap = (step - y.bandwidth()) / 2;
       const rowIdx = d3.range(yDomain.length);
-      chartState.rowBG = bgLayer.selectAll('rect.row-bg').data(rowIdx, d => d).enter().append('rect').attr('class', 'row-bg').attr('x', -margin.left).attr('y', i => y(yDomain[i]) - padGap).attr('width', width + margin.left + margin.right).attr('height', step).attr('fill', (d, i) => i % 2 ? "#f5f5f5" : "#ffffff").attr('pointer-events', 'none').lower();
+      chartState.rowBG = bgLayer.selectAll('rect.row-bg').data(rowIdx, d => d).enter().append('rect').attr('class', 'row-bg').attr('x', -margin.left).attr('y', i => y(yDomain[i]) - padGap).attr('width', width + margin.left + margin.right).attr('height', step).attr('fill', (d, i) => i % 2 ? "#f8fafc" : "#ffffff").attr('pointer-events', 'none').lower();
       chartState.yAxisGroup = g.append('g').attr('class', 'axis axis-y').call(d3.axisLeft(y));
       chartState.yAxisGroup.selectAll('text').style('font-size', axisFS + 'px');
       truncateAxisLabels(margin.left - logoWidth - padding - 8);
@@ -746,6 +1002,9 @@
       g.selectAll('text.value').data(data, d => d.id).enter().append('text').attr('class', 'value').attr('x', d => x(clampValue(d.total)) - 12).attr('y', d => y(d.id) + y.bandwidth() / 2 + Math.round(4 * sizeFactor)).attr('text-anchor', 'end').attr('font-size', chartState.valueFS + 'px').attr('font-weight', '600').attr('fill', '#ffffff').text(d => fmt(d.total));
       g.selectAll('image.logo').data(data, d => d.id).enter().append('image').attr('class', 'logo').attr('x', d => x(clampValue(d.total)) + 6).attr('y', d => y(d.id) + (y.bandwidth() - logoSize) / 2).attr('width', logoSize).attr('height', logoSize).attr('href', d => d.logo).attr('xlink:href', d => d.logo);
       chartState.logos = g.selectAll('image.logo');
+
+      if (chartState.yAxisGroup) chartState.yAxisGroup.raise();
+      if (chartState.xAxisGroup) chartState.xAxisGroup.raise();
 
       const overlay = svg.append('rect').attr('class', 'highlight-overlay')
         .attr('fill', bgColor)
@@ -857,8 +1116,8 @@
       const idx = d3.range(newDomain.length);
       const bg = chartState.bgLayer.selectAll('rect.row-bg').data(idx, d => d);
       bg.join(
-        enter => enter.append('rect').attr('class', 'row-bg').attr('x', -chartState.margin.left).attr('y', i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2)).attr('width', chartState.width + chartState.margin.left + chartState.margin.right).attr('height', y.step()).attr('fill', (d, i) => i % 2 ? "#f5f5f5" : "#ffffff").attr('opacity', 0).transition().duration(700).attr('opacity', 1),
-        update => update.attr('fill', (d, i) => i % 2 ? "#f5f5f5" : "#ffffff").transition().duration(700).attr('y', i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2)).attr('height', y.step()),
+        enter => enter.append('rect').attr('class', 'row-bg').attr('x', -chartState.margin.left).attr('y', i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2)).attr('width', chartState.width + chartState.margin.left + chartState.margin.right).attr('height', y.step()).attr('fill', (d, i) => i % 2 ? "#f8fafc" : "#ffffff").attr('opacity', 0).transition().duration(700).attr('opacity', 1),
+        update => update.attr('fill', (d, i) => i % 2 ? "#f8fafc" : "#ffffff").transition().duration(700).attr('y', i => y(newDomain[i]) - ((y.step() - y.bandwidth()) / 2)).attr('height', y.step()),
         exit => exit.transition().duration(500).attr('opacity', 0).remove()
       );
       chartState.bgLayer.lower();
@@ -976,6 +1235,10 @@
         exit => exit.transition().duration(500).attr('opacity', 0).remove()
       );
       chartState.logos = chartState.svg.select('g').selectAll('image.logo');
+
+      if (chartState.yAxisGroup) chartState.yAxisGroup.raise();
+      if (chartState.xAxisGroup) chartState.xAxisGroup.raise();
+
       const hoverSel = chartState.svg.select('g').selectAll('.bar-win,.bar-tie');
       hoverSel.on('mousemove', (event, d) => {
         if (highlightMode && !highlightPaused && d.id !== highlightMode) return;

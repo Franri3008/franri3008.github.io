@@ -1,10 +1,10 @@
 {
-    "last_updated": "2026-02-20 04:30:03",
+    "last_updated": "2026-02-20 10:03:57",
     "stats": {
-        "models_tracked": 36,
+        "models_tracked": 37,
         "matches_found": {
-            "lma": 30,
-            "aa": 29,
+            "lma": 32,
+            "aa": 32,
             "lb": 24
         },
         "rows_scraped": {
@@ -14,6 +14,6 @@
         }
     },
     "alerts_summary": {
-        "new_models_detected": 5
+        "new_models_detected": 10
     }
 }
