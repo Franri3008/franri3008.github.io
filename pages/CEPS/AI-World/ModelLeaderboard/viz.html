@@ -292,6 +292,7 @@
       align-items: center;
       justify-content: center;
       border: 1px solid #111;
+      transition: background 0.7s ease, border-color 0.7s ease;
     }
 
     .legend-square svg {
@@ -309,6 +310,14 @@
 
     .legend-square[data-palette="1"] svg {
       stroke: #fff;
+    }
+
+    .legend-square[data-palette="2"] svg {
+      stroke: #fff;
+    }
+
+    .legend-item[data-geo="China"] .legend-square[data-palette="2"] svg {
+      stroke: #111;
     }
 
     .viz-grid.with-logo #footnote-container {
@@ -427,6 +436,7 @@
           <div class="selector-group">
             <button class="selector-button" data-palette="0">Organization</button>
             <button class="selector-button" data-palette="1">Open Source</button>
+            <button class="selector-button" data-palette="2">Country</button>
           </div>
         </div>
       </div>
@@ -460,6 +470,8 @@
     let modelColors = {};
     let modelToOs = {};
     let activeOsFilter = null;
+    let modelToGeo = {};
+    let hiddenGeos = [];
     let questionAnswers = {};
     let active = { question: 'ALL' };
     let displayLimit = 30;
@@ -489,6 +501,7 @@
         if (paletteParam) {
           const p = parseInt(paletteParam, 10);
           if (p === 1) paletteMode = 1;
+          if (p === 2) paletteMode = 2;
         }
 
         const idToColor = {};
@@ -499,6 +512,7 @@
         if (trackingData) {
           trackingData.forEach(t => {
             modelToOs[t.model] = t.os;
+            if (t.geo) modelToGeo[t.model] = t.geo === 'USA' ? 'US' : t.geo;
           });
         }
 
@@ -513,6 +527,12 @@
           if (paletteMode === 1) {
             const os = modelToOs[model] !== undefined ? modelToOs[model] : 0;
             modelColors[model] = os === 1 ? '#188ab2' : '#ef476f';
+          } else if (paletteMode === 2) {
+            const geo = modelToGeo[model] || 'Other';
+            if (geo === 'US') modelColors[model] = '#ec787a';
+            else if (geo === 'China') modelColors[model] = '#fadb56';
+            else if (geo === 'France') modelColors[model] = '#5c5a74';
+            else modelColors[model] = '#cccccc';
           } else if (logo && idToColor[logo]) {
             modelColors[model] = idToColor[logo];
           }
@@ -605,6 +625,12 @@
                 if (paletteMode === 1) {
                   const os = modelToOs[model] !== undefined ? modelToOs[model] : 0;
                   modelColors[model] = os === 1 ? '#188ab2' : '#ef476f';
+                } else if (paletteMode === 2) {
+                  const geo = modelToGeo[model] || 'Other';
+                  if (geo === 'US') modelColors[model] = '#ec787a';
+                  else if (geo === 'China') modelColors[model] = '#fadb56';
+                  else if (geo === 'France') modelColors[model] = '#5c5a74';
+                  else modelColors[model] = '#cccccc';
                 } else if (logo && idToColor[logo]) {
                   modelColors[model] = idToColor[logo];
                 } else {
@@ -668,45 +694,134 @@
       footnote.style.display = 'flex';
       footnote.style.justifyContent = 'center';
 
+      let container = footnote.querySelector('.legend-wrapper-inner');
+      if (!container) {
+        footnote.innerHTML = `
+          <div class="legend-wrapper-inner" style="display: flex; gap: clamp(16px, 4vw, 48px); justify-content: center; align-items: flex-start; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="font-size: clamp(10px, 1.2vw, 12px); font-weight: 600; color: #666;">Licensing</div>
+              <div class="legend" style="margin: 0; padding: 0;">
+                <div class="legend-item" tabindex="0" data-os="1">
+                  <div class="legend-square" style="transition: background 0.7s ease, border-color 0.7s ease;"></div>
+                  <span>Open Source</span>
+                </div>
+                <div class="legend-item" tabindex="0" data-os="0">
+                  <div class="legend-square" style="transition: background 0.7s ease, border-color 0.7s ease;"></div>
+                  <span>Proprietary</span>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="font-size: clamp(10px, 1.2vw, 12px); font-weight: 600; color: #666;">Country</div>
+              <div class="legend" style="margin: 0; padding: 0;">
+                <div class="legend-item" tabindex="0" data-geo="US">
+                  <div class="legend-square" style="transition: background 0.7s ease, border-color 0.7s ease;"></div>
+                  <span>US</span>
+                </div>
+                <div class="legend-item" tabindex="0" data-geo="China">
+                  <div class="legend-square" style="transition: background 0.7s ease, border-color 0.7s ease;"></div>
+                  <span>China</span>
+                </div>
+                <div class="legend-item" tabindex="0" data-geo="France">
+                  <div class="legend-square" style="transition: background 0.7s ease, border-color 0.7s ease;"></div>
+                  <span>France</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        footnote.querySelectorAll('.legend-item[data-os]').forEach(item => {
+          item.addEventListener('click', () => {
+            const osVal = parseInt(item.getAttribute('data-os'), 10);
+            if (activeOsFilter === null) {
+              activeOsFilter = (osVal === 1) ? 0 : 1;
+            } else if (activeOsFilter === osVal) {
+              return;
+            } else {
+              activeOsFilter = null;
+            }
+            updateChart();
+            updateFootnote();
+          });
+          item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              item.click();
+            }
+          });
+        });
+
+        footnote.querySelectorAll('.legend-item[data-geo]').forEach(item => {
+          item.addEventListener('click', () => {
+            const geoVal = item.getAttribute('data-geo');
+            if (hiddenGeos.includes(geoVal)) {
+              hiddenGeos = hiddenGeos.filter(g => g !== geoVal);
+            } else {
+              if (hiddenGeos.length >= 2) return;
+              hiddenGeos.push(geoVal);
+            }
+            updateChart();
+            updateFootnote();
+          });
+          item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              item.click();
+            }
+          });
+        });
+      }
+
       const osBg = paletteMode === 1 ? '#188ab2' : '#ffffff';
       const propBg = paletteMode === 1 ? '#ef476f' : '#ffffff';
-
       const osCheck = (activeOsFilter === null || activeOsFilter === 1) ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
       const propCheck = (activeOsFilter === null || activeOsFilter === 0) ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
 
-      footnote.innerHTML = `
-        <div class="legend" style="margin: 0 auto; display: inline-flex;">
-          <div class="legend-item ${(activeOsFilter === 0) ? 'dim' : ''}" tabindex="0" data-os="1">
-            <div class="legend-square" style="background: ${osBg};" data-palette="${paletteMode}">${osCheck}</div>
-            <span>Open Source</span>
-          </div>
-          <div class="legend-item ${(activeOsFilter === 1) ? 'dim' : ''}" tabindex="0" data-os="0">
-            <div class="legend-square" style="background: ${propBg};" data-palette="${paletteMode}">${propCheck}</div>
-            <span>Proprietary</span>
-          </div>
-        </div>
-      `;
-      footnote.querySelectorAll('.legend-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const osVal = parseInt(item.getAttribute('data-os'), 10);
-          if (activeOsFilter === null) {
-            activeOsFilter = (osVal === 1) ? 0 : 1;
-          } else if (activeOsFilter === osVal) {
-            // Cannot uncheck if it's the last selected option
-            return;
-          } else {
-            activeOsFilter = null;
-          }
-          updateChart();
-          updateFootnote();
-        });
-        item.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            item.click();
-          }
-        });
-      });
+      const itOs = footnote.querySelector('.legend-item[data-os="1"]');
+      if (activeOsFilter === 0) itOs.classList.add('dim'); else itOs.classList.remove('dim');
+      const sqOs = itOs.querySelector('.legend-square');
+      sqOs.style.background = osBg;
+      sqOs.setAttribute('data-palette', paletteMode === 1 ? 1 : 0);
+      sqOs.innerHTML = osCheck;
+
+      const itProp = footnote.querySelector('.legend-item[data-os="0"]');
+      if (activeOsFilter === 1) itProp.classList.add('dim'); else itProp.classList.remove('dim');
+      const sqProp = itProp.querySelector('.legend-square');
+      sqProp.style.background = propBg;
+      sqProp.setAttribute('data-palette', paletteMode === 1 ? 1 : 0);
+      sqProp.innerHTML = propCheck;
+
+      const usBg = paletteMode === 2 ? '#ec787a' : '#ffffff';
+      const cnBg = paletteMode === 2 ? '#fadb56' : '#ffffff';
+      const frBg = paletteMode === 2 ? '#5c5a74' : '#ffffff';
+      const usCheck = !hiddenGeos.includes('US') ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
+      const cnCheck = !hiddenGeos.includes('China') ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
+      const frCheck = !hiddenGeos.includes('France') ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
+
+      const itUs = footnote.querySelector('.legend-item[data-geo="US"]');
+      if (hiddenGeos.includes('US')) itUs.classList.add('dim'); else itUs.classList.remove('dim');
+      const sqUs = itUs.querySelector('.legend-square');
+      sqUs.style.background = usBg;
+      sqUs.style.borderColor = paletteMode === 2 ? usBg : '#111';
+      sqUs.setAttribute('data-palette', paletteMode === 2 ? 2 : 0);
+      sqUs.innerHTML = usCheck;
+
+      const itCn = footnote.querySelector('.legend-item[data-geo="China"]');
+      if (hiddenGeos.includes('China')) itCn.classList.add('dim'); else itCn.classList.remove('dim');
+      const sqCn = itCn.querySelector('.legend-square');
+      sqCn.style.background = cnBg;
+      sqCn.style.borderColor = paletteMode === 2 ? cnBg : '#111';
+      sqCn.setAttribute('data-palette', paletteMode === 2 ? 2 : 0);
+      sqCn.innerHTML = cnCheck;
+
+      const itFr = footnote.querySelector('.legend-item[data-geo="France"]');
+      if (hiddenGeos.includes('France')) itFr.classList.add('dim'); else itFr.classList.remove('dim');
+      const sqFr = itFr.querySelector('.legend-square');
+      sqFr.style.background = frBg;
+      sqFr.style.borderColor = paletteMode === 2 ? frBg : '#111';
+      sqFr.setAttribute('data-palette', paletteMode === 2 ? 2 : 0);
+      sqFr.innerHTML = frCheck;
     }
     function updateAnswerDisplay() { const answerEl = document.getElementById('correctAnswer'); const answerSection = document.getElementById('answerSection'); if (!answerEl || !answerSection) { return; } if (active.question === 'ALL') { answerSection.classList.add('hidden'); } else { answerEl.textContent = questionAnswers[active.question] || '-'; answerSection.classList.remove('hidden'); } }
     function getAggregated() {
@@ -779,6 +894,10 @@
 
       return rows.filter(d => {
         if (d.score <= 0) return false;
+        if (hiddenGeos.length > 0) {
+          const geo = modelToGeo[d.model] || 'Other';
+          if (hiddenGeos.includes(geo)) return false;
+        }
         if (activeOsFilter !== null) {
           const os = modelToOs[d.model] !== undefined ? modelToOs[d.model] : 0;
           if (os !== activeOsFilter) return false;
@@ -1152,7 +1271,7 @@
           this._yc = y(d.id) + y.bandwidth() / 2;
           this._h = barHNow;
         }).attr('d', d => barPath(baseX, baseX, y(d.id) + y.bandwidth() / 2, barHNow, d.ties > 0 ? { roundStart: false, roundEnd: false, baseRadius: responsiveRadius } : { roundStart: false, baseRadius: responsiveRadius })).attr('fill', d => d.color || 'url(#gradBlue)'),
-        update => update.attr('fill', d => d.color || 'url(#gradBlue)'),
+        update => update,
         exit => exit.transition().duration(350).attrTween('d', function (d) {
           const xStart = this._x1 ?? baseX;
           const yStart = this._yc ?? (y(d.id) + y.bandwidth() / 2);
@@ -1167,25 +1286,27 @@
             return barPath(baseX, xi, yi, hi, d.ties > 0 ? { roundStart: false, roundEnd: false, baseRadius: responsiveRadius } : { roundStart: false, baseRadius: responsiveRadius });
           };
         }).on('end', function () { this.remove(); })
-      ).transition().duration(700).attrTween('d', function (d) {
-        const xStart = this._x1 ?? baseX;
-        const yStart = this._yc ?? (y(d.id) + y.bandwidth() / 2);
-        const hStart = this._h ?? barHNow;
-        const xEnd = x(clampValue(d.wins));
-        const yEnd = y(d.id) + y.bandwidth() / 2;
-        const hEnd = getBarHeight(y, chartState.sizeFactor || 1);
-        return function (t) {
-          const xi = xStart + (xEnd - xStart) * t;
-          const yi = yStart + (yEnd - yStart) * t;
-          const hi = hStart + (hEnd - hStart) * t;
-          return barPath(baseX, xi, yi, hi, d.ties > 0 ? { roundStart: false, roundEnd: false, baseRadius: responsiveRadius } : { roundStart: false, baseRadius: responsiveRadius });
-        };
-      }).on('end', function (d) {
-        this._x0 = baseX;
-        this._x1 = x(clampValue(d.wins));
-        this._yc = y(d.id) + y.bandwidth() / 2;
-        this._h = getBarHeight(y, chartState.sizeFactor || 1);
-      });
+      ).transition().duration(700)
+        .attr('fill', d => d.color || 'url(#gradBlue)')
+        .attrTween('d', function (d) {
+          const xStart = this._x1 ?? baseX;
+          const yStart = this._yc ?? (y(d.id) + y.bandwidth() / 2);
+          const hStart = this._h ?? barHNow;
+          const xEnd = x(clampValue(d.wins));
+          const yEnd = y(d.id) + y.bandwidth() / 2;
+          const hEnd = getBarHeight(y, chartState.sizeFactor || 1);
+          return function (t) {
+            const xi = xStart + (xEnd - xStart) * t;
+            const yi = yStart + (yEnd - yStart) * t;
+            const hi = hStart + (hEnd - hStart) * t;
+            return barPath(baseX, xi, yi, hi, d.ties > 0 ? { roundStart: false, roundEnd: false, baseRadius: responsiveRadius } : { roundStart: false, baseRadius: responsiveRadius });
+          };
+        }).on('end', function (d) {
+          this._x0 = baseX;
+          this._x1 = x(clampValue(d.wins));
+          this._yc = y(d.id) + y.bandwidth() / 2;
+          this._h = getBarHeight(y, chartState.sizeFactor || 1);
+        });
       chartState.barsWin = chartState.svg.select('g').selectAll('path.bar-win');
       const ties = chartState.svg.select('g').selectAll('path.bar-tie').data(data, d => d.id);
       const defs = chartState.svg.select('defs');
@@ -1196,7 +1317,7 @@
           this._yc = y(d.id) + y.bandwidth() / 2;
           this._h = barHNow;
         }).attr('d', d => barPath(baseX, baseX, y(d.id) + y.bandwidth() / 2, barHNow, d.wins > 0 ? { roundStart: false, baseRadius: responsiveRadius } : { baseRadius: responsiveRadius })).attr('fill', d => { if (d.ties > 0) { return d.color ? createColorPattern(defs, d.color) : ('url(#crossPattern)'); } return d.color ? lighten(d.color, .35) : 'url(#gradBlueTie)'; }),
-        update => update.attr('fill', d => { if (d.ties > 0) { return d.color ? createColorPattern(defs, d.color) : ('url(#crossPattern)'); } return d.color ? lighten(d.color, .35) : 'url(#gradBlueTie)'; }),
+        update => update,
         exit => exit.transition().duration(350).attrTween('d', function (d) {
           const xStart = this._x1 ?? baseX;
           const yStart = this._yc ?? (y(d.id) + y.bandwidth() / 2);
@@ -1211,27 +1332,29 @@
             return barPath(baseX, xi, yi, hi, d.wins > 0 ? { roundStart: false, baseRadius: responsiveRadius } : { baseRadius: responsiveRadius });
           };
         }).on('end', function () { this.remove(); })
-      ).transition().duration(700).attrTween('d', function (d) {
-        const xStart = this._x1 ?? baseX;
-        const yStart = this._yc ?? (y(d.id) + y.bandwidth() / 2);
-        const hStart = this._h ?? barHNow;
-        const xEnd = x(clampValue(d.total));
-        const yEnd = y(d.id) + y.bandwidth() / 2;
-        const hEnd = getBarHeight(y, chartState.sizeFactor || 1);
-        return function (t) {
-          const xi = xStart + (xEnd - xStart) * t;
-          const yi = yStart + (yEnd - yStart) * t;
-          const hi = hStart + (hEnd - hStart) * t;
-          const mid = x(clampValue(d.wins));
-          const xi0 = xi < mid ? mid : xi;
-          return barPath(mid, xi0, yi, hi, d.wins > 0 ? { roundStart: false, baseRadius: responsiveRadius } : { baseRadius: responsiveRadius });
-        };
-      }).on('end', function (d) {
-        this._x0 = x(clampValue(d.wins));
-        this._x1 = x(clampValue(d.total));
-        this._yc = y(d.id) + y.bandwidth() / 2;
-        this._h = getBarHeight(y, chartState.sizeFactor || 1);
-      });
+      ).transition().duration(700)
+        .attr('fill', d => { if (d.ties > 0) { return d.color ? createColorPattern(defs, d.color) : ('url(#crossPattern)'); } return d.color ? lighten(d.color, .35) : 'url(#gradBlueTie)'; })
+        .attrTween('d', function (d) {
+          const xStart = this._x1 ?? baseX;
+          const yStart = this._yc ?? (y(d.id) + y.bandwidth() / 2);
+          const hStart = this._h ?? barHNow;
+          const xEnd = x(clampValue(d.total));
+          const yEnd = y(d.id) + y.bandwidth() / 2;
+          const hEnd = getBarHeight(y, chartState.sizeFactor || 1);
+          return function (t) {
+            const xi = xStart + (xEnd - xStart) * t;
+            const yi = yStart + (yEnd - yStart) * t;
+            const hi = hStart + (hEnd - hStart) * t;
+            const mid = x(clampValue(d.wins));
+            const xi0 = xi < mid ? mid : xi;
+            return barPath(mid, xi0, yi, hi, d.wins > 0 ? { roundStart: false, baseRadius: responsiveRadius } : { baseRadius: responsiveRadius });
+          };
+        }).on('end', function (d) {
+          this._x0 = x(clampValue(d.wins));
+          this._x1 = x(clampValue(d.total));
+          this._yc = y(d.id) + y.bandwidth() / 2;
+          this._h = getBarHeight(y, chartState.sizeFactor || 1);
+        });
       chartState.barsTie = chartState.svg.select('g').selectAll('path.bar-tie');
       const fmt = getValueFormatter();
       const values = chartState.svg.select('g').selectAll('text.value').data(data, d => d.id);

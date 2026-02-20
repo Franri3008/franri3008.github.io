@@ -230,10 +230,10 @@ fixed_df = pd.read_json(BASE_DIR / "config/tracking.json")
 fixed_df = fixed_df.replace({"": None, float("nan"): None})
 print_step(f"Loaded {len(fixed_df)} models configuration")
 
-result = fixed_df[['model', 'name', 'logo']].copy()
-result['lma'] = None
-result['aa'] = None
-result['lb'] = None
+result = fixed_df[['model', 'name', 'logo', 'geo']].copy();
+result['lma'] = None;
+result['aa'] = None;
+result['lb'] = None;
 
 lma_data = lma_df
 aa_data = aa_df
