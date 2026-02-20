@@ -44,7 +44,7 @@
       grid-row: 3;
       grid-column: 1 / span 2;
       background: #f9fafc;
-      padding: 8px 16px;
+      padding: 6px 16px;
       font-size: clamp(10px, 1.4vw, 13px);
       color: #666;
       text-align: right;
@@ -253,8 +253,8 @@
       align-items: center;
       justify-content: center;
       gap: clamp(6px, 1vw, 14px);
-      background: rgba(255, 255, 255, 1);
-      padding: clamp(4px, 1vh, 10px) clamp(10px, 2vw, 16px);
+      background: transparent;
+      padding: clamp(4px, 1vh, 10px) 0;
       border-radius: 0;
       max-width: 100%;
       max-height: 100%;
@@ -284,10 +284,31 @@
     }
 
     .legend-square {
-      width: clamp(8px, 0.9vw, 12px);
-      height: clamp(8px, 0.9vw, 12px);
+      width: clamp(10px, 1vw, 14px);
+      height: clamp(10px, 1vw, 14px);
       border-radius: 0;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #111;
+    }
+
+    .legend-square svg {
+      width: 75%;
+      height: 75%;
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .legend-square[data-palette="0"] svg {
+      stroke: #111;
+    }
+
+    .legend-square[data-palette="1"] svg {
+      stroke: #fff;
     }
 
     .viz-grid.with-logo #footnote-container {
@@ -575,7 +596,6 @@
             const val = parseInt(btn.getAttribute('data-palette'), 10);
             if (paletteMode !== val) {
               paletteMode = val;
-              activeOsFilter = null;
               paletteButtons.forEach(b => b.classList.remove('active'));
               btn.classList.add('active');
 
@@ -645,48 +665,48 @@
       const footnote = document.getElementById('footnote-container');
       if (!footnote) return;
 
-      if (active.question === 'ALL' || paletteMode === 1) {
-        footnote.style.display = 'flex';
-      } else {
-        footnote.style.display = 'none';
-      }
+      footnote.style.display = 'flex';
+      footnote.style.justifyContent = 'center';
 
-      if (paletteMode === 1) {
-        footnote.style.justifyContent = 'center';
-        footnote.innerHTML = `
-          <div class="legend" style="margin: 0 auto; display: inline-flex;">
-            <div class="legend-item ${activeOsFilter === 0 ? 'dim' : ''}" tabindex="0" data-os="1">
-              <div class="legend-square" style="background: #188ab2;"></div>
-              <span>Open Source</span>
-            </div>
-            <div class="legend-item ${activeOsFilter === 1 ? 'dim' : ''}" tabindex="0" data-os="0">
-              <div class="legend-square" style="background: #ef476f;"></div>
-              <span>Proprietary</span>
-            </div>
+      const osBg = paletteMode === 1 ? '#188ab2' : '#ffffff';
+      const propBg = paletteMode === 1 ? '#ef476f' : '#ffffff';
+
+      const osCheck = (activeOsFilter === null || activeOsFilter === 1) ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
+      const propCheck = (activeOsFilter === null || activeOsFilter === 0) ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '';
+
+      footnote.innerHTML = `
+        <div class="legend" style="margin: 0 auto; display: inline-flex;">
+          <div class="legend-item ${(activeOsFilter === 0) ? 'dim' : ''}" tabindex="0" data-os="1">
+            <div class="legend-square" style="background: ${osBg};" data-palette="${paletteMode}">${osCheck}</div>
+            <span>Open Source</span>
           </div>
-        `;
-        footnote.querySelectorAll('.legend-item').forEach(item => {
-          item.addEventListener('click', () => {
-            const osVal = parseInt(item.getAttribute('data-os'), 10);
-            activeOsFilter = (activeOsFilter === osVal) ? null : osVal;
-            updateChart();
-            updateFootnote();
-          });
-          item.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              item.click();
-            }
-          });
-        });
-      } else {
-        footnote.style.justifyContent = 'flex-end';
-        footnote.innerHTML = `<span style="font-style: italic;">${baseFootnote}</span>`;
-        if (activeOsFilter !== null) {
-          activeOsFilter = null;
+          <div class="legend-item ${(activeOsFilter === 1) ? 'dim' : ''}" tabindex="0" data-os="0">
+            <div class="legend-square" style="background: ${propBg};" data-palette="${paletteMode}">${propCheck}</div>
+            <span>Proprietary</span>
+          </div>
+        </div>
+      `;
+      footnote.querySelectorAll('.legend-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const osVal = parseInt(item.getAttribute('data-os'), 10);
+          if (activeOsFilter === null) {
+            activeOsFilter = (osVal === 1) ? 0 : 1;
+          } else if (activeOsFilter === osVal) {
+            // Cannot uncheck if it's the last selected option
+            return;
+          } else {
+            activeOsFilter = null;
+          }
           updateChart();
-        }
-      }
+          updateFootnote();
+        });
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            item.click();
+          }
+        });
+      });
     }
     function updateAnswerDisplay() { const answerEl = document.getElementById('correctAnswer'); const answerSection = document.getElementById('answerSection'); if (!answerEl || !answerSection) { return; } if (active.question === 'ALL') { answerSection.classList.add('hidden'); } else { answerEl.textContent = questionAnswers[active.question] || '-'; answerSection.classList.remove('hidden'); } }
     function getAggregated() {
@@ -759,7 +779,7 @@
 
       return rows.filter(d => {
         if (d.score <= 0) return false;
-        if (activeOsFilter !== null && paletteMode === 1) {
+        if (activeOsFilter !== null) {
           const os = modelToOs[d.model] !== undefined ? modelToOs[d.model] : 0;
           if (os !== activeOsFilter) return false;
         }
