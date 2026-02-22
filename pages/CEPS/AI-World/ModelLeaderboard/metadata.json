@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-02-21 04:22:04",
+    "last_updated": "2026-02-22 04:42:53",
     "stats": {
         "models_tracked": 38,
         "matches_found": {
@@ -8,7 +8,7 @@
             "lb": 25
         },
         "rows_scraped": {
-            "lmarena": 312,
+            "lmarena": 313,
             "artificial_analysis": 406,
             "livebench": 55
         }

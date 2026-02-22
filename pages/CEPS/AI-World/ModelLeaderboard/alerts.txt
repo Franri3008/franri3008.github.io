@@ -1,40 +1,40 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-21 04:22:04
+Generated on: 2026-02-22 04:42:53
 ======================================================================
 
 [LMArena - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     1505.0   [NO] !!!             claude-opus-4-6
-2     1504.0   [YES]                claude-opus-4-6-thinking
+1     1505.0   [YES]                claude-opus-4-6-thinking
+2     1505.0   [NO] !!!             claude-opus-4-6
 3     1500.0   [YES]                gemini-3.1-pro-preview
 4     1486.0   [YES]                gemini-3-pro
-5     1475.0   [NO] !!!             dola-seed-2.0-preview
-6     1474.0   [YES]                gemini-3-flash
-7     1474.0   [YES]                grok-4.1-thinking
-8     1471.0   [YES]                claude-opus-4-5-20251101-thinking-32k
-9     1467.0   [NO] !!!             claude-opus-4-5-20251101
-10    1463.0   [NO] !!!             grok-4.1
-11    1462.0   [YES]                gemini-3-flash (thinking-minimal)
-12    1458.0   [YES]                gpt-5.1-high
-13    1457.0   [NO] !!! [NEW]       claude-sonnet-4-6
-14    1455.0   [YES]                glm-5
-15    1453.0   [YES]                ernie-5.0-0110
-16    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
-17    1450.0   [YES]                qwen3.5-397b-a17b
-18    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
-19    1449.0   [YES]                gemini-2.5-pro
-20    1449.0   [YES]                kimi-k2.5-thinking
-21    1449.0   [NO] !!!             ernie-5.0-preview-1203
-22    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
-23    1446.0   [YES]                claude-opus-4-1-20250805
-24    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
-25    1442.0   [NO] !!!             chatgpt-4o-latest-20250326
-26    1441.0   [YES]                glm-4.7
-27    1441.0   [YES]                gpt-5.2-high
-28    1438.0   [NO] !!!             gpt-5.2
-29    1438.0   [NO] !!!             gpt-5.1
-30    1437.0   [NO] !!!             kimi-k2.5-instant
+5     1478.0   [NO] !!! [NEW]       gpt-5.2-chat-latest-20260210
+6     1474.0   [NO] !!!             dola-seed-2.0-preview
+7     1474.0   [YES]                gemini-3-flash
+8     1473.0   [YES]                grok-4.1-thinking
+9     1472.0   [YES]                claude-opus-4-5-20251101-thinking-32k
+10    1467.0   [NO] !!!             claude-opus-4-5-20251101
+11    1463.0   [NO] !!!             grok-4.1
+12    1461.0   [YES]                gemini-3-flash (thinking-minimal)
+13    1457.0   [YES]                gpt-5.1-high
+14    1457.0   [NO] !!!             claude-sonnet-4-6
+15    1452.0   [YES]                glm-5
+16    1452.0   [YES]                ernie-5.0-0110
+17    1450.0   [YES]                kimi-k2.5-thinking
+18    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
+19    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+20    1449.0   [YES]                gemini-2.5-pro
+21    1449.0   [YES]                qwen3.5-397b-a17b
+22    1449.0   [NO] !!!             ernie-5.0-preview-1203
+23    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
+24    1446.0   [YES]                claude-opus-4-1-20250805
+25    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
+26    1442.0   [NO] !!!             chatgpt-4o-latest-20250326
+27    1441.0   [YES]                glm-4.7
+28    1439.0   [YES]                gpt-5.2-high
+29    1438.0   [NO] !!!             gpt-5.2
+30    1437.0   [NO] !!!             gpt-5.1
 
 [Artificial Analysis - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
@@ -58,7 +58,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 17    44.0     [NO] !!!             Claude Sonnet 4.6
 18    43.0     [YES]                Claude Opus 4.5
 19    43.0     [YES]                Claude 4.5 Sonnet
-20    43.0     [NO] !!! [NEW]       Claude Sonnet 4.6 (Non-reasoning, Low Effort)
+20    43.0     [NO] !!!             Claude Sonnet 4.6 (Non-reasoning, Low Effort)
 21    42.0     [NO] !!!             GPT-5.1 Codex (high)
 22    42.0     [YES]                GLM-4.7
 23    42.0     [YES]                MiniMax-M2.5
