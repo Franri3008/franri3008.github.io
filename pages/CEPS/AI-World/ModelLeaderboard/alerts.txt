@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-22 04:42:53
+Generated on: 2026-02-23 04:50:49
 ======================================================================
 
 [LMArena - TOP 30]
@@ -9,7 +9,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 2     1505.0   [NO] !!!             claude-opus-4-6
 3     1500.0   [YES]                gemini-3.1-pro-preview
 4     1486.0   [YES]                gemini-3-pro
-5     1478.0   [NO] !!! [NEW]       gpt-5.2-chat-latest-20260210
+5     1478.0   [NO] !!!             gpt-5.2-chat-latest-20260210
 6     1474.0   [NO] !!!             dola-seed-2.0-preview
 7     1474.0   [YES]                gemini-3-flash
 8     1473.0   [YES]                grok-4.1-thinking
