@@ -1,16 +1,16 @@
 {
-    "last_updated": "2026-02-24 04:45:22",
+    "last_updated": "2026-02-25 04:45:45",
     "stats": {
         "models_tracked": 38,
         "matches_found": {
-            "lma": 33,
+            "lma": 34,
             "aa": 33,
             "lb": 25
         },
         "rows_scraped": {
-            "lmarena": 314,
-            "artificial_analysis": 407,
-            "livebench": 55
+            "lmarena": 315,
+            "artificial_analysis": 408,
+            "livebench": 56
         }
     },
     "alerts_summary": {

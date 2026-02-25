@@ -1,30 +1,30 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-02-24 04:45:22
+Generated on: 2026-02-25 04:45:45
 ======================================================================
 
 [LMArena - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
 1     1504.0   [NO] !!!             claude-opus-4-6
-2     1504.0   [YES]                claude-opus-4-6-thinking
+2     1503.0   [YES]                claude-opus-4-6-thinking
 3     1500.0   [YES]                gemini-3.1-pro-preview
 4     1486.0   [YES]                gemini-3-pro
-5     1480.0   [NO] !!!             gpt-5.2-chat-latest-20260210
-6     1474.0   [NO] !!!             dola-seed-2.0-preview
+5     1481.0   [NO] !!!             gpt-5.2-chat-latest-20260210
+6     1473.0   [YES]                gemini-3-flash
 7     1473.0   [YES]                grok-4.1-thinking
-8     1473.0   [YES]                gemini-3-flash
+8     1472.0   [NO] !!!             dola-seed-2.0-preview
 9     1472.0   [YES]                claude-opus-4-5-20251101-thinking-32k
 10    1467.0   [NO] !!!             claude-opus-4-5-20251101
 11    1463.0   [NO] !!!             grok-4.1
 12    1462.0   [YES]                gemini-3-flash (thinking-minimal)
-13    1458.0   [YES]                gpt-5.1-high
-14    1457.0   [NO] !!!             claude-sonnet-4-6
-15    1453.0   [YES]                glm-5
-16    1452.0   [YES]                ernie-5.0-0110
-17    1451.0   [YES]                kimi-k2.5-thinking
-18    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
-19    1450.0   [YES]                qwen3.5-397b-a17b
-20    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+13    1457.0   [YES]                claude-sonnet-4-6
+14    1457.0   [YES]                gpt-5.1-high
+15    1454.0   [YES]                glm-5
+16    1453.0   [YES]                ernie-5.0-0110
+17    1451.0   [YES]                qwen3.5-397b-a17b
+18    1450.0   [YES]                kimi-k2.5-thinking
+19    1450.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+20    1450.0   [NO] !!!             claude-sonnet-4-5-20250929
 21    1449.0   [YES]                gemini-2.5-pro
 22    1449.0   [NO] !!!             ernie-5.0-preview-1203
 23    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
@@ -80,26 +80,26 @@ RANK  SCORE    TRACKED?             MODEL NAME
 5     74.3     [NO] !!!             GPT-5.2 Codex
 6     73.98    [NO] !!!             GPT-5.1 Codex Max High
 7     73.39    [YES]                Gemini 3 Pro Preview High
-8     72.4     [YES]                Gemini 3 Flash Preview High
-9     72.04    [YES]                GPT-5.1 High
-10    70.48    [YES]                GPT-5 Pro
-11    69.07    [YES]                Kimi K2.5 Thinking
-12    68.85    [YES]                GLM 5
-13    68.61    [NO] !!!             GPT-5.1 Codex
-14    68.19    [YES]                Claude Sonnet 4.5 Thinking
-15    65.91    [YES]                GPT-5 Mini High
-16    62.2     [YES]                DeepSeek V3.2 Thinking
-17    62.02    [NO] !!!             Grok 4
-18    61.81    [YES]                Claude 4.1 Opus Thinking
-19    61.59    [YES]                Kimi K2 Thinking
-20    61.32    [YES]                Claude Haiku 4.5 Thinking
-21    61.27    [NO] !!!             Claude 4 Sonnet Thinking
-22    60.38    [NO] !!!             GPT-5.1 Codex Mini
-23    60.14    [YES]                Minimax M2.5
-24    59.99    [YES]                Grok 4.1 Fast
-25    59.1     [NO] !!!             Claude 4.5 Opus Medium Effort
-26    58.9     [NO] !!!             DeepSeek V3.2 Exp Thinking
-27    58.33    [YES]                Gemini 2.5 Pro (Max Thinking)
-28    58.09    [YES]                GLM 4.7
-29    55.19    [YES]                GLM 4.6
-30    54.45    [NO] !!!             Claude 4.1 Opus
+8     72.76    [NO] !!! [NEW]       GPT-5.3 Codex High
+9     72.4     [YES]                Gemini 3 Flash Preview High
+10    72.04    [YES]                GPT-5.1 High
+11    70.48    [YES]                GPT-5 Pro
+12    69.07    [YES]                Kimi K2.5 Thinking
+13    68.85    [YES]                GLM 5
+14    68.61    [NO] !!!             GPT-5.1 Codex
+15    68.19    [YES]                Claude Sonnet 4.5 Thinking
+16    65.91    [YES]                GPT-5 Mini High
+17    62.2     [YES]                DeepSeek V3.2 Thinking
+18    62.02    [NO] !!!             Grok 4
+19    61.81    [YES]                Claude 4.1 Opus Thinking
+20    61.59    [YES]                Kimi K2 Thinking
+21    61.32    [YES]                Claude Haiku 4.5 Thinking
+22    61.27    [NO] !!!             Claude 4 Sonnet Thinking
+23    60.38    [NO] !!!             GPT-5.1 Codex Mini
+24    60.14    [YES]                Minimax M2.5
+25    59.99    [YES]                Grok 4.1 Fast
+26    59.1     [NO] !!!             Claude 4.5 Opus Medium Effort
+27    58.9     [NO] !!!             DeepSeek V3.2 Exp Thinking
+28    58.33    [YES]                Gemini 2.5 Pro (Max Thinking)
+29    58.09    [YES]                GLM 4.7
+30    55.19    [YES]                GLM 4.6
