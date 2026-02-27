@@ -1,5 +1,4 @@
 Model,Organization,Global Average,Reasoning Average,Coding Average,Agentic Coding Average,Mathematics Average,Data Analysis Average,Language Average,IF Average
-Gemini 3.1 Pro Preview High**5th rank in unseen questions across all categories,Google,79.93,84.00,76.45,65.00,91.04,78.54,85.38,79.10
 Claude 4.6 Opus Thinking High Effort,Anthropic,76.33,88.67,78.18,61.67,89.32,69.89,83.27,63.31
 Claude 4.5 Opus Thinking High Effort,Anthropic,75.96,80.09,79.65,63.33,90.39,74.44,81.26,62.55
 Claude 4.6 Sonnet Thinking Medium Effort,Anthropic,75.47,84.77,79.27,60.00,86.99,77.95,76.10,63.22
