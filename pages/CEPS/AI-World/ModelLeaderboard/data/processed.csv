@@ -30,8 +30,8 @@ grok-4;Grok 4;grok;US;;;
 mistral-medium-2508;Mistral;mistral;France;;;
 magistral-medium;Magistral Medium;mistral;France;1305;27;
 llama-4-maverick-17b-128e-instruct;Llama 4 Maverick;meta;US;;;
-nemotron-ultra-v1;Nemotron Ultra v1;nemotron;US;1347;20;
-nemotron-super-v1-5;Nemotron Super v1.5;nemotron;US;1341;24;
+nemotron-ultra-v1;Nemotron Ultra v1;nemotron;US;1347;15;
+nemotron-super-v1-5;Nemotron Super v1.5;nemotron;US;1341;19;
 nemotron-3-nano;Nemotron 3 Nano;nemotron;US;1317;24;
 minimax-m2-5;MiniMax M2.5;minimax;China;1401;42;60.14
 ernie-5.0;ERNIE 5.0;baidu;China;1453;29;
