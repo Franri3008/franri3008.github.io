@@ -1142,13 +1142,17 @@
       g.selectAll('image.logo').data(data, d => d.id).enter().append('image').attr('class', 'logo').attr('x', d => x(clampValue(d.total)) + 6).attr('y', d => y(d.id) + (y.bandwidth() - logoSize) / 2).attr('width', logoSize).attr('height', logoSize).attr('href', d => d.logo).attr('xlink:href', d => d.logo);
       chartState.logos = g.selectAll('image.logo');
 
-      if (chartState.yAxisGroup) chartState.yAxisGroup.raise();
-      if (chartState.xAxisGroup) chartState.xAxisGroup.raise();
-
-      const overlay = svg.append('rect').attr('class', 'highlight-overlay')
+      const overlay = g.append('rect').attr('class', 'highlight-overlay')
+        .attr('x', -margin.left)
+        .attr('y', -margin.top)
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
         .attr('fill', bgColor)
         .attr('pointer-events', 'none')
         .attr('opacity', 0);
+
+      if (chartState.yAxisGroup) chartState.yAxisGroup.raise();
+      if (chartState.xAxisGroup) chartState.xAxisGroup.raise();
 
 
 
@@ -1188,29 +1192,48 @@
           const y = chartState.y;
           const step = y.step();
           const gap = (step - y.bandwidth()) / 2;
-          const yPos = chartState.margin.top + y(found.id) - gap;
+          const yPos = y(found.id) - gap;
 
-          maskBg.attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
+          maskBg.attr('x', -chartState.margin.left)
+            .attr('y', -chartState.margin.top)
+            .attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
             .attr('height', chartState.height + chartState.margin.top + chartState.margin.bottom);
 
           const holeSel = animate ? maskHole.transition().duration(700) : maskHole;
-          holeSel.attr('x', 0)
+          holeSel.attr('x', -chartState.margin.left)
             .attr('y', yPos)
             .attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
             .attr('height', step);
 
           const overlaySel = animate ? overlay.transition().duration(700) : overlay;
-          overlaySel.attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
+          overlaySel.attr('x', -chartState.margin.left)
+            .attr('y', -chartState.margin.top)
+            .attr('width', chartState.width + chartState.margin.left + chartState.margin.right)
             .attr('height', chartState.height + chartState.margin.top + chartState.margin.bottom)
             .attr('mask', 'url(#highlightMask)')
             .attr('opacity', 0.8);
+
+          if (chartState.yAxisGroup) {
+            const labels = animate ? chartState.yAxisGroup.selectAll('.tick text').transition().duration(700) : chartState.yAxisGroup.selectAll('.tick text');
+            labels.style('opacity', function (d) { return d === highlightMode ? 1 : 0.25; });
+          }
         } else {
           const overlaySel = animate ? overlay.transition().duration(700) : overlay;
           overlaySel.attr('opacity', 0);
+
+          if (chartState.yAxisGroup) {
+            const labels = animate ? chartState.yAxisGroup.selectAll('.tick text').transition().duration(700) : chartState.yAxisGroup.selectAll('.tick text');
+            labels.style('opacity', 1);
+          }
         }
       } else {
         const overlaySel = animate ? overlay.transition().duration(700) : overlay;
         overlaySel.attr('opacity', 0);
+
+        if (chartState.yAxisGroup) {
+          const labels = animate ? chartState.yAxisGroup.selectAll('.tick text').transition().duration(700) : chartState.yAxisGroup.selectAll('.tick text');
+          labels.style('opacity', 1);
+        }
       }
     }
     function pauseHighlight() {
@@ -1379,6 +1402,8 @@
       );
       chartState.logos = chartState.svg.select('g').selectAll('image.logo');
 
+      const overlay = chartState.svg.select('.highlight-overlay');
+      if (overlay.node()) overlay.raise();
       if (chartState.yAxisGroup) chartState.yAxisGroup.raise();
       if (chartState.xAxisGroup) chartState.xAxisGroup.raise();
 
