@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-03-06 10:38:59
+Generated on: 2026-03-06 10:43:19
 ======================================================================
 
 [LMArena - TOP 30]
@@ -73,7 +73,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 [LiveBench - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     80.28    [NO] !!! [NEW]       GPT-5.4 Thinking xHigh Effort
+1     80.28    [YES]                GPT-5.4 Thinking xHigh Effort
 2     79.93    [YES]                Gemini 3.1 Pro Preview High**5th rank in unseen questions across all categories
 3     76.33    [YES]                Claude 4.6 Opus Thinking High Effort
 4     75.96    [YES]                Claude 4.5 Opus Thinking High Effort
