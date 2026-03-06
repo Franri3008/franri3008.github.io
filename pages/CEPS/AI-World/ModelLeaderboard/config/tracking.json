@@ -7,7 +7,7 @@
         "os": 0,
         "lma_lookup": "gemini-3.1-pro-preview",
         "aa_lookup": "Gemini 3.1 Pro Preview",
-        "lb_lookup": null
+        "lb_lookup": "Gemini 3.1 Pro Preview High**5th rank in unseen questions across all categories"
     },
     {
         "model": "gemini-3-pro",
@@ -108,6 +108,16 @@
         "lma_lookup": "claude-haiku-4-5-20251001",
         "aa_lookup": "Claude 4.5 Haiku",
         "lb_lookup": "Claude Haiku 4.5 Thinking"
+    },
+    {
+        "model": "gpt-5.4",
+        "name": "GPT-5.4 (Thinking)",
+        "logo": "gpt",
+        "geo": "US",
+        "os": 0,
+        "lma_lookup": "gpt-5.4-high",
+        "aa_lookup": "GPT-5.4 (xhigh)",
+        "lb_lookup": "GPT-5.4 Thinking High Effort"
     },
     {
         "model": "gpt-5.2",
