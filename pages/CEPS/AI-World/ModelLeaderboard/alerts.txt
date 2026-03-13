@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-03-12 04:28:58
+Generated on: 2026-03-13 04:27:28
 ======================================================================
 
 [LMArena - TOP 30]
@@ -48,27 +48,27 @@ RANK  SCORE    TRACKED?             MODEL NAME
 7     50.0     [YES]                GLM-5
 8     50.0     [YES]                Claude Opus 4.5
 9     49.0     [NO] !!!             GPT-5.2 Codex (xhigh)
-10    48.0     [YES]                Gemini 3 Pro Preview (high)
-11    48.0     [YES]                GPT-5.1 (high)
-12    47.0     [YES]                Kimi K2.5
-13    47.0     [NO] !!!             GPT-5.2 (medium)
-14    46.0     [NO] !!!             Claude Opus 4.6
-15    46.0     [YES]                Gemini 3 Flash
-16    45.0     [YES]                Qwen3.5 397B A17B
-17    45.0     [NO] !!!             GPT-5 Codex (high)
-18    45.0     [YES]                GPT-5 (high)
-19    44.0     [NO] !!!             Claude Sonnet 4.6
-20    43.0     [NO] !!!             GPT-5.1 Codex (high)
-21    43.0     [YES]                Claude Opus 4.5
-22    43.0     [YES]                Claude 4.5 Sonnet
-23    43.0     [NO] !!!             Claude Sonnet 4.6 (Non-reasoning, Low Effort)
-24    42.0     [YES]                GLM-4.7
-25    42.0     [NO] !!!             Qwen3.5 27B
-26    42.0     [NO] !!!             GPT-5 (medium)
-27    42.0     [YES]                MiniMax-M2.5
-28    42.0     [YES]                DeepSeek V3.2
-29    42.0     [NO] !!!             Qwen3.5 122B A10B
-30    42.0     [NO] !!!             Grok 4
+10    48.0     [NO] !!! [NEW]       Grok 4.20 Beta 0309
+11    48.0     [YES]                Gemini 3 Pro Preview (high)
+12    48.0     [YES]                GPT-5.1 (high)
+13    47.0     [YES]                Kimi K2.5
+14    47.0     [NO] !!!             GPT-5.2 (medium)
+15    46.0     [NO] !!!             Claude Opus 4.6
+16    46.0     [YES]                Gemini 3 Flash
+17    45.0     [YES]                Qwen3.5 397B A17B
+18    45.0     [NO] !!!             GPT-5 Codex (high)
+19    45.0     [YES]                GPT-5 (high)
+20    44.0     [NO] !!!             Claude Sonnet 4.6
+21    43.0     [NO] !!!             GPT-5.1 Codex (high)
+22    43.0     [YES]                Claude Opus 4.5
+23    43.0     [YES]                Claude 4.5 Sonnet
+24    43.0     [NO] !!!             Claude Sonnet 4.6 (Non-reasoning, Low Effort)
+25    42.0     [YES]                GLM-4.7
+26    42.0     [NO] !!!             Qwen3.5 27B
+27    42.0     [NO] !!!             GPT-5 (medium)
+28    42.0     [YES]                MiniMax-M2.5
+29    42.0     [YES]                DeepSeek V3.2
+30    42.0     [NO] !!!             Qwen3.5 122B A10B
 
 [LiveBench - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
