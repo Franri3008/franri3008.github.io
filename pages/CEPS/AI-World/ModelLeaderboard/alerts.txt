@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-03-13 04:27:28
+Generated on: 2026-03-13 17:56:45
 ======================================================================
 
 [LMArena - TOP 30]
@@ -7,7 +7,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
 1     1503.0   [NO] !!!             claude-opus-4-6
 2     1503.0   [YES]                claude-opus-4-6-thinking
-3     1496.0   [NO] !!!             grok-4.20-beta1
+3     1496.0   [YES]                grok-4.20-beta1
 4     1492.0   [YES]                gemini-3.1-pro-preview
 5     1486.0   [YES]                gemini-3-pro
 6     1485.0   [YES]                gpt-5.4-high
@@ -48,13 +48,13 @@ RANK  SCORE    TRACKED?             MODEL NAME
 7     50.0     [YES]                GLM-5
 8     50.0     [YES]                Claude Opus 4.5
 9     49.0     [NO] !!!             GPT-5.2 Codex (xhigh)
-10    48.0     [NO] !!! [NEW]       Grok 4.20 Beta 0309
+10    48.0     [YES]                Grok 4.20 Beta 0309
 11    48.0     [YES]                Gemini 3 Pro Preview (high)
 12    48.0     [YES]                GPT-5.1 (high)
 13    47.0     [YES]                Kimi K2.5
 14    47.0     [NO] !!!             GPT-5.2 (medium)
-15    46.0     [NO] !!!             Claude Opus 4.6
-16    46.0     [YES]                Gemini 3 Flash
+15    46.0     [YES]                Gemini 3 Flash
+16    46.0     [NO] !!!             Claude Opus 4.6
 17    45.0     [YES]                Qwen3.5 397B A17B
 18    45.0     [NO] !!!             GPT-5 Codex (high)
 19    45.0     [YES]                GPT-5 (high)
@@ -63,12 +63,12 @@ RANK  SCORE    TRACKED?             MODEL NAME
 22    43.0     [YES]                Claude Opus 4.5
 23    43.0     [YES]                Claude 4.5 Sonnet
 24    43.0     [NO] !!!             Claude Sonnet 4.6 (Non-reasoning, Low Effort)
-25    42.0     [YES]                GLM-4.7
-26    42.0     [NO] !!!             Qwen3.5 27B
-27    42.0     [NO] !!!             GPT-5 (medium)
-28    42.0     [YES]                MiniMax-M2.5
-29    42.0     [YES]                DeepSeek V3.2
-30    42.0     [NO] !!!             Qwen3.5 122B A10B
+25    42.0     [YES]                DeepSeek V3.2
+26    42.0     [NO] !!! [NEW]       Grok 4
+27    42.0     [NO] !!!             Qwen3.5 122B A10B
+28    42.0     [NO] !!!             GPT-5 (medium)
+29    42.0     [YES]                MiniMax-M2.5
+30    42.0     [NO] !!!             Qwen3.5 27B
 
 [LiveBench - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
@@ -90,16 +90,16 @@ RANK  SCORE    TRACKED?             MODEL NAME
 15    68.85    [YES]                GLM 5
 16    68.61    [NO] !!!             GPT-5.1 Codex
 17    68.19    [YES]                Claude Sonnet 4.5 Thinking
-18    65.91    [YES]                GPT-5 Mini High
-19    62.2     [YES]                DeepSeek V3.2 Thinking
-20    62.02    [NO] !!!             Grok 4
-21    61.81    [YES]                Claude 4.1 Opus Thinking
-22    61.68    [NO] !!!             Gemini 3.1 Flash Lite Preview High
-23    61.59    [YES]                Kimi K2 Thinking
-24    61.32    [YES]                Claude Haiku 4.5 Thinking
-25    61.27    [NO] !!!             Claude 4 Sonnet Thinking
-26    60.38    [NO] !!!             GPT-5.1 Codex Mini
-27    60.14    [YES]                Minimax M2.5
-28    59.99    [NO] !!!             GPT-5.3 Instant
-29    59.99    [YES]                Grok 4.1 Fast
-30    59.1     [NO] !!!             Claude 4.5 Opus Medium Effort
+18    67.96    [NO] !!! [NEW]       Grok 4.20 Beta
+19    65.91    [YES]                GPT-5 Mini High
+20    62.2     [YES]                DeepSeek V3.2 Thinking
+21    62.02    [NO] !!!             Grok 4
+22    61.81    [YES]                Claude 4.1 Opus Thinking
+23    61.68    [NO] !!!             Gemini 3.1 Flash Lite Preview High
+24    61.59    [YES]                Kimi K2 Thinking
+25    61.32    [YES]                Claude Haiku 4.5 Thinking
+26    61.27    [NO] !!!             Claude 4 Sonnet Thinking
+27    60.38    [NO] !!!             GPT-5.1 Codex Mini
+28    60.14    [YES]                Minimax M2.5
+29    59.99    [NO] !!!             GPT-5.3 Instant
+30    59.99    [YES]                Grok 4.1 Fast

@@ -260,6 +260,16 @@
         "lb_lookup": "DeepSeek V3.2 Thinking"
     },
     {
+        "model": "grok-4-20",
+        "name": "Grok 4.20 (Beta)",
+        "logo": "grok",
+        "geo": "US",
+        "os": 0,
+        "lma_lookup": "grok-4.20-beta1",
+        "aa_lookup": "Grok 4.20 Beta 0309",
+        "lb_lookup": null
+    },
+    {
         "model": "grok-4-1-thinking",
         "name": "Grok 4.1 (Thinking)",
         "logo": "grok",
