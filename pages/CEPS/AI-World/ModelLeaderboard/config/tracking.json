@@ -267,7 +267,7 @@
         "os": 0,
         "lma_lookup": "grok-4.20-beta1",
         "aa_lookup": "Grok 4.20 Beta 0309",
-        "lb_lookup": null
+        "lb_lookup": "Grok 4.20 Beta"
     },
     {
         "model": "grok-4-1-thinking",
@@ -327,6 +327,16 @@
         "os": 1,
         "lma_lookup": null,
         "aa_lookup": null,
+        "lb_lookup": null
+    },
+    {
+        "model": "nemotron-3-super",
+        "name": "Nemotron 3 Super",
+        "logo": "nemotron",
+        "geo": "US",
+        "os": 1,
+        "lma_lookup": "nvidia-nemotron-3-super-120b-a12b",
+        "aa_lookup": "NVIDIA Nemotron 3 Super",
         "lb_lookup": null
     },
     {

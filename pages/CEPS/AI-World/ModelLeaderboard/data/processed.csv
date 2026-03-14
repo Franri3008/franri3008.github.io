@@ -25,13 +25,14 @@ glm-4-5-air;GLM 4.5 Air;zai;China;;;
 qwen3-5;Qwen 3.5;qwen;China;1450;45;
 qwen3-max;Qwen 3 Max;qwen;China;1425;30;52.97
 deepseek-v3-2-exp-thinking;DeepSeek v3.2 (Thinking);deepseek;China;1421;42;62.2
-grok-4-20;Grok 4.20 (Beta);grok;US;1496;48;
+grok-4-20;Grok 4.20 (Beta);grok;US;1496;48;67.96
 grok-4-1-thinking;Grok 4.1 (Thinking);grok;US;1473;;
 grok-4-1-fast;Grok 4.1 Fast;grok;US;1431;39;59.99
 grok-4;Grok 4;grok;US;;;
 mistral-medium-2508;Mistral;mistral;France;;;
 magistral-medium;Magistral Medium;mistral;France;1305;27;
 llama-4-maverick-17b-128e-instruct;Llama 4 Maverick;meta;US;;;
+nemotron-3-super;Nemotron 3 Super;nemotron;US;1364;36;
 nemotron-ultra-v1;Nemotron Ultra v1;nemotron;US;1348;15;
 nemotron-super-v1-5;Nemotron Super v1.5;nemotron;US;1342;19;
 nemotron-3-nano;Nemotron 3 Nano;nemotron;US;1318;24;

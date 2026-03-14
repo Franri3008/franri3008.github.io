@@ -54,7 +54,7 @@ Qwen3.5 35B A3B,262k,Alibaba,37,$0.69,162,2.15,Model Providers
 Claude 4.5 Haiku,200k,Anthropic,37,$2.00,105,12.78,Model Providers
 MiniMax-M2,205k,MiniMax,36,$0.53,46,3.20,Model Providers
 KAT-Coder-Pro V1,256k,KwaiKAT,36,$0.53,51,1.97,Model Providers
-NVIDIA Nemotron 3 Super,1m,NVIDIA,36,$0.41,448,0.67,Model Providers
+NVIDIA Nemotron 3 Super,1m,NVIDIA,36,$0.41,424,0.70,Model Providers
 Qwen3.5 122B A10B,262k,Alibaba,36,$1.10,147,2.42,Model Providers
 Nova 2.0 Pro Preview (medium),256k,Amazon,36,$3.44,147,11.48,Model Providers
 Grok 4 Fast,2m,xAI,35,$0.28,196,3.89,Model Providers
