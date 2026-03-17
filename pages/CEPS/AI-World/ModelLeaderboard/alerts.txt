@@ -1,40 +1,40 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-03-16 05:07:48
+Generated on: 2026-03-17 04:44:31
 ======================================================================
 
 [LMArena - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     1503.0   [NO] !!!             claude-opus-4-6
-2     1503.0   [YES]                claude-opus-4-6-thinking
-3     1496.0   [YES]                grok-4.20-beta1
-4     1492.0   [YES]                gemini-3.1-pro-preview
+1     1501.0   [YES]                claude-opus-4-6-thinking
+2     1501.0   [NO] !!!             claude-opus-4-6
+3     1493.0   [YES]                gemini-3.1-pro-preview
+4     1492.0   [YES]                grok-4.20-beta1
 5     1486.0   [YES]                gemini-3-pro
 6     1485.0   [YES]                gpt-5.4-high
-7     1481.0   [NO] !!!             gpt-5.2-chat-latest-20260210
-8     1474.0   [YES]                gemini-3-flash
-9     1473.0   [YES]                grok-4.1-thinking
-10    1472.0   [YES]                claude-opus-4-5-20251101-thinking-32k
-11    1467.0   [NO] !!!             claude-opus-4-5-20251101
-12    1465.0   [NO] !!!             dola-seed-2.0-preview
-13    1463.0   [YES]                gemini-3-flash (thinking-minimal)
-14    1463.0   [NO] !!!             gpt-5.4
-15    1462.0   [NO] !!!             grok-4.1
-16    1460.0   [YES]                claude-sonnet-4-6
-17    1456.0   [YES]                gpt-5.1-high
-18    1454.0   [YES]                glm-5
-19    1452.0   [YES]                kimi-k2.5-thinking
-20    1452.0   [YES]                ernie-5.0-0110
-21    1452.0   [NO] !!!             claude-sonnet-4-5-20250929
-22    1451.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
-23    1450.0   [YES]                qwen3.5-397b-a17b
-24    1450.0   [NO] !!!             ernie-5.0-preview-1203
-25    1449.0   [YES]                gemini-2.5-pro
-26    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
-27    1447.0   [YES]                claude-opus-4-1-20250805
-28    1445.0   [NO] !!!             gpt-4.5-preview-2025-02-27
-29    1443.0   [YES]                gpt-5.2-high
-30    1443.0   [NO] !!!             chatgpt-4o-latest-20250326
+7     1482.0   [NO] !!! [NEW]       grok-4.20-beta-0309-reasoning
+8     1480.0   [NO] !!!             gpt-5.2-chat-latest-20260210
+9     1474.0   [YES]                gemini-3-flash
+10    1473.0   [YES]                claude-opus-4-5-20251101-thinking-32k
+11    1473.0   [YES]                grok-4.1-thinking
+12    1468.0   [NO] !!! [NEW]       gpt-5.3-chat-latest
+13    1467.0   [NO] !!!             claude-opus-4-5-20251101
+14    1464.0   [NO] !!!             dola-seed-2.0-preview
+15    1463.0   [NO] !!!             gpt-5.4
+16    1462.0   [YES]                gemini-3-flash (thinking-minimal)
+17    1462.0   [NO] !!!             grok-4.1
+18    1461.0   [YES]                claude-sonnet-4-6
+19    1456.0   [YES]                gpt-5.1-high
+20    1453.0   [YES]                glm-5
+21    1453.0   [YES]                kimi-k2.5-thinking
+22    1452.0   [NO] !!!             claude-sonnet-4-5-20250929
+23    1452.0   [YES]                ernie-5.0-0110
+24    1452.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
+25    1452.0   [YES]                qwen3.5-397b-a17b
+26    1450.0   [NO] !!!             ernie-5.0-preview-1203
+27    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
+28    1449.0   [YES]                gemini-2.5-pro
+29    1447.0   [YES]                claude-opus-4-1-20250805
+30    1445.0   [NO] !!!             gpt-4.5-preview-2025-02-27
 
 [Artificial Analysis - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
