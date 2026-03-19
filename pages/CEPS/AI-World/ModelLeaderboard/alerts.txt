@@ -1,40 +1,40 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-03-18 04:49:34
+Generated on: 2026-03-19 04:47:48
 ======================================================================
 
 [LMArena - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
 ----------------------------------------------------------------------
-1     1501.0   [YES]                claude-opus-4-6-thinking
-2     1501.0   [NO] !!!             claude-opus-4-6
-3     1493.0   [YES]                gemini-3.1-pro-preview
+1     1502.0   [YES]                claude-opus-4-6-thinking
+2     1500.0   [NO] !!!             claude-opus-4-6
+3     1494.0   [YES]                gemini-3.1-pro-preview
 4     1492.0   [YES]                grok-4.20-beta1
-5     1486.0   [YES]                gemini-3-pro
-6     1485.0   [YES]                gpt-5.4-high
-7     1482.0   [NO] !!!             grok-4.20-beta-0309-reasoning
+5     1487.0   [YES]                gemini-3-pro
+6     1486.0   [YES]                gpt-5.4-high
+7     1483.0   [NO] !!!             grok-4.20-beta-0309-reasoning
 8     1480.0   [NO] !!!             gpt-5.2-chat-latest-20260210
-9     1474.0   [YES]                gemini-3-flash
-10    1473.0   [YES]                claude-opus-4-5-20251101-thinking-32k
-11    1473.0   [YES]                grok-4.1-thinking
-12    1468.0   [NO] !!!             gpt-5.3-chat-latest
-13    1467.0   [NO] !!!             claude-opus-4-5-20251101
-14    1464.0   [NO] !!!             dola-seed-2.0-preview
-15    1463.0   [NO] !!!             gpt-5.4
-16    1462.0   [YES]                gemini-3-flash (thinking-minimal)
+9     1475.0   [YES]                gemini-3-flash
+10    1474.0   [YES]                claude-opus-4-5-20251101-thinking-32k
+11    1472.0   [YES]                grok-4.1-thinking
+12    1469.0   [NO] !!!             claude-opus-4-5-20251101
+13    1466.0   [NO] !!!             gpt-5.3-chat-latest
+14    1464.0   [YES]                claude-sonnet-4-6
+15    1463.0   [YES]                gemini-3-flash (thinking-minimal)
+16    1463.0   [NO] !!!             gpt-5.4
 17    1462.0   [NO] !!!             grok-4.1
-18    1461.0   [YES]                claude-sonnet-4-6
-19    1456.0   [YES]                gpt-5.1-high
-20    1453.0   [YES]                glm-5
+18    1461.0   [NO] !!!             dola-seed-2.0-preview
+19    1457.0   [YES]                glm-5
+20    1455.0   [YES]                gpt-5.1-high
 21    1453.0   [YES]                kimi-k2.5-thinking
-22    1452.0   [NO] !!!             claude-sonnet-4-5-20250929
-23    1452.0   [YES]                ernie-5.0-0110
+22    1452.0   [YES]                ernie-5.0-0110
+23    1452.0   [NO] !!!             claude-sonnet-4-5-20250929
 24    1452.0   [YES]                claude-sonnet-4-5-20250929-thinking-32k
 25    1452.0   [YES]                qwen3.5-397b-a17b
 26    1450.0   [NO] !!!             ernie-5.0-preview-1203
-27    1449.0   [YES]                claude-opus-4-1-20250805-thinking-16k
-28    1449.0   [YES]                gemini-2.5-pro
+27    1449.0   [YES]                gemini-2.5-pro
+28    1448.0   [YES]                claude-opus-4-1-20250805-thinking-16k
 29    1447.0   [YES]                claude-opus-4-1-20250805
-30    1445.0   [NO] !!!             gpt-4.5-preview-2025-02-27
+30    1444.0   [NO] !!!             gpt-4.5-preview-2025-02-27
 
 [Artificial Analysis - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
@@ -47,28 +47,28 @@ RANK  SCORE    TRACKED?             MODEL NAME
 6     51.0     [YES]                GPT-5.2 (xhigh)
 7     50.0     [YES]                GLM-5
 8     50.0     [YES]                Claude Opus 4.5
-9     49.0     [NO] !!!             GPT-5.2 Codex (xhigh)
-10    48.0     [YES]                Grok 4.20 Beta 0309
-11    48.0     [YES]                Gemini 3 Pro Preview (high)
-12    48.0     [YES]                GPT-5.1 (high)
-13    47.0     [YES]                Kimi K2.5
-14    47.0     [NO] !!!             GPT-5.2 (medium)
-15    46.0     [NO] !!!             Claude Opus 4.6
-16    46.0     [YES]                Gemini 3 Flash
-17    45.0     [YES]                Qwen3.5 397B A17B
-18    45.0     [NO] !!!             GPT-5 Codex (high)
-19    45.0     [YES]                GPT-5 (high)
-20    44.0     [NO] !!!             Claude Sonnet 4.6
-21    43.0     [NO] !!!             GPT-5.1 Codex (high)
-22    43.0     [YES]                Claude Opus 4.5
-23    43.0     [YES]                Claude 4.5 Sonnet
-24    43.0     [NO] !!!             Claude Sonnet 4.6 (Non-reasoning, Low Effort)
-25    42.0     [YES]                GLM-4.7
-26    42.0     [NO] !!!             Qwen3.5 27B
-27    42.0     [NO] !!!             GPT-5 (medium)
-28    42.0     [YES] [NEW]          Claude 4.1 Opus
-29    42.0     [YES]                MiniMax-M2.5
-30    42.0     [YES]                DeepSeek V3.2
+9     50.0     [NO] !!! [NEW]       MiniMax-M2.7
+10    49.0     [NO] !!! [NEW]       MiMo-V2-Pro
+11    49.0     [NO] !!!             GPT-5.2 Codex (xhigh)
+12    48.0     [YES]                Grok 4.20 Beta 0309
+13    48.0     [YES]                Gemini 3 Pro Preview (high)
+14    48.0     [YES]                GPT-5.1 (high)
+15    47.0     [YES]                Kimi K2.5
+16    47.0     [NO] !!!             GPT-5.2 (medium)
+17    46.0     [NO] !!!             Claude Opus 4.6
+18    46.0     [YES]                Gemini 3 Flash
+19    45.0     [YES]                Qwen3.5 397B A17B
+20    45.0     [YES]                GPT-5 (high)
+21    45.0     [NO] !!!             GPT-5 Codex (high)
+22    44.0     [NO] !!!             Claude Sonnet 4.6
+23    43.0     [NO] !!!             GPT-5.1 Codex (high)
+24    43.0     [YES]                Claude Opus 4.5
+25    43.0     [YES]                Claude 4.5 Sonnet
+26    43.0     [NO] !!!             Claude Sonnet 4.6 (Non-reasoning, Low Effort)
+27    42.0     [YES]                GLM-4.7
+28    42.0     [NO] !!!             Qwen3.5 27B
+29    42.0     [NO] !!!             GPT-5 (medium)
+30    42.0     [YES]                Claude 4.1 Opus
 
 [LiveBench - TOP 30]
 RANK  SCORE    TRACKED?             MODEL NAME
