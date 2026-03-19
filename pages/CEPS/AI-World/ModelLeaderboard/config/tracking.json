@@ -370,6 +370,16 @@
         "lb_lookup": null
     },
     {
+        "model": "minimax-m2-7",
+        "name": "MiniMax M2.7",
+        "logo": "minimax",
+        "geo": "China",
+        "os": 1,
+        "lma_lookup": "minimax-m2.7",
+        "aa_lookup": "MiniMax-M2.7",
+        "lb_lookup": null
+    },
+    {
         "model": "minimax-m2-5",
         "name": "MiniMax M2.5",
         "logo": "minimax",
