@@ -1,5 +1,5 @@
 NEW MODEL ALERTS REPORT
-Generated on: 2026-03-21 04:21:27
+Generated on: 2026-03-22 04:45:58
 ======================================================================
 
 [LMArena - TOP 30]
@@ -63,7 +63,7 @@ RANK  SCORE    TRACKED?             MODEL NAME
 22    45.0     [YES]                GPT-5 (high)
 23    44.0     [NO] !!!             GPT-5.4 nano (xhigh)
 24    44.0     [NO] !!!             Claude Sonnet 4.6
-25    43.0     [NO] !!! [NEW]       mimo-v2-omni
+25    43.0     [NO] !!!             mimo-v2-omni
 26    43.0     [NO] !!!             GPT-5.1 Codex (high)
 27    43.0     [YES]                Claude Opus 4.5
 28    43.0     [YES]                Claude 4.5 Sonnet
@@ -86,13 +86,13 @@ RANK  SCORE    TRACKED?             MODEL NAME
 11    72.4     [YES]                Gemini 3 Flash Preview High
 12    72.04    [YES]                GPT-5.1 High
 13    70.48    [YES]                GPT-5 Pro
-14    70.13    [NO] !!! [NEW]       GPT-5.4 Nano xHigh
+14    70.13    [NO] !!!             GPT-5.4 Nano xHigh
 15    69.07    [YES]                Kimi K2.5 Thinking
 16    68.85    [YES]                GLM 5
 17    68.61    [NO] !!!             GPT-5.1 Codex
 18    68.19    [YES]                Claude Sonnet 4.5 Thinking
 19    67.96    [YES]                Grok 4.20 Beta
-20    67.54    [NO] !!! [NEW]       GPT-5.4 Mini xHigh
+20    67.54    [NO] !!!             GPT-5.4 Mini xHigh
 21    65.91    [YES]                GPT-5 Mini High
 22    62.2     [YES]                DeepSeek V3.2 Thinking
 23    62.02    [NO] !!!             Grok 4
