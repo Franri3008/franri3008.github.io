@@ -1,17 +1,21 @@
+html,
+body {
+    height: 100%;
+}
+
 body {
     margin: 0;
     overflow: hidden;
-    background: #ffffff;
-    color: #111;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif;
     height: 100vh;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Helvetica, Arial, sans-serif;
+    background-color: white;
 }
 
 /* Containers */
 
 .viz-grid {
     display: grid;
-    grid-template-rows: 17fr 2fr 1fr;
+    grid-template-rows: 16fr 1fr 1fr;
     grid-template-columns: 1fr 1fr;
     height: 100vh;
     width: 100vw;
@@ -22,10 +26,8 @@ body {
 #container1 {
     grid-row: 1;
     grid-column: 1 / span 2;
-    display: flex;
     overflow: hidden;
     min-height: 0;
-    column-gap: 0;
 }
 
 #container1 .chart-wrapper {
@@ -50,7 +52,6 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    font-size: clamp(8px, 1.6vw, 16px);
 }
 
 #container3 {
@@ -70,18 +71,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 clamp(8px, 2vw, 20px);
+    padding: 0 20px;
     overflow: hidden;
     min-width: 0;
-    gap: clamp(4px, 1vw, 8px);
 }
 
 #container4 a {
     height: 100%;
     display: flex;
     align-items: center;
-    flex-shrink: 0;
-    min-width: 0;
+    cursor: default;
 }
 
 /* Switch button */
@@ -120,23 +119,9 @@ body {
     color: #fff;
 }
 
-/* No idea */
-
 #viz {
-    position: relative;
     width: 100%;
     height: 100%;
-    min-width: 0;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: clamp(8px, 1vw, 12px) clamp(12px, 2vw, 24px) 0 clamp(12px, 2vw, 24px);
-    box-sizing: border-box;
-}
-
-.chart-body {
-    position: relative;
-    flex: 1;
     min-height: 0;
     min-width: 0;
 }
@@ -261,22 +246,6 @@ body {
     cursor: pointer;
 }
 
-
-/* Tooltip */
-
-#tooltip {
-    position: absolute;
-    background: #fff;
-    border: 1px solid #d9d9df;
-    border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 12px;
-    pointer-events: none;
-    opacity: 0;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    transition: opacity 0.12s ease;
-}
-
 /* Legend */
 
 .legend {
@@ -297,16 +266,11 @@ body {
     display: flex;
     align-items: center;
     gap: clamp(4px, 1vw, 8px);
-    cursor: pointer;
-    transition: opacity 0.2s ease;
     font-weight: 600;
     color: #333;
     font-size: inherit;
     padding: 2px 6px;
-}
-
-.legend-item.dim {
-    opacity: 0.35;
+    cursor: default;
 }
 
 .legend-item:focus-visible {
@@ -317,14 +281,14 @@ body {
 .legend-square {
     width: clamp(8px, 0.9vw, 12px);
     height: clamp(8px, 0.9vw, 12px);
-    border-radius: 4px;
+    border-radius: 0;
     flex-shrink: 0;
 }
 
 /* Source */
 
 .source-text {
-    font-size: clamp(8px, 1.6vw, 16px);
+    font-size: clamp(10px, 1.6vw, 16px);
     font-weight: 600;
     color: #333;
     white-space: nowrap;
@@ -337,7 +301,7 @@ body {
 .source-text a {
     color: #2756d3;
     text-decoration: underline;
-    cursor: pointer;
+    cursor: default;
     font-style: normal;
 }
 
@@ -351,10 +315,9 @@ body {
     height: 100%;
     width: auto;
     max-height: 100%;
-    max-width: clamp(80px, 15vw, 200px);
+    max-width: 100%;
     pointer-events: auto;
     object-fit: contain;
-    flex-shrink: 0;
 }
 
 .axis path,
@@ -363,26 +326,36 @@ body {
 }
 
 .tick text {
-    font-size: clamp(8px, 1.2vw, 18px);
     font-weight: 600;
+    fill: #4b5563;
 }
 
-.axis--y text {
-    font-style: italic;
+.grid-lines line {
+    stroke: #DBDBDB;
+    stroke-dasharray: 2, 3;
+}
+
+.grid-lines path {
+    stroke: none;
+}
+
+.bar-label {
+    fill: #555;
+    font-weight: 500;
 }
 
 /* Small screen */
 
 @media (max-height: 500px) {
     .viz-grid {
-        grid-template-rows: 1fr;
-        grid-template-columns: 1fr;
+        grid-template-rows: 1fr !important;
+        grid-template-columns: 1fr !important;
         padding-bottom: 0;
     }
 
     #container1 {
-        grid-row: 1;
-        grid-column: 1;
+        grid-row: 1 !important;
+        grid-column: 1 !important;
     }
 
     #container2,
@@ -391,17 +364,9 @@ body {
         display: none !important;
     }
 
-    #viz {
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-    }
-
-    .axis--y,
-    .axis--x {
-        display: none;
-    }
-
-    .grid-lines {
-        display: none;
+    .legend,
+    .source-text,
+    .logo {
+        display: none !important;
     }
 }

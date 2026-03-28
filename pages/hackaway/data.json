@@ -1,0 +1,12 @@
+[
+  { "id": 1, "task": "Fill the basket with fruit and veg for 5 dinners", "icon": "🥬", "pillar": "Fresh", "goal": 5, "progress": 5 },
+  { "id": 2, "task": "Reserve the next electric delivery slot", "icon": "🚚", "pillar": "Convenience", "goal": 1, "progress": 1 },
+  { "id": 3, "task": "Add ingredients for 3 quick Picnic recipe nights", "icon": "🍽️", "pillar": "Convenience", "goal": 3, "progress": 2 },
+  { "id": 4, "task": "Restock 8 budget pantry staples in one order", "icon": "🧺", "pillar": "Affordable", "goal": 8, "progress": 8 },
+  { "id": 5, "task": "Choose 6 seasonal produce items", "icon": "🥕", "pillar": "Fresh", "goal": 6, "progress": 4 },
+  { "id": 6, "task": "Swap 2 meals to plant-based options", "icon": "🌱", "pillar": "Sustainable", "goal": 2, "progress": 1 },
+  { "id": 7, "task": "Plan 3 leftover lunches to cut food waste", "icon": "♻️", "pillar": "Sustainable", "goal": 3, "progress": 0 },
+  { "id": 8, "task": "Cover 6 breakfast and lunch essentials", "icon": "🥣", "pillar": "Convenience", "goal": 6, "progress": 5 },
+  { "id": 9, "task": "Keep 5 chilled and frozen favorites stocked", "icon": "🧊", "pillar": "Fresh", "goal": 5, "progress": 5 },
+  { "id": 10, "task": "Lock in value picks across 4 product categories", "icon": "💶", "pillar": "Affordable", "goal": 4, "progress": 3 }
+]
