@@ -132,6 +132,142 @@ body {
     height: 100%;
 }
 
+/* Dropdown */
+
+/* Selector group (button row) */
+.selector-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(2px, 0.5vw, 6px);
+    padding: clamp(2px, 0.4vw, 4px);
+    border-radius: 6px;
+    border: 1px solid rgba(17, 24, 39, 0.15);
+    background: #f8fafc;
+    max-width: 100%;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.selector-button {
+    border: none;
+    background: transparent;
+    padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 14px);
+    border-radius: 6px;
+    font-size: clamp(9px, 1.4vw, 13px);
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.selector-button.active {
+    background: #2756d3;
+    color: #fff;
+}
+
+/* Dropdown */
+.selector-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.selector-dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(6px, 1vw, 10px);
+    padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 14px);
+    border: 1px solid rgba(17, 24, 39, 0.15);
+    border-radius: 6px;
+    background: #f8fafc;
+    font-size: clamp(9px, 1.4vw, 13px);
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.selector-dropdown-toggle:hover {
+    border-color: rgba(17, 24, 39, 0.3);
+}
+
+.selector-dropdown-toggle:focus-visible {
+    outline: 2px solid #2756d3;
+    outline-offset: 1px;
+}
+
+.selector-dropdown-toggle::after {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #475569;
+    border-bottom: 2px solid #475569;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    margin-top: -2px;
+    transition: transform 0.2s ease;
+}
+
+.selector-dropdown-toggle[aria-expanded="true"]::after {
+    transform: rotate(-135deg);
+    margin-top: 2px;
+}
+
+.selector-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    min-width: 100%;
+    width: max-content;
+    max-height: clamp(180px, 30vh, 320px);
+    overflow-y: auto;
+    background: #f8fafc;
+    border: 1px solid rgba(17, 24, 39, 0.15);
+    border-radius: 6px;
+    padding: clamp(2px, 0.4vw, 4px);
+    display: none;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.selector-dropdown-menu.open {
+    display: block;
+}
+
+.selector-dropdown-option {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 14px);
+    border-radius: 6px;
+    font-size: clamp(9px, 1.4vw, 13px);
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+}
+
+.selector-dropdown-option:hover,
+.selector-dropdown-option:focus {
+    background: rgba(39, 86, 211, 0.08);
+    outline: none;
+}
+
+.selector-dropdown-option.active {
+    background: #2756d3;
+    color: #fff;
+}
+
 /* Slider */
 
 #slider-container {
