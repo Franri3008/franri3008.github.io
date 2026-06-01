@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Die banner</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #04060d;
+        }
+
+        #die {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="die"></canvas>
+
+    <script>
+        const canvas = document.getElementById("die");
+        const ctx = canvas.getContext("2d");
+        let width = 0, height = 0, dpr = 1;
+        let time = 0, timeSpeed = 1;
+
+        let CELL = 54;
+        const EDGE_PROB = 0.55;
+        const INFLUENCE = 240;
+
+        let cols = 0, rows = 0, originX = 0, originY = 0;
+        let nodes = [];
+        let edges = [];
+        const edgeMap = new Map();
+        let blocks = [];
+        let packets = [];
+        let ports = [];
+        const ripples = [];
+
+        let basePath = null;
+        let gridPath = null;
+
+        let pointer = false, pressing = false;
+        let mx = 0, my = 0;
+        let sx = 0, sy = 0;
+
+        function makeGlow(rgb) {
+            const s = 96, c = document.createElement("canvas");
+            c.width = c.height = s;
+            const g = c.getContext("2d");
+            const grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+            grad.addColorStop(0, `rgba(${rgb},0.95)`);
+            grad.addColorStop(0.28, `rgba(${rgb},0.45)`);
+            grad.addColorStop(1, `rgba(${rgb},0)`);
+            g.fillStyle = grad;
+            g.fillRect(0, 0, s, s);
+            return c;
+        }
+        const glowCyan = makeGlow("130,212,255");
+        const glowViolet = makeGlow("178,142,255");
+        const glowAmber = makeGlow("255,196,120");
+        const glowProbe = makeGlow("120,200,255");
+        const PACKET_GLOWS = [glowCyan, glowViolet, glowAmber];
+        const PACKET_RGB = ["150,222,255", "190,160,255", "255,206,140"];
+
+        function blit(sprite, x, y, r, alpha) {
+            ctx.globalAlpha = alpha;
+            ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2);
+        }
+
+        function makeBlockSprite(w, h, type) {
+            const c = document.createElement("canvas");
+            c.width = w; c.height = h;
+            const g = c.getContext("2d");
+
+            const fill = g.createLinearGradient(0, 0, w, h);
+            fill.addColorStop(0, "rgba(16,34,58,0.92)");
+            fill.addColorStop(1, "rgba(10,22,42,0.92)");
+            g.fillStyle = fill;
+            g.fillRect(0, 0, w, h);
+
+            g.strokeStyle = "rgba(96,170,235,0.20)";
+            g.lineWidth = 1;
+            if (type === 0) {
+                for (let y = 5; y < h - 3; y += 4) {
+                    g.beginPath(); g.moveTo(4, y + 0.5); g.lineTo(w - 4, y + 0.5); g.stroke();
+                }
+            } else if (type === 1) {
+                for (let x = 6; x < w - 3; x += 9) { g.beginPath(); g.moveTo(x + 0.5, 4); g.lineTo(x + 0.5, h - 4); g.stroke(); }
+                for (let y = 6; y < h - 3; y += 9) { g.beginPath(); g.moveTo(4, y + 0.5); g.lineTo(w - 4, y + 0.5); g.stroke(); }
+            } else {
+                for (let x = 6; x < w - 3; x += 6) {
+                    g.strokeStyle = x % 18 < 6 ? "rgba(120,200,255,0.28)" : "rgba(96,170,235,0.12)";
+                    g.beginPath(); g.moveTo(x + 0.5, 5); g.lineTo(x + 0.5, h - 5); g.stroke();
+                }
+            }
+
+            g.strokeStyle = "rgba(150,215,255,0.55)";
+            g.lineWidth = 1.4;
+            g.strokeRect(1, 1, w - 2, h - 2);
+            g.fillStyle = "rgba(150,215,255,0.55)";
+            g.beginPath(); g.arc(8, 8, 2.4, 0, Math.PI * 2); g.fill();
+
+            g.fillStyle = "rgba(120,195,255,0.6)";
+            const pad = 3;
+            for (let x = 10; x < w - 8; x += 11) { g.fillRect(x, 0, pad, 2); g.fillRect(x, h - 2, pad, 2); }
+            for (let y = 10; y < h - 8; y += 11) { g.fillRect(0, y, 2, pad); g.fillRect(w - 2, y, 2, pad); }
+
+            return c;
+        }
+
+        function pseudo(i, salt) {
+            const v = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453;
+            return v - Math.floor(v);
+        }
+
+        function inBlock(x, y, inset) {
+            for (const b of blocks) {
+                if (x > b.x + inset && x < b.x + b.w - inset &&
+                    y > b.y + inset && y < b.y + b.h - inset) return true;
+            }
+            return false;
+        }
+
+        const resize = () => {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            width = canvas.clientWidth || window.innerWidth;
+            height = canvas.clientHeight || window.innerHeight;
+            if (width < 2 || height < 2) return;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            CELL = Math.max(38, Math.min(60, Math.round(Math.min(width, height) / 15)));
+
+            const margin = CELL * 2;
+            cols = Math.ceil((width + margin * 2) / CELL) + 1;
+            rows = Math.ceil((height + margin * 2) / CELL) + 1;
+            originX = -margin;
+            originY = -margin;
+
+            nodes = [];
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const i = y * cols + x;
+                    nodes.push({
+                        px: originX + x * CELL + (pseudo(i, 1) - 0.5) * 6,
+                        py: originY + y * CELL + (pseudo(i, 2) - 0.5) * 6,
+                        deg: 0, act: 0
+                    });
+                }
+            }
+            blocks = [];
+            const maxWCells = Math.max(2, Math.min(6, Math.floor(cols * 0.18)));
+            const maxHCells = Math.max(2, Math.min(5, Math.floor(rows * 0.22)));
+            const targetBlocks = Math.max(3, Math.round((cols * rows) / 70));
+            let tries = 0;
+            while (blocks.length < targetBlocks && tries < targetBlocks * 20) {
+                tries++;
+                const bw = (2 + Math.floor(pseudo(tries, 3) * (maxWCells - 1))) * CELL;
+                const bh = (2 + Math.floor(pseudo(tries, 4) * (maxHCells - 1))) * CELL;
+                if (bw >= width - CELL || bh >= height - CELL) continue;
+                const bx = Math.floor(pseudo(tries, 5) * (width - bw));
+                const by = Math.floor(pseudo(tries, 6) * (height - bh));
+                const pad = CELL * 0.5;
+                const clash = blocks.some(b =>
+                    bx < b.x + b.w + pad && bx + bw + pad > b.x &&
+                    by < b.y + b.h + pad && by + bh + pad > b.y);
+                if (clash) continue;
+                const type = Math.floor(pseudo(tries, 7) * 3);
+                blocks.push({
+                    x: bx, y: by, w: bw, h: bh, type, act: 0, traffic: 0,
+                    scan: pseudo(tries, 8),
+                    sprite: makeBlockSprite(bw, bh, type)
+                });
+            }
+            edges = [];
+            edgeMap.clear();
+            const linked = new Set();
+            const wdeg = new Int16Array(nodes.length);
+            const ekey = (a, b) => a < b ? a + "_" + b : b + "_" + a;
+            const canLink = (a, b) => !inBlock((nodes[a].px + nodes[b].px) / 2, (nodes[a].py + nodes[b].py) / 2, -6);
+            const addEdge = (a, b) => {
+                const k = ekey(a, b);
+                if (linked.has(k) || !canLink(a, b)) return;
+                linked.add(k);
+                const na = nodes[a], nb = nodes[b];
+                edges.push({ a, b, mx: (na.px + nb.px) / 2, my: (na.py + nb.py) / 2, act: 0 });
+                wdeg[a]++; wdeg[b]++;
+            };
+            const orthoNeighbours = (i) => {
+                const x = i % cols, y = (i / cols) | 0, out = [];
+                if (x > 0) out.push(i - 1);
+                if (x < cols - 1) out.push(i + 1);
+                if (y > 0) out.push(i - cols);
+                if (y < rows - 1) out.push(i + cols);
+                return out;
+            };
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const i = y * cols + x;
+                    if (x < cols - 1 && pseudo(i * 2, 9) < EDGE_PROB) addEdge(i, i + 1);
+                    if (y < rows - 1 && pseudo(i * 2 + 1, 9) < EDGE_PROB) addEdge(i, i + cols);
+                }
+            }
+            for (let i = 0; i < nodes.length; i++) {
+                while (wdeg[i] < 2) {
+                    const opts = orthoNeighbours(i).filter(n => canLink(i, n) && !linked.has(ekey(i, n)));
+                    if (opts.length === 0) break;   // boxed in by blocks / grid edge
+                    addEdge(i, opts[Math.floor(pseudo(i + wdeg[i], 15) * opts.length)]);
+                }
+            }
+            const link = nodes.map(() => new Set());
+            for (const e of edges) { link[e.a].add(e.b); link[e.b].add(e.a); }
+            const core = link.map(s => new Set(s));
+            const q = [];
+            for (let i = 0; i < nodes.length; i++) if (core[i].size <= 1) q.push(i);
+            while (q.length) {
+                const i = q.pop();
+                for (const j of core[i]) { core[j].delete(i); if (core[j].size === 1) q.push(j); }
+                core[i].clear();
+            }
+            edges = edges.filter(e => core[e.a].has(e.b));
+            edgeMap.clear();
+            for (const e of edges) edgeMap.set(e.a < e.b ? e.a + "_" + e.b : e.b + "_" + e.a, e);
+            for (let i = 0; i < nodes.length; i++) {
+                nodes[i].adj = [...core[i]];
+                nodes[i].deg = core[i].size;
+            }
+
+            ports = [];
+            for (const b of blocks) {
+                const nPorts = Math.max(3, Math.min(10, Math.round((b.w + b.h) / CELL / 2)));
+                const cand = [];
+                for (let i = 0; i < cols * rows; i++) {
+                    const n = nodes[i];
+                    if (n.adj.length < 2) continue;                         // must be live mesh
+                    const outside = n.px < b.x || n.px > b.x + b.w || n.py < b.y || n.py > b.y + b.h;
+                    const reach = n.px >= b.x - CELL * 1.1 && n.px <= b.x + b.w + CELL * 1.1 &&
+                                  n.py >= b.y - CELL * 1.1 && n.py <= b.y + b.h + CELL * 1.1;
+                    if (outside && reach) cand.push(i);
+                }
+                cand.sort((p, qn) => pseudo(p, 16) - pseudo(qn, 16));        // deterministic spread
+                const placed = [];
+                let made = 0;
+                for (const ei of cand) {
+                    if (made >= nPorts) break;
+                    const n = nodes[ei];
+                    const dl = Math.abs(n.px - b.x), dr = Math.abs(b.x + b.w - n.px);
+                    const dt = Math.abs(n.py - b.y), dbm = Math.abs(b.y + b.h - n.py);
+                    const m = Math.min(dl, dr, dt, dbm);
+                    let px = n.px, py = n.py;
+                    if (m === dl) { px = b.x; py = Math.max(b.y, Math.min(b.y + b.h, n.py)); }
+                    else if (m === dr) { px = b.x + b.w; py = Math.max(b.y, Math.min(b.y + b.h, n.py)); }
+                    else if (m === dt) { py = b.y; px = Math.max(b.x, Math.min(b.x + b.w, n.px)); }
+                    else { py = b.y + b.h; px = Math.max(b.x, Math.min(b.x + b.w, n.px)); }
+                    if (placed.some(q => Math.hypot(q.x - px, q.y - py) < CELL * 0.7)) continue;
+                    placed.push({ x: px, y: py });
+                    const pIdx = nodes.length;
+                    const portObj = { node: pIdx, entry: ei, block: b };
+                    nodes.push({ px, py, deg: 2, act: 0, adj: [ei], port: portObj });
+                    nodes[ei].adj.push(pIdx);
+                    const e = { a: ei, b: pIdx, mx: (n.px + px) / 2, my: (n.py + py) / 2, act: 0 };
+                    edges.push(e);
+                    edgeMap.set(ekey(ei, pIdx), e);
+                    ports.push(portObj);
+                    made++;
+                }
+            }
+
+            basePath = new Path2D();
+            for (const e of edges) {
+                basePath.moveTo(nodes[e.a].px, nodes[e.a].py);
+                basePath.lineTo(nodes[e.b].px, nodes[e.b].py);
+            }
+            gridPath = new Path2D();
+            for (let x = 0; x <= cols; x++) { gridPath.moveTo(originX + x * CELL, originY); gridPath.lineTo(originX + x * CELL, originY + rows * CELL); }
+            for (let y = 0; y <= rows; y++) { gridPath.moveTo(originX, originY + y * CELL); gridPath.lineTo(originX + cols * CELL, originY + y * CELL); }
+
+            const comp = new Int32Array(nodes.length).fill(-1);
+            const compSize = [];
+            let nc = 0;
+            for (let i = 0; i < nodes.length; i++) {
+                if (comp[i] !== -1 || nodes[i].adj.length === 0) continue;
+                const stack = [i]; comp[i] = nc; let size = 0;
+                while (stack.length) {
+                    const k = stack.pop(); size++;
+                    for (const j of nodes[k].adj) if (comp[j] === -1) { comp[j] = nc; stack.push(j); }
+                }
+                compSize[nc++] = size;
+            }
+            const seeds = [];
+            for (let i = 0; i < nodes.length; i++) {
+                if (nodes[i].adj.length >= 2 && compSize[comp[i]] >= 14) seeds.push(i);
+            }
+
+            const count = Math.max(50, Math.min(170, Math.round(width * height / 16000)));
+            packets = [];
+            for (let i = 0; i < count; i++) {
+                if (ports.length) {
+                    const pt = ports[Math.floor(pseudo(i, 11) * ports.length)];
+                    const p = spawnPacket(pt.node, i);
+                    p.to = pt.entry; p.prev = pt.node; p.t = pseudo(i, 17);
+                    packets.push(p);
+                } else if (seeds.length) {
+                    packets.push(spawnPacket(seeds[Math.floor(pseudo(i, 11) * seeds.length)], i));
+                }
+            }
+        };
+
+        function spawnPacket(start, seed) {
+            const p = {
+                from: start, to: start, prev: -1, t: 1,
+                speed: 0.55 + pseudo(seed, 12) * 0.7,
+                kind: Math.floor(pseudo(seed, 13) * 3),
+                bias: 0.6 + pseudo(seed, 14) * 0.32,   // lane-keeping tendency (0.6–0.92)
+                x: nodes[start].px, y: nodes[start].py, px: nodes[start].px, py: nodes[start].py,
+                boost: 0
+            };
+            return p;
+        }
+        function nextNode(fromIdx, atIdx, bias) {
+            const cur = nodes[atIdx];
+            const adj = cur.adj;
+            if (adj.length === 0) return atIdx;
+
+            let cands = adj.filter(n => n !== fromIdx);
+            if (cands.length === 0) cands = adj;
+
+            const inDx = cur.px - nodes[fromIdx].px;
+            const inDy = cur.py - nodes[fromIdx].py;
+            const inLen = Math.hypot(inDx, inDy) || 1;
+            let straight = cands[0], bestAlign = -Infinity;
+            for (const c of cands) {
+                const dx = nodes[c].px - cur.px, dy = nodes[c].py - cur.py;
+                const align = (inDx * dx + inDy * dy) / (inLen * (Math.hypot(dx, dy) || 1));
+                if (align > bestAlign) { bestAlign = align; straight = c; }
+            }
+            if (cands.length === 1) return straight;
+
+            if (pseudo(atIdx * 1.7 + fromIdx + time, atIdx) < bias) return straight;
+            const others = cands.filter(c => c !== straight);
+            return others[Math.floor(pseudo(time * 0.5 + atIdx, fromIdx + 1) * others.length)] || straight;
+        }
+
+        function drawBackground() {
+            const g = ctx.createRadialGradient(width * 0.5, height * 0.45, 0, width * 0.5, height * 0.5, Math.max(width, height) * 0.75);
+            g.addColorStop(0, "rgba(22,54,104,0.55)");
+            g.addColorStop(0.45, "rgba(10,24,52,0.5)");
+            g.addColorStop(1, "rgba(3,5,13,1)");
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function drawBlocks() {
+            for (const b of blocks) {
+                b.traffic *= 0.95;
+                const near = pointer ? Math.max(0, 1 - dist(sx, sy, b.x + b.w / 2, b.y + b.h / 2) / (INFLUENCE + b.w)) : 0;
+                b.act = Math.max(b.act * 0.9, near, b.traffic);
+
+                ctx.globalAlpha = 1;
+                ctx.drawImage(b.sprite, b.x, b.y);
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(b.x, b.y, b.w, b.h);
+                ctx.clip();
+                ctx.globalCompositeOperation = "lighter";
+
+                const sy2 = b.y + ((time * 0.6 * timeSpeed + b.scan * b.h) % b.h);
+                ctx.globalAlpha = 0.10 + b.act * 0.35;
+                const sg = ctx.createLinearGradient(0, sy2 - 14, 0, sy2 + 14);
+                sg.addColorStop(0, "rgba(120,205,255,0)");
+                sg.addColorStop(0.5, "rgba(150,225,255,0.8)");
+                sg.addColorStop(1, "rgba(120,205,255,0)");
+                ctx.fillStyle = sg;
+                ctx.fillRect(b.x, sy2 - 14, b.w, 28);
+
+                if (b.act > 0.02) {
+                    ctx.globalAlpha = b.act * 0.6;
+                    ctx.strokeStyle = "rgba(170,230,255,0.9)";
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(b.x, b.y, b.w, b.h);
+                }
+                ctx.restore();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        function drawTraces() {
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = "rgba(70,140,210,0.16)";
+            ctx.lineWidth = 1;
+            ctx.stroke(basePath);
+
+            ctx.globalCompositeOperation = "lighter";
+            ctx.lineWidth = 1.5;
+            for (const e of edges) {
+                let boost = e.act;
+                if (pointer) {
+                    const d = dist(sx, sy, e.mx, e.my);
+                    if (d < INFLUENCE) boost = Math.max(boost, (1 - d / INFLUENCE) * 0.7);
+                }
+                for (const r of ripples) {
+                    const d = Math.abs(dist(r.x, r.y, e.mx, e.my) - r.r);
+                    if (d < r.band) boost = Math.max(boost, (1 - d / r.band) * r.life * 0.9);
+                }
+                e.act *= 0.9;
+                if (boost < 0.04) continue;
+                ctx.strokeStyle = `rgba(150,220,255,${Math.min(0.9, boost)})`;
+                ctx.beginPath();
+                ctx.moveTo(nodes[e.a].px, nodes[e.a].py);
+                ctx.lineTo(nodes[e.b].px, nodes[e.b].py);
+                ctx.stroke();
+            }
+            ctx.globalCompositeOperation = "source-over";
+        }
+
+        function drawVias() {
+            ctx.globalCompositeOperation = "lighter";
+            for (const n of nodes) {
+                if (n.port) continue;
+                if (n.deg < 3 && n.act < 0.05) continue;
+                const base = n.deg >= 3 ? 0.12 : 0;
+                const a = Math.min(1, base + n.act);
+                n.act *= 0.9;
+                if (a < 0.05) continue;
+                blit(glowCyan, n.px, n.py, 5 + a * 9, a * 0.8);
+                ctx.globalAlpha = Math.min(1, a + 0.25);
+                ctx.fillStyle = "rgba(200,240,255,0.9)";
+                ctx.beginPath();
+                ctx.arc(n.px, n.py, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalCompositeOperation = "source-over";
+            ctx.globalAlpha = 1;
+        }
+
+        function updatePackets() {
+            ctx.globalCompositeOperation = "lighter";
+            for (const p of packets) {
+                const a = nodes[p.from], b = nodes[p.to];
+                const segLen = Math.hypot(b.px - a.px, b.py - a.py) || CELL;
+
+                let cursorBoost = 0;
+                if (pointer) {
+                    const d = dist(sx, sy, p.x, p.y);
+                    if (d < INFLUENCE) cursorBoost = (1 - d / INFLUENCE) * 1.6;
+                }
+                p.boost += (cursorBoost - p.boost) * 0.15;
+                const v = (p.speed * (1 + p.boost) * timeSpeed) / segLen;
+                p.t += v;
+
+                while (p.t >= 1) {
+                    p.t -= 1;
+                    p.prev = p.from;
+                    p.from = p.to;
+                    const arrived = nodes[p.from];
+                    arrived.act = 1;
+                    if (arrived.port) {
+                        arrived.port.block.traffic = 1;
+                        const np = ports[Math.floor(pseudo(time + p.from, p.kind + 1) * ports.length)];
+                        np.block.traffic = 1;
+                        p.prev = np.node; p.from = np.node; p.to = np.entry; p.warp = true;
+                    } else {
+                        p.to = nextNode(p.prev, p.from, p.bias);
+                    }
+                    const key = p.from < p.to ? p.from + "_" + p.to : p.to + "_" + p.from;
+                    const e = edgeMap.get(key);
+                    if (e) e.act = 1;
+                }
+
+                const na = nodes[p.from], nb = nodes[p.to];
+                p.px = p.x; p.py = p.y;
+                p.x = na.px + (nb.px - na.px) * p.t;
+                p.y = na.py + (nb.py - na.py) * p.t;
+                if (p.warp) { p.px = p.x; p.py = p.y; p.warp = false; }
+                for (const bl of blocks) {
+                    if (p.x > bl.x - 6 && p.x < bl.x + bl.w + 6 &&
+                        p.y > bl.y - 6 && p.y < bl.y + bl.h + 6) bl.traffic = Math.max(bl.traffic, 0.35);
+                }
+
+                const bright = 0.55 + p.boost * 0.4;
+                const r = 7 + p.boost * 6;
+                blit(PACKET_GLOWS[p.kind], p.px, p.py, r * 0.8, bright * 0.35);
+                blit(PACKET_GLOWS[p.kind], (p.x + p.px) / 2, (p.y + p.py) / 2, r * 0.9, bright * 0.5);
+                blit(PACKET_GLOWS[p.kind], p.x, p.y, r, bright);
+                ctx.globalAlpha = Math.min(1, bright + 0.3);
+                ctx.fillStyle = `rgba(${PACKET_RGB[p.kind]},1)`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 1.6 + p.boost, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalCompositeOperation = "source-over";
+            ctx.globalAlpha = 1;
+        }
+
+        function drawPorts() {
+            ctx.globalCompositeOperation = "lighter";
+            for (const pt of ports) {
+                const n = nodes[pt.node];
+                const a = Math.min(1, 0.16 + pt.block.act * 0.6 + n.act * 0.5);
+                n.act *= 0.9;
+                blit(glowCyan, n.px, n.py, 4 + a * 7, a * 0.85);
+                ctx.globalAlpha = Math.min(1, a + 0.25);
+                ctx.fillStyle = "rgba(205,242,255,0.95)";
+                ctx.beginPath();
+                ctx.arc(n.px, n.py, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalCompositeOperation = "source-over";
+            ctx.globalAlpha = 1;
+        }
+
+        function drawProbe() {
+            if (!pointer) return;
+            ctx.globalCompositeOperation = "lighter";
+            blit(glowProbe, mx, my, INFLUENCE * 0.85, pressing ? 0.32 : 0.18);
+            blit(glowProbe, mx, my, 22, 0.5);
+            ctx.globalCompositeOperation = "source-over";
+            ctx.globalAlpha = 1;
+        }
+
+        function drawVignette() {
+            const g = ctx.createRadialGradient(width / 2, height / 2, Math.min(width, height) * 0.35, width / 2, height / 2, Math.max(width, height) * 0.72);
+            g.addColorStop(0, "rgba(0,0,0,0)");
+            g.addColorStop(1, "rgba(2,4,10,0.78)");
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        const dist = (x1, y1, x2, y2) => Math.hypot(x1 - x2, y1 - y2);
+        function animate() {
+            time += 1;
+            const target = pressing ? 1.7 : (pointer ? 1.05 : 0.4);
+            timeSpeed += (target - timeSpeed) * 0.04;
+            sx = mx;
+            sy = my;
+
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const r = ripples[i];
+                r.r += 11 * timeSpeed;
+                r.life *= 0.972;
+                if (r.life < 0.04) ripples.splice(i, 1);
+            }
+
+            drawBackground();
+
+            ctx.save();
+            ctx.strokeStyle = "rgba(60,120,190,0.05)";
+            ctx.lineWidth = 1;
+            ctx.stroke(gridPath);
+            drawBlocks();
+            drawTraces();
+            drawVias();
+            drawPorts();
+            updatePackets();
+            ctx.restore();
+
+            drawProbe();
+            drawVignette();
+
+            requestAnimationFrame(animate);
+        }
+
+        function onMove(e) {
+            const t = e.touches ? e.touches[0] : e;
+            mx = sx = t.clientX; my = sy = t.clientY;
+            pointer = true;
+        }
+        function onDown(e) {
+            onMove(e);
+            pressing = true;
+            ripples.push({ x: sx, y: sy, r: 0, band: 60, life: 1 });
+            for (const p of packets) {
+                if (dist(sx, sy, p.x, p.y) < INFLUENCE) p.boost = 2.4;
+            }
+        }
+        function onUp() { pressing = false; }
+
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mousedown", onDown);
+        window.addEventListener("mouseup", onUp);
+        window.addEventListener("mouseleave", () => { pointer = false; pressing = false; });
+        window.addEventListener("touchstart", onDown, { passive: true });
+        window.addEventListener("touchmove", onMove, { passive: true });
+        window.addEventListener("touchend", onUp);
+        window.addEventListener("resize", resize);
+        if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
+
+        mx = window.innerWidth / 2;
+        my = window.innerHeight / 2;
+        resize();
+        animate();
+    </script>
+</body>
+</html>
