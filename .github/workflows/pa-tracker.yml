@@ -1,0 +1,35 @@
+name: PA Tracker Weekly Scrape
+
+on:
+  schedule:
+    - cron: "0 6 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run scraper
+        run: python pages/CEPS/pa-tracker/scrape.py
+
+      - name: Commit and push changes
+        run: |
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > pages/CEPS/pa-tracker/.last-run
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add pages/CEPS/pa-tracker
+          git commit -m "PA tracker update"
+          git push
