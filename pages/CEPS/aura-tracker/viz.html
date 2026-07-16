@@ -110,8 +110,12 @@ const SHOW_CONTAINER_4 = 1;
 const SHOW_CONTAINER_5 = 0;
 
 // Metadata — ponytail: joke chart, no source by design
-const LINE_COLOR = "#2756d3";
-const PHOTO_SRC = "cristina.jpg";
+// Colors assigned by series name, photos by name too
+const PEOPLE = {
+  cristina:  { color: "#2756d3", photo: "cristina.jpg" },
+  gaia:      { color: "#10b981", photo: "gaia.jpg" },
+  francisco: { color: "#E53229", photo: "francisco.jpg" },
+};
 const BREAKPOINT_COMPACT = 500; // px; MUST equal --breakpoint-compact
 
 (function applyContainerVisibility() {
@@ -218,27 +222,9 @@ function render() {
     .style("font-family", "system-ui, -apple-system, Segoe UI, Roboto, sans-serif")
     .text("Aura points");
 
-  // Line
-  const lineGen = d3.line()
-    .x(d => xScale(d.date))
-    .y(d => yScale(d.value))
-    .curve(d3.curveMonotoneX)
-    .defined(d => d.date != null && !isNaN(d.value));
-
-  g.append("path")
-    .datum(data)
-    .attr("class", "line-path")
-    .attr("fill", "none")
-    .attr("stroke", LINE_COLOR)
-    .attr("stroke-width", 2.5)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("d", lineGen);
-
-  // Today mark: dashed vertical line + label + photo circle at line end
+  // Today mark: dashed vertical line + label at the shared line end
   const last = data[data.length - 1];
   const lx = xScale(last.date);
-  const ly = yScale(last.value);
 
   g.append("line")
     .attr("x1", lx).attr("x2", lx)
@@ -257,31 +243,52 @@ function render() {
     .style("font-family", "system-ui, -apple-system, Segoe UI, Roboto, sans-serif")
     .text("Today");
 
-  // Photo circle at the end of the line
-  const clipId = "photo-clip";
-  svg.append("defs").append("clipPath")
-    .attr("id", clipId)
-    .append("circle")
-    .attr("cx", margin.left + lx)
-    .attr("cy", margin.top + ly)
-    .attr("r", photoR);
+  // One line + end photo circle per person
+  const defs = svg.append("defs");
+  const names = Object.keys(PEOPLE);
+  const lineGen = name => d3.line()
+    .x(d => xScale(d.date))
+    .y(d => yScale(d[name]))
+    .curve(d3.curveMonotoneX)
+    .defined(d => d.date != null && !isNaN(d[name]));
 
-  svg.append("image")
-    .attr("href", PHOTO_SRC)
-    .attr("x", margin.left + lx - photoR)
-    .attr("y", margin.top + ly - photoR)
-    .attr("width", photoR * 2)
-    .attr("height", photoR * 2)
-    .attr("preserveAspectRatio", "xMidYMid slice")
-    .attr("clip-path", `url(#${clipId})`);
+  names.forEach(name => {
+    const { color, photo } = PEOPLE[name];
+    g.append("path")
+      .datum(data)
+      .attr("class", "line-path")
+      .attr("fill", "none")
+      .attr("stroke", color)
+      .attr("stroke-width", 2.5)
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("d", lineGen(name));
 
-  svg.append("circle")
-    .attr("cx", margin.left + lx)
-    .attr("cy", margin.top + ly)
-    .attr("r", photoR)
-    .attr("fill", "none")
-    .attr("stroke", LINE_COLOR)
-    .attr("stroke-width", 3);
+    const ly = yScale(last[name]);
+    defs.append("clipPath")
+      .attr("id", `photo-clip-${name}`)
+      .append("circle")
+      .attr("cx", margin.left + lx)
+      .attr("cy", margin.top + ly)
+      .attr("r", photoR);
+
+    svg.append("image")
+      .attr("href", photo)
+      .attr("x", margin.left + lx - photoR)
+      .attr("y", margin.top + ly - photoR)
+      .attr("width", photoR * 2)
+      .attr("height", photoR * 2)
+      .attr("preserveAspectRatio", "xMidYMid slice")
+      .attr("clip-path", `url(#photo-clip-${name})`);
+
+    svg.append("circle")
+      .attr("cx", margin.left + lx)
+      .attr("cy", margin.top + ly)
+      .attr("r", photoR)
+      .attr("fill", "none")
+      .attr("stroke", color)
+      .attr("stroke-width", 3);
+  });
 
   // Tooltip via invisible hover overlay
   if (SHOW_TOOLTIP) {
@@ -293,7 +300,11 @@ function render() {
       .on("mousemove", (event) => {
         const [mx] = d3.pointer(event);
         const d = data[bisect(data, xScale.invert(mx))];
-        tooltip.innerHTML = `<strong>${fmtDate(d.date)}</strong><br>Aura: ${smartFormat(d.value)}`;
+        const rowsHtml = Object.keys(PEOPLE)
+          .sort((a, b) => d[b] - d[a])
+          .map(n => `<span style="color:${PEOPLE[n].color};font-weight:600">${n}</span>: ${smartFormat(d[n])}`)
+          .join("<br>");
+        tooltip.innerHTML = `<strong>${fmtDate(d.date)}</strong><br>${rowsHtml}`;
         tooltip.style.opacity = "1";
         if (event.clientX > window.innerWidth / 2) {
           tooltip.style.left = (event.clientX - 14 - tooltip.offsetWidth) + "px";
@@ -307,8 +318,11 @@ function render() {
 }
 
 d3.csv("data.csv").then(rows => {
-  allData = rows.map(d => ({ date: parseDate(d.date), value: parseNum(d.aura) }))
-    .filter(d => d.date)
+  allData = rows.map(d => {
+    const row = { date: parseDate(d.date) };
+    Object.keys(PEOPLE).forEach(n => { row[n] = parseNum(d[n]); });
+    return row;
+  }).filter(d => d.date)
     .sort((a, b) => a.date - b.date);
   render();
 });
