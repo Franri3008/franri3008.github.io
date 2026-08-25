@@ -1,0 +1,330 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pkmn Masters Logins</title>
+<style>
+  :root {
+    --bg: #f7f7f8;
+    --card: #fff;
+    --ink: #1b1b1e;
+    --muted: #6c6c74;
+    --line: #e2e2e6;
+    --pad: #ececef;
+    --accent: #2f7d51;
+    --yes: #2f7d51;
+    --no: #b23a3a;
+    --square: rgba(0, 0, 0, .045);
+    --gold-a: #fdf1c8;
+    --gold-b: #f5d97a;
+    --gold-ink: #6b5309;
+  }
+  :root[data-theme="dark"] {
+    --bg: #16171a;
+    --card: #1e2024;
+    --ink: #e8e8ea;
+    --muted: #9a9aa3;
+    --line: #313339;
+    --pad: #26282d;
+    --accent: #59b981;
+    --yes: #59b981;
+    --no: #e07a7a;
+    --square: rgba(255, 255, 255, .05);
+    --gold-a: #4a3c12;
+    --gold-b: #8a6f1e;
+    --gold-ink: #f6dd93;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16171a; --card: #1e2024; --ink: #e8e8ea; --muted: #9a9aa3;
+      --line: #313339; --pad: #26282d; --accent: #59b981; --yes: #59b981;
+      --no: #e07a7a; --square: rgba(255, 255, 255, .05);
+      --gold-a: #4a3c12; --gold-b: #8a6f1e; --gold-ink: #f6dd93;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    padding: 24px 24px 24px calc(var(--side) + 24px);
+    background: var(--bg); color: var(--ink);
+  }
+  :root { --side: 260px; }
+  svg { display: block; }
+
+  /* Background: a tiled grid of squares drifting slowly. */
+  #bg {
+    position: fixed; inset: -60px; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(var(--square) 1px, transparent 1px),
+      linear-gradient(90deg, var(--square) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: drift 32s linear infinite;
+  }
+  @keyframes drift { to { transform: translate(60px, 60px); } }
+  @media (prefers-reduced-motion: reduce) { #bg { animation: none; } }
+
+  h1 { margin: 0 0 16px; font-size: 22px; text-align: left; }
+  .sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px;
+  }
+
+  #side {
+    position: fixed; left: 0; top: 0; bottom: 0; width: var(--side); z-index: 3;
+    overflow-y: auto; padding: 20px 16px;
+    background: var(--card); border-right: 1px solid var(--line);
+  }
+  #side h2 { margin: 0 0 12px; font-size: 13px; color: var(--muted); font-weight: 600;
+             text-transform: uppercase; letter-spacing: inherit; }
+  #side details { border-top: 1px solid var(--line); padding: 8px 0; }
+  #side details:first-of-type { border-top: 0; }
+  #side summary {
+    cursor: pointer; padding: 4px 0; list-style: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  #side summary::-webkit-details-marker { display: none; }
+  #side summary .chev { color: var(--muted); transition: transform .15s; flex: 0 0 auto; }
+  #side details[open] summary .chev { transform: rotate(90deg); }
+  #side summary .count { margin-left: auto; color: var(--muted); font-size: 12px; }
+  #side summary .mon { width: 32px; height: 32px; }
+  #side summary { min-height: 40px; }
+  #side ul { list-style: none; margin: 6px 0 4px; padding: 0 0 0 22px; font-size: 13px; }
+  #side li { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+  #side li.pad { color: var(--muted); opacity: .5; }
+  .yes { color: var(--yes); }
+  .no { color: var(--no); }
+
+  #main { min-width: 0; }
+  #main > .card { width: fit-content; max-width: 100%; margin: 0 auto; }
+  #wrap { overflow-x: auto; padding-bottom: 4px; }
+
+  table { border-collapse: collapse; margin: 0 auto; }
+  .mon { width: 48px; height: 48px; object-fit: contain; flex: 0 0 auto; }
+  a.mon-link { display: inline-flex; }
+  th, td { padding: 12px 10px; }
+  tbody tr { height: 68px; }
+  th.date { height: 96px; vertical-align: bottom; white-space: nowrap; font-weight: 400;
+            font-size: 12px; color: var(--muted); width: 34px; text-align: center; }
+  /* width:0 + margin-left:50% puts the rotation pivot on the column centre, under the checkbox */
+  th.date > div { transform: rotate(-45deg); transform-origin: left bottom; width: 0; margin-left: 50%; }
+  th.user {
+    text-align: left; white-space: nowrap; padding-right: 16px; font-weight: 500;
+    position: sticky; left: 0; background: var(--card); z-index: 1;
+  }
+  th.user > div { display: flex; align-items: center; gap: 12px; }
+  tbody tr:hover th.user, tbody tr:hover td { background: color-mix(in srgb, var(--accent) 8%, var(--card)); }
+  td { text-align: center; border-top: 1px solid var(--line); }
+  td.pad { background: var(--pad); }
+  tbody tr:hover td.pad { background: var(--pad); }
+  /* Read-only marks: the sheet is the source of truth. */
+  td .mark { display: grid; place-items: center; width: 22px; height: 22px; margin: 0 auto;
+             border-radius: 5px; }
+  td .mark.yes { background: color-mix(in srgb, var(--yes) 16%, transparent); }
+  td .mark.no { color: var(--muted); opacity: .55; }
+
+  /* Gold: the last 5 logged days in a row.
+     The band lives on a ::before so the mask fades the plate, never the text. */
+  .plate { position: relative; z-index: 0; }
+  .plate::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 10px;
+    background: linear-gradient(100deg, var(--gold-a), var(--gold-b), var(--gold-a));
+    background-size: 250% 100%;
+    animation: shine 6s linear infinite;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  @keyframes shine { to { background-position: -250% 0; } }
+
+  /* Table: the band sits on the row itself, so it runs unbroken across the day columns.
+     The opaque name cell and the grey padded cells paint over it and bound it. */
+  tbody tr.gold {
+    background: linear-gradient(100deg, var(--gold-a), var(--gold-b), var(--gold-a));
+    background-size: 250% 100%;
+    animation: shine 6s linear infinite;
+  }
+  tbody tr.gold td, tbody tr.gold:hover td { background: transparent; border-top-color: transparent; }
+  tbody tr.gold td .mark.yes { background: color-mix(in srgb, var(--gold-ink) 14%, transparent); }
+  tbody tr.gold td .mark { color: var(--gold-ink); }
+  tbody tr.gold td.pad, tbody tr.gold:hover td.pad { background: var(--pad); }
+  tbody tr.gold th.user, tbody tr.gold:hover th.user { background: var(--card); }
+
+  /* Sidebar: fade starts much earlier than the table's. */
+  #side details.gold { padding: 8px; margin: 4px 0; }
+  #side details.gold summary.plate { padding: 8px 6px; }
+  #side details.gold summary.plate::before {
+    /* Two linear fades intersected: a soft-edged block, not an ellipse. */
+    --glow-x: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+    --glow-y: linear-gradient(180deg, transparent, #000 26%, #000 74%, transparent);
+    -webkit-mask-image: var(--glow-x), var(--glow-y);
+    mask-image: var(--glow-x), var(--glow-y);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+  #side details.gold summary, #side details.gold summary .count { color: var(--gold-ink); }
+
+  @media (prefers-reduced-motion: reduce) { .plate::before { animation: none; } }
+
+  /* Two-way switch: both icons always visible, a thumb slides under the active one. */
+  #theme {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4;
+    display: flex; padding: 4px; gap: 0;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; cursor: pointer;
+  }
+  #theme .thumb {
+    position: absolute; top: 4px; left: 4px; width: 34px; height: 34px;
+    border-radius: 999px; background: color-mix(in srgb, var(--accent) 22%, var(--card));
+    transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+  }
+  #theme.dark .thumb { transform: translateX(34px); }
+  #theme span {
+    position: relative; display: grid; place-items: center;
+    width: 34px; height: 34px; color: var(--muted);
+    transition: color .28s ease;
+  }
+  #theme:not(.dark) .s-light, #theme.dark .s-dark { color: var(--accent); }
+
+  @media (max-width: 820px) {
+    body { padding: 12px; }
+    #side { position: static; width: auto; border-right: 0;
+            border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+    #app { display: block; }
+  }
+</style>
+
+<div id="bg"></div>
+
+<div id="app">
+  <aside id="side"><h2>Miembros</h2><p id="status">Cargando...</p></aside>
+
+  <div id="main">
+    <h1>PKMN Masters Login</h1>
+    <div class="card"><div id="wrap"><table id="grid"></table></div></div>
+  </div>
+</div>
+
+<button id="theme" title="Cambiar tema" aria-label="Cambiar tema">
+  <span class="thumb"></span><span class="s-light"></span><span class="s-dark"></span>
+</button>
+
+<script>
+// Sheet: row 1 = "Users" banner, row 2 = usernames, row 3 = favourite Pokemon,
+// rows 4+ = one per day (newest first). Cols A/B are labels, users start at col C.
+const SHEET_ID = "1tYyWIDSRMK21ErtCrt-24BM-xCcWItaUkPfWeHc5f44";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+const PAD = 20;   // how many days to show before the oldest sheet row
+
+const svg = body => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const ICON = {
+  check: svg(`<polyline points="20 6 9 17 4 12"/>`),
+  cross: svg(`<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`),
+  dash: svg(`<line x1="5" y1="12" x2="19" y2="12"/>`),
+  chev: svg(`<polyline points="9 18 15 12 9 6"/>`),
+  sun: svg(`<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4
+    M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>`),
+  moon: svg(`<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>`),
+};
+
+// ponytail: naive CSV split, no quoted fields. Dates and user names don't have commas.
+const parse = t => t.trim().split(/\r?\n/).map(r => r.split(","));
+const on = v => (v || "").trim().toUpperCase() === "TRUE";
+
+let users = [], mons = [], days = [];
+const COL0 = 2;   // first user column in each CSV row
+
+// Sprites come from Pokemon DB, keyed by lowercase name.
+// ponytail: plain <img> in the sidebar — a link inside <summary> would also toggle the section.
+const img = name => {
+  const slug = (name || "").trim().toLowerCase();
+  return slug
+    ? `<img class="mon" loading="lazy" alt="${slug}" title="${slug}"
+        src="https://img.pokemondb.net/sprites/home/normal/${slug}.png">`
+    : "";
+};
+const sprite = name => {
+  const slug = (name || "").trim().toLowerCase();
+  return slug
+    ? `<a class="mon-link" href="https://pokemondb.net/pokedex/${slug}"
+        target="_blank" rel="noopener">${img(slug)}</a>`
+    : "";
+};
+
+// Sheet dates are d/m/yyyy.
+const toDate = s => { const [d, m, y] = s.trim().split("/").map(Number); return new Date(y, m - 1, d); };
+const fmt = dt => `${dt.getDate()}/${dt.getMonth() + 1}/${dt.getFullYear()}`;
+
+function padBack() {
+  if (!days.length) return;
+  const oldest = toDate(days[days.length - 1][0]);
+  for (let i = 1; i <= PAD; i++) {
+    const dt = new Date(oldest);
+    dt.setDate(dt.getDate() - i);
+    const row = [fmt(dt)];
+    row.pad = true;
+    days.push(row);
+  }
+}
+
+const STREAK = 5;
+// Gold when the STREAK most recent sheet days are all logged. Padded days don't count.
+const isGold = c => {
+  const recent = days.filter(d => !d.pad).slice(0, STREAK);
+  return recent.length === STREAK && recent.every(d => on(d[c + COL0]));
+};
+
+function draw() {
+  const real = days.filter(d => !d.pad).length;
+
+  document.getElementById("grid").innerHTML = `
+    <thead><tr><th></th>${days.map(d => `<th class="date"><div>${d[0]}</div></th>`).join("")}</tr></thead>
+    <tbody>${users.map((u, c) => `<tr class="${isGold(c) ? "gold" : ""}">
+      <th class="user"><div>${sprite(mons[c])}<span>${u}</span></div></th>
+      ${days.map(d => d.pad
+        ? `<td class="pad"></td>`
+        : `<td><span class="mark ${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span></td>`
+      ).join("")}
+    </tr>`).join("")}</tbody>`;
+
+  const open = new Set([...document.querySelectorAll("#side details[open]")].map(d => d.dataset.u));
+  document.getElementById("side").innerHTML = `<h2>Miembros</h2>` + users.map((u, c) => `
+    <details data-u="${u}" class="${isGold(c) ? "gold" : ""}" ${open.has(u) ? "open" : ""}>
+      <summary class="${isGold(c) ? "plate" : ""}">
+        <span class="chev">${ICON.chev}</span>${img(mons[c])}<span>${u}</span>
+        <span class="count">${days.filter(d => !d.pad && on(d[c + COL0])).length}/${real}</span>
+      </summary>
+      <ul>${days.map(d => d.pad
+        ? `<li class="pad">${ICON.dash}${d[0]}</li>`
+        : `<li><span class="${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span>${d[0]}</li>`
+      ).join("")}</ul>
+    </details>`).join("");
+}
+
+fetch(CSV_URL).then(r => r.text()).then(text => {
+  const rows = parse(text);
+  users = rows[1].slice(COL0);
+  mons = rows[2].slice(COL0);
+  days = rows.slice(3).filter(d => d[0]);
+  padBack();
+  draw();
+});
+
+const theme = document.getElementById("theme");
+theme.querySelector(".s-light").innerHTML = ICON.sun;
+theme.querySelector(".s-dark").innerHTML = ICON.moon;
+const setTheme = t => {
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const dark = t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  theme.classList.toggle("dark", dark);
+};
+setTheme(localStorage.theme || "");
+theme.onclick = () => {
+  const dark = document.documentElement.dataset.theme
+    ? document.documentElement.dataset.theme === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
+  localStorage.theme = dark ? "light" : "dark";
+  setTheme(localStorage.theme);
+};
+</script>
