@@ -14,8 +14,11 @@
     --yes: #2f7d51;
     --no: #b23a3a;
     --square: rgba(0, 0, 0, .045);
-    --gold-a: #fdf1c8;
-    --gold-b: #f5d97a;
+    --gold-glass-a: rgba(253, 241, 200, .46);
+    --gold-glass-b: rgba(245, 217, 122, .54);
+    --gold-reflection: rgba(255, 255, 255, .52);
+    --gold-edge: rgba(172, 126, 12, .18);
+    --gold-shadow: rgba(139, 103, 10, .10);
     --gold-ink: #6b5309;
   }
   :root[data-theme="dark"] {
@@ -29,8 +32,11 @@
     --yes: #59b981;
     --no: #e07a7a;
     --square: rgba(255, 255, 255, .05);
-    --gold-a: #4a3c12;
-    --gold-b: #8a6f1e;
+    --gold-glass-a: rgba(74, 60, 18, .48);
+    --gold-glass-b: rgba(138, 111, 30, .48);
+    --gold-reflection: rgba(255, 238, 178, .20);
+    --gold-edge: rgba(230, 198, 103, .18);
+    --gold-shadow: rgba(0, 0, 0, .16);
     --gold-ink: #f6dd93;
   }
   @media (prefers-color-scheme: dark) {
@@ -38,7 +44,11 @@
       --bg: #16171a; --card: #1e2024; --ink: #e8e8ea; --muted: #9a9aa3;
       --line: #313339; --pad: #26282d; --accent: #59b981; --yes: #59b981;
       --no: #e07a7a; --square: rgba(255, 255, 255, .05);
-      --gold-a: #4a3c12; --gold-b: #8a6f1e; --gold-ink: #f6dd93;
+      --gold-glass-a: rgba(74, 60, 18, .48);
+      --gold-glass-b: rgba(138, 111, 30, .48);
+      --gold-reflection: rgba(255, 238, 178, .20);
+      --gold-edge: rgba(230, 198, 103, .18);
+      --gold-shadow: rgba(0, 0, 0, .16); --gold-ink: #f6dd93;
     }
   }
 
@@ -63,7 +73,14 @@
   @keyframes drift { to { transform: translate(60px, 60px); } }
   @media (prefers-reduced-motion: reduce) { #bg { animation: none; } }
 
-  h1 { margin: 0 0 16px; font-size: 22px; text-align: left; }
+  h1 { margin: 0; font-size: 22px; text-align: left; }
+  #head { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  #pick {
+    margin-left: auto; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 10px; cursor: pointer;
+  }
+  #pick:hover { border-color: var(--accent); }
   .sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
 
   .card {
@@ -124,47 +141,59 @@
   td .mark.yes { background: color-mix(in srgb, var(--yes) 16%, transparent); }
   td .mark.no { color: var(--muted); opacity: .55; }
 
-  /* Gold: the last 5 logged days in a row.
-     The band lives on a ::before so the mask fades the plate, never the text. */
+  /* Gold: the last 5 logged days in a row. The original warm palette is kept
+     translucent while a narrow reflection travels over the stationary glass. */
   .plate { position: relative; z-index: 0; }
   .plate::before {
-    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 10px;
-    background: linear-gradient(100deg, var(--gold-a), var(--gold-b), var(--gold-a));
-    background-size: 250% 100%;
-    animation: shine 6s linear infinite;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    border: 1px solid var(--gold-edge); border-radius: 10px;
+    background:
+      linear-gradient(105deg,
+        transparent 24%,
+        color-mix(in srgb, var(--gold-reflection) 28%, transparent) 36%,
+        var(--gold-reflection) 50%,
+        color-mix(in srgb, var(--gold-reflection) 28%, transparent) 64%,
+        transparent 76%) no-repeat,
+      linear-gradient(100deg,
+        var(--gold-glass-a), var(--gold-glass-b) 50%, var(--gold-glass-a));
+    background-position: -240% 0, 0 0;
+    background-size: 68% 100%, 100% 100%;
+    box-shadow:
+      inset 0 1px 0 var(--gold-reflection),
+      inset 0 -1px 0 var(--gold-edge),
+      0 4px 14px var(--gold-shadow);
+    -webkit-backdrop-filter: blur(7px) saturate(115%);
+    backdrop-filter: blur(7px) saturate(115%);
+    animation: glass-reflection 7s ease-in-out infinite;
   }
-  @keyframes shine { to { background-position: -250% 0; } }
-
+  @keyframes glass-reflection {
+    0%, 18% { background-position: -240% 0, 0 0; }
+    76%, 100% { background-position: 340% 0, 0 0; }
+  }
   /* Table: the band sits on the row itself, so it runs unbroken across the day columns.
      The opaque name cell and the grey padded cells paint over it and bound it. */
   tbody tr.gold {
-    background: linear-gradient(100deg, var(--gold-a), var(--gold-b), var(--gold-a));
-    background-size: 250% 100%;
-    animation: shine 6s linear infinite;
+    background: linear-gradient(100deg,
+      var(--gold-glass-a), var(--gold-glass-b) 50%, var(--gold-glass-a));
   }
-  tbody tr.gold td, tbody tr.gold:hover td { background: transparent; border-top-color: transparent; }
-  tbody tr.gold td .mark.yes { background: color-mix(in srgb, var(--gold-ink) 14%, transparent); }
+  tbody tr.gold td, tbody tr.gold:hover td {
+    background: transparent; border-top-color: transparent;
+    box-shadow: inset 0 6px 0 var(--card), inset 0 -6px 0 var(--card);
+  }
+  tbody tr.gold td .mark.yes { background: color-mix(in srgb, var(--gold-ink) 10%, transparent); }
   tbody tr.gold td .mark { color: var(--gold-ink); }
-  tbody tr.gold td.pad, tbody tr.gold:hover td.pad { background: var(--pad); }
+  tbody tr.gold td.pad, tbody tr.gold:hover td.pad { background: var(--pad); box-shadow: none; }
   tbody tr.gold th.user, tbody tr.gold:hover th.user { background: var(--card); }
 
-  /* Sidebar: fade starts much earlier than the table's. */
+  /* Sidebar username: keep the glass close to the content instead of filling
+     the whole details block. */
   #side details.gold { padding: 8px; margin: 4px 0; }
   #side details.gold summary.plate { padding: 8px 6px; }
-  #side details.gold summary.plate::before {
-    /* Two linear fades intersected: a soft-edged block, not an ellipse. */
-    --glow-x: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
-    --glow-y: linear-gradient(180deg, transparent, #000 26%, #000 74%, transparent);
-    -webkit-mask-image: var(--glow-x), var(--glow-y);
-    mask-image: var(--glow-x), var(--glow-y);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
-  }
   #side details.gold summary, #side details.gold summary .count { color: var(--gold-ink); }
 
-  @media (prefers-reduced-motion: reduce) { .plate::before { animation: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .plate::before { animation: none; background-position: 35% 0, 0 0; }
+  }
 
   /* Two-way switch: both icons always visible, a thumb slides under the active one. */
   #theme {
@@ -200,7 +229,10 @@
   <aside id="side"><h2>Miembros</h2><p id="status">Cargando...</p></aside>
 
   <div id="main">
-    <h1>PKMN Masters Login</h1>
+    <div id="head">
+      <h1>PKMN Masters Login</h1>
+      <select id="pick" aria-label="Mes"><option value="all">Todos</option></select>
+    </div>
     <div class="card"><div id="wrap"><table id="grid"></table></div></div>
   </div>
 </div>
@@ -210,10 +242,21 @@
 </button>
 
 <script>
-// Sheet: row 1 = "Users" banner, row 2 = usernames, row 3 = favourite Pokemon,
-// rows 4+ = one per day (newest first). Cols A/B are labels, users start at col C.
+// One tab per month. Each tab: row 1 = "Users" banner, row 2 = usernames,
+// row 3 = favourite Pokemon, rows 4+ = one per day, oldest first.
+// Cols A/B are labels, users start at col C.
+// ponytail: tabs listed by hand — Sheets has no public API to enumerate them.
+// Add a line when a new month tab is created; oldest month first. The gid is the
+// number in the tab's URL (open the tab in Sheets and read #gid= in the address bar).
+const TABS = [
+  { name: "September 2026 (Month 1)", gid: "0" },
+  { name: "October 2026 (Month 2)", gid: "211219219" },
+];
 const SHEET_ID = "1tYyWIDSRMK21ErtCrt-24BM-xCcWItaUkPfWeHc5f44";
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+// The gviz endpoint types each column, which blanks the username and Pokemon rows
+// sitting above the checkboxes. This one returns raw cell text.
+const csvUrl = gid =>
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
 const PAD = 20;   // how many days to show before the oldest sheet row
 
 const svg = body => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -228,8 +271,9 @@ const ICON = {
   moon: svg(`<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>`),
 };
 
-// ponytail: naive CSV split, no quoted fields. Dates and user names don't have commas.
-const parse = t => t.trim().split(/\r?\n/).map(r => r.split(","));
+// ponytail: naive CSV split — no field here contains a comma, only surrounding quotes.
+const cell = s => s.trim().replace(/^"(.*)"$/s, "$1").replace(/""/g, '"');
+const parse = t => t.trim().split(/\r?\n/).map(r => r.split(",").map(cell));
 const on = v => (v || "").trim().toUpperCase() === "TRUE";
 
 let users = [], mons = [], days = [];
@@ -302,14 +346,35 @@ function draw() {
     </details>`).join("");
 }
 
-fetch(CSV_URL).then(r => r.text()).then(text => {
-  const rows = parse(text);
-  users = rows[1].slice(COL0);
-  mons = rows[2].slice(COL0);
-  days = rows.slice(3).filter(d => d[0]);
+let tabRows = [];   // parsed CSV per tab, in TABS order
+const pick = document.getElementById("pick");
+
+// Tabs are listed oldest first and each tab lists days oldest first;
+// the table wants the exact opposite, so reverse both.
+function build() {
+  const chosen = pick.value === "all"
+    ? tabRows.map((rows, i) => i).reverse()
+    : [Number(pick.value)];
+  days = chosen.flatMap(i => tabRows[i].slice(3).filter(d => d[0]).reverse());
   padBack();
   draw();
-});
+}
+
+Promise.all(TABS.map(t => fetch(csvUrl(t.gid)).then(r => r.text()).then(parse)))
+  .then(tabs => {
+    tabRows = tabs;
+    // Every tab must keep the same user column order; the fullest roster wins.
+    const roster = tabs.filter(r => r.length > 2)
+      .sort((a, b) => b[1].filter(Boolean).length - a[1].filter(Boolean).length)[0];
+    if (!roster) return;
+    users = roster[1].slice(COL0).filter(Boolean);
+    mons = roster[2].slice(COL0);
+    pick.innerHTML = `<option value="all">Todos</option>` +
+      TABS.map((t, i) => `<option value="${i}">${t.name}</option>`).reverse().join("");
+    build();
+  });
+
+pick.onchange = build;
 
 const theme = document.getElementById("theme");
 theme.querySelector(".s-light").innerHTML = ICON.sun;
