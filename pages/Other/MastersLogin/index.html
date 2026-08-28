@@ -195,6 +195,23 @@
     .plate::before { animation: none; background-position: 35% 0, 0 0; }
   }
 
+  /* Loading skeletons: grey shapes with a shimmer sweep, replaced when data lands. */
+  .skel {
+    background: linear-gradient(90deg, var(--pad) 25%,
+      color-mix(in srgb, var(--ink) 8%, var(--pad)) 50%, var(--pad) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+  .skel.dot { width: 22px; height: 22px; margin: 0 auto; }
+  .skel.bar { height: 14px; }
+  .skel.circle { width: 32px; height: 32px; border-radius: 50%; flex: 0 0 auto; }
+  #side .skel-row { display: flex; align-items: center; gap: 8px; min-height: 40px;
+                    border-top: 1px solid var(--line); }
+  #side .skel-row:first-of-type { border-top: 0; }
+
   /* Two-way switch: both icons always visible, a thumb slides under the active one. */
   #theme {
     position: fixed; right: 16px; bottom: 16px; z-index: 4;
@@ -226,11 +243,12 @@
 <div id="bg"></div>
 
 <div id="app">
-  <aside id="side"><h2>Miembros</h2><p id="status">Cargando...</p></aside>
+  <aside id="side"><h2>Miembros</h2></aside>
 
   <div id="main">
     <div id="head">
-      <h1>PKMN Masters Login</h1>
+      <div><h1>PKMN Masters Login</h1>
+        <div style="font-size:11px;color:var(--muted)">v0.1.1</div></div>
       <select id="pick" aria-label="Mes"><option value="all">Todos</option></select>
     </div>
     <div class="card"><div id="wrap"><table id="grid"></table></div></div>
@@ -257,8 +275,6 @@ const SHEET_ID = "1tYyWIDSRMK21ErtCrt-24BM-xCcWItaUkPfWeHc5f44";
 // sitting above the checkboxes. This one returns raw cell text.
 const csvUrl = gid =>
   `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-const PAD = 20;   // how many days to show before the oldest sheet row
-
 const svg = body => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
 const ICON = {
@@ -296,39 +312,20 @@ const sprite = name => {
     : "";
 };
 
-// Sheet dates are d/m/yyyy.
-const toDate = s => { const [d, m, y] = s.trim().split("/").map(Number); return new Date(y, m - 1, d); };
-const fmt = dt => `${dt.getDate()}/${dt.getMonth() + 1}/${dt.getFullYear()}`;
-
-function padBack() {
-  if (!days.length) return;
-  const oldest = toDate(days[days.length - 1][0]);
-  for (let i = 1; i <= PAD; i++) {
-    const dt = new Date(oldest);
-    dt.setDate(dt.getDate() - i);
-    const row = [fmt(dt)];
-    row.pad = true;
-    days.push(row);
-  }
-}
-
 const STREAK = 5;
-// Gold when the STREAK most recent sheet days are all logged. Padded days don't count.
+// Gold when the STREAK most recent sheet days are all logged.
 const isGold = c => {
-  const recent = days.filter(d => !d.pad).slice(0, STREAK);
+  const recent = days.slice(0, STREAK);
   return recent.length === STREAK && recent.every(d => on(d[c + COL0]));
 };
 
 function draw() {
-  const real = days.filter(d => !d.pad).length;
-
   document.getElementById("grid").innerHTML = `
     <thead><tr><th></th>${days.map(d => `<th class="date"><div>${d[0]}</div></th>`).join("")}</tr></thead>
     <tbody>${users.map((u, c) => `<tr class="${isGold(c) ? "gold" : ""}">
       <th class="user"><div>${sprite(mons[c])}<span>${u}</span></div></th>
-      ${days.map(d => d.pad
-        ? `<td class="pad"></td>`
-        : `<td><span class="mark ${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span></td>`
+      ${days.map(d =>
+        `<td><span class="mark ${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span></td>`
       ).join("")}
     </tr>`).join("")}</tbody>`;
 
@@ -337,11 +334,10 @@ function draw() {
     <details data-u="${u}" class="${isGold(c) ? "gold" : ""}" ${open.has(u) ? "open" : ""}>
       <summary class="${isGold(c) ? "plate" : ""}">
         <span class="chev">${ICON.chev}</span>${img(mons[c])}<span>${u}</span>
-        <span class="count">${days.filter(d => !d.pad && on(d[c + COL0])).length}/${real}</span>
+        <span class="count">${days.filter(d => on(d[c + COL0])).length}/${days.length}</span>
       </summary>
-      <ul>${days.map(d => d.pad
-        ? `<li class="pad">${ICON.dash}${d[0]}</li>`
-        : `<li><span class="${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span>${d[0]}</li>`
+      <ul>${days.map(d =>
+        `<li><span class="${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span>${d[0]}</li>`
       ).join("")}</ul>
     </details>`).join("");
 }
@@ -349,20 +345,34 @@ function draw() {
 let tabRows = [];   // parsed CSV per tab, in TABS order
 const pick = document.getElementById("pick");
 
-// Tabs are listed oldest first and each tab lists days oldest first;
-// the table wants the exact opposite, so reverse both.
+// Skeletons shown while the sheet loads.
+document.getElementById("grid").innerHTML = `
+  <thead><tr><th></th>${Array.from({length: 14}, () =>
+    `<th class="date"><div><span class="skel bar" style="width:52px"></span></div></th>`).join("")}</tr></thead>
+  <tbody>${Array.from({length: 6}, () => `<tr>
+    <th class="user"><div><span class="skel circle" style="width:48px;height:48px"></span>
+      <span class="skel bar" style="width:90px"></span></div></th>
+    ${Array.from({length: 14}, () => `<td><span class="skel dot"></span></td>`).join("")}
+  </tr>`).join("")}</tbody>`;
+document.getElementById("side").innerHTML = `<h2>Miembros</h2>` +
+  Array.from({length: 8}, () => `<div class="skel-row">
+    <span class="skel circle"></span><span class="skel bar" style="width:60%"></span>
+  </div>`).join("");
+
+// Tabs are listed oldest first but each tab already lists days newest first,
+// which is what the table wants; only the tab order needs reversing.
 function build() {
   const chosen = pick.value === "all"
     ? tabRows.map((rows, i) => i).reverse()
     : [Number(pick.value)];
-  days = chosen.flatMap(i => tabRows[i].slice(3).filter(d => d[0]).reverse());
-  padBack();
+  days = chosen.flatMap(i => tabRows[i].slice(3).filter(d => d[0]));
   draw();
 }
 
 Promise.all(TABS.map(t => fetch(csvUrl(t.gid)).then(r => r.text()).then(parse)))
   .then(tabs => {
-    tabRows = tabs;
+    // A wrong gid makes Google return an HTML page; drop those tabs.
+    tabRows = tabs.map(rows => rows[0]?.[0]?.startsWith("<") ? [] : rows);
     // Every tab must keep the same user column order; the fullest roster wins.
     const roster = tabs.filter(r => r.length > 2)
       .sort((a, b) => b[1].filter(Boolean).length - a[1].filter(Boolean).length)[0];
