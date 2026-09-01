@@ -123,9 +123,24 @@
   th, td { padding: 12px 10px; }
   tbody tr { height: 68px; }
   th.date { height: 96px; vertical-align: bottom; white-space: nowrap; font-weight: 400;
-            font-size: 12px; color: var(--muted); width: 34px; text-align: center; }
+            font-size: 12px; color: var(--muted); width: 34px; text-align: center;
+            position: relative; }
   /* width:0 + margin-left:50% puts the rotation pivot on the column centre, under the checkbox */
   th.date > div { transform: rotate(-45deg); transform-origin: left bottom; width: 0; margin-left: 50%; }
+  th.date > .n {
+    position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+    font-weight: 600; font-size: 11px;
+    color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent);
+    border-radius: 999px; width: 20px; height: 20px; line-height: 20px;
+  }
+  th.date > .n.zero { color: var(--muted); background: var(--pad); }
+  th.date > .n .chk {
+    position: absolute; right: -4px; bottom: -4px; width: 11px; height: 11px;
+    display: grid; place-items: center; border-radius: 50%;
+    background: var(--card); color: var(--accent); box-shadow: 0 0 0 1px var(--card);
+  }
+  th.date > .n.zero .chk { color: var(--muted); }
+  th.date > .n .chk svg { width: 8px; height: 8px; }
   th.user {
     text-align: left; white-space: nowrap; padding-right: 16px; font-weight: 500;
     position: sticky; left: 0; background: var(--card); z-index: 1;
@@ -232,30 +247,56 @@
   }
   #theme:not(.dark) .s-light, #theme.dark .s-dark { color: var(--accent); }
 
+  /* Language switch: same shape as #theme, stacked above it. Flags dim when inactive
+     since their colour comes from the SVG itself, not currentColor. */
+  #lang {
+    position: fixed; right: 16px; bottom: 66px; z-index: 4;
+    display: flex; padding: 4px; gap: 0;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; cursor: pointer;
+  }
+  #lang .thumb {
+    position: absolute; top: 4px; left: 4px; width: 34px; height: 34px;
+    border-radius: 999px; background: color-mix(in srgb, var(--accent) 22%, var(--card));
+    transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+  }
+  #lang.es .thumb { transform: translateX(34px); }
+  #lang span {
+    position: relative; display: grid; place-items: center;
+    width: 34px; height: 34px; opacity: .4; transition: opacity .28s ease;
+  }
+  #lang svg { width: 20px; height: 20px; border-radius: 50%; }
+  #lang:not(.es) .s-en, #lang.es .s-es { opacity: 1; }
+
   @media (max-width: 820px) {
     body { padding: 12px; }
+    #app { display: flex; flex-direction: column; }
+    /* #main already holds title before table; pushing #side after it puts
+       members last: title, table, members. */
     #side { position: static; width: auto; border-right: 0;
-            border-bottom: 1px solid var(--line); margin-bottom: 12px; }
-    #app { display: block; }
+            border-bottom: 1px solid var(--line); margin-bottom: 12px; order: 2; }
   }
 </style>
 
 <div id="bg"></div>
 
 <div id="app">
-  <aside id="side"><h2>Miembros</h2></aside>
+  <aside id="side"><h2></h2></aside>
 
   <div id="main">
     <div id="head">
       <div><h1>PKMN Masters Login</h1>
-        <div style="font-size:11px;color:var(--muted)">v0.1.1</div></div>
-      <select id="pick" aria-label="Mes"><option value="all">Todos</option></select>
+        <div style="font-size:11px;color:var(--muted)">v0.2.0</div></div>
+      <select id="pick"><option value="all"></option></select>
     </div>
     <div class="card"><div id="wrap"><table id="grid"></table></div></div>
   </div>
 </div>
 
-<button id="theme" title="Cambiar tema" aria-label="Cambiar tema">
+<button id="lang">
+  <span class="thumb"></span><span class="s-en"></span><span class="s-es"></span>
+</button>
+<button id="theme">
   <span class="thumb"></span><span class="s-light"></span><span class="s-dark"></span>
 </button>
 
@@ -286,6 +327,21 @@ const ICON = {
     M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>`),
   moon: svg(`<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>`),
 };
+// Simplified flags (square viewBox, clipped to a circle by CSS) rather than a flag font/library.
+const FLAG_EN = `<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#00247d"/>
+  <g stroke="#fff" stroke-width="6"><path d="M0,0 L40,40 M40,0 L0,40"/></g>
+  <g stroke="#cf142b" stroke-width="2.5"><path d="M0,0 L40,40 M40,0 L0,40"/></g>
+  <g stroke="#fff" stroke-width="10"><path d="M20,0 V40 M0,20 H40"/></g>
+  <g stroke="#cf142b" stroke-width="6"><path d="M20,0 V40 M0,20 H40"/></g></svg>`;
+const FLAG_ES = `<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#AA151B"/>
+  <rect y="10" width="40" height="20" fill="#F1BF00"/></svg>`;
+
+const I18N = {
+  en: { members: "Members", all: "All", month: "Month", theme: "Switch theme", lang: "Switch language" },
+  es: { members: "Miembros", all: "Todos", month: "Mes", theme: "Cambiar tema", lang: "Cambiar idioma" },
+};
+let lang = localStorage.lang === "es" ? "es" : "en";
+const t = k => I18N[lang][k];
 
 // ponytail: naive CSV split — no field here contains a comma, only surrounding quotes.
 const cell = s => s.trim().replace(/^"(.*)"$/s, "$1").replace(/""/g, '"');
@@ -321,7 +377,12 @@ const isGold = c => {
 
 function draw() {
   document.getElementById("grid").innerHTML = `
-    <thead><tr><th></th>${days.map(d => `<th class="date"><div>${d[0]}</div></th>`).join("")}</tr></thead>
+    <thead><tr><th></th>${days.map(d => {
+      const n = users.filter((u, c) => on(d[c + COL0])).length;
+      return `<th class="date">
+        <span class="n${n === 0 ? " zero" : ""}">${n}<span class="chk">${ICON.check}</span></span>
+        <div>${d[0]}</div></th>`;
+    }).join("")}</tr></thead>
     <tbody>${users.map((u, c) => `<tr class="${isGold(c) ? "gold" : ""}">
       <th class="user"><div>${sprite(mons[c])}<span>${u}</span></div></th>
       ${days.map(d =>
@@ -330,7 +391,7 @@ function draw() {
     </tr>`).join("")}</tbody>`;
 
   const open = new Set([...document.querySelectorAll("#side details[open]")].map(d => d.dataset.u));
-  document.getElementById("side").innerHTML = `<h2>Miembros</h2>` + users.map((u, c) => `
+  document.getElementById("side").innerHTML = `<h2>${t("members")}</h2>` + users.map((u, c) => `
     <details data-u="${u}" class="${isGold(c) ? "gold" : ""}" ${open.has(u) ? "open" : ""}>
       <summary class="${isGold(c) ? "plate" : ""}">
         <span class="chev">${ICON.chev}</span>${img(mons[c])}<span>${u}</span>
@@ -354,7 +415,7 @@ document.getElementById("grid").innerHTML = `
       <span class="skel bar" style="width:90px"></span></div></th>
     ${Array.from({length: 14}, () => `<td><span class="skel dot"></span></td>`).join("")}
   </tr>`).join("")}</tbody>`;
-document.getElementById("side").innerHTML = `<h2>Miembros</h2>` +
+document.getElementById("side").innerHTML = `<h2>${t("members")}</h2>` +
   Array.from({length: 8}, () => `<div class="skel-row">
     <span class="skel circle"></span><span class="skel bar" style="width:60%"></span>
   </div>`).join("");
@@ -365,7 +426,7 @@ function build() {
   const chosen = pick.value === "all"
     ? tabRows.map((rows, i) => i).reverse()
     : [Number(pick.value)];
-  days = chosen.flatMap(i => tabRows[i].slice(3).filter(d => d[0]));
+  days = chosen.flatMap(i => tabRows[i].slice(3).filter(d => d[0])).reverse();
   draw();
 }
 
@@ -379,8 +440,8 @@ Promise.all(TABS.map(t => fetch(csvUrl(t.gid)).then(r => r.text()).then(parse)))
     if (!roster) return;
     users = roster[1].slice(COL0).filter(Boolean);
     mons = roster[2].slice(COL0);
-    pick.innerHTML = `<option value="all">Todos</option>` +
-      TABS.map((t, i) => `<option value="${i}">${t.name}</option>`).reverse().join("");
+    pick.innerHTML = `<option value="all">${t("all")}</option>` +
+      TABS.map((tab, i) => `<option value="${i}">${tab.name}</option>`).reverse().join("");
     build();
   });
 
@@ -401,5 +462,26 @@ theme.onclick = () => {
     : matchMedia("(prefers-color-scheme: dark)").matches;
   localStorage.theme = dark ? "light" : "dark";
   setTheme(localStorage.theme);
+};
+
+const langBtn = document.getElementById("lang");
+langBtn.querySelector(".s-en").innerHTML = FLAG_EN;
+langBtn.querySelector(".s-es").innerHTML = FLAG_ES;
+function applyLang() {
+  document.documentElement.lang = lang;
+  langBtn.classList.toggle("es", lang === "es");
+  langBtn.title = langBtn.ariaLabel = t("lang");
+  theme.title = theme.ariaLabel = t("theme");
+  pick.ariaLabel = t("month");
+  const allOpt = pick.querySelector('option[value="all"]');
+  if (allOpt) allOpt.textContent = t("all");
+  const h2 = document.querySelector("#side h2");
+  if (h2) h2.textContent = t("members");
+}
+applyLang();
+langBtn.onclick = () => {
+  lang = lang === "es" ? "en" : "es";
+  localStorage.lang = lang;
+  applyLang();
 };
 </script>
