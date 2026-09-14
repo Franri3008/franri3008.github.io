@@ -260,19 +260,11 @@
 </button>
 
 <script>
-// One tab per month. Each tab: row 1 = "Users" banner, row 2 = usernames,
-// row 3 = favourite Pokemon, rows 4+ = one per day, newest first.
-// Cols A/B are labels, users start at col C.
-// ponytail: tabs listed by hand — Sheets has no public API to enumerate them.
-// Add a line when a new month tab is created; oldest month first. The gid is the
-// number in the tab's URL (open the tab in Sheets and read #gid= in the address bar).
 const TABS = [
   { name: "September 2026 (Month 1)", gid: "0" },
   { name: "October 2026 (Month 2)", gid: "211219219" },
 ];
 const SHEET_ID = "1tYyWIDSRMK21ErtCrt-24BM-xCcWItaUkPfWeHc5f44";
-// The gviz endpoint types each column, which blanks the username and Pokemon rows
-// sitting above the checkboxes. This one returns raw cell text.
 const csvUrl = gid =>
   `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
 const svg = body => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -286,7 +278,6 @@ const ICON = {
     M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>`),
   moon: svg(`<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>`),
 };
-// Simplified flags (square viewBox, clipped to a circle by CSS) rather than a flag font/library.
 const FLAG_EN = `<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#00247d"/>
   <g stroke="#fff" stroke-width="6"><path d="M0,0 L40,40 M40,0 L0,40"/></g>
   <g stroke="#cf142b" stroke-width="2.5"><path d="M0,0 L40,40 M40,0 L0,40"/></g>
@@ -308,7 +299,6 @@ const I18N = {
 let lang = localStorage.lang === "es" ? "es" : "en";
 const t = k => I18N[lang][k];
 
-// ponytail: naive CSV split — no field here contains a comma, only surrounding quotes.
 const cell = s => s.trim().replace(/^"(.*)"$/s, "$1").replace(/""/g, '"');
 const parse = t => t.trim().split(/\r?\n/).map(r => r.split(",").map(cell));
 const on = v => (v || "").trim().toUpperCase() === "TRUE";
@@ -316,8 +306,6 @@ const on = v => (v || "").trim().toUpperCase() === "TRUE";
 let users = [], mons = [], days = [];
 const COL0 = 2;   // first user column in each CSV row
 
-// Sprites come from Pokemon DB, keyed by lowercase name.
-// ponytail: plain <img> in the sidebar — a link inside <summary> would also toggle the section.
 const img = name => {
   const slug = (name || "").trim().toLowerCase();
   return slug
@@ -333,17 +321,12 @@ const sprite = name => {
     : "";
 };
 
-// Future sheet rows do not count, but a missed current or past day resets the streak.
-const sheetDate = value => {
-  const [day, month, year] = (value || "").split("/").map(Number);
-  return day && month && year ? new Date(year, month - 1, day) : null;
-};
+// The newest day with any login is the tracking cutoff. Empty rows after it may
+// represent future dates or a day whose data has not been entered yet.
 const loginStreak = c => {
   const eventDays = tabRows.flatMap(rows => rows.slice(3).filter(d => d[0]).reverse());
-  const today = new Date();
-  today.setHours(23, 59, 59, 999);
   let latest = eventDays.length - 1;
-  while (latest >= 0 && sheetDate(eventDays[latest][0]) > today) latest--;
+  while (latest >= 0 && !users.some((u, i) => on(eventDays[latest][i + COL0]))) latest--;
   let streak = 0;
   while (latest >= 0 && on(eventDays[latest][c + COL0])) { streak++; latest--; }
   return streak;
