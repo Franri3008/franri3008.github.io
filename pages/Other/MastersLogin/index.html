@@ -65,12 +65,13 @@
 
   h1 { margin: 0; font-size: 22px; text-align: left; }
   #head { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-  #pick {
-    margin-left: auto; color: var(--ink);
+  #pick, #sort {
+    color: var(--ink);
     background: var(--card); border: 1px solid var(--line);
     border-radius: 8px; padding: 7px 10px; cursor: pointer;
   }
-  #pick:hover { border-color: var(--accent); }
+  #pick { margin-left: auto; }
+  #pick:hover, #sort:hover { border-color: var(--accent); }
   .sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
 
   .card {
@@ -146,8 +147,8 @@
   td .mark.yes { background: color-mix(in srgb, var(--yes) 16%, transparent); }
   td .mark.no { color: var(--muted); opacity: .55; }
 
-  /* Lifetime login ranks. The selected month only changes the grid; rank progress
-     always comes from every configured event tab. */
+  /* Active-streak ranks. The selected month only changes the grid; streaks always
+     come from every configured event tab. */
   .rank { font-weight: 700; }
   .rank.bronze { color: var(--bronze); }
   .rank.silver { color: var(--silver); text-shadow: 0 1px 0 rgba(255, 255, 255, .35); }
@@ -224,6 +225,7 @@
   @media (max-width: 820px) {
     body { padding: 12px; }
     #app { display: flex; flex-direction: column; }
+    #head { flex-wrap: wrap; }
     /* #main already holds title before table; pushing #side after it puts
        members last: title, table, members. */
     #side { position: static; width: auto; border-right: 0;
@@ -239,8 +241,12 @@
   <div id="main">
     <div id="head">
       <div><h1>PKMN Masters Login</h1>
-        <div style="font-size:11px;color:var(--muted)">v0.3.0</div></div>
+        <div style="font-size:11px;color:var(--muted)">v0.3.1</div></div>
       <select id="pick"><option value="all"></option></select>
+      <select id="sort">
+        <option value="default"></option>
+        <option value="streak"></option>
+      </select>
     </div>
     <div class="card"><div id="wrap"><table id="grid"></table></div></div>
   </div>
@@ -255,7 +261,7 @@
 
 <script>
 // One tab per month. Each tab: row 1 = "Users" banner, row 2 = usernames,
-// row 3 = favourite Pokemon, rows 4+ = one per day, oldest first.
+// row 3 = favourite Pokemon, rows 4+ = one per day, newest first.
 // Cols A/B are labels, users start at col C.
 // ponytail: tabs listed by hand — Sheets has no public API to enumerate them.
 // Add a line when a new month tab is created; oldest month first. The gid is the
@@ -291,8 +297,12 @@ const FLAG_ES = `<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#AA
 
 const I18N = {
   en: { members: "Members", all: "All", month: "Month", theme: "Switch theme", lang: "Switch language",
+    sort: "Sort members", default: "Default", streak: "By login streak",
+    consecutiveDays: "consecutive days",
     bronze: "Bronze", silver: "Silver", gold: "Gold", rainbow: "Rainbow" },
   es: { members: "Miembros", all: "Todos", month: "Mes", theme: "Cambiar tema", lang: "Cambiar idioma",
+    sort: "Ordenar miembros", default: "Predeterminado", streak: "Por racha de inicio",
+    consecutiveDays: "días consecutivos",
     bronze: "Bronce", silver: "Plata", gold: "Oro", rainbow: "Arcoíris" },
 };
 let lang = localStorage.lang === "es" ? "es" : "en";
@@ -323,20 +333,38 @@ const sprite = name => {
     : "";
 };
 
-// Ranks use total logins across the whole event, regardless of the month filter.
-const totalLogins = c => tabRows.reduce((total, rows) => total +
-  rows.slice(3).filter(d => d[0] && on(d[c + COL0])).length, 0);
-const rankFor = c => {
-  const total = totalLogins(c);
-  if (total >= 25) return "rainbow";
-  if (total >= 20) return "gold";
-  if (total >= 10) return "silver";
-  if (total >= 5) return "bronze";
+// Future sheet rows do not count, but a missed current or past day resets the streak.
+const sheetDate = value => {
+  const [day, month, year] = (value || "").split("/").map(Number);
+  return day && month && year ? new Date(year, month - 1, day) : null;
+};
+const loginStreak = c => {
+  const eventDays = tabRows.flatMap(rows => rows.slice(3).filter(d => d[0]).reverse());
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  let latest = eventDays.length - 1;
+  while (latest >= 0 && sheetDate(eventDays[latest][0]) > today) latest--;
+  let streak = 0;
+  while (latest >= 0 && on(eventDays[latest][c + COL0])) { streak++; latest--; }
+  return streak;
+};
+const rankFor = streak => {
+  if (streak >= 25) return "rainbow";
+  if (streak >= 20) return "gold";
+  if (streak >= 10) return "silver";
+  if (streak >= 5) return "bronze";
   return "";
 };
 const rankName = c => {
-  const rank = rankFor(c);
-  return `<span class="${rank ? `rank ${rank}` : ""}"${rank ? ` title="${t(rank)} · ${totalLogins(c)}"` : ""}>${users[c]}</span>`;
+  const streak = loginStreak(c);
+  const rank = rankFor(streak);
+  return `<span class="${rank ? `rank ${rank}` : ""}"${rank ? ` title="${t(rank)} · ${streak} ${t("consecutiveDays")}"` : ""}>${users[c]}</span>`;
+};
+const orderedColumns = () => {
+  const columns = users.map((u, c) => c);
+  return sort.value === "streak"
+    ? columns.sort((a, b) => loginStreak(b) - loginStreak(a) || a - b)
+    : columns;
 };
 
 function draw() {
@@ -347,7 +375,7 @@ function draw() {
         <span class="n${n === 0 ? " zero" : ""}">${n}<span class="chk">${ICON.check}</span></span>
         <div>${d[0]}</div></th>`;
     }).join("")}</tr></thead>
-    <tbody>${users.map((u, c) => `<tr>
+    <tbody>${orderedColumns().map(c => `<tr>
       <th class="user"><div>${sprite(mons[c])}${rankName(c)}</div></th>
       ${days.map(d =>
         `<td><span class="mark ${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span></td>`
@@ -355,8 +383,8 @@ function draw() {
     </tr>`).join("")}</tbody>`;
 
   const open = new Set([...document.querySelectorAll("#side details[open]")].map(d => d.dataset.u));
-  document.getElementById("side").innerHTML = `<h2>${t("members")}</h2>` + users.map((u, c) => `
-    <details data-u="${u}" ${open.has(u) ? "open" : ""}>
+  document.getElementById("side").innerHTML = `<h2>${t("members")}</h2>` + orderedColumns().map(c => `
+    <details data-u="${users[c]}" ${open.has(users[c]) ? "open" : ""}>
       <summary>
         <span class="chev">${ICON.chev}</span>${img(mons[c])}${rankName(c)}
         <span class="count">${days.filter(d => on(d[c + COL0])).length}/${days.length}</span>
@@ -369,6 +397,7 @@ function draw() {
 
 let tabRows = [];   // parsed CSV per tab, in TABS order
 const pick = document.getElementById("pick");
+const sort = document.getElementById("sort");
 
 // Skeletons shown while the sheet loads.
 document.getElementById("grid").innerHTML = `
@@ -410,6 +439,7 @@ Promise.all(TABS.map(t => fetch(csvUrl(t.gid)).then(r => r.text()).then(parse)))
   });
 
 pick.onchange = build;
+sort.onchange = draw;
 
 const theme = document.getElementById("theme");
 theme.querySelector(".s-light").innerHTML = ICON.sun;
@@ -437,8 +467,11 @@ function applyLang() {
   langBtn.title = langBtn.ariaLabel = t("lang");
   theme.title = theme.ariaLabel = t("theme");
   pick.ariaLabel = t("month");
+  sort.ariaLabel = t("sort");
   const allOpt = pick.querySelector('option[value="all"]');
   if (allOpt) allOpt.textContent = t("all");
+  sort.querySelector('option[value="default"]').textContent = t("default");
+  sort.querySelector('option[value="streak"]').textContent = t("streak");
   const h2 = document.querySelector("#side h2");
   if (h2) h2.textContent = t("members");
 }
