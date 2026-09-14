@@ -14,12 +14,9 @@
     --yes: #2f7d51;
     --no: #b23a3a;
     --square: rgba(0, 0, 0, .045);
-    --gold-glass-a: rgba(253, 241, 200, .46);
-    --gold-glass-b: rgba(245, 217, 122, .54);
-    --gold-reflection: rgba(255, 255, 255, .52);
-    --gold-edge: rgba(172, 126, 12, .18);
-    --gold-shadow: rgba(139, 103, 10, .10);
-    --gold-ink: #6b5309;
+    --bronze: #9a5b2f;
+    --silver: #6f7782;
+    --gold: #a87900;
   }
   :root[data-theme="dark"] {
     --bg: #16171a;
@@ -32,23 +29,16 @@
     --yes: #59b981;
     --no: #e07a7a;
     --square: rgba(255, 255, 255, .05);
-    --gold-glass-a: rgba(74, 60, 18, .48);
-    --gold-glass-b: rgba(138, 111, 30, .48);
-    --gold-reflection: rgba(255, 238, 178, .20);
-    --gold-edge: rgba(230, 198, 103, .18);
-    --gold-shadow: rgba(0, 0, 0, .16);
-    --gold-ink: #f6dd93;
+    --bronze: #d29462;
+    --silver: #c3c9d2;
+    --gold: #f0c94f;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #16171a; --card: #1e2024; --ink: #e8e8ea; --muted: #9a9aa3;
       --line: #313339; --pad: #26282d; --accent: #59b981; --yes: #59b981;
       --no: #e07a7a; --square: rgba(255, 255, 255, .05);
-      --gold-glass-a: rgba(74, 60, 18, .48);
-      --gold-glass-b: rgba(138, 111, 30, .48);
-      --gold-reflection: rgba(255, 238, 178, .20);
-      --gold-edge: rgba(230, 198, 103, .18);
-      --gold-shadow: rgba(0, 0, 0, .16); --gold-ink: #f6dd93;
+      --bronze: #d29462; --silver: #c3c9d2; --gold: #f0c94f;
     }
   }
 
@@ -156,59 +146,22 @@
   td .mark.yes { background: color-mix(in srgb, var(--yes) 16%, transparent); }
   td .mark.no { color: var(--muted); opacity: .55; }
 
-  /* Gold: the last 5 logged days in a row. The original warm palette is kept
-     translucent while a narrow reflection travels over the stationary glass. */
-  .plate { position: relative; z-index: 0; }
-  .plate::before {
-    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    border: 1px solid var(--gold-edge); border-radius: 10px;
-    background:
-      linear-gradient(105deg,
-        transparent 24%,
-        color-mix(in srgb, var(--gold-reflection) 28%, transparent) 36%,
-        var(--gold-reflection) 50%,
-        color-mix(in srgb, var(--gold-reflection) 28%, transparent) 64%,
-        transparent 76%) no-repeat,
-      linear-gradient(100deg,
-        var(--gold-glass-a), var(--gold-glass-b) 50%, var(--gold-glass-a));
-    background-position: -240% 0, 0 0;
-    background-size: 68% 100%, 100% 100%;
-    box-shadow:
-      inset 0 1px 0 var(--gold-reflection),
-      inset 0 -1px 0 var(--gold-edge),
-      0 4px 14px var(--gold-shadow);
-    -webkit-backdrop-filter: blur(7px) saturate(115%);
-    backdrop-filter: blur(7px) saturate(115%);
-    animation: glass-reflection 7s ease-in-out infinite;
+  /* Lifetime login ranks. The selected month only changes the grid; rank progress
+     always comes from every configured event tab. */
+  .rank { font-weight: 700; }
+  .rank.bronze { color: var(--bronze); }
+  .rank.silver { color: var(--silver); text-shadow: 0 1px 0 rgba(255, 255, 255, .35); }
+  .rank.gold { color: var(--gold); text-shadow: 0 1px 0 rgba(255, 255, 255, .28); }
+  .rank.rainbow {
+    color: transparent;
+    background: linear-gradient(90deg, #ef4444, #f59e0b, #22c55e, #3b82f6, #8b5cf6, #ef4444);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: rainbow-name 4s linear infinite;
   }
-  @keyframes glass-reflection {
-    0%, 18% { background-position: -240% 0, 0 0; }
-    76%, 100% { background-position: 340% 0, 0 0; }
-  }
-  /* Table: the band sits on the row itself, so it runs unbroken across the day columns.
-     The opaque name cell and the grey padded cells paint over it and bound it. */
-  tbody tr.gold {
-    background: linear-gradient(100deg,
-      var(--gold-glass-a), var(--gold-glass-b) 50%, var(--gold-glass-a));
-  }
-  tbody tr.gold td, tbody tr.gold:hover td {
-    background: transparent; border-top-color: transparent;
-    box-shadow: inset 0 6px 0 var(--card), inset 0 -6px 0 var(--card);
-  }
-  tbody tr.gold td .mark.yes { background: color-mix(in srgb, var(--gold-ink) 10%, transparent); }
-  tbody tr.gold td .mark { color: var(--gold-ink); }
-  tbody tr.gold td.pad, tbody tr.gold:hover td.pad { background: var(--pad); box-shadow: none; }
-  tbody tr.gold th.user, tbody tr.gold:hover th.user { background: var(--card); }
-
-  /* Sidebar username: keep the glass close to the content instead of filling
-     the whole details block. */
-  #side details.gold { padding: 8px; margin: 4px 0; }
-  #side details.gold summary.plate { padding: 8px 6px; }
-  #side details.gold summary, #side details.gold summary .count { color: var(--gold-ink); }
-
-  @media (prefers-reduced-motion: reduce) {
-    .plate::before { animation: none; background-position: 35% 0, 0 0; }
-  }
+  @keyframes rainbow-name { to { background-position: 220% 0; } }
+  @media (prefers-reduced-motion: reduce) { .rank.rainbow { animation: none; } }
 
   /* Loading skeletons: grey shapes with a shimmer sweep, replaced when data lands. */
   .skel {
@@ -286,7 +239,7 @@
   <div id="main">
     <div id="head">
       <div><h1>PKMN Masters Login</h1>
-        <div style="font-size:11px;color:var(--muted)">v0.2.0</div></div>
+        <div style="font-size:11px;color:var(--muted)">v0.3.0</div></div>
       <select id="pick"><option value="all"></option></select>
     </div>
     <div class="card"><div id="wrap"><table id="grid"></table></div></div>
@@ -337,8 +290,10 @@ const FLAG_ES = `<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#AA
   <rect y="10" width="40" height="20" fill="#F1BF00"/></svg>`;
 
 const I18N = {
-  en: { members: "Members", all: "All", month: "Month", theme: "Switch theme", lang: "Switch language" },
-  es: { members: "Miembros", all: "Todos", month: "Mes", theme: "Cambiar tema", lang: "Cambiar idioma" },
+  en: { members: "Members", all: "All", month: "Month", theme: "Switch theme", lang: "Switch language",
+    bronze: "Bronze", silver: "Silver", gold: "Gold", rainbow: "Rainbow" },
+  es: { members: "Miembros", all: "Todos", month: "Mes", theme: "Cambiar tema", lang: "Cambiar idioma",
+    bronze: "Bronce", silver: "Plata", gold: "Oro", rainbow: "Arcoíris" },
 };
 let lang = localStorage.lang === "es" ? "es" : "en";
 const t = k => I18N[lang][k];
@@ -368,11 +323,20 @@ const sprite = name => {
     : "";
 };
 
-const STREAK = 5;
-// Gold when the STREAK most recent sheet days are all logged.
-const isGold = c => {
-  const recent = days.slice(0, STREAK);
-  return recent.length === STREAK && recent.every(d => on(d[c + COL0]));
+// Ranks use total logins across the whole event, regardless of the month filter.
+const totalLogins = c => tabRows.reduce((total, rows) => total +
+  rows.slice(3).filter(d => d[0] && on(d[c + COL0])).length, 0);
+const rankFor = c => {
+  const total = totalLogins(c);
+  if (total >= 25) return "rainbow";
+  if (total >= 20) return "gold";
+  if (total >= 10) return "silver";
+  if (total >= 5) return "bronze";
+  return "";
+};
+const rankName = c => {
+  const rank = rankFor(c);
+  return `<span class="${rank ? `rank ${rank}` : ""}"${rank ? ` title="${t(rank)} · ${totalLogins(c)}"` : ""}>${users[c]}</span>`;
 };
 
 function draw() {
@@ -383,8 +347,8 @@ function draw() {
         <span class="n${n === 0 ? " zero" : ""}">${n}<span class="chk">${ICON.check}</span></span>
         <div>${d[0]}</div></th>`;
     }).join("")}</tr></thead>
-    <tbody>${users.map((u, c) => `<tr class="${isGold(c) ? "gold" : ""}">
-      <th class="user"><div>${sprite(mons[c])}<span>${u}</span></div></th>
+    <tbody>${users.map((u, c) => `<tr>
+      <th class="user"><div>${sprite(mons[c])}${rankName(c)}</div></th>
       ${days.map(d =>
         `<td><span class="mark ${on(d[c + COL0]) ? "yes" : "no"}">${on(d[c + COL0]) ? ICON.check : ICON.cross}</span></td>`
       ).join("")}
@@ -392,9 +356,9 @@ function draw() {
 
   const open = new Set([...document.querySelectorAll("#side details[open]")].map(d => d.dataset.u));
   document.getElementById("side").innerHTML = `<h2>${t("members")}</h2>` + users.map((u, c) => `
-    <details data-u="${u}" class="${isGold(c) ? "gold" : ""}" ${open.has(u) ? "open" : ""}>
-      <summary class="${isGold(c) ? "plate" : ""}">
-        <span class="chev">${ICON.chev}</span>${img(mons[c])}<span>${u}</span>
+    <details data-u="${u}" ${open.has(u) ? "open" : ""}>
+      <summary>
+        <span class="chev">${ICON.chev}</span>${img(mons[c])}${rankName(c)}
         <span class="count">${days.filter(d => on(d[c + COL0])).length}/${days.length}</span>
       </summary>
       <ul>${days.map(d =>
@@ -483,5 +447,6 @@ langBtn.onclick = () => {
   lang = lang === "es" ? "en" : "es";
   localStorage.lang = lang;
   applyLang();
+  if (users.length) draw();
 };
 </script>
