@@ -99,3 +99,53 @@ step,Rank,W.Rank,Author,Institution,City,Country,Score
 2,48,19,Ibrahim Dolapo Raheem,European Xtramile Centre of African Studies (EXCAS),Liège,Belgium,53.81
 2,49,66,Jean Hindriks,Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM),Louvain-la-Neuve,Belgium,53.84
 2,50,81,Axel Gautier,Université de Liège -> HEC École de Gestion; Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Liège; Louvain-la-Neuve,Belgium; Belgium,54.61
+3,1,2,Jan K. De Loecker,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Department of Economics -> Centrum voor Economie en Duurzaam Ondernemen (CEDON),Leuven,Belgium,2.25
+3,2,7,Stijn Baert,Universiteit Gent -> Faculteit Economie en Bedrijfskunde; Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Institut de Recherche Économique et Sociale (IRES),Gent; Louvain-la-Neuve,Belgium; Belgium,6.17
+3,3,15,Frank Verboven (F Verboven),KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Department of Economics,Leuven,Belgium,6.53
+3,4,19,Gert Peersman,Universiteit Gent -> Faculteit Economie en Bedrijfskunde,Gent,Belgium,8.22
+3,5,14,Hans Degryse,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen,Leuven,Belgium,8.51
+3,6,12,Jozef Konings,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Vlaams Instituut voor Economie en Samenleving (VIVES),Leuven,Belgium,8.58
+3,7,16,David de la Croix,Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Institut de Recherche Économique et Sociale (IRES),Louvain-la-Neuve,Belgium,8.76
+3,8,17,Leopold Simar,Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Louvain-la-Neuve,Belgium,9.18
+3,9,5,Pierre-Alexandre Balland,Centre for European Policy Studies (CEPS),Bruxelles/Brussel,Belgium,10.59
+3,10,22,Emmanuel Dhyne,Nationale Bank van België/Banque national de Belqique (BNB); Université de Mons -> Faculté Warocqué d'Économie et de Gestion,Bruxelles/Brussel; Mons,Belgium; Belgium,11.33
+3,11,23,Dirk Czarnitzki,"KU Leuven -> Faculteit Economie en Bedrijfswetenschappen; KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Onderzoekseenheid Bedrijfseconomie, Strategie en Innovatie",Leuven; Leuven,Belgium; Belgium,13.11
+3,12,24,Kris Boudt,Universiteit Gent -> Faculteit Economie en Bedrijfskunde,Gent,Belgium,13.22
+3,13,25,Bram De Rock,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles,Belgium,14.95
+3,14,33,Klaas Mulier,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen,Leuven,Belgium,15.99
+3,15,29,Ansgar Rannenberg,Nationale Bank van België/Banque national de Belqique (BNB),Bruxelles/Brussel,Belgium,16.98
+3,16,26,Stef Proost,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Department of Economics,Leuven,Belgium,18.15
+3,17,32,Danny Cassimon,Universiteit Antwerpen -> Instituut voor Ontwikkelingsbeleid en -beheer (IOB),Antwerpen,Belgium,18.51
+3,18,27,Reinhilde Veugelers,"KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Onderzoekseenheid Bedrijfseconomie, Strategie en Innovatie; Bruegel",Leuven; Bruxelles/Brussel,Belgium; Belgium,18.58
+3,19,37,Christian Matthias Hafner,"Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Institute of Statistics, Biostatistics and Actuarial Sciences (ISBA)",Louvain-la-Neuve,Belgium,19.10
+3,20,41,Olivier De Jonghe,Nationale Bank van België/Banque national de Belqique (BNB),Bruxelles/Brussel,Belgium,19.65
+3,21,35,Ferdinand Vieider,Universiteit Gent -> Faculteit Economie en Bedrijfskunde -> Vakgroep Economie; Universiteit Gent -> Faculteit Economie en Bedrijfskunde,Gent; Gent,Belgium; Belgium,20.35
+3,22,38,Paul Belleflamme,Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Louvain-la-Neuve,Belgium,20.50
+3,23,36,Guntram Wolff,Bruegel; Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles/Brussel; Bruxelles,Belgium; Belgium,21.32
+3,24,42,Laurens Cherchye,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Department of Economics,Leuven,Belgium,22.49
+3,25,47,Thomas Demuynck,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles,Belgium,24.04
+3,26,45,Philip Ushchev,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles,Belgium,24.85
+3,27,31,Francois Rycx,Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Institut de Recherche Économique et Sociale (IRES); Université de Mons -> Faculté Warocqué d'Économie et de Gestion; Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> Département d'Économie Appliquée (DULBEA); Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> Centre Emile Bernheim,Louvain-la-Neuve; Mons; Bruxelles; Bruxelles,Belgium; Belgium; Belgium; Belgium,26.34
+3,28,48,Marc Hallin,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles,Belgium,27.96
+3,29,50,Barnabé Walheer (Barnabe Walheer),Université de Liège -> HEC École de Gestion,Liège,Belgium,29.21
+3,30,53,Glenn Magerman,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles,Belgium,30.00
+3,31,28,Pierre Pestieau,Université de Liège -> HEC École de Gestion -> Centre de Recherche en Économie Publique et de la Population (CREPP); Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Liège; Louvain-la-Neuve,Belgium; Belgium,31.80
+3,32,52,Lukas Vogel,European Commission -> Directorate-General Economic and Financial Affairs (ECFIN); Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Institut de Recherche Économique et Sociale (IRES),Bruxelles/Brussel; Louvain-la-Neuve,Belgium; Belgium,32.75
+3,33,49,Olivier Sterck,Universiteit Antwerpen -> Instituut voor Ontwikkelingsbeleid en -beheer (IOB),Antwerpen,Belgium,33.49
+3,34,40,Rene Belderbos,"KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> Onderzoekseenheid Bedrijfseconomie, Strategie en Innovatie",Leuven,Belgium,34.20
+3,35,21,Jonathan Mark Karpoff,European Corporate Governance Institute (ECGI),Bruxelles/Brussel,Belgium,35.06
+3,36,58,Daniel Gros,Centre for European Policy Studies (CEPS),Bruxelles/Brussel,Belgium,36.45
+3,37,44,Francois Paul Maniquet,Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Louvain-la-Neuve,Belgium,37.97
+3,38,62,Paula Gobbi,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> European Centre for Advanced Research in Economics and Statistics (ECARES),Bruxelles,Belgium,40.49
+3,39,61,Georg Zachmann,Bruegel,Bruxelles/Brussel,Belgium,41.47
+3,40,60,Pierre-Guillaume Méon (Pierre-Guillaume Meon),Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> Centre Emile Bernheim,Bruxelles,Belgium,44.86
+3,41,43,Jacques Thisse (Jacques François Thisse),Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Louvain-la-Neuve,Belgium,46.72
+3,42,91,Mike Mariathasan,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen,Leuven,Belgium,47.77
+3,43,64,Alessandro Olper,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen -> LICOS Centre for Institutions and Economic Performance,Leuven,Belgium,50.29
+3,44,70,Rudi Vander Vennet,Universiteit Gent -> Faculteit Economie en Bedrijfskunde,Gent,Belgium,51.34
+3,45,75,Frédéric Vrins (Frederic Vrins),Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Louvain Finance,Louvain-la-Neuve,Belgium,53.06
+3,46,63,Ariane Szafarz,Université Libre de Bruxelles -> Solvay Brussels School of Economics and Management -> Centre Emile Bernheim; Centre for European Research in Microfinance (CERMi),Bruxelles; Bruxelles/Brussel,Belgium; Belgium,53.08
+3,47,82,Koen Inghelbrecht,Universiteit Gent -> Faculteit Economie en Bedrijfskunde -> Vakgroep Economie,Gent,Belgium,53.57
+3,48,67,Kristof De Witte,KU Leuven -> Faculteit Economie en Bedrijfswetenschappen,Leuven,Belgium,54.60
+3,49,77,Sam Desiere,Universiteit Gent -> Faculteit Economie en Bedrijfskunde,Gent,Belgium,55.12
+3,50,81,Axel Gautier,Université de Liège -> HEC École de Gestion; Université Catholique de Louvain -> Louvain Institute of Data Analysis and Modelling in Economics and Statistics (LIDAM) -> Center for Operations Research and Econometrics (CORE),Liège; Louvain-la-Neuve,Belgium; Belgium,55.17
