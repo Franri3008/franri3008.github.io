@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grupos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #fafaf8; --card: #fff; --line: #e4e2dc; --ink: #1f1f1f; --muted: #8a877f;
+    --accent: #2f6fde; --accent-soft: #eaf1fd; --danger: #c8463b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    display: flex; align-items: center; gap: 16px; padding: 14px 24px;
+    border-bottom: 1px solid var(--line); background: var(--card);
+  }
+  header h1 { font-family: "Libre Baskerville", "Bodoni 72", Didot, serif; font-size: 20px; margin: 0; font-weight: 700; }
+  .tabs { display: flex; gap: 6px; flex: 1; }
+  .tab {
+    border: 1px solid var(--line); background: var(--bg); border-radius: 999px;
+    padding: 6px 14px; cursor: pointer; font: inherit; font-size: 14px; color: var(--ink);
+  }
+  .tab.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); cursor: pointer; display: grid; place-items: center; color: var(--ink);
+  }
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .icon-btn svg, .drop svg, .export svg { width: 20px; height: 20px; }
+
+  /* Upload screen */
+  #upload { flex: 1; display: grid; place-items: center; }
+  .drop {
+    width: 320px; height: 220px; border: 2px dashed var(--line); border-radius: 18px;
+    display: grid; place-items: center; cursor: pointer; color: var(--muted); background: var(--card);
+    transition: border-color .15s, color .15s;
+  }
+  .drop svg { width: 56px; height: 56px; }
+  .drop.over, .drop:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Board */
+  #board { flex: 1; display: none; min-height: 0; }
+  #pool-wrap {
+    width: 280px; border-right: 1px solid var(--line); background: var(--card);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .pool-head { padding: 14px 16px 6px; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+  .pool-head svg { width: 18px; height: 18px; }
+  #pool { flex: 1; overflow-y: auto; padding: 8px 12px 16px; display: flex; flex-direction: column; gap: 6px; }
+  #groups {
+    flex: 1; overflow-y: auto; padding: 20px; display: grid; gap: 16px; align-content: start;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); grid-auto-rows: max-content;
+  }
+  .group {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    min-height: 180px; display: flex; flex-direction: column;
+  }
+  .group-head {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line);
+  }
+  .group-head .num { font-family: "Libre Baskerville", serif; font-weight: 700; font-size: 16px; }
+  .group-head .count { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 4px; flex: 1; }
+  .group-head .count svg { width: 14px; height: 14px; }
+  .group-head button { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 4px; border-radius: 6px; display: grid; }
+  .group-head button:hover { color: var(--danger); background: #fbeeed; }
+  .group-head button svg { width: 16px; height: 16px; }
+  .slot { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .add {
+    border: 2px dashed var(--line); border-radius: 14px; min-height: 180px; background: none;
+    cursor: pointer; color: var(--muted); display: grid; place-items: center;
+  }
+  .add svg { width: 36px; height: 36px; }
+  .add:hover { border-color: var(--accent); color: var(--accent); }
+
+  .chip {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px;
+    font-size: 14px; cursor: grab; user-select: none;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.dragging { opacity: .4; }
+  #pool-wrap.over, .group.over { background: var(--accent-soft); outline: 2px dashed var(--accent); outline-offset: -4px; border-radius: 10px; }
+  .empty { color: var(--muted); display: grid; place-items: center; flex: 1; padding: 20px; }
+  .empty svg { width: 28px; height: 28px; }
+
+  footer {
+    padding: 12px 24px; border-top: 1px solid var(--line); background: var(--card);
+    display: none; justify-content: center;
+  }
+  .export {
+    display: flex; align-items: center; gap: 8px; border: 0; border-radius: 12px; padding: 12px 28px;
+    font: inherit; font-size: 15px; font-weight: 600; background: var(--line); color: var(--muted); cursor: not-allowed;
+    transition: background .2s, color .2s;
+  }
+  .export.ready { background: var(--accent); color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(47,111,222,.3); }
+  input[type=file] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Grupos</h1>
+  <div class="tabs" id="tabs"></div>
+  <button class="icon-btn" id="shuffle" title="Repartir al azar" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></svg>
+  </button>
+  <button class="icon-btn" id="reset" title="Vaciar grupos" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+  </button>
+  <button class="icon-btn" id="newfile" title="Otro archivo" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
+  </button>
+</header>
+
+<section id="upload">
+  <label class="drop" id="drop" title="Subir lista (.xlsx)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+    <input type="file" id="file" accept=".xlsx,.xls,.csv">
+  </label>
+</section>
+
+<section id="board">
+  <aside id="pool-wrap">
+    <div class="pool-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg>
+      <span id="pool-count"></span>
+    </div>
+    <div id="pool" class="zone" data-zone="pool"></div>
+  </aside>
+  <main id="groups"></main>
+</section>
+
+<footer id="footer">
+  <button class="export" id="export" disabled title="Descargar Excel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+    .xlsx
+  </button>
+</footer>
+
+<script>
+// The file is read in the browser only. Nothing is uploaded or stored.
+const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+const ICON_PERSON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>';
+const ICON_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const ICON_DROP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>';
+
+const $ = id => document.getElementById(id);
+let classes = {};      // sheet name -> { students: [names], groups: [[names]], pool: [names] }
+let current = null;
+let dragged = null;
+
+function readNames(sheet) {
+  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, blankrows: false });
+  const names = [];
+  const seen = new Set();
+  for (const row of rows) {
+    const text = row.find(c => typeof c === 'string' && c.trim() && isNaN(c.trim()));
+    if (!text) continue;
+    const name = text.trim().replace(/\s+/g, ' ');
+    if (seen.has(name)) continue;
+    seen.add(name);
+    names.push(name);
+  }
+  return names;
+}
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wb = XLSX.read(e.target.result, { type: 'array' });
+    classes = {};
+    for (const name of wb.SheetNames) {
+      const students = readNames(wb.Sheets[name]);
+      if (students.length) classes[name] = { order: [...students], pool: [...students], groups: [[], [], []] };
+    }
+    const names = Object.keys(classes);
+    if (!names.length) { alert('No se encontraron nombres en el archivo.'); return; }
+    showBoard(names[0]);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showBoard(first) {
+  $('upload').style.display = 'none';
+  $('board').style.display = 'flex';
+  $('footer').style.display = 'flex';
+  for (const id of ['shuffle', 'reset', 'newfile']) $(id).style.display = 'grid';
+  select(first);
+}
+
+// Saved in this browser only, so a refresh or a closed tab keeps the groups.
+const STORE = 'grupos-v1';
+function save() {
+  localStorage.setItem(STORE, JSON.stringify({ classes, current }));
+}
+function restore() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE));
+    if (!saved || !saved.classes[saved.current]) return;
+    classes = saved.classes;
+    showBoard(saved.current);
+  } catch { localStorage.removeItem(STORE); }
+}
+
+function renderTabs() {
+  const tabs = $('tabs');
+  tabs.innerHTML = '';
+  const names = Object.keys(classes);
+  if (names.length < 2) return;
+  for (const name of names) {
+    const b = document.createElement('button');
+    b.className = 'tab' + (name === current ? ' on' : '');
+    b.textContent = name;
+    b.onclick = () => select(name);
+    tabs.appendChild(b);
+  }
+}
+
+function select(name) {
+  current = name;
+  renderTabs();
+  render();
+}
+
+function chip(name) {
+  const el = document.createElement('div');
+  el.className = 'chip';
+  el.draggable = true;
+  el.textContent = name;
+  el.addEventListener('dragstart', e => {
+    dragged = name;
+    el.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', name);
+  });
+  el.addEventListener('dragend', () => { el.classList.remove('dragging'); dragged = null; });
+  return el;
+}
+
+function makeZone(el, target) {
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('over'); });
+  el.addEventListener('dragleave', e => { if (!el.contains(e.relatedTarget)) el.classList.remove('over'); });
+  el.addEventListener('drop', e => {
+    e.preventDefault();
+    el.classList.remove('over');
+    if (dragged) move(dragged, target);
+  });
+}
+
+function move(name, target) {
+  const c = classes[current];
+  c.pool = c.pool.filter(n => n !== name);
+  c.groups = c.groups.map(g => g.filter(n => n !== name));
+  if (target === 'pool') c.pool.push(name);
+  else c.groups[target].push(name);
+  render();
+}
+
+function render() {
+  const c = classes[current];
+  const order = classes[current].order || (classes[current].order = [...c.pool, ...c.groups.flat()]);
+  c.pool.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+  const pool = $('pool');
+  pool.innerHTML = '';
+  if (!c.pool.length) pool.innerHTML = '<div class="empty">' + ICON_PERSON.replace('<svg', '<svg style="opacity:.4"') + '</div>';
+  c.pool.forEach(n => pool.appendChild(chip(n)));
+  $('pool-count').textContent = c.pool.length + ' / ' + order.length;
+
+  const groups = $('groups');
+  groups.innerHTML = '';
+  c.groups.forEach((members, i) => {
+    const box = document.createElement('div');
+    box.className = 'group';
+    box.innerHTML = `<div class="group-head"><span class="num">${i + 1}</span>
+      <span class="count">${ICON_PERSON}${members.length}</span>
+      <button title="Quitar grupo">${ICON_X}</button></div>`;
+    box.querySelector('button').onclick = () => {
+      c.pool.push(...members);
+      c.groups.splice(i, 1);
+      render();
+    };
+    const slot = document.createElement('div');
+    slot.className = 'slot zone';
+    if (!members.length) slot.innerHTML = '<div class="empty">' + ICON_DROP + '</div>';
+    members.forEach(n => slot.appendChild(chip(n)));
+    makeZone(box, i);
+    box.appendChild(slot);
+    groups.appendChild(box);
+  });
+  const add = document.createElement('button');
+  add.className = 'add';
+  add.title = 'Nuevo grupo';
+  add.innerHTML = ICON_PLUS;
+  add.onclick = () => { c.groups.push([]); render(); };
+  groups.appendChild(add);
+
+  const ready = c.groups.some(g => g.length);
+  $('export').disabled = !ready;
+  $('export').classList.toggle('ready', ready);
+  save();
+}
+
+function shuffle() {
+  const c = classes[current];
+  if (!c.groups.length) c.groups.push([], [], []);
+  const all = [...c.pool, ...c.groups.flat()];
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  c.groups = c.groups.map(() => []);
+  all.forEach((n, i) => c.groups[i % c.groups.length].push(n));
+  c.pool = [];
+  render();
+}
+
+function reset() {
+  const c = classes[current];
+  c.pool = [...c.order];
+  c.groups = c.groups.map(() => []);
+  render();
+}
+
+function exportFile() {
+  const c = classes[current];
+  const rows = [['Grupo', 'Nombre']];
+  c.groups.forEach((members, i) => members.forEach(n => rows.push([i + 1, n])));
+  c.pool.forEach(n => rows.push(['Sin grupo', n]));
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 10 }, { wch: 36 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Grupos');
+  const slug = current.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+  XLSX.writeFile(wb, `grupos-${slug}.xlsx`);
+}
+
+// Wiring
+const drop = $('drop');
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', e => {
+  e.preventDefault();
+  drop.classList.remove('over');
+  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+$('file').addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+makeZone($('pool-wrap'), 'pool');
+$('shuffle').onclick = shuffle;
+$('reset').onclick = reset;
+$('newfile').onclick = () => {
+  if (!confirm('¿Empezar con otro archivo? Se borran los grupos actuales.')) return;
+  localStorage.removeItem(STORE);
+  location.reload();
+};
+$('export').onclick = exportFile;
+restore();
+</script>
+</body>
+</html>
