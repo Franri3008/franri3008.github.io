@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <style>
   :root {
     --bg: #fafaf8; --card: #fff; --line: #e4e2dc; --ink: #1f1f1f; --muted: #8a877f;
@@ -92,7 +93,7 @@
 
   footer {
     padding: 12px 24px; border-top: 1px solid var(--line); background: var(--card);
-    display: none; justify-content: center;
+    display: none; justify-content: center; gap: 12px;
   }
   .export {
     display: flex; align-items: center; gap: 8px; border: 0; border-radius: 12px; padding: 12px 28px;
@@ -141,6 +142,10 @@
   <button class="export" id="export" disabled title="Descargar Excel">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
     .xlsx
+  </button>
+  <button class="export" id="png" disabled title="Descargar imagen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+    .png
   </button>
 </footer>
 
@@ -303,8 +308,10 @@ function render() {
   groups.appendChild(add);
 
   const ready = c.groups.some(g => g.length);
-  $('export').disabled = !ready;
-  $('export').classList.toggle('ready', ready);
+  for (const id of ['export', 'png']) {
+    $(id).disabled = !ready;
+    $(id).classList.toggle('ready', ready);
+  }
   save();
 }
 
@@ -329,17 +336,154 @@ function reset() {
   render();
 }
 
-function exportFile() {
+// Both downloads show the groups as cards, like the board on screen.
+const PALETTE = ['2F6FDE', 'D9822B', '3A9D5D', 'C8463B', '7B5BC9', '1C9AA8', 'C2508A', '8A6D3B'];
+const PER_ROW = 4;
+
+function cards() {
   const c = classes[current];
-  const rows = [['Grupo', 'Nombre']];
-  c.groups.forEach((members, i) => members.forEach(n => rows.push([i + 1, n])));
-  c.pool.forEach(n => rows.push(['Sin grupo', n]));
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [{ wch: 10 }, { wch: 36 }];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Grupos');
-  const slug = current.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
-  XLSX.writeFile(wb, `grupos-${slug}.xlsx`);
+  const list = c.groups
+    .map((members, i) => ({ title: 'Grupo ' + (i + 1), members, color: PALETTE[i % PALETTE.length] }))
+    .filter(g => g.members.length);
+  if (c.pool.length) list.push({ title: 'Sin grupo', members: c.pool, color: '8A877F' });
+  return list;
+}
+
+function slug() {
+  return current.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+}
+
+function download(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function tint(hex) {
+  // Very light version of a group colour, for the name cells.
+  const mix = i => Math.round(parseInt(hex.slice(i, i + 2), 16) * 0.12 + 255 * 0.88).toString(16).padStart(2, '0');
+  return (mix(0) + mix(2) + mix(4)).toUpperCase();
+}
+
+async function exportFile() {
+  if (!window.ExcelJS) { alert('No se pudo cargar el Excel. Prueba con la imagen (.png).'); return; }
+  const list = cards();
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('Grupos', {
+    views: [{ showGridLines: false }],
+    pageSetup: { orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: .4, right: .4, top: .5, bottom: .5, header: .2, footer: .2 } },
+  });
+  // Columns: a narrow gap, then name / gap pairs for each card in a row.
+  const cols = [{ width: 2 }];
+  for (let k = 0; k < PER_ROW; k++) cols.push({ width: 34 }, { width: 3 });
+  ws.columns = cols;
+
+  const title = ws.getCell(2, 2);
+  title.value = current;
+  title.font = { name: 'Calibri', size: 18, bold: true, color: { argb: 'FF1F1F1F' } };
+  ws.getRow(2).height = 28;
+
+  const thin = color => ({ style: 'thin', color: { argb: 'FF' + color } });
+  let top = 4;
+  for (let r = 0; r < list.length; r += PER_ROW) {
+    const row = list.slice(r, r + PER_ROW);
+    const tallest = Math.max(...row.map(g => g.members.length));
+    row.forEach((g, k) => {
+      const col = 2 + k * 2;
+      const head = ws.getCell(top, col);
+      head.value = `${g.title}  (${g.members.length})`;
+      head.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
+      head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + g.color } };
+      head.alignment = { vertical: 'middle', horizontal: 'center' };
+      head.border = { top: thin(g.color), left: thin(g.color), right: thin(g.color), bottom: thin(g.color) };
+      g.members.forEach((n, j) => {
+        const cell = ws.getCell(top + 1 + j, col);
+        cell.value = n;
+        cell.font = { name: 'Calibri', size: 12, color: { argb: 'FF1F1F1F' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + tint(g.color) } };
+        cell.alignment = { vertical: 'middle', indent: 1 };
+        cell.border = { left: thin(g.color), right: thin(g.color), bottom: thin(j === g.members.length - 1 ? g.color : 'E4E2DC') };
+      });
+    });
+    ws.getRow(top).height = 26;
+    for (let j = 1; j <= tallest; j++) ws.getRow(top + j).height = 20;
+    top += tallest + 3;
+  }
+  const buf = await wb.xlsx.writeBuffer();
+  download(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `grupos-${slug()}.xlsx`);
+}
+
+function exportPng() {
+  const list = cards();
+  const CARD_W = 300, HEAD = 42, LINE = 30, GAP = 24, PAD = 40, TITLE = 60, SCALE = 2;
+  const perRow = Math.min(PER_ROW, list.length);
+  const rows = [];
+  for (let r = 0; r < list.length; r += PER_ROW) rows.push(list.slice(r, r + PER_ROW));
+  const heights = rows.map(row => HEAD + Math.max(...row.map(g => g.members.length)) * LINE + 12);
+  const W = PAD * 2 + perRow * CARD_W + (perRow - 1) * GAP;
+  const H = PAD * 2 + TITLE + heights.reduce((a, b) => a + b, 0) + (rows.length - 1) * GAP;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W * SCALE;
+  canvas.height = H * SCALE;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+  ctx.fillStyle = '#fafaf8';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#1f1f1f';
+  ctx.font = 'bold 26px "Libre Baskerville", Georgia, serif';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(current, PAD, PAD + 18);
+
+  const sans = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const fit = (text, max) => {
+    if (ctx.measureText(text).width <= max) return text;
+    while (text.length && ctx.measureText(text + '…').width > max) text = text.slice(0, -1);
+    return text + '…';
+  };
+  let y = PAD + TITLE;
+  rows.forEach((row, r) => {
+    row.forEach((g, k) => {
+      const x = PAD + k * (CARD_W + GAP);
+      const h = HEAD + g.members.length * LINE + 12;
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(x, y, CARD_W, h, 14);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.clip();
+      ctx.fillStyle = '#' + g.color;
+      ctx.fillRect(x, y, CARD_W, HEAD);
+      ctx.restore();
+      ctx.beginPath();
+      ctx.roundRect(x + .5, y + .5, CARD_W - 1, h - 1, 14);
+      ctx.strokeStyle = '#e4e2dc';
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold 17px ${sans}`;
+      ctx.fillText(g.title, x + 16, y + HEAD / 2);
+      ctx.font = `15px ${sans}`;
+      ctx.textAlign = 'right';
+      ctx.fillText(String(g.members.length), x + CARD_W - 16, y + HEAD / 2);
+      ctx.textAlign = 'left';
+
+      ctx.font = `15px ${sans}`;
+      g.members.forEach((n, j) => {
+        const ly = y + HEAD + 6 + j * LINE + LINE / 2;
+        ctx.fillStyle = '#' + g.color;
+        ctx.beginPath();
+        ctx.arc(x + 20, ly, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#1f1f1f';
+        ctx.fillText(fit(n, CARD_W - 50), x + 34, ly);
+      });
+    });
+    y += heights[r] + GAP;
+  });
+  canvas.toBlob(blob => download(blob, `grupos-${slug()}.png`), 'image/png');
 }
 
 // Wiring
@@ -361,6 +505,7 @@ $('newfile').onclick = () => {
   location.reload();
 };
 $('export').onclick = exportFile;
+$('png').onclick = exportPng;
 restore();
 </script>
 </body>
